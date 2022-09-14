@@ -11,8 +11,9 @@ import Headings from "./InputFields/Headings";
 const InputFields = (props) => {
   let inputElement = null;
   const { ...controls } = props;
+  const {signature_flag}=props
   
-  console.log("controls.field_type---->", controls.field_type);
+  console.log("props-2132--->", props.signature_flag);
   switch (controls.field_type) {
     case "radio":
       inputElement = <Radio {...controls} />;
@@ -26,11 +27,11 @@ const InputFields = (props) => {
     case "instruction_text":
       inputElement = <TextArea {...controls} />;
       break;
-    case "select":
+    case "dropdown_selection":
       inputElement = <Select {...controls} />;
       break;
     case "signature":
-      inputElement = <Signature {...controls} />;
+      inputElement = <Signature {...controls} signature_flag={props.signature_flag} />;
       break;
     case "document_attachment":
       inputElement = <FileUpload {...controls} />;

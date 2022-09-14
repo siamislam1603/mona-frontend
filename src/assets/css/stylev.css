@@ -89,6 +89,7 @@
 
 .custom-menu-dots .dropdown-toggle {
     min-width: auto;
+    margin: 0 10px;
     padding: 0;
     border: 1px solid #3E5D58;
     background: #F7F7F7;
@@ -1461,9 +1462,8 @@ li.branch {
 .module_title {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
-    /* margin-top: 21px; */
-}
+    margin-bottom: 1rem;
+ }
 
 .module_title h3 {
     font-family: 'Noto Sans';
@@ -1501,6 +1501,9 @@ tr {
 
 span.module_dot {
     margin: 0 15px;
+}
+.print .module_title .title{
+    color: #AA0061;
 }
 
 .reference_videos {
@@ -1856,7 +1859,7 @@ button.add_operating_button.btn.btn-primary {
     min-width: inherit;
     padding: 4px 15px;
     border-radius: 5px;
-    margin: 0 10px;
+    margin:0 0 0 10px;
 }
 
 .tree_search_box .tree_view_search {

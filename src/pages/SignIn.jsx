@@ -37,17 +37,30 @@ const SignIn = () => {
       localStorage.setItem('profile_photo', res.data.user.profile_photo);
 
       let token = res.data.accessToken;
-      const response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
+      let response = await axios.get(`${BASE_URL}/auth/get_menu_list`, {
         headers: {
           "Authorization": "Bearer " + token
         }
-      })
+      });
 
       if (response.status === 200 && response.data.status === "success") {
         let { permissionsObject } = response.data;
 
         console.log('PERMISSIONS OBJECT:', permissionsObject)
         localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
+
+        console.log('TOKEN VALUE:', localStorage.getItem('token'));
+
+        // CHANGING LOGIN FLAG DURING FIRST LOGIN
+        response = await axios.patch(`${BASE_URL}/api/first-time-login`, {data: 1}, {
+          headers: {
+            "Authorization": "Bearer " + localStorage.getItem('token')
+          }
+        });
+
+        if(response.status === 200 && response.data.status === "success") {
+          console.log('LOGIN FLAG CHANGED SUCCESSFULLY!');
+        }
       }
 
       console.log('ROLE:', res.data.user.role);

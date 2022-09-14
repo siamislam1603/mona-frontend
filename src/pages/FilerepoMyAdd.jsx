@@ -70,6 +70,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             copyFetchedData(file);
         }
     }
+
     const copyFetchedData = (data) => {
         setFormSettings(prevState => ({
             ...prevState,
@@ -87,7 +88,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
-        // setCoverImage(data?.repository_files[0].filesPath);
+
     }
 
 
@@ -107,38 +108,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
-
-    // const GetData = async () => {
-    //     let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
-    //         headers: {
-    //             authorization: `Bearer ${localStorage.getItem('token')}`,
-    //         },
-    //     })
-
-    //     if (response.status === 200 && response.data.status === "success") {
-    //         const { file } = response.data;
-    //         copyFetchedData(file);
-    //     }
-    // }
-    // assigned_role: [],
-    // franchisee: [],
-    // assigned_users: [],
-    // assigned_childs: []
-    // const copyFetchedData = (data) => {
-    //     setFormSettings(prevState => ({
-    //         ...prevState,
-    //         franchisee: data?.repository_shares[0].franchisee,
-    //         assigned_role: data?.repository_shares[0].accessibleToRole,
-    //         accessibleToAll: data?.repository_shares[0].accessibleToAll,
-    //         assigned_users: data?.repository_shares[0].assigned_users,
-    //         user_roles: data?.repository_shares[0].assigned_roles,
-    //         assigned_childs: data?.repository_shares[0].assigned_childs,
-    //     }));
-    // }
-    // useEffect(() => {
-    //     GetData();
-    // }, [saveFileId])
-
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
 
@@ -196,28 +165,28 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const GetFile = async () => {
         try {
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
-            console.log(franchiseeId, "selectedFranchisees")
+            if (franchiseeId) {
+                let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
+                if (response) {
+                    setfullLoaderStatus(false)
+                }
 
-            let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-            if (response) {
-                setfullLoaderStatus(false)
-            }
+                if (response.status === 200 && response.data.status === "success") {
+                    const { files } = response.data;
+                    let tempData = files.map((dt) => ({
+                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        createdAt: dt.createdAt,
+                        userID: dt.id,
+                        creatorName: dt.creatorName + "," + dt.creatorRole,
+                        categoryId: dt.categoryId,
+                        Shaired: dt.repository_shares.length,
+                        // Shaired: dt.repository.repository_shares[0].length,
+                        filesId: dt.filesId,
 
-            if (response.status === 200 && response.data.status === "success") {
-                const { files } = response.data;
-                let tempData = files.map((dt) => ({
-                    name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
-                    createdAt: dt.createdAt,
-                    userID: dt.id,
-                    creatorName: dt.creatorName + "," + dt.creatorRole,
-                    categoryId: dt.categoryId,
-                    Shaired: dt.repository_shares ? dt.repository_shares.length : dt.repository.repository_shares.length,
-                    // Shaired: dt.repository.repository_shares[0].length,
-                    filesId: dt.filesId,
-
-                }));
-                setUserData(tempData);
-                console.log('tempData++++++++++++++++++++', tempData)
+                    }));
+                    setUserData(tempData);
+                    console.log('tempData++++++++++++++++++++', tempData)
+                }
             }
         } catch (err) {
             setfullLoaderStatus(false)
@@ -285,9 +254,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetData()
-    }, [saveFileId])
-
-
+    }, [saveFileId, userData])
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');
@@ -304,12 +271,11 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             });
     }
 
-
     useEffect(() => {
         setTimeout(() => {
             SetfileDeleteMessage(null)
         }, 3000);
-    }, [fileDeleteMessage])
+    }, [fileDeleteMessage, userData])
 
 
     // FETCH FILE DATA
@@ -475,11 +441,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                     <img src="../img/dot-ico.svg" alt="" />
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                    <Dropdown.Item onClick={() => {
-                                        if (window.confirm("Are you sure you want to delete ?"))
-                                            handleTrainingDelete(cell)
-                                    }}>Delete</Dropdown.Item>
-
                                     <Dropdown.Item href={`/file-repository-Edit/${cell}`}>Edit</Dropdown.Item>
                                     {getUser_Role === "guardian" ? (<></>) : (<>
                                         <Dropdown.Item href="#" onClick={() => {
@@ -487,7 +448,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                             setShowModal(true)
                                         }}>Share</Dropdown.Item>
                                     </>)}
-
+                                    <Dropdown.Item onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete ?"))
+                                            handleTrainingDelete(cell)
+                                    }}>Delete</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>

@@ -28,7 +28,10 @@ const FileRpositoryList = () => {
     const handleVideoClose = () => setVideo(false);
     const [category, setCategory] = useState([]);
     const [userData, setUserData] = useState([]);
+
     const [user, setUser] = useState([]);
+    const [Count, setCount] = useState([]);
+
     const [franchiseeList, setFranchiseeList] = useState();
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [formSettings, setFormSettings] = useState({
@@ -72,15 +75,19 @@ const FileRpositoryList = () => {
         };
         try {
             let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
-            console.log(data, "dataID")
-            console.log(data, "ID")
-            let response = await fetch(`${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]`, requestOptions)
+            let user_Role = localStorage.getItem('user_role');
+            console.log(user_Role, "user_Role")
+            let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]?limit=20` :
+                `${BASE_URL}/fileRepo/files-by-category/${Params.id}?limit=20`
+
+            let response = await fetch(URL, requestOptions)
             response = await response.json();
-            setUser(response.result)
+            setCount(response.result.count)
             if (response) {
                 setfullLoaderStatus(false)
             }
             const users = response.result.files;
+            console.log(users, "users")
             let tempData = users.map((dt) => ({
                 name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
                 createdAt: dt.createdAt,
@@ -213,7 +220,6 @@ const FileRpositoryList = () => {
                                             {cell[1]}.mp3
                                         </span>
                                     </>
-
                                     : cell[0] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
@@ -366,7 +372,7 @@ const FileRpositoryList = () => {
                                                                                         Params?.id === "7" ? "Resources" :
                                                                                             Params?.id === "8" ? "General" : "Null"
                                                                 }
-                                                                <small>{userData.length} files</small>
+                                                                <small>{Count} files</small>
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -382,7 +388,9 @@ const FileRpositoryList = () => {
                                                         {...props.baseProps}
                                                         // selectRow={selectRow}
                                                         pagination={paginationFactory()}
+
                                                     />
+                                                    {console.log(paginationFactory(), "paginationFactory()")}
                                                 </>
                                             )}
                                         </ToolkitProvider>

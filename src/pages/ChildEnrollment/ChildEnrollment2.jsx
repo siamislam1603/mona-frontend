@@ -30,6 +30,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const telephone = useRef(null);
   const medical_service_address = useRef(null);
   const maternal_and_child_health_centre = useRef(null);
+  const courtOrderFocus = useRef(null);
+  let healthRecordRef = useRef(null);
+  let immunisationRecordFocus = useRef(null);
+  let allergyFocus = useRef(null);
 
   const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
@@ -102,12 +106,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const [allergyForm, setAllergyForm] = useState(null);
   const [medicalPlanDetails, setMedicalPlanDetails] = useState(null);
   const [medicalPlan, setMedicalPlan] = useState(null);
+  const [healthRecordDetails, setHealthRecordDetails] = useState(null);
+  const [healthRecord, setHealthRecord] = useState(null);
 
   const [immunisationRecordDeleteMessage, setImmunisationRecordDeleteMessage] = useState(null);
   const [courtOrdersDeleteMessage, setCourtOrdersDeleteMessage] = useState(null);
   const [specialNeedsFormDeleteMessage, setSpecialNeedsFormDeleteMessage] = useState(null);
   const [allergyFormDeleteMessage, setAllergyFormDeleteMessage] = useState(null);
   const [medicalPlanDeleteMessage, setMedicalPlanDeleteMessage] = useState(null);
+  const [healthRecordDeleteMessage, setHealthRecordDeleteMessage] = useState(null);
 
   // UPDATEING FORM TWO DATA
   const updateFormTwoData = async () => {
@@ -361,6 +368,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       setAllergyFormDetails(...childFiles.filter(f => f.category === "allergy"));
       setMedicalPlanDetails(...childFiles.filter(f => f.category === "medical-plan"));
       setImmunisationRecordDetails(...childFiles.filter(f => f.category === "immunisation-record"));
+      setHealthRecordDetails(...childFiles.filter(f => f.category === 'health-record'));
     } else {
       console.log('NO CHILD FILES ATTACHED FOR THIS FORM');
     }
@@ -378,7 +386,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       medical_service_address?.current?.focus();
     } else if(errArray.includes('maternal_and_child_health_centre')) {
       maternal_and_child_health_centre?.current?.focus();
-    } 
+    } else if(errArray.includes('courtOrders')) {
+      courtOrderFocus?.current?.focus()
+    } else if(errArray.includes('hasHealthRecord')) {
+      healthRecordRef?.current?.focus();
+    } else if(errArray.includes('healthRecord')) {
+      healthRecordRef?.current?.focus();
+    } else if(errArray.includes('immunisationRecord')) {
+      immunisationRecordFocus?.current?.focus();
+    } else if(errArray.includes('allergyError')) {
+      allergyFocus?.current?.focus()
+    }
   }
 
   const submitFormData = (e) => {
@@ -387,16 +405,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     const errors = healthInformationFormValidator(
       healthInformation, 
       parentData?.i_give_medication_permission, 
+      childDetails?.has_health_record,
+      healthRecordDetails,
       childDetails?.has_court_orders,
       courtOrderDetails,
-      childDetails?.has_been_immunised,
+      childDetails?.has_been_immunized,
       immunisationRecordDetails,
-      childMedicalInformation?.inclusion_support_form_of_special_needs,
-      specialNeedsFormDetails,
-      childMedicalInformation?.inclusion_support_form_of_allergies,
+      childMedicalInformation?.has_sensitivity,
       allergyFormDetails,
-      childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided,
-      medicalPlanDetails
     );  
     if (Object.keys(errors).length > 0) {
       // window.scrollTo(0, 0);
@@ -469,6 +485,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
       if(token === 'court-order') {
         setCourtOrdersDeleteMessage('Court order has been deleted');
+      }
+
+      if(token === 'health-record') {
+        setHealthRecordDeleteMessage('Health record has been deleted');
       }
     }
   }
@@ -577,6 +597,27 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
   };
 
+  // UPLOAD HEALTH RECORD
+  const uploadHealthRecord = async () => {
+    let data = new FormData();
+    data.append('images', healthRecord[0]);
+    data.append('category', 'health-record');
+
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/file-upload/${paramsChildId}/${paramsParentId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    console.log('FILE UPLOAD RESPONSE:', response);
+    if(response.status === 201 && response.data.status === 'success') {
+      console.log('INSIDE RESPONSE');
+      let { supportForm } = response.data;
+      setHealthRecord(null);
+      setHealthRecordDetails(supportForm);
+    }
+  };
+
   useEffect(() => {
     // setShowSignatureDialog(false);
     saveSignatureImage();
@@ -642,41 +683,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   }, [allergyFormDeleteMessage])
 
 
-  // ELEMENT FOCUS FUNCTION
-  const focusOnHealthInfoErrors = (refName) => {
-    if(refName === "medical_service") {
-      medical_service?.current?.focus();
-      
-      if(healthInfoFormErrors[`${refName}`] === null) {
-        delete healthInfoFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "telephone") {
-      telephone?.current?.focus();
-      
-      if(healthInfoFormErrors[`${refName}`] === null) {
-        delete healthInfoFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "medical_service_address") {
-      medical_service_address?.current?.focus();
-      
-      if(healthInfoFormErrors[`${refName}`] === null) {
-        delete healthInfoFormErrors[`${refName}`];
-      }
-    }
-
-    if(refName === "maternal_and_child_health_centre") {
-      maternal_and_child_health_centre?.current?.focus();
-      
-      if(healthInfoFormErrors[`${refName}`] === null) {
-        delete healthInfoFormErrors[`${refName}`];
-      }
-    }
-  }
-
   // MEDICAL PLAN
   useEffect(() => {
     if(medicalPlanDeleteMessage) {
@@ -703,6 +709,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   }, [courtOrders]);
 
   useEffect(() => {
+    if(healthRecord) {
+      uploadHealthRecord();
+    }
+  }, [healthRecord]);
+
+  useEffect(() => {
     if(courtOrdersDeleteMessage) {
       setCourtOrderDetails(null);
       setTimeout(() => {
@@ -711,6 +723,16 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }
 
   }, [courtOrdersDeleteMessage]);
+  
+  useEffect(() => {
+    if(healthRecordDeleteMessage) {
+      setHealthRecordDetails(null);
+      setTimeout(() => {
+        setHealthRecordDeleteMessage(null);
+      }, 3000); 
+    }
+
+  }, [healthRecordDeleteMessage]);
 
   // useEffect(() => {
   //   if(healthInfoFormErrors) {
@@ -734,13 +756,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       immunisationRecord: null
     }));
   }, [immunisationRecordDetails]);
-  
-  useEffect(() => {
-    setHealthInfoFormErrors(prevState => ({
-      ...prevState,
-      specialNeeds: null
-    }));
-  }, [specialNeedsFormDetails]);
 
   useEffect(() => {
     setHealthInfoFormErrors(prevState => ({
@@ -749,12 +764,19 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     }));
   }, [allergyFormDetails]);
   
+  // useEffect(() => {
+  //   setHealthInfoFormErrors(prevState => ({
+  //     ...prevState,
+  //     medicalPlan: null
+  //   }));
+  // }, [medicalPlanDetails]);
+  
   useEffect(() => {
     setHealthInfoFormErrors(prevState => ({
       ...prevState,
-      medicalPlan: null
+      healthRecord: null
     }));
-  }, [medicalPlanDetails]);
+  }, [healthRecordDetails]);
 
   courtOrders && console.log('COURT ORDERS:', courtOrders);
   return (
@@ -774,14 +796,17 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       {
         courtOrdersDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{courtOrdersDeleteMessage}</p>
       }
-      <div className="enrollment-form-sec">
+      {
+        healthRecordDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{healthRecordDeleteMessage}</p>
+      }
+      <div className="enrollment-form-sec error-sec">
         <Form onSubmit={submitFormData}>
           <div className="enrollment-form-column">
             <h2 className="title-xs mb-4">Court orders relating to the child R 160 (C)</h2>
             <div className="grayback mb-4">
               <Row>
                 <Col md={12}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3 relative">
                     <Form.Label>Are there any court orders relating to the powers, duties, responsibilities or authorities of any person in relation to the child or access to the child?</Form.Label>
                     <div className="btn-radio inline-col">
                       <Form.Check
@@ -838,7 +863,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   childDetails.has_court_orders &&
                   <>
                     <Col md={12}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
                         <Form.Control
                           as="textarea"
@@ -861,7 +886,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       </Form.Group>
                     </Col>
                     <Col md={12}>
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 relative">
                         <Form.Label>
                           Please note:
                         </Form.Label>
@@ -887,7 +912,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         </p>
                         <>
                           <Form.Group className="col-md-6 mb-3 mt-3">
-                            <Form.Label>Attach any Court Orders, Parenting Orders and/or Parenting Plans that are in place</Form.Label>
+                            <Form.Label>Upload any supporting documents</Form.Label>
                             <DragDropMultiple 
                               module="court-orders"
                               fileLimit={1}
@@ -896,6 +921,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file max.)</small>
                           </Form.Group>
                           { healthInfoFormErrors?.courtOrders !== null && <span className="error">{healthInfoFormErrors?.courtOrders}</span> }
+                          <input 
+                            style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                            ref={temp => {
+                              courtOrderFocus.current = temp;
+                            }}
+                            type="text"
+                          />
                           {
                             courtOrderDetails &&
                               <div>
@@ -929,7 +961,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="grayback">
                 <Row>
                   <Col md={6}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 relative">
                       <Form.Label>Doctor's Name/Medical Service *</Form.Label>
                       <Form.Control
                         type="text"
@@ -960,7 +992,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </Col>
 
                   <Col md={6}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 relative">
                       <Form.Label>Telephone *</Form.Label>
                       <Form.Control
                         type="tel"
@@ -992,7 +1024,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 relative">
                       <Form.Label>Doctor’s Address/Medical Service *</Form.Label>
                       <Form.Control
                         type="text"
@@ -1022,7 +1054,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 relative">
                       <Form.Label>Maternal And Child Health Centre *</Form.Label>
                       <Form.Control
                         type="text"
@@ -1052,8 +1084,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                   </Col>
 
                   <Col md={12}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Does your child have a child health record?</Form.Label>
+                    <Form.Group className="mb-3 relative">
+                      <Form.Label>Does your child have a child health record / immunisation record?</Form.Label>
                       <div className="btn-radio inline-col">
                         <Form.Check
                           type="radio"
@@ -1066,6 +1098,11 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             setChildDetails(prevState => ({
                               ...prevState,
                               has_health_record: true
+                            }));
+
+                            setHealthInfoFormErrors(prevState => ({
+                              ...prevState,
+                              hasHealthRecord: null
                             }));
 
                             if (!childDetails.log.includes("has_health_record")) {
@@ -1102,80 +1139,118 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Text className="text-muted">
                         if ‘Yes’ please provide to the service for sighting.
                       </Form.Text>
+                      <br></br>
+                      {healthInfoFormErrors?.hasHealthRecord !== null && <span className="error">{healthInfoFormErrors?.hasHealthRecord}</span>}
                     </Form.Group>
                   </Col>
-
+                  <input 
+                      style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                      ref={temp => {
+                        healthRecordRef.current = temp;
+                      }}
+                      type="text"
+                    />   
                   {
                     childDetails.has_health_record &&
-                    <Col md={12}>
-                      <Form.Group className="mb-3">
-                        <Form.Label>Name and position of person at the service who has sighted the child’s health record</Form.Label>
-                        <Row>
-                          <Col md={6}>
-                            <div className="mb-3">
-                              <Form.Label>Name</Form.Label>
-                              <Form.Control 
-                                type="text"
-                                name="name_of_record_viewer"
-                                value={childDetails?.name_of_record_viewer || ""}
-                                onChange={(e) => {
-                                  setChildDetails(prevState => ({
-                                    ...prevState,
-                                    name_of_record_viewer: e.target.value
-                                  }))
-                                }} />
-                            </div>
-                          </Col>
-
-                          <Col md={6}>
-                            <div className="mb-3">
-                              <Form.Label>Signature</Form.Label>
-                              {
-                                <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061", fontSize: "1rem" }}>Click Here</strong> to sign</p>
-                              }
-                              {
-                                childDetails?.signature_of_record_viewer &&
-                                <img src={childDetails?.signature_of_record_viewer} alt="parent signature" style={{ width: "80px", height: "80px" }} />
-                              }
-                            </div>
-                          </Col>
-                          
-                          <Col md={6}>
-                            <div className="mb-3">
-                              <Form.Label>Date</Form.Label>
-                              <Form.Control 
-                                type="date" 
-                                placeholder=""
-                                min={new Date().toISOString().slice(0, 10)}
-                                value={childDetails?.date_of_record_viewing || ""}
-                                name="date_of_record_viewing"
-                                onChange={(e) => {
-                                  setChildDetails(prevState => ({
-                                    ...prevState,
-                                    date_of_record_viewing: e.target.value
-                                  }))
-                                }} />
-                            </div>
-                          </Col>
-                          
-                          <Col md={6}>
-                            <div className="mb-3">
-                              <Form.Label>Position</Form.Label>
-                              <Form.Control 
-                                type="text"
-                                value={childDetails?.position_of_record_viewer || ""}
-                                name="position_of_record_viewer"
-                                onChange={(e) => {
-                                  setChildDetails(prevState => ({
-                                    ...prevState,
-                                    position_of_record_viewer: e.target.value
-                                  }))
-                                }} />
-                            </div>
-                          </Col>
-                        </Row>
+                    <>
+                      <Form.Group className="col-md-12 mb-3 relative">
+                        <Form.Label>Upload any supporting documents</Form.Label>
+                        <DragDropMultiple 
+                          module="child-enrollment"
+                          fileLimit={1}
+                          supportFormDetails={healthRecordDetails}
+                          onSave={setHealthRecord} />
+                        <small 
+                          className="fileinput" 
+                          style={{ width: '95px', textAlign: 'center' }}>
+                            (Upload 1 file)
+                        </small>
+                        { healthInfoFormErrors?.healthRecord !== null && <span className="error">{healthInfoFormErrors?.healthRecord}</span> }
                       </Form.Group>
-                    </Col>
+                      {
+                        healthRecordDetails &&
+                        (
+                          <div>
+                            <a href={healthRecordDetails?.file}><p>{healthRecordDetails?.fileName || healthRecordDetails?.originalName}</p></a>
+                            <img
+                              onClick={() => handleChildFileDelete(healthRecordDetails?.id)}
+                              // className="file-remove"
+                              style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                              src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                              alt="" />
+                          </div>
+                        )
+                      }
+                    </>
+                    // <Col md={12}>
+                    //   <Form.Group className="mb-3">
+                    //     <Form.Label>Name and position of person at the service who has sighted the child’s health record</Form.Label>
+                    //     <Row>
+                    //       <Col md={6}>
+                    //         <div className="mb-3">
+                    //           <Form.Label>Name</Form.Label>
+                    //           <Form.Control 
+                    //             type="text"
+                    //             name="name_of_record_viewer"
+                    //             value={childDetails?.name_of_record_viewer || ""}
+                    //             onChange={(e) => {
+                    //               setChildDetails(prevState => ({
+                    //                 ...prevState,
+                    //                 name_of_record_viewer: e.target.value
+                    //               }))
+                    //             }} />
+                    //         </div>
+                    //       </Col>
+
+                    //       <Col md={6}>
+                    //         <div className="mb-3">
+                    //           <Form.Label>Signature</Form.Label>
+                    //           {
+                    //             <p onClick={() => setShowSignatureDialog(true)} style={{ cursor: "pointer" }}><strong style={{ color: "#AA0061", fontSize: "1rem" }}>Click Here</strong> to sign</p>
+                    //           }
+                    //           {
+                    //             childDetails?.signature_of_record_viewer &&
+                    //             <img src={childDetails?.signature_of_record_viewer} alt="parent signature" style={{ width: "80px", height: "80px" }} />
+                    //           }
+                    //         </div>
+                    //       </Col>
+                          
+                    //       <Col md={6}>
+                    //         <div className="mb-3">
+                    //           <Form.Label>Date</Form.Label>
+                    //           <Form.Control 
+                    //             type="date" 
+                    //             placeholder=""
+                    //             min={new Date().toISOString().slice(0, 10)}
+                    //             value={childDetails?.date_of_record_viewing || ""}
+                    //             name="date_of_record_viewing"
+                    //             onChange={(e) => {
+                    //               setChildDetails(prevState => ({
+                    //                 ...prevState,
+                    //                 date_of_record_viewing: e.target.value
+                    //               }))
+                    //             }} />
+                    //         </div>
+                    //       </Col>
+                          
+                    //       <Col md={6}>
+                    //         <div className="mb-3">
+                    //           <Form.Label>Position</Form.Label>
+                    //           <Form.Control 
+                    //             type="text"
+                    //             value={childDetails?.position_of_record_viewer || ""}
+                    //             name="position_of_record_viewer"
+                    //             onChange={(e) => {
+                    //               setChildDetails(prevState => ({
+                    //                 ...prevState,
+                    //                 position_of_record_viewer: e.target.value
+                    //               }))
+                    //             }} />
+                    //         </div>
+                    //       </Col>
+                    //     </Row>
+                    //   </Form.Group>
+                    // </Col>
                   }
                 </Row>
               </div>
@@ -1183,7 +1258,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
               <div className="grayback">
                 <Row>
                   <Col md={12}>
-                    <Form.Group className="mb-3">
+                    <Form.Group className="mb-3 relative">
                       <Form.Label>Has the child been immunised?</Form.Label>
                       <div className="btn-radio inline-col">
                         <Form.Check
@@ -1230,12 +1305,12 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       <Form.Text className="text-muted">
                         if 'Yes' please provide the details.
                       </Form.Text>
-
-                      {
+                    </Form.Group>
+                    {
                         childDetails.has_been_immunized &&
                         <>
-                          <Form.Group className="col-md-6 mb-3 mt-3">
-                            <Form.Label>Please attach your child's immunisation record</Form.Label>
+                          <Form.Group className="col-md-12 mt-3 mb-3 relative">
+                            <Form.Label>Upload any supporting documents</Form.Label>
                             <DragDropMultiple 
                               module="child-enrollment"
                               fileLimit={1}
@@ -1243,6 +1318,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                               onSave={setImmunisationRecord} />
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
                           </Form.Group>
+                          <input 
+                            style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                            ref={temp => {
+                              immunisationRecordFocus.current = temp;
+                            }}
+                            type="text"
+                          />
                           { healthInfoFormErrors?.immunisationRecord !== null && <span className="error">{healthInfoFormErrors?.immunisationRecord}</span> }
                           {
                             immunisationRecordDetails &&
@@ -1260,7 +1342,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           }
                         </>
                       }
-                    </Form.Group>
                   </Col>
                 </Row>
               </div>
@@ -3164,57 +3245,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col">
-                            <p>Inclusion Support Form (If applicable)</p>
-                            <Form.Group className="ms-auto">
-                              <div className="btn-radio inline-col mb-0">
-                                <Form.Check
-                                  type="radio"
-                                  name="support"
-                                  id="yesss"
-                                  label="Yes"
-                                  checked={childMedicalInformation?.inclusion_support_form_of_special_needs === true}
-                                  onChange={() => {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      inclusion_support_form_of_special_needs: true
-                                    }));
-
-                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
-                                      setChildMedicalInformation(prevState => ({
-                                        ...prevState,
-                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
-                                      }));
-                                    }
-                                  }} />
-                                <Form.Check
-                                  type="radio"
-                                  name="support"
-                                  id="noss"
-                                  label="No"
-                                  checked={childMedicalInformation?.inclusion_support_form_of_special_needs === false}
-                                  defaultChecked
-                                  onChange={() => {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      inclusion_support_form_of_special_needs: false
-                                    }));
-
-                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_special_needs")) {
-                                      setChildMedicalInformation(prevState => ({
-                                        ...prevState,
-                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_special_needs"]
-                                      }));
-                                    }
-                                  }} />
-                              </div>
-                            </Form.Group>
-                          </div>
                           {
-                            childMedicalInformation?.inclusion_support_form_of_special_needs &&
                             <>
-                              <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                              <Form.Group className="col-md-12 mt-3 mb-3">
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3222,7 +3256,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setSpecialNeedsForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
-                              { healthInfoFormErrors?.specialNeeds !== null && <span className="error">{healthInfoFormErrors?.specialNeeds}</span> }
                               {
                                 specialNeedsFormDetails &&
                                 (
@@ -3238,7 +3271,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 )
                               }
                             </>
-                          }
+                          } 
                         </>
                       }
 
@@ -3320,57 +3353,10 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 }
                               }} />
                           </Form.Group>
-                          <div className="single-col">
-                            <p>Inclusion Support Form (If applicable)</p>
-                            <Form.Group className="ms-auto">
-                              <div className="btn-radio inline-col mb-0">
-                                <Form.Check
-                                  type="radio"
-                                  name="applicable"
-                                  id="yesdd"
-                                  label="Yes"
-                                  checked={childMedicalInformation?.inclusion_support_form_of_allergies === true}
-                                  onChange={() => {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      inclusion_support_form_of_allergies: true
-                                    }));
-
-                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
-                                      setChildMedicalInformation(prevState => ({
-                                        ...prevState,
-                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
-                                      }));
-                                    }
-                                  }} />
-                                <Form.Check
-                                  type="radio"
-                                  name="applicable"
-                                  id="nodd"
-                                  label="No"
-                                  checked={childMedicalInformation?.inclusion_support_form_of_allergies === false}
-                                  defaultChecked
-                                  onChange={() => {
-                                    setChildMedicalInformation(prevState => ({
-                                      ...prevState,
-                                      inclusion_support_form_of_allergies: false
-                                    }));
-
-                                    if (!childMedicalInformation.log.includes("inclusion_support_form_of_allergies")) {
-                                      setChildMedicalInformation(prevState => ({
-                                        ...prevState,
-                                        log: [...childMedicalInformation.log, "inclusion_support_form_of_allergies"]
-                                      }));
-                                    }
-                                  }} />
-                              </div>
-                            </Form.Group>
-                          </div>
                           {
-                            childMedicalInformation?.inclusion_support_form_of_allergies &&
                             <>
-                              <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                              <Form.Group className="col-md-12 mt-3 mb-3">
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3378,6 +3364,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setAllergyForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
+                              <input 
+                                style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                                ref={temp => {
+                                  allergyFocus.current = temp;
+                                }}
+                                type="text"
+                              />
                               { healthInfoFormErrors?.allergyError !== null && <span className="error">{healthInfoFormErrors?.allergyError}</span> }
                               {
                                 allergyFormDetails &&
@@ -3502,8 +3495,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           {
                             childMedicalInformation?.has_anaphylaxis_medical_plan_been_provided &&
                             <>
-                              <Form.Group className="col-md-6 mb-3">
-                                <Form.Label>Upload Support Form</Form.Label>
+                              <Form.Group className="col-md-12 mt-3 mb-3">
+                                <Form.Label>Upload any supporting documents</Form.Label>
                                 <DragDropMultiple 
                                   module="child-enrollment"
                                   fileLimit={1}
@@ -3511,7 +3504,6 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                   onSave={setMedicalPlan} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
-                              { healthInfoFormErrors?.medicalPlan !== null && <span className="error">{healthInfoFormErrors?.medicalPlan}</span> }
                               {
                                 medicalPlanDetails &&
                                 (
@@ -3576,7 +3568,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           </div>
                         </Form.Group>
                       </div>
-                      <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a style={{ fontWeight: 'bold', textDecoration: "underline", color: "blue" }}href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p>
+                      {/* <p className="mb-3">In case of anaphylaxis, you are required to provide the service with an individual medical management plan for your child signed by the medical practitioner. This will be attached to your child’s enrolment form. More information is available at <a style={{ fontWeight: 'bold', textDecoration: "underline", color: "blue" }}href="www.education.vic.gov.au/anaphyaxis">www.education.vic.gov.au/anaphyaxis</a>.</p> */}
                       <div className="single-col mb-3">
                         <p>Does your child have any other medical conditions? (e.g. asthma, epilepsy, and diabetes, etc. that are relevant to the care of your child)</p>
                         <Form.Group className="ms-auto">

@@ -273,15 +273,15 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => {
-                              if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
-                            }}>Delete</Dropdown.Item>
                             {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
                             <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
                             }}>Share</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this training?"))
+                                handleTrainingDelete(training.id)
+                            }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>
@@ -357,7 +357,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
           {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
             null
             :
-            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No trainings available.</strong> </div>
+            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
           }
           {/* {
 

@@ -8,11 +8,10 @@ export const childFormValidator = (childForm, inclusionSupportForm) => {
     home_address,
     language,
     country_of_birth,
+    developmental_delay,
     child_medical_no,
     child_crn,
     parent_crn_1,
-    developmental_delay,
-    parent_crn_2
   } = childForm;
 
   if(!fullname)
@@ -53,9 +52,6 @@ export const childFormValidator = (childForm, inclusionSupportForm) => {
   
   if(!parent_crn_1)
     errors.parent_crn_1 = "Please complete mandatory field"
-  
-  if(!parent_crn_2)
-    errors.parent_crn_2 = "Please complete mandatory field"
 
   return errors;
 };
@@ -76,10 +72,10 @@ export const parentFormValidator = (parentForm) => {
   } = parentForm;
 
   if(!parent_family_name)
-    errors.family_name = "Please complete mandatory field";
+    errors.parent_family_name = "Please complete mandatory field";
 
   if(parent_family_name.length > 0 && !(/^[a-zA-Z ]+$/i.test(parent_family_name)))
-    errors.fullname = "Field shouldn't contain numbers & special characters"
+    errors.parent_family_name = "Field shouldn't contain numbers & special characters"
 
   if(!given_name)
     errors.given_name = "Please complete mandatory field";
@@ -120,16 +116,14 @@ export const parentFormValidator = (parentForm) => {
 export const healthInformationFormValidator = (
   healthInformationForm, 
   i_give_medication_permission,
+  has_health_record,
+  healthRecordDetails,
   has_court_orders,
   courtOrderDetails,
   has_been_immunised,
   immunisationRecordDetails,
-  inclusion_support_form_of_special_needs,
-  specialNeedsFormDetails,
-  inclusion_support_form_of_allergies,
+  has_sensitivity,
   allergyFormDetails,
-  has_anaphylaxis_medical_plan_been_provided,
-  medicalPlanDetails
 ) => {
   let errors = {};
   let {
@@ -161,19 +155,23 @@ export const healthInformationFormValidator = (
     errors.i_give_medication_permission = "Please give medication consent"
   
   if(has_court_orders === true && (!courtOrderDetails || courtOrderDetails.length === 0))
-    errors.courtOrders = "Please insert court orders."
+    errors.courtOrders = "Please insert supporting document"
   
+  if(has_health_record === false)
+    errors.hasHealthRecord = "You must provide a child health record/immunisation certificate"
+
+  if(has_health_record === true && (!healthRecordDetails || healthRecordDetails.length === 0)) {
+    errors.healthRecord = "please insert supporting document"
+  }
+
   if(has_been_immunised === true && (!immunisationRecordDetails || immunisationRecordDetails.length === 0))
-    errors.immunisationRecord = "Please insert immunisation record."
+    errors.immunisationRecord = "Please insert supporting document"
   
-  if(inclusion_support_form_of_special_needs === true && (!specialNeedsFormDetails || specialNeedsFormDetails.length === 0))
-    errors.specialNeeds = "Please insert special needs form."
+  if(has_sensitivity === true && (!allergyFormDetails || allergyFormDetails.length === 0))
+    errors.allergyError = "Please insert supporting document"
   
-  if(inclusion_support_form_of_allergies === true && (!allergyFormDetails || allergyFormDetails.length === 0))
-    errors.allergyError = "Please insert allergy detail form."
-  
-  if(has_anaphylaxis_medical_plan_been_provided === true && (!medicalPlanDetails || medicalPlanDetails.length === 0))
-    errors.medicalPlan = "Please insert medical plan."
+  // if(has_anaphylaxis_medical_plan_been_provided === true && (!medicalPlanDetails || medicalPlanDetails.length === 0))
+  //   errors.medicalPlan = "Please insert medical plan."
 
   return errors;
 };

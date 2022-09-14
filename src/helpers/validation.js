@@ -4,22 +4,34 @@ export const DynamicFormValidation = (
   form,
   data,
   behalf_of,
-  behalf_of_flag
+  behalf_of_flag,
+  signature_access_flag
 ) => {
+  console.log("signature_access_flag",signature_access_flag);
   let newErrors = {};
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
 
+      
+      
       if (inner_item.required) {
-        console.log('inner_item', inner_item);
-        console.log('form-=-->21321313', form);
-        if (!form[item][`${inner_item.field_name}`]) {
+        if(inner_item.field_type==="signature" && signature_access_flag===true && !form[item][`${inner_item.field_name}`])
+        {
           newErrors[
             `${inner_item.field_name}`
           ] = `${inner_item.field_label} is required`;
         }
+        else{
+          if (inner_item.field_type!=="signature" && !form[item][`${inner_item.field_name}`]) {
+            newErrors[
+              `${inner_item.field_name}`
+            ] = `${inner_item.field_label} is required`;
+          }
+        }
+        
+        
       }
     });
   });
@@ -279,9 +291,9 @@ export const TrainingFormValidation = (form) => {
   let errors = {};
   let {
     title,
+    category_id,
     description,
     meta_description,
-    category_id,
     time_required_to_complete,
 
   } = form;
@@ -290,8 +302,15 @@ export const TrainingFormValidation = (form) => {
     errors.title = 'Training title is required';
   }
 
+  if(title.length > 0 && !(/^[a-zA-Z ]+$/i.test(title)))
+    errors.title = "Field shouldn't contain numbers & special characters"
+
   if (title <= 2) {
     errors.title_length = 'Training title should be more than 2 characters';
+  }
+
+  if (!category_id) {
+    errors.category_id = 'Training category title is required';
   }
 
   if (!description) {
@@ -300,10 +319,6 @@ export const TrainingFormValidation = (form) => {
 
   if (!meta_description) {
     errors.meta_description = 'Meta description is required';
-  }
-
-  if (!category_id) {
-    errors.category_id = 'Training category title is required';
   }
 
   if (!time_required_to_complete) {
@@ -487,20 +502,13 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-  let { fullname, role, state, city, address, postalCode, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
-  if(email.length > 0 && !regex.test(email)) 
-    errors.email = "Email is invalid";
-    
-  if (email.length > 0 && !(/^[A-Z0-9.]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)))
-    errors.email = "Email is invalid";
-
-  
   if (!role) errors.role = 'User role is required';
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -512,12 +520,14 @@ export const UserFormValidation = (formObj) => {
   if (!address) errors.address = 'Address is required';
   
   if (!postalCode) errors.postalCode = 'Post code is required';
+
+  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
   
   if (!franchisee) errors.franchisee = 'Franchise is required';
 
-  if(open_coordinator === true && !coordinator)
+  if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
   
   if (password && confirm_password && password !== confirm_password) {

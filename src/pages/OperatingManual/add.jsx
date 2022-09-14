@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
@@ -177,15 +176,14 @@ const AddOperatingManual = () => {
   const onModelSubmit = (e) => {
     e.preventDefault();
     let data = operatingManualData;
-
     if (!data?.id) {
       toast.error('Please save the details of operating manual!!');
     } else {
       if (formSettingData.shared_role === '' && selectedUserId === '') {
-        console.log('Hello');
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
+        formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("all,","") : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
@@ -250,7 +248,10 @@ const AddOperatingManual = () => {
           if (res?.success === false) {
             let errorData = { ...errors };
             errorData['title'] = res?.message;
+            console.log("Error DATA",errorData)
             setErrors(errorData);
+            document.getElementById(Object.keys(errorData)[0]).focus();
+
           } else {
             setOperatingManualData(res?.result);
             setFormSettingFlag(true);
@@ -445,7 +446,7 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-console.log("Oepratiing",operatingManualData)
+console.log("Oepratiing",errors)
   return (
     <>
       <div id="main">
@@ -599,7 +600,8 @@ console.log("Oepratiing",operatingManualData)
                             <MyEditor
                               name="description"
                               id="description"
-                              operatingManual={{ ...operatingManualData }}
+                              // operatingManual={{ ...operatingManualData }}
+                              data={operatingManualData?.description}
                               errors={errors}
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);

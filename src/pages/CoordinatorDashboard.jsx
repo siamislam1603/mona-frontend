@@ -137,16 +137,11 @@ const columns = [
 ];
 
 const CoordinatorDashboard = () => {
-  const [count, setcount] = React.useState({
-    educatorsLoggedIn: 0,
-    overdueForms: 0,
-    overdueTrainings: 0,
-    newEnrollments: 0,
-  });
+  const [count, setcount] = React.useState();
 
   const [user, setUser] = useState([]);
   const [userData, setUserData] = useState([]);
-  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [latest_announcement, setlatest_announcement] = React.useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
   const announcement = () => {
@@ -159,7 +154,7 @@ const CoordinatorDashboard = () => {
       }
     }).then((response) => {
       setlatest_announcement(response.data.recentAnnouncement);
-      console.log(response.data)
+      console.log("response ",response.data)
     }).catch((e) => {
       setlatest_announcement([])
       console.log("Error", e);
@@ -190,6 +185,8 @@ const CoordinatorDashboard = () => {
 
   }
   const Additional_Needs = async () => {
+
+
     var myHeaders = new Headers();
     myHeaders.append(
       'authorization',
@@ -203,7 +200,7 @@ const CoordinatorDashboard = () => {
 
     let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
     response = await response.json();
-
+    console.log("Response chikd",response)
     if (response.status === "pass") {
       console.log(" data repsonse", response)
 
@@ -215,16 +212,12 @@ const CoordinatorDashboard = () => {
       console.log("THE TEMPDATA", tempData)
       setUserData(tempData);
     }
+    if(response.status=== "success"){
+      setUserData([])
+    }
 
   }
-  const [onboarding, setonboarding] = useState(
-    {
-      newEducators: 0,
-      newParents: 0,
-      newForms: 0,
-      newFiles: 0,
-    }
-  );
+  const [onboarding, setonboarding] = useState();
 
   const newonboarding = async () => {
     var myHeaders = new Headers();

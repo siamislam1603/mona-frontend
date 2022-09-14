@@ -52,7 +52,7 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [saveTrainingId, setSaveTrainingId] = useState(null);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-  const [page, setPage] = useState(5)
+  const [page, setPage] = useState(6)
   const [noMore,setNoMore] = useState(true)
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const navigate = useNavigate();
@@ -172,9 +172,10 @@ const TrainingCreatedByMe = ({ filter }) => {
     CreatedByme()
   }, [filterData.search, filterData.category_id, selectedFranchisee,page])
 
-  console.log("TRAIING DATA", filterData.category_id)
-  console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
+  // console.log("TRAIING DATA", filterData.category_id)
+  // console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
   console.log("Selected frnahise", selectedFranchisee)
+  console.log("Data Rohan",myTrainingData)
 
   return (
     <>
@@ -285,7 +286,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                     overflow: "hidden"
                   }}
                         dataLength={myTrainingData.length} //This is important field to render the next data
-                        next={() => setPage(page+5)}
+                        next={() => setPage(page+6)}
                         hasMore={true}
                         // loader={<h4>Loading...</h4>}
                         // endMessage={
@@ -320,15 +321,15 @@ const TrainingCreatedByMe = ({ filter }) => {
                                       <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                      <Dropdown.Item onClick={() => {
-                                        if (window.confirm("Are you sure you want to delete this training?"))
-                                          handleTrainingDelete(training.id)
-                                      }}>Delete</Dropdown.Item>
                                       {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
                                       <Dropdown.Item href="#" onClick={() => {
                                         setSaveTrainingId(training.id);
                                         setShowModal(true)
                                       }}>Share</Dropdown.Item>
+                                      <Dropdown.Item onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this training?"))
+                                          handleTrainingDelete(training.id)
+                                      }}>Delete</Dropdown.Item>
                                     </Dropdown.Menu>
                                   </Dropdown>
                                 </div>

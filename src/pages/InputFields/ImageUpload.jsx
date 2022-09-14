@@ -16,6 +16,16 @@ const ImageUpload = (props) => {
     if (file.size > 2048 * 1024) {
       toast.error('File is too large. File limit 2 MB.');
       return null;
+    }else if (
+      !(
+        file.type.includes('jpg') ||
+        file.type.includes('jpeg') ||
+        file.type.includes('png') ||
+        file.type.includes('psd')
+      )
+    ) {
+      toast.error('Image must be JPG, PNG, or PSD.');
+      return null;
     } else {
       const body = new FormData();
       const blob = await fetch(await toBase64(file)).then((res) => res.blob());
