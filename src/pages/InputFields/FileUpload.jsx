@@ -15,7 +15,26 @@ const FileUpload = (props) => {
     if (file.size > 2048 * 1024) {
       toast.error('File is too large. File limit 2 MB.');
       return null;
-    } else {
+    }else if (
+      !(
+        file.type.includes('doc') ||
+        file.type.includes('docx') ||
+        file.type.includes('html') ||
+        file.type.includes('htm') ||
+        file.type.includes('odt') ||
+        file.type.includes('xls') ||
+        file.type.includes('xlsx') ||
+        file.type.includes('ods') ||
+        file.type.includes('ppt') ||
+        file.type.includes('pptx') ||
+        file.type.includes('pdf') ||
+        file.type.includes('txt')
+      )
+    ) {
+      toast.error('File must be DOC, PDF, TXT, XLS, or PPT.');
+      return null;
+    }
+     else {
       const body = new FormData();
       const blob = await fetch(await toBase64(file)).then((res) => res.blob());
       body.append('image', blob, file.name);
