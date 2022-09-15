@@ -48,6 +48,15 @@ const MyAnnouncements = (props) => {
 
     }
   }
+  const deleteAnnouncementAlert = (id) =>{
+    if (window.confirm('Are you sure you want to delete ?')) {
+      console.log("Console yes")
+      deleteAnnouncement(id)
+    }
+    else{
+      console.log("Console no")
+    }
+  }
   const deleteAnnouncement = async (id) =>{
     const token = localStorage.getItem('token');
     const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
@@ -212,7 +221,7 @@ useEffect(() =>{
                         >Edit</Dropdown.Item>                                          
                            
                       
-                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => {deleteAnnouncementAlert(data.id)}}>Delete</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                     ):(

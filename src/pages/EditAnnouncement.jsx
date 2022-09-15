@@ -360,7 +360,8 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
-  console.log("My annoucnement",announcementData)
+  console.log("My annoucnement",announcementCopyData)
+  console.log("ALL FRANHISE",allFranchise)
   
   return (
     <>
@@ -428,8 +429,8 @@ const selectFranhise = () =>{
                                     }));
                                   setAllFranchise(true)
                                   }}
-                                  checked={announcementCopyData?.franchise?.length===0 }
-                                  
+                                  // checked={announcementCopyData?.franchise?.length===0 }
+                                  checked={allFranchise}
                                   
                                 // defaultChecked = {allFranchise}
                                   
@@ -452,8 +453,8 @@ const selectFranhise = () =>{
                                   }
                                   
                                 }
-                                
-                                 checked={announcementCopyData?.franchise?.length>0}
+                                checked={!allFranchise}
+                                //  checked={announcementCopyData?.franchise?.length>0 || !allFranchise}
                                   label="No"
                                    />
                                    
