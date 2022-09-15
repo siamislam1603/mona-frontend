@@ -13,18 +13,20 @@ const ImageUpload = (props) => {
       reader.onerror = (error) => reject(error);
     });
   const uploadFiles = async (file) => {
-    if (file.size > 2048 * 1024) {
-      toast.error('File is too large. File limit 2 MB.');
-      return null;
-    }else if (
+    let type=file.name.split(".")[file.name.split(".").length-1];
+    if (
       !(
-        file.type.includes('jpg') ||
-        file.type.includes('jpeg') ||
-        file.type.includes('png') ||
-        file.type.includes('psd')
+        type.includes('jpg') ||
+        type.includes('jpeg') ||
+        type.includes('png') ||
+        type.includes('psd')
       )
     ) {
       toast.error('Image must be JPG, PNG, or PSD.');
+      return null;
+    }
+    else if (file.size > 2048 * 1024) {
+      toast.error('File is too large. File limit 2 MB.');
       return null;
     } else {
       const body = new FormData();

@@ -117,7 +117,7 @@ const RepoEdit = () => {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
                 console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
-                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
+                    
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
@@ -583,7 +583,7 @@ const RepoEdit = () => {
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                 Coordinators
-                                                                                {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
+                                                                              
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
