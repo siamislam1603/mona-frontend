@@ -71,7 +71,8 @@ const FranchisorDashboard = () => {
 
   const Forms_count = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count/${selectedFranchise}`;
 
     axios.get(countUrl, {
       headers: {
@@ -79,7 +80,6 @@ const FranchisorDashboard = () => {
       }
     }).then((response) => {
       setForms_count(response.data.totalNumberOfAuditFormsInLast30Days);
-
     }).catch((e) => {
       console.log("Error", e);
     })
@@ -145,7 +145,8 @@ const FranchisorDashboard = () => {
   }
   const FormData = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access/${selectedFranchise}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
