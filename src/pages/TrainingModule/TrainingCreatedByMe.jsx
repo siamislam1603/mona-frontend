@@ -209,7 +209,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                       </Button>
                     <h1 className="title-lg mb-0">
                     
-                      Trainings Created By Me</h1>
+                      Training created by me</h1>
                  
                     <div className="othpanel">
                       <div className="extra-btn">

@@ -177,8 +177,7 @@ const AllFranchisees = () => {
         }, 3000);
     }, [deleteResponseMessage])
 
-    console.log('PERMISSION TO ADD FRANCHISEE:', verifyPermission("user_management", "add"));
-
+    franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
     return (
         <div>
             <div id="main">
