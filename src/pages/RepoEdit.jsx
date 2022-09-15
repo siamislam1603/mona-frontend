@@ -582,7 +582,7 @@ const RepoEdit = () => {
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
-                                                                                Coordinators
+                                                                                Coordinator
                                                                                 {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                 <input
                                                                                     type="checkbox"
@@ -607,7 +607,7 @@ const RepoEdit = () => {
                                                                                 <span className="checkmark"></span>
                                                                             </label>) : null}
                                                                             {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
-                                                                                Educators
+                                                                                Educator
                                                                                 <input
                                                                                     type="checkbox"
                                                                                     name="shared_role"
