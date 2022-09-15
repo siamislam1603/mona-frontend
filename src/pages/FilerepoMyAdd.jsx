@@ -108,9 +108,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             })));
         }
     };
+
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
-
         setLoaderFlag(true);
         if (
             formSettingData.accessible_to_role === null ||
@@ -128,13 +128,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             } else {
                 formSettings.user_roles = ""
                 formSettings.assigned_users = selectedUserId.slice(0, -1)
-                formSettings.accessibleToRole = formSettingData.accessible_to_role
-                formSettings.accessibleToAll = false
+                // formSettings.accessibleToRole = formSettingData.accessible_to_role
+                // formSettings.accessibleToAll = false
             }
         }
 
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
-        console.log(saveFileId, "saveFILEID")
+
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -145,14 +145,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         if (response.status === 201 && response.data.status === "success") {
             setLoaderFlag(false);
-            window.location.reload()
+            // window.location.reload()
         } else {
             setLoaderFlag(false);
-            window.location.reload()
+            // window.location.reload()
         }
     }
-
-
 
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
@@ -254,7 +252,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     useEffect(() => {
         GetData()
-    }, [saveFileId, userData])
+    }, [saveFileId])
 
     const handleTrainingDelete = async (cell) => {
         let token = localStorage.getItem('token');

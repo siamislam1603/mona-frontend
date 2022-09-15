@@ -179,14 +179,15 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
         setSearchLoaderFlag(true)
 
 
-        const response = await axios.get(`${BASE_URL}/globalSearch`, {
-          headers: { "Authorization": "Bearer " + token },
-          "search":`${searchKey}`
-
+        const response = await axios.get(`${BASE_URL}/globalSearch/`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "search":`${searchKey}`
+          }
         });
         
         if (response.status === 200 && response.data.status === "success") {
-
+      
           setSearchResult(response.data.data[0])
           console.log("ddddddddddddddddddddddddddddddddddddddddddddd", response.data.data[0].announcement)
 
@@ -559,7 +560,15 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                         <li>
                           <a href={`/training-detail/${trainingData.id}`} className="d-flex">
                             {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{trainingData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{trainingData?.training?.title}</strong></span>
+                          </a>
+                        </li>
+                      ))}
+                       {searchUser?.map((user) => (
+                        <li>
+                          <a href={`/user-management`} className="d-flex">
+                            {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                            <span className="sec-cont"><strong className="text-capitalize">{user?.fullname}</strong></span>
                           </a>
                         </li>
                       ))}
@@ -569,7 +578,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                         <li>
                           <a href={`/operatingmanual/?selected=${operatingData.id}`} className="d-flex">
                             {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{operatingData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{operatingData?.operating_manual?.title}</strong></span>
                           </a>
                         </li>
                       ))}
@@ -586,9 +595,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
                       {searchFileRepository?.map((fileRepoData) => (
                         <li>
-                          <a href={`/file-repository-List/${fileRepoData?.repository_files[0]?.categoryId}`} className="d-flex">
+                          <a href={`/file-repository-List/${fileRepoData?.repository?.repository_files[0]?.categoryId}`} className="d-flex">
                             {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.title}</strong></span>
+                            <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.repository?.title}</strong></span>
                           </a>
                         </li>
                       ))}

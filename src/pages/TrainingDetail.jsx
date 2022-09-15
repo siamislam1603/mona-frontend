@@ -150,8 +150,9 @@ const TrainingDetail = () => {
       window.location.href=`/parents-dashboard`;
     }
   }, []);
+  
   trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  relatedForms && console.log('RELATED Forms:', relatedForms);
+  console.log('IS BUTTON VISIBLE:', hideTrainingFinishButton);
   return (
     <>
       <div id="main">
@@ -250,11 +251,11 @@ const TrainingDetail = () => {
                                             {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
                                           </a>
                                         </div>
-                                        <div className="cta-col">
+                                        {/* <div className="cta-col">
                                           <a href="">
                                             <img src="../img/removeIcon.svg" alt="" />
                                           </a>
-                                        </div>
+                                        </div> */}
                                       </div>
                                     ))
                                   }
@@ -291,24 +292,51 @@ const TrainingDetail = () => {
                       
                       <div className="complete-training text-center" style={{ marginBottom: "50px" }}>
                         { 
-                          localStorage.getItem('user_role') === 'franchisor_admin' ?
-                          <p>
-                            {parseInt(localStorage.getItem('user_id')) === parseInt(trainingDetails?.addedBy) ? `This training was created by you on ${moment(trainingDetails.createdAt).format('DD/MM/YYYY')}.`: ""}
-                          </p>
-                          :<>
-                            {hideTrainingFinishButton === true
-                              ? <p> You've finished this training on {moment(trainingFinishedDate).format(
-                                'MMMM Do, YYYY'
-                              )}</p>
-                              : <p>
-                                Please acknowledge that you have completed this training in its entirety by clicking below.
-                              </p>
+                          (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') 
+                          ?
+                            (
+                              parseInt(localStorage.getItem('user_id')) === parseInt(trainingDetails?.addedBy) 
+                              ?
+                                (
+                                  <p style={{ marginBottom: 0 }}>
+                                    `This training was created by you on ${moment(trainingDetails.createdAt).format('DD/MM/YYYY')}.`
+                                  </p>
+                                )
+                              :
+                              (
+                                <>
+                                  {hideTrainingFinishButton === true
+                                    ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                                      'MMMM Do, YYYY'
+                                    )}</p>
+                                    : <p>
+                                      Please acknowledge that you have completed this training in its entirety by clicking below.
+                                    </p>
+  
+                                  }
+                                  <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
+                                    Yes, I have completed the training
+                                  </button>
+                                </>
+                              )
+                            )
+                          :
+                            (
+                              <>
+                                {hideTrainingFinishButton === true
+                                  ? <p> You've finished this training on {moment(trainingFinishedDate).format(
+                                    'MMMM Do, YYYY'
+                                  )}</p>
+                                  : <p>
+                                    Please acknowledge that you have completed this training in its entirety by clicking below.
+                                  </p>
 
-                            }
-                            <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
-                              Yes, I have completed the training
-                            </button>
-                          </>
+                                }
+                                <button className={`btn btn-primary ${hideTrainingFinishButton === true ? "d-none" : ""}`} onClick={handleFinishTraining}>
+                                  Yes, I have completed the training
+                                </button>
+                              </>
+                            )
                         }
                       </div>
 

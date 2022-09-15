@@ -169,7 +169,10 @@ const TrainingCreatedByMe = ({ filter }) => {
     console.log("Traingin created")
   }, []);
   useEffect(() => {
-    CreatedByme()
+    if(selectedFranchisee){
+      CreatedByme()
+    }
+
   }, [filterData.search, filterData.category_id, selectedFranchisee,page])
 
   // console.log("TRAIING DATA", filterData.category_id)
@@ -397,7 +400,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                     {myTrainingData?.length > 0 ?
                       null
                       :
-                      fullLoaderStatus? null:  <div className="text-center mb-5 mt-5"> <strong>No trainings available</strong> </div>
+                      fullLoaderStatus? null:  <div className="text-center mb-5 mt-5"> <strong>No training available</strong> </div>
                     }
                   </div>
 
