@@ -77,6 +77,7 @@ const FileRepository = () => {
                           <div className="training-column">
                             {tabLinkPath === "/available-Files"
                               && <FileRepoShairWithme
+                                selectedFranchisee={selectedFranchisee}
                                 filter={filterData} />}
                             {tabLinkPath === "/created-by-me"
                               && <FileRepodAddbyMe

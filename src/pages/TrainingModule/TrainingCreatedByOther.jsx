@@ -350,7 +350,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
           {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
           null
             :     
-            fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No trainings available !</strong> </div>
+            fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No training available !</strong> </div>
           }
              {/* {
 

@@ -147,7 +147,7 @@ const Training = () => {
 
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">Trainings</h1>
+                    <h1 className="title-lg">Training</h1>
                     <div className="othpanel">
                       <div className="extra-btn">
                         <div className="data-search me-3">
