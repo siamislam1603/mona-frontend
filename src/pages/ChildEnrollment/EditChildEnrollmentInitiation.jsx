@@ -93,7 +93,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && (await response).data.status === "success") {
       let { child } = response.data;
 
-      let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date } = child;
+      let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date, has_special_needs } = child;
       let educatorIds = users.map(d => d.id);
 
       console.log('USERS:', users);
@@ -109,6 +109,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         name_of_school,
         school_status,
         start_date,
+        has_special_needs,
         educator: [...educatorIds]
       }))
     }
@@ -387,6 +388,34 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
+                            <Col md={12}>
+                              <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>Does your child have special needs? *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.has_special_needs === 1}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 1
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsno"
+                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 0
+                                    }))} />
+                                </div>
+                              </Form.Group>
+                            </Col>
                           </Row>
                         </div>
                       </div>
