@@ -106,7 +106,8 @@ const FranchisorDashboard = () => {
 
   const count_Api = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count/${selectedFranchisee}`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count/${selectedFranchise}`;
     axios.get(countUrl, {
       headers: {
         "Authorization": `Bearer ${token}`
