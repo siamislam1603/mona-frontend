@@ -660,16 +660,22 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 export const enrollmentInitiationFormValidation = (
   formOneChildData
 ) => {
-  let { fullname, family_name, dob, home_address, educator } = formOneChildData;
+  let { fullname, family_name, dob, start_date, home_address, child_crn, school_status, name_of_school, educator } = formOneChildData;
   let errors = {};
 
-  if (!fullname) errors.name = 'Fullname is required';
+  if (!fullname) errors.fullname = 'Fullname is required';
 
-  if(!family_name) errors.family_name = 'Family name is required'
+  if (!family_name) errors.family_name = 'Family name is required'
 
   if (!dob) errors.dob = 'Date of birth is required';
 
+  if (!start_date) errors.start_date = 'Start date is required'
+
   if (!home_address) errors.home_address = 'Home address is required';
+
+  if (!child_crn) errors.child_crn = 'Child CRN is required';
+
+  if (school_status === "Y" && !name_of_school) errors.name_of_school = "School name is required";
 
   if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected';
 

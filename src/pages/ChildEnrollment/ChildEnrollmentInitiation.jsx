@@ -17,8 +17,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fullname: "",
     family_name: "",
     dob: "",
+    start_date: "",
+    sex: "M",
     home_address: "",
-    gender: "M",
+    child_crn: "",
+    school_status: "N",
+    name_of_school: "",
     educator: []
   });
   const [educatorData, setEducatorData] = useState(null);
@@ -32,7 +36,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     console.log('RESPONSE EDUCATOR DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
-      setEducatorData(users.map(user => ({
+      setEducatorData(users?.map(user => ({
         id: user.id,
         value: user.fullname,
         label: user.fullname
@@ -117,10 +121,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fetchEducatorList();
   }, [selectedFranchisee])
   
-  // formOneChildData && console.log('CHILD DATA:', formOneChildData);
-  // educatorData && console.log('EDUCATOR DATA:', educatorData);
-  // selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
-  // errors && console.log('ERRORS:', errors);
+  formOneChildData && console.log('CHILD DATA:', formOneChildData);
   return (
     <>
       <div id="main">
@@ -135,7 +136,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                   setSelectedFranchisee={setSelectedFranchisee}/>
                 <div className="entry-container">
                   <header className="title-head">
-                    <h1 className="title-lg">Child Enrolment Initiation Form</h1>
+                    <h1 className="title-lg">Child Enrolment Form</h1>
                   </header>
                   <div className="enrollment-form-sec error-sec my-5">
                     <Form onSubmit={submitFormData}>
@@ -205,30 +206,50 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   {errors.dob !== null && <span className="error">{errors.dob}</span>}
                               </Form.Group>
                             </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Start Date *</Form.Label>
+                                <Form.Control
+                                  type="date"
+                                  name="start_date"
+                                  max={new Date().toISOString().slice(0, 10)}
+                                  value={formOneChildData?.start_date || ""}
+                                  onChange={(e) => {
+                                    handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      start_date: null
+                                    }))
+                                  }} />
+                                  {errors.start_date !== null && <span className="error">{errors.start_date}</span>}
+                              </Form.Group>
+                            </Col>
+
                             <Col md={12}>
                               <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
                                   <Form.Label>Sex *</Form.Label>
                                   <Form.Check
                                     type="radio"
-                                    name="gender"
+                                    name="sex"
                                     id="malecheck"
                                     label="Male"
-                                    checked={formOneChildData?.gender === "M"}
+                                    checked={formOneChildData?.sex === "M"}
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
-                                      gender: "M"
+                                      sex: "M"
                                     }))} />
                                   <Form.Check
                                     type="radio"
-                                    name="gender"
+                                    name="sex"
                                     id="femalecheck"
-                                    checked = {formOneChildData?.gender === "F"}
+                                    checked = {formOneChildData?.sex === "F"}
                                     label="Female"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
-                                      gender: "F"
+                                      sex: "F"
                                     }))} />
                                 </div>
                               </Form.Group>
@@ -265,7 +286,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   onChange={(e) => {
                                     setFormOneChildData((prevState) => ({
                                       ...prevState,
-                                      educator: [...e.map(e => e.id)]
+                                      educator: [...e?.map(e => e.id)]
                                     }));
 
                                     setErrors(prevState => ({
@@ -283,46 +304,27 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Label>Child CRN *</Form.Label>
                                 <Form.Control
                                   type="text"
-                                  name="crn"
-                                  // ref={crn}
-                                  value={formOneChildData.crn || ""}
+                                  name="child_crn"
+                                  // ref={child_crn}
+                                  value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
                                   }} 
                                   // onBlur={(e) => {
-                                  //   if(!formOneChildData.log.includes("child_crn")) {
+                                  //   if(!formOneChildData.log.includes("child_child_crn")) {
                                   //     setFormOneChildData(prevState => ({
                                   //       ...prevState,
-                                  //       log: [...formOneChildData.log, "child_crn"]
+                                  //       log: [...formOneChildData.log, "child_child_crn"]
                                   //     }));
                                   //   }
                                   //   setChildFormErrors(prevState => ({
                                   //     ...prevState,
-                                  //     child_crn: null,
+                                  //     child_child_crn: null,
                                   //   })) 
                                   // }} /> 
                                   />
 
-                                  { errors?.crn !== null && <span className="error">{errors?.crn}</span> }
-                              </Form.Group>
-                            </Col>
-
-                            <Col md={6}>
-                              <Form.Group className="mb-3 relative">
-                                <Form.Label>Start Date *</Form.Label>
-                                <Form.Control
-                                  type="start_date"
-                                  name="dob"
-                                  max={new Date().toISOString().slice(0, 10)}
-                                  value={formOneChildData?.dob || ""}
-                                  onChange={(e) => {
-                                    handleChildData(e);
-                                    setErrors(prevState => ({
-                                      ...prevState,
-                                      start_date: null
-                                    }))
-                                  }} />
-                                  {errors.start_date !== null && <span className="error">{errors.start_date}</span>}
+                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
                               </Form.Group>
                             </Col>
                             
@@ -332,10 +334,10 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Label>School Status *</Form.Label>
                                   <Form.Check
                                     type="radio"
-                                    name="gender"
+                                    name="school_status"
                                     id="statuscheckyes"
                                     label="Yes"
-                                    checked={formOneChildData?.gender === "Y"}
+                                    checked={formOneChildData?.school_status === "Y"}
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -343,9 +345,9 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     }))} />
                                   <Form.Check
                                     type="radio"
-                                    name="gender"
+                                    name="school_status"
                                     id="statuscheckno"
-                                    checked = {formOneChildData?.gender === "N"}
+                                    checked = {formOneChildData?.school_status === "N"}
                                     label="No"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -355,23 +357,26 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                               </Form.Group>
                             </Col>
 
-                            <Col md={6}>
-                              <Form.Group className="mb-3 relative">
-                                <Form.Label>School Name *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="fullname"
-                                  value={formOneChildData?.school_name || ""}
-                                  onChange={(e) => {
-                                    handleChildData(e);
-                                    setErrors(prevState => ({
-                                      ...prevState,
-                                      school_name: null
-                                    }))
-                                  }} />
-                                  {errors.school_name !== null && <span className="error">{errors.school_name}</span>}
-                              </Form.Group>
-                            </Col>
+                            { 
+                              formOneChildData?.school_status === "Y" &&
+                              <Col md={6}>
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>School Name *</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    name="name_of_school"
+                                    value={formOneChildData?.name_of_school || ""}
+                                    onChange={(e) => {
+                                      handleChildData(e);
+                                      setErrors(prevState => ({
+                                        ...prevState,
+                                        name_of_school: null
+                                      }))
+                                    }} />
+                                    {errors.name_of_school !== null && <span className="error">{errors.name_of_school}</span>}
+                                </Form.Group>
+                              </Col>
+                            }
                           </Row>
                         </div>
                       </div>
