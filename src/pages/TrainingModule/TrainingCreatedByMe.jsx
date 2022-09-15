@@ -169,7 +169,10 @@ const TrainingCreatedByMe = ({ filter }) => {
     console.log("Traingin created")
   }, []);
   useEffect(() => {
-    CreatedByme()
+    if(selectedFranchisee){
+      CreatedByme()
+    }
+
   }, [filterData.search, filterData.category_id, selectedFranchisee,page])
 
   // console.log("TRAIING DATA", filterData.category_id)
@@ -206,7 +209,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                       </Button>
                     <h1 className="title-lg mb-0">
                     
-                      Trainings Created By Me</h1>
+                      Training created by me</h1>
                  
                     <div className="othpanel">
                       <div className="extra-btn">

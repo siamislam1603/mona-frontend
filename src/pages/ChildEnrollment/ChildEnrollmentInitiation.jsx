@@ -23,6 +23,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     child_crn: "",
     school_status: "N",
     name_of_school: "",
+    has_special_needs: 0,
     educator: []
   });
   const [educatorData, setEducatorData] = useState(null);
@@ -377,6 +378,35 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
+
+                            <Col md={12}>
+                              <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>Does your child have special needs? *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.has_special_needs === 1}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 1
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsno"
+                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 0
+                                    }))} />
+                                </div>
+                              </Form.Group>
+                            </Col>
                           </Row>
                         </div>
                       </div>

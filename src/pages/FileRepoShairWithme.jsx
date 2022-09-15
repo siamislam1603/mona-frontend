@@ -15,6 +15,8 @@ const selectRow = {
 };
 
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
+
+  console.log(selectedFranchisee, "selectedFranchisee")
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -22,7 +24,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     try {
       let User = localStorage.getItem('user_role');
 
-      let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${localStorage.getItem('user_id')}]` : `${BASE_URL}/fileRepo/`
+      let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${selectedFranchisee}]` : `${BASE_URL}/fileRepo/`
       // let ulr = `${BASE_URL}/fileRepo/`
 
       let response = await axios.get(URL, {
@@ -50,6 +52,11 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     }
 
   }
+  useEffect(() => {
+    GetData();
+  }, [selectedFranchisee]);
+
+
   const [columns, setColumns] = useState([
     {
       dataField: 'name',
@@ -138,9 +145,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
       // },
     },
   ]);
-  useEffect(() => {
-    GetData();
-  }, []);
+
 
   return (
     <div>
@@ -156,8 +161,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
             <>
               <BootstrapTable
                 {...props.baseProps}
-                // selectRow={selectRow}
-                pagination={paginationFactory()}
               />
             </>
           )}

@@ -19,16 +19,19 @@ const ChildrenEnrol = () => {
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
-  const [filter, setFilter] = useState(null);
-  const [isLoading, setIsLoading] = useState(true)
+
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
-  const [Filters, setFilters] = useState();
+  const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const { SearchBar } = Search;
 
   const handelApply = () => {
     setApplyFilte(Filters);
+  }
+  const ResteFilter = () => {
+    setApplyFilte("")
+    setFilters()
   }
   console.log(typeof AppyFilter, "AppyFilter")
 
@@ -47,6 +50,7 @@ const ChildrenEnrol = () => {
         if (response) {
           setfullLoaderStatus(false)
         }
+        console.log("THE RESPONSE",response)
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
 
@@ -71,6 +75,7 @@ const ChildrenEnrol = () => {
     }
     catch (error) {
       setfullLoaderStatus(false)
+      setChildEnroll([])
       console.log("ERROR child enroll", error)
     }
   }
@@ -83,13 +88,16 @@ const ChildrenEnrol = () => {
       text: 'Name',
       formatter: (cell) => {
         cell = cell.split(',');
+        console.log("cell name",cell[0][0])
         return (<>
           <div className="user-list">
             <span className="user-name">
-              {cell[0]}
+              {/* {cell[0]}  */}
+              {cell[0][0].toUpperCase()+cell[0].slice(1)}
+
               <small>
                 {/* EnrolmentInitiated<br /> */}
-                DBO: {moment(cell[1]).format('DD/MM/YYYY')}
+                DOB: {moment(cell[1]).format('DD/MM/YYYY')}
               </small>
             </span>
           </div>
@@ -112,7 +120,9 @@ const ChildrenEnrol = () => {
                 <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
               </span>
               <span className="user-name">
-                {cell[0] === "undefined" ? null : cell[0]}
+                {/* {cell[0] === "undefined" ? null : cell[0]} */}
+              {cell[0] === "undefined" ? null : cell[0][0].toUpperCase()+cell[0].slice(1)}
+
               </span>
             </div>
           }
@@ -124,8 +134,7 @@ const ChildrenEnrol = () => {
                 <img src={cell[4] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[4]} />
               </span>
               <span className="user-name">
-                {cell[1] === "undefined" ? null : cell[1]
-                } </span>
+                {cell[1] === "undefined" ? null : cell[1][0].toUpperCase()+cell[1].slice(1) } </span>
             </div>
           }
           {
@@ -135,7 +144,7 @@ const ChildrenEnrol = () => {
                 <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
               </span>
               <span className="user-name">
-                {cell[2] === "undefined" ? null : cell[2]
+                {cell[2] === "undefined" ? null : cell[2][0].toUpperCase()+cell[2].slice(1)
                 } </span>
             </div>
           }
@@ -160,7 +169,8 @@ const ChildrenEnrol = () => {
 
                 <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
 
-              </span><span className="user-name">{cell[0]}
+              </span><span className="user-name">{
+               cell[0][0].toUpperCase()+cell[0].slice(1)}
                 {/* <span>{cell[1]}</span> */}
               </span>
             </div>
@@ -171,7 +181,9 @@ const ChildrenEnrol = () => {
             <div className="user-list">
               <span className="user-pic">
                 <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
-              </span><span className="user-name">{cell[2]}
+              </span><span className="user-name">{
+                  cell[2][0].toUpperCase()+cell[0].slice(1)
+              }
               </span>
             </div>
           }
@@ -228,6 +240,7 @@ const ChildrenEnrol = () => {
       }, 3000);
     }
   }, []);
+  console.log("Filter",Filters)
 
   const csvLink = useRef();
   return (
@@ -269,6 +282,7 @@ const ChildrenEnrol = () => {
                                     <Dropdown.Toggle
                                       id="extrabtn"
                                       variant="btn-outline"
+
                                     >
                                       <i className="filter-ico"></i> Add Filters
                                     </Dropdown.Toggle>
@@ -311,7 +325,7 @@ const ChildrenEnrol = () => {
                                         <Button
                                           variant="transparent"
                                           type="submit"
-                                          onClick={() => { setFilter(''); }}
+                                          onClick={ResteFilter}
                                         >
                                           Reset
                                         </Button>
