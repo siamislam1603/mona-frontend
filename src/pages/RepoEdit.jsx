@@ -212,7 +212,7 @@ const RepoEdit = () => {
 
         let franchiseeArr = data.franchise
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setUser(response.data.users)
         }

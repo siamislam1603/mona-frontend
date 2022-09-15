@@ -92,7 +92,7 @@ const FilerepoUploadFile = () => {
     const getUser = async () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr || [] }, {
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
