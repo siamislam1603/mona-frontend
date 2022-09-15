@@ -93,8 +93,10 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && (await response).data.status === "success") {
       let { child } = response.data;
 
-      let { users, fullname, family_name, dob, home_address, sex } = child;
+      let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date, has_special_needs } = child;
       let educatorIds = users.map(d => d.id);
+
+      console.log('USERS:', users);
 
       setFormOneChildData(prevState => ({
         ...prevState,
@@ -102,7 +104,12 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         family_name,
         dob,
         home_address,
-        gender: sex,
+        sex,
+        child_crn,
+        name_of_school,
+        school_status,
+        start_date,
+        has_special_needs,
         educator: [...educatorIds]
       }))
     }
@@ -134,6 +141,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fetchAndPopulateChildData();
   }, []);
   
+
+  educatorData && console.log('EDUCATOR:', educatorData);
   return (
     <>
       <div id="main">
@@ -217,6 +226,26 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   {errors.dob !== null && <span className="error">{errors.dob}</span>}
                               </Form.Group>
                             </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Start Date *</Form.Label>
+                                <Form.Control
+                                  type="date"
+                                  name="start_date"
+                                  max={new Date().toISOString().slice(0, 10)}
+                                  value={formOneChildData?.start_date || ""}
+                                  onChange={(e) => {
+                                    handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      start_date: null
+                                    }))
+                                  }} />
+                                  {errors.start_date !== null && <span className="error">{errors.start_date}</span>}
+                              </Form.Group>
+                            </Col>
+
                             <Col md={12}>
                               <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
@@ -266,28 +295,125 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                               </Form.Group>
                             </Col>
 
+                            {
+                              localStorage.getItem('user_role') !== 'guardian' &&
+                              <Col md={6}>
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>Select An Educator *</Form.Label>
+                                  <Select
+                                    placeholder={"Select"}
+                                    closeMenuOnSelect={true}
+                                    isMulti
+                                    value={educatorData?.filter(d => formOneChildData?.educator.includes(d.id))}
+                                    options={educatorData}
+                                    onChange={(e) => {
+                                      setFormOneChildData((prevState) => ({
+                                        ...prevState,
+                                        educator: [...e.map(e => e.id)]
+                                      }));
+
+                                      setErrors(prevState => ({
+                                        ...prevState,
+                                        educatorData: null
+                                      }))
+                                    }}
+                                  />
+                                  {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
+                                </Form.Group>
+                              </Col>
+                            }
+
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Select An Educator *</Form.Label>
-                                <Select
-                                  placeholder={"Select"}
-                                  closeMenuOnSelect={true}
-                                  isMulti
-                                  value={educatorData?.filter(d => formOneChildData?.educator.includes(d.id))}
-                                  options={educatorData}
+                                <Form.Label>Child CRN *</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="child_crn"
+                                  // ref={child_crn}
+                                  value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
-                                    setFormOneChildData((prevState) => ({
-                                      ...prevState,
-                                      educator: [...e.map(e => e.id)]
-                                    }));
+                                    handleChildData(e);
+                                  }} />
 
-                                    setErrors(prevState => ({
+                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={12}>
+                              <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>School Status *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="school_status"
+                                    id="statuscheckyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.school_status === "Y"}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
-                                      educatorData: null
-                                    }))
-                                  }}
-                                />
-                                {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
+                                      school_status: "Y"
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="school_status"
+                                    id="statuscheckno"
+                                    checked = {formOneChildData?.school_status === "N"}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      school_status: "N"
+                                    }))} />
+                                </div>
+                              </Form.Group>
+                            </Col>
+
+                            { 
+                              formOneChildData?.school_status === "Y" &&
+                              <Col md={6}>
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>School Name *</Form.Label>
+                                  <Form.Control
+                                    type="text"
+                                    name="name_of_school"
+                                    value={formOneChildData?.name_of_school || ""}
+                                    onChange={(e) => {
+                                      handleChildData(e);
+                                      setErrors(prevState => ({
+                                        ...prevState,
+                                        name_of_school: null
+                                      }))
+                                    }} />
+                                    {errors.name_of_school !== null && <span className="error">{errors.name_of_school}</span>}
+                                </Form.Group>
+                              </Col>
+                            }
+                            <Col md={12}>
+                              <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>Does your child have special needs? *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.has_special_needs === 1}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 1
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsno"
+                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 0
+                                    }))} />
+                                </div>
                               </Form.Group>
                             </Col>
                           </Row>

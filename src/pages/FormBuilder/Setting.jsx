@@ -25,7 +25,7 @@ function Setting(props) {
     signatories_role: '',
     target_user: '',
     fill_access_users: '',
-    response_visibility: '',
+    response_visibility: 'franchisor_admin,franchisee_admin',
     for_training: false,
   });
   const [errors, setErrors] = useState({});
@@ -199,7 +199,7 @@ function Setting(props) {
           oldResult.signatories_role = '';
           oldResult.target_user = '';
           oldResult.fill_access_users = '';
-          oldResult.response_visibility = '';
+          oldResult.response_visibility = 'franchisor_admin,franchisee_admin,';
           oldResult.accessible_to_role = true;
           setForm(oldResult);
         }

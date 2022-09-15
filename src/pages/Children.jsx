@@ -290,50 +290,50 @@ const Children = () => {
             text: 'Location',
 
         },
-        {
-            dataField: 'EnrollFlag',
-            text: '',
-            formatter: (cell) => {
-                // console.log(cell, 'ENROLLED CELL');
-                return (
-                    <>  {
-                            cell.enrollFlag === 0 ?
-                            (   
-                                localStorage.getItem('user_role') !== 'guardian' ?
-                                <div className="cta-col">
-                                    <button 
-                                        className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-                                        disabled={cell.initiationFlag === true}
-                                        onClick={() => sendInitiationMail(cell.childId)}>
-                                        {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
-                                    </button>
-                                </div>
-                                : 
-                                <div className="cta-col">
-                                    <button 
-                                        className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-                                        // disabled={cell.initiationFlag === true}
-                                        onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-                                        View Enrolment
-                                    </button>
-                                </div>
-                            )
-                            :
-                            <div className="cta-col">
-                                <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800", textAlign: 'center'}}
-                                onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-                                    View Enrolment
-                                </button>
-                                {
-                                    (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
-                                    <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
-                                }
-                            </div>
-                        }
-                    </>
-                );
-            },
-        },
+        // {
+        //     dataField: 'EnrollFlag',
+        //     text: '',
+        //     formatter: (cell) => {
+        //         // console.log(cell, 'ENROLLED CELL');
+        //         return (
+        //             <>  {
+        //                     cell.enrollFlag === 0 ?
+        //                     (   
+        //                         localStorage.getItem('user_role') !== 'guardian' ?
+        //                         <div className="cta-col">
+        //                             <button 
+        //                                 className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+        //                                 disabled={cell.initiationFlag === true}
+        //                                 onClick={() => sendInitiationMail(cell.childId)}>
+        //                                 {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
+        //                             </button>
+        //                         </div>
+        //                         : 
+        //                         <div className="cta-col">
+        //                             <button 
+        //                                 className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
+        //                                 // disabled={cell.initiationFlag === true}
+        //                                 onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
+        //                                 View Enrolment
+        //                             </button>
+        //                         </div>
+        //                     )
+        //                     :
+        //                     <div className="cta-col">
+        //                         <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800", textAlign: 'center'}}
+        //                         onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
+        //                             View Enrolment
+        //                         </button>
+        //                         {
+        //                             (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
+        //                             <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
+        //                         }
+        //                     </div>
+        //                 }
+        //             </>
+        //         );
+        //     },
+        // },
         {
             dataField: 'action',
             text: '',
@@ -341,7 +341,7 @@ const Children = () => {
                 // console.log('CELL DATA CHILDREN:', cell);
                 return (
                     <>  {
-                            localStorage.getItem('user_role') !== 'guardian' &&
+                            // localStorage.getItem('user_role') !== 'guardian' &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -349,7 +349,8 @@ const Children = () => {
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                        {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
+                                        {/* {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>} */}
+                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Educator</Dropdown.Item>
                                         <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
                                         <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>

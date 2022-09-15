@@ -91,6 +91,7 @@ const ChildrenEnrol = () => {
             <span className="user-name">
               {cell[0]}
               <small>
+                {/* EnrolmentInitiated<br /> */}
                 DOB: {moment(cell[1]).format('DD/MM/YYYY')}
               </small>
             </span>
@@ -271,7 +272,7 @@ const ChildrenEnrol = () => {
                                     <Dropdown.Toggle
                                       id="extrabtn"
                                       variant="btn-outline"
-                                      
+
                                     >
                                       <i className="filter-ico"></i> Add Filters
                                     </Dropdown.Toggle>

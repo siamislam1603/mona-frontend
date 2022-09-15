@@ -365,6 +365,8 @@ const UserManagement = () => {
         csv_data.push(item);
         let data = { ...csv_data[index] };
         data["name"] = data.name.split(",")[1];
+        delete data.action
+        delete data.roleDetail
         csv_data[index] = data;
       });
       setCsvData(csv_data);
@@ -546,6 +548,7 @@ const UserManagement = () => {
       console.log('DISPLAY ROLES:', displayRoles);
     }
   }, [displayRoles])
+ 
 
   const csvLink = useRef();
 
