@@ -14,8 +14,6 @@ const selectRow = {
 };
 
 const FileRepodAddbyMe = ({ selectedFranchisee }) => {
-
-    console.log(selectedFranchisee, "selectedFranchisee")
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -117,7 +115,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
                                                             cell[1]
                                     }
                                 </small>
-                                {/* <small>{cell[1]}</small> */}
+                                
                             </span>
                         </div>
                     </>
@@ -160,8 +158,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
                         <>
                             <BootstrapTable
                                 {...props.baseProps}
-                                // selectRow={selectRow}
-                                pagination={paginationFactory()}
                             />
                         </>
                     )}

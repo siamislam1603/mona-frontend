@@ -54,7 +54,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
     if (response.status === 200 && response.data.status === 'success') {
       let { children } = response.data;
-      console.log('CHILDREN:', children);
+   
       setChildList(children.map(d => ({
         id: d.id,
         name: d.fullname
@@ -125,7 +125,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   };
 
   const handleLinkClick = notificationId => {
-    console.log("event eventeventeventevent", notificationId)
+  
 
     if (notificationId) {
       const response = axios.put(
@@ -189,7 +189,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
         if (response.status === 200 && response.data.status === "success") {
       
           setSearchResult(response.data.data[0])
-          console.log("ddddddddddddddddddddddddddddddddddddddddddddd", response.data.data[0].announcement)
 
           setSearchAnnouncement(response.data.data[0].announcement)
           setSearchFileRepository(response.data.data[0].fileRepository)
@@ -246,7 +245,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
 
   const selectFranchisee = (e) => {
-    console.log('SELECTED FRANCHISEE:', e);
     if (e === 'All') {
       setFranchiseeId({ franchisee_name: 'All' });
       setSelectedFranchisee('all');
@@ -260,7 +258,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   };
 
   const selectChild = (e) => {
-    console.log('SELECTED CHILD:', e);
+    // console.log('SELECTED CHILD:', e);
     // if (e === 'All') {
     //   setChildId({ name: 'All' });
     //   setSelectedFranchisee('all');
@@ -406,7 +404,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }, [])
 
   useEffect(() => {
-    console.log('Fetching notificaiton data');
+    // console.log('Fetching notificaiton data');
     fetchNotificationData();
   }, [notifType])
 
@@ -443,7 +441,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   //   savePermissionInState();
   // }, []);
 
-  console.log("local Storge ", localStorage.getItem('profile_photo'))
+  // console.log("local Storge ", localStorage.getItem('profile_photo'))
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
