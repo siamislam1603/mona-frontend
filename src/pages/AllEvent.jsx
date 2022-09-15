@@ -170,55 +170,7 @@ useEffect(() =>{
                              {data.user.fullname[0].toUpperCase()+data.user.fullname.slice(1)}
                           
                           </small></div>              
-              <div className="date">
-                 
-                  {/* <Dropdown.Toggle id="extrabtn" className="ctaact">
-                      <NavLink to="/edit-announcement">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </NavLink>
-                   </Dropdown.Toggle> */}
-                   {
-                    userRole === "franchisor_admin" || userRole === "franchisee_admin" ?
-                    (
-                      <Dropdown>
-                      <Dropdown.Toggle id="extrabtn" className="ctaact">
-                        <img src="../img/dot-ico.svg" alt=""/>
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item 
-                         href={
-                          new Date(data?.scheduled_date)>new Date() ? (
-                            `/edit-announcement/${data.id}`  
-
-                          ):
-                          (
-                              null     
-                            
-                          )
-                        }
-                        onClick={() =>  
-                          new Date(data?.scheduled_date)>new Date() ? (
-                            setTopErrorMessage(null)
-
-                          ):(
-                            setTopErrorMessage("Cannot edit started announcement")
-
-                          )
-                          }
-                        
-                        >Edit</Dropdown.Item>                                          
-                           
-                      
-                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                    ):(
-                      null
-                    )
-                   }
-                  
-                
-            </div>
+ 
             </div>
           </Accordion.Header>
           <Accordion.Body>
