@@ -57,7 +57,6 @@ const MyAnnouncements = (props) => {
     }); 
     console.log("The response after delete",response)
     if(response.status === 200){
-        console.log("Delete succussfully")
         setTopMessage("Delete succussfully")
         myAnnouncementData()
         setTimeout(() =>{
@@ -130,15 +129,13 @@ const MyAnnouncements = (props) => {
          
     }
   },[props.myLoadData])
+
   useEffect(()=>{
       if(props.myAnnouncementData) {
         setmyAnnouncement(props.myAnnouncementData)
-    
       }
   },[props.myAnnouncementData])
-  console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
-
-
+  
 useEffect(() =>{
   setTimeout(() => {
     setTopErrorMessage(null);

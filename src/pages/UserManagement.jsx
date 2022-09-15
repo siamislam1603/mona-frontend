@@ -41,6 +41,7 @@ let DeleteId = [];
 
 const UserManagement = () => {
   const Key = useParams()
+
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
@@ -57,10 +58,34 @@ const UserManagement = () => {
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
 
-  
 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
+      // if (e.target.text === 'Delete') {
+
+      //   async function deleteUserFromDB() {
+      //     const response = await axios.patch(
+      //       `${BASE_URL}/auth/user/status/${row.userID}`,
+      //       {
+      //         is_active: 2,
+      //       }, {
+      //       headers: {
+      //         "Authorization": `Bearer ${localStorage.getItem('token')}`
+      //       }
+      //     });
+
+      //     if(response.status === 201 && response.data.status === "success") {
+      //       fetchUserDetails();
+      //     }
+      //   }
+
+      //   if (window.confirm('Are you sure you want to delete this user?')) {
+      //     deleteUserFromDB();
+      //   }
+
+      //   // fetchUserDetails();
+      // }
+
       if (e.target.text === "Deactivate") {
         async function deactivateUserFromDB() {
           const response = await axios.patch(
@@ -511,6 +536,8 @@ const UserManagement = () => {
   }, [])
 
   useEffect(() => {
+    console.log('ROLES HAVE BEEN POPULATED')
+    console.log('USER ROLE DATA:', userRoleData);
     trimRoleList();
   }, [userRoleData]);
 
@@ -539,6 +566,7 @@ const UserManagement = () => {
 
                 <div className="entry-container">
                   <div className="user-management-sec">
+
                     <>
                       {
                         topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
@@ -604,7 +632,27 @@ const UserManagement = () => {
                                     }
                                   </Form.Group>
                                 </div>
-                                    
+                                {/* <div className="custom-radio">
+                                      <label className="mb-2">Location:</label>
+                                      <Form.Group>
+                                        <Select
+                                          closeMenuOnSelect={false}
+                                          components={animatedComponents}
+                                          isMulti
+                                          options={training}
+                                          onChange={(event) =>
+                                            setFilter((prevState) => ({
+                                              ...prevState,
+                                              location: [
+                                                ...event.map(
+                                                  (data) => data.label
+                                                ),
+                                              ],
+                                            }))
+                                          }
+                                        />
+                                      </Form.Group>
+                                    </div> */}
                                 <footer>
                                   <Button
                                     variant="transparent"
@@ -695,7 +743,7 @@ const UserManagement = () => {
                                 <BootstrapTable
                                   {...props.baseProps}
                                   rowEvents={rowEvents}
-                                  // selectRow={selectRow}
+                                  selectRow={selectRow}
                                   pagination={paginationFactory()}
                                 />
                               </>
