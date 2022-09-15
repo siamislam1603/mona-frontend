@@ -9,8 +9,7 @@ const LeftNavbar = () => {
   const [userDashboardLink, setuserDashboardLink] = useState();
 
   const fetchPermissionList = async () => {
-
-
+    
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
     // setPermissionList(menu_list.filter(permission => permission.controller.show_in_menu === true));
 

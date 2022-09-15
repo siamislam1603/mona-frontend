@@ -48,6 +48,15 @@ const MyAnnouncements = (props) => {
 
     }
   }
+  const deleteAnnouncementAlert = (id) =>{
+    if (window.confirm('Are you sure you want to delete ?')) {
+      console.log("Console yes")
+      deleteAnnouncement(id)
+    }
+    else{
+      console.log("Console no")
+    }
+  }
   const deleteAnnouncement = async (id) =>{
     const token = localStorage.getItem('token');
     const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
@@ -57,7 +66,6 @@ const MyAnnouncements = (props) => {
     }); 
     console.log("The response after delete",response)
     if(response.status === 200){
-        console.log("Delete succussfully")
         setTopMessage("Delete succussfully")
         myAnnouncementData()
         setTimeout(() =>{
@@ -130,15 +138,13 @@ const MyAnnouncements = (props) => {
          
     }
   },[props.myLoadData])
+
   useEffect(()=>{
       if(props.myAnnouncementData) {
         setmyAnnouncement(props.myAnnouncementData)
-    
       }
   },[props.myAnnouncementData])
-  console.log("MY ANNOUNCEMENT DATA props",props.myAnnouncementData)
-
-
+  
 useEffect(() =>{
   setTimeout(() => {
     setTopErrorMessage(null);
@@ -215,7 +221,7 @@ useEffect(() =>{
                         >Edit</Dropdown.Item>                                          
                            
                       
-                        <Dropdown.Item onClick={() =>deleteAnnouncement(data.id)}>Delete</Dropdown.Item>
+                        <Dropdown.Item onClick={() => {deleteAnnouncementAlert(data.id)}}>Delete</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
                     ):(

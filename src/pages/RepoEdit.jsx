@@ -117,7 +117,7 @@ const RepoEdit = () => {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
                 console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
-                    console.log('IMAGE UPLOADED SUCCESSFULLY => type: string');
+                    
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
@@ -212,7 +212,7 @@ const RepoEdit = () => {
 
         let franchiseeArr = data.franchise
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setUser(response.data.users)
         }
@@ -778,7 +778,7 @@ const RepoEdit = () => {
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
                                                                                     disable={sendToAllFranchisee === 'all'}
-                                                                                    placeholder={"Select child"}
+                                                                                    placeholder={"Select"}
                                                                                     displayValue="name"
                                                                                     className="multiselect-box default-arrow-select"
                                                                                     onRemove={onRemoveChild}
