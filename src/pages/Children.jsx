@@ -243,7 +243,8 @@ const Children = () => {
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
-        action: { enrollFlag: child.isChildEnrolled }
+        action: { enrollFlag: child.isChildEnrolled },
+        Parents: {parents:child.parents, childId:child.id}
     }));
     // console.log('Products:', productsTow);
 
@@ -274,6 +275,37 @@ const Children = () => {
                                         </span>
                                         <span className="user-name">
                                             {item.fullname}
+                                        </span>
+                                    </div>
+                                </div>
+                                )
+                            })
+                            
+                        }
+                    </>
+                );
+            },
+        },
+        {
+            dataField: 'Parents',
+            text: 'Parents',
+            formatter: (cell) => {
+                // console.log(cell,"celll")
+                return (
+                    <>
+                        {cell.parents.length === 0 ?
+                            <div className="user-list">
+                               "No Co-Parents Assigned Yet!"
+                            </div> :
+                            (cell.parents || []).map((item)=>{
+                               return (
+                                <div className="childern-list">
+                                    <div className="user-list">
+                                        <span className="user-pic">
+                                            <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
+                                        </span>
+                                        <span className="user-name">
+                                            {item.parent_family_name ? item.parent_family_name : "Parent"}
                                         </span>
                                     </div>
                                 </div>

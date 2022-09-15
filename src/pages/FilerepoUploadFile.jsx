@@ -92,7 +92,7 @@ const FilerepoUploadFile = () => {
     const getUser = async () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr || [] }, {
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -618,7 +618,7 @@ const FilerepoUploadFile = () => {
                                                             <span className="checkmark"></span>
                                                         </label>) : null}
                                                         {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
-                                                            Coordinators
+                                                            Coordinator
                                                             <input
                                                                 type="checkbox"
                                                                 name="shared_role"
@@ -650,7 +650,7 @@ const FilerepoUploadFile = () => {
                                                             <span className="checkmark"></span>
                                                         </label>) : null}
                                                         {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<label className="container">
-                                                            Educators
+                                                            Educator
                                                             <input
                                                                 type="checkbox"
                                                                 name="shared_role"

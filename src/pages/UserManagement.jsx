@@ -281,9 +281,9 @@ const UserManagement = () => {
       },
     },
   ];
-  const onFilter = debounce(() => {
-    fetchUserDetails();
-  }, 200);
+  // const onFilter = debounce(() => {
+  //   fetchUserDetails();
+  // }, 200);
 
   const getFormattedName = (name) => {
     let firstName = name?.split(" ")[0];
@@ -293,6 +293,9 @@ const UserManagement = () => {
   }
 
   const fetchUserDetails = async () => {
+
+
+
     let api_url = '';
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
 
@@ -503,6 +506,10 @@ const UserManagement = () => {
     Show_eduactor()
   }, [selectedFranchisee])
 
+  useEffect(() => {
+    fetchUserDetails()
+  }, [search])
+
 
   useEffect(() => {
     if (selectedFranchisee) {
@@ -595,8 +602,14 @@ const UserManagement = () => {
                                   placeholder="Search"
                                   name="search"
                                   onChange={(e) => {
+
+                                  //   setSearch(e.target.value, () => {
+                                  //     onFilter();
+                                  //  });
                                     setSearch(e.target.value);
-                                    onFilter();
+                                    // onFilter(e.target.value);
+
+
                                   }}
                                 />
                               </Form.Group>
@@ -691,7 +704,7 @@ const UserManagement = () => {
                                     setCsvDownloadFlag(true);
                                   }}
                                 >
-                                  Export CSV!!
+                                  Export CSV
                                   {csvDownloadFlag && (
                                     <CSVDownload
                                       data={csvData}
