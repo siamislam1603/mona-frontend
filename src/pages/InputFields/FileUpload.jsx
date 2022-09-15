@@ -12,26 +12,30 @@ const FileUpload = (props) => {
       reader.onerror = (error) => reject(error);
     });
   const uploadFiles = async (file) => {
-    if (file.size > 2048 * 1024) {
-      toast.error('File is too large. File limit 2 MB.');
-      return null;
-    }else if (
+    console.log("file.type--->",file.name.split(".")[file.name.split(".").length-1]);
+    console.log("file.type--->",file.type);
+    let type=file.name.split(".")[file.name.split(".").length-1];
+    if (
       !(
-        file.type.includes('doc') ||
-        file.type.includes('docx') ||
-        file.type.includes('html') ||
-        file.type.includes('htm') ||
-        file.type.includes('odt') ||
-        file.type.includes('xls') ||
-        file.type.includes('xlsx') ||
-        file.type.includes('ods') ||
-        file.type.includes('ppt') ||
-        file.type.includes('pptx') ||
-        file.type.includes('pdf') ||
-        file.type.includes('txt')
+        type.includes('doc') ||
+        type.includes('docx') ||
+        type.includes('html') ||
+        type.includes('htm') ||
+        type.includes('odt') ||
+        type.includes('xls') ||
+        type.includes('xlsx') ||
+        type.includes('ods') ||
+        type.includes('ppt') ||
+        type.includes('pptx') ||
+        type.includes('pdf') ||
+        type.includes('txt')
       )
     ) {
       toast.error('File must be DOC, PDF, TXT, XLS, or PPT.');
+      return null;
+    }
+    else if (file.size > 2048 * 1024) {
+      toast.error('File is too large. File limit 2 MB.');
       return null;
     }
      else {
