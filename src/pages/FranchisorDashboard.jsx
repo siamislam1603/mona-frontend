@@ -16,6 +16,8 @@ const FranchisorDashboard = () => {
   const navigate = useNavigate();
   const [count, setcount] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+
+  console.log(selectedFranchisee, "selectedFranchisee")
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
   const [formData, setFormData] = useState([])
@@ -104,7 +106,7 @@ const FranchisorDashboard = () => {
 
   const count_Api = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count/${selectedFranchisee}`;
     axios.get(countUrl, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -175,7 +177,7 @@ const FranchisorDashboard = () => {
     }
 
     // Redirect to baseurl when not not specific Role
-    if (localStorage.getItem('user_role')!=='franchisor_admin') {
+    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
       window.location.href = '/';
     }
 
@@ -189,12 +191,12 @@ const FranchisorDashboard = () => {
     announcement();
     Forms_count();
     FormData();
-  }, []);
+  }, [selectedFranchisee]);
 
   return (
     <>
       {
-      topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+        topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
 
 
