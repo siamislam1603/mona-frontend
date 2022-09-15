@@ -269,28 +269,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     }
 
-    // const handleTrainingDelete = async (cell) => {
-    //     let token = localStorage.getItem('token');
-    //     await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
-    //         headers: {
-    //             "Authorization": `Bearer ${token}`
-    //         }
-    //     }).then(function () {
-    //         SetfileDeleteMessage('Delete successful')
-    //         GetFile();
-    //     })
-    //         .catch(error => {
-    //         });
-    // }
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         SetfileDeleteMessage(null)
-    //     }, 3000);
-    // }, [fileDeleteMessage, userData])
-
-
-    // FETCH FILE DATA
+    
 
 
     const isAllRolesChecked = () => {
@@ -729,7 +708,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("coordinator")}
-                                                            label="Coordinators"
+                                                            label="Coordinator"
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("coordinator")) {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "coordinator");
@@ -750,7 +729,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Educators"
+                                                            label="Educator"
                                                             checked={formSettings.assigned_role.includes("educator")}
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("educator")) {
