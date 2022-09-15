@@ -172,9 +172,6 @@ const Main = () => {
             </Protected>
           }
         />
-
-
-
         <Route
           path="/child-enrollment/:childId/:parentId"
           element={

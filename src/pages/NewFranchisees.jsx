@@ -118,6 +118,7 @@ const NewFranchisees = () => {
 
     const setAutoFocus = (errObj) => {
         const errArray = Object.keys(errObj);
+        console.log('ERROR ARRAY OBJECT:', errArray);
 
         if(errArray.includes('franchisee_name')) {
           franchisee_name.current.focus();
@@ -320,7 +321,7 @@ const NewFranchisees = () => {
                                                 <Form.Control 
                                                     name="franchisee_number"
                                                     type="text" 
-                                                    ref={franchisee_name}
+                                                    ref={franchisee_number}
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

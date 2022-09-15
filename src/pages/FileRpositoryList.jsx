@@ -41,7 +41,6 @@ const FileRpositoryList = () => {
     });
 
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-    console.log(selectedFranchisee, "franchiseeList")
     const [child, setChild] = useState([]);
 
     const fetchFranchiseeList = async () => {
@@ -76,26 +75,27 @@ const FileRpositoryList = () => {
         try {
             let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
             let user_Role = localStorage.getItem('user_role');
-            console.log(user_Role, "user_Role")
-            let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]&limit=20` :
-                `${BASE_URL}/fileRepo/files-by-category/${Params.id}&limit=20`
+            let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]` :
+                `${BASE_URL}/fileRepo/files-by-category/${Params.id}`
 
-            let response = await fetch(URL, requestOptions)
-            response = await response.json();
-            setCount(response.result.count)
-            if (response) {
-                setfullLoaderStatus(false)
+            if (URL) {
+                let response = await fetch(URL, requestOptions)
+                response = await response.json();
+                setCount(response.result.count)
+                if (response) {
+                    setfullLoaderStatus(false)
+                }
+                const users = response.result.files;
+
+                let tempData = users.map((dt) => ({
+                    name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
+                    createdAt: dt.createdAt,
+                    userID: dt.id,
+                    creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
+                    Shaired: dt.repository.repository_files[0].length,
+                }));
+                setUserData(tempData);
             }
-            const users = response.result.files;
-            console.log(users, "users")
-            let tempData = users.map((dt) => ({
-                name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
-                createdAt: dt.createdAt,
-                userID: dt.id,
-                creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
-                Shaired: dt.repository.repository_files[0].length,
-            }));
-            setUserData(tempData);
         } catch (e) {
             setfullLoaderStatus(false)
         }
@@ -115,7 +115,7 @@ const FileRpositoryList = () => {
         let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
         result = await result.json()
             .then((result) => setCategory(result.category))
-            .catch((error) => console.log('error', error));
+            .catch((error) => console.error('error', error));
     };
 
 
@@ -141,7 +141,7 @@ const FileRpositoryList = () => {
                 });
                 setUser(result?.data);
             })
-            .catch((error) => console.log('error', error));
+            .catch((error) => console.error('error', error));
     };
 
     const getChildren = async () => {
@@ -390,7 +390,7 @@ const FileRpositoryList = () => {
                                                         pagination={paginationFactory()}
 
                                                     />
-                                                    {console.log(paginationFactory(), "paginationFactory()")}
+
                                                 </>
                                             )}
                                         </ToolkitProvider>
