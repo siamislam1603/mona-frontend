@@ -778,7 +778,7 @@ const RepoEdit = () => {
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
                                                                                     disable={sendToAllFranchisee === 'all'}
-                                                                                    placeholder={"Select child"}
+                                                                                    placeholder={"Select"}
                                                                                     displayValue="name"
                                                                                     className="multiselect-box default-arrow-select"
                                                                                     onRemove={onRemoveChild}

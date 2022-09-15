@@ -69,7 +69,8 @@ const FranchisorDashboard = () => {
 
   const Forms_count = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/audit-forms-count/${selectedFranchise}`;
 
     axios.get(countUrl, {
       headers: {
@@ -77,7 +78,6 @@ const FranchisorDashboard = () => {
       }
     }).then((response) => {
       setForms_count(response.data.totalNumberOfAuditFormsInLast30Days);
-
     }).catch((e) => {
       console.log("Error", e);
     })
@@ -85,7 +85,8 @@ const FranchisorDashboard = () => {
 
   const announcement = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement/${selectedFranchise}`;
 
     axios.get(countUrl, {
       headers: {
@@ -104,7 +105,8 @@ const FranchisorDashboard = () => {
 
   const count_Api = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/activity-count/${selectedFranchise}`;
     axios.get(countUrl, {
       headers: {
         "Authorization": `Bearer ${token}`
@@ -142,7 +144,8 @@ const FranchisorDashboard = () => {
   }
   const FormData = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access`, {
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const response = await axios.get(`${BASE_URL}/dashboard/franchisor/audit-forms-quick-access/${selectedFranchise}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -175,7 +178,7 @@ const FranchisorDashboard = () => {
     }
 
     // Redirect to baseurl when not not specific Role
-    if (localStorage.getItem('user_role')!=='franchisor_admin') {
+    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
       window.location.href = '/';
     }
 
@@ -189,12 +192,12 @@ const FranchisorDashboard = () => {
     announcement();
     Forms_count();
     FormData();
-  }, []);
+  }, [selectedFranchisee]);
 
   return (
     <>
       {
-      topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
+        topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
 
 

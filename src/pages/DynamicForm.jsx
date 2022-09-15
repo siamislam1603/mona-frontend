@@ -363,15 +363,15 @@ const DynamicForm = () => {
                                   }
                                 }}
                               >
-                                <option value="">Select Behalf of</option>
+                                <option value="">Select</option>
                                 {targetUser?.map((item) => {
                                   return (
                                     <>
-                                      <option value={item.id}>
+                                      {(parseInt(localStorage.getItem("franchisee_id"))===item.franchisee_id || localStorage.getItem("user_role")==="franchisor_admin")  && <option value={item.id}>
                                         {item.child
                                           ? item.fullname
                                           : item.email}
-                                      </option>
+                                      </option>}
                                     </>
                                   );
                                 })}
