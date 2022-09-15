@@ -167,7 +167,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   }, []);
   useEffect(() =>{
     trainingCreatedByOther() 
-  },[filterData.search,filterData.category_id,page])
+  },[filterData.search,filterData.category_id,page,selectedFranchisee])
 
   console.log("TRAIING DATA",myTrainingData)
 

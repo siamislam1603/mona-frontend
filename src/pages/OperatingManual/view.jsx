@@ -434,6 +434,10 @@ const OperatingManual = () => {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
+        if(localStorage.getItem("user_role")!=="franchisor_admin")
+        {
+          formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("franchisee_admin,","") : null;
+        }
         formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("all,","") : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
