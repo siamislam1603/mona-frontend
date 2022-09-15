@@ -89,7 +89,7 @@ const ChildrenEnrol = () => {
               {cell[0]}
               <small>
                 {/* EnrolmentInitiated<br /> */}
-                DBO: {moment(cell[1]).format('DD/MM/YYYY')}
+                DOB: {moment(cell[1]).format('DD/MM/YYYY')}
               </small>
             </span>
           </div>

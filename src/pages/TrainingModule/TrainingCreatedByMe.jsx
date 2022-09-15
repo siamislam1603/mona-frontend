@@ -169,7 +169,10 @@ const TrainingCreatedByMe = ({ filter }) => {
     console.log("Traingin created")
   }, []);
   useEffect(() => {
-    CreatedByme()
+    if(selectedFranchisee){
+      CreatedByme()
+    }
+
   }, [filterData.search, filterData.category_id, selectedFranchisee,page])
 
   // console.log("TRAIING DATA", filterData.category_id)
