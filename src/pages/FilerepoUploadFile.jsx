@@ -31,7 +31,7 @@ const FilerepoUploadFile = () => {
     const [selectedAll, setSelectedAll] = useState(false);
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '',accessible_to_role:1 });
+    const [formSettingData, setFormSettingData] = useState({ shared_role: '', accessible_to_role: 1 });
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
@@ -90,23 +90,28 @@ const FilerepoUploadFile = () => {
     }
     //======================== GET User List==================
     const getUser = async () => {
-        let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr || [] }, {
-            headers: {
-                authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-        })
+        try {
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisees/`, { franchisee_id: franchiseeArr || [] }, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
 
-        if (response.status === 200) {
-            let userList = response.data.users
-            if (getUser_Role == 'franchisee_admin') {
-                userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
-            } else if (getUser_Role == 'coordinator') {
-                userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
-            } else if (getUser_Role == 'educator') {
-                userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+            if (response.status === 200) {
+                let userList = response.data.users
+                if (getUser_Role == 'franchisee_admin') {
+                    userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'coordinator') {
+                    userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'educator') {
+                    userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+                }
+                setUser(userList)
             }
-            setUser(userList)
+
+        } catch (err) {
+
         }
     };
 
@@ -268,7 +273,7 @@ const FilerepoUploadFile = () => {
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                 }
             })
-            .catch((error) => console.log('error', error));
+            .catch((error) => console.error('error', error));
     };
 
     useEffect(() => {
@@ -608,7 +613,7 @@ const FilerepoUploadFile = () => {
                                                                     }
                                                                     setFormSettingData(data);
                                                                 }}
-                                                                
+
                                                             />
                                                             <span className="checkmark"></span>
                                                         </label>) : null}

@@ -19,8 +19,7 @@ const ChildrenEnrol = () => {
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
-  const [filter, setFilter] = useState(null);
-  const [isLoading, setIsLoading] = useState(true)
+
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
   const [Filters, setFilters] = useState(null);
@@ -29,6 +28,10 @@ const ChildrenEnrol = () => {
 
   const handelApply = () => {
     setApplyFilte(Filters);
+  }
+  const ResteFilter = () => {
+    setApplyFilte("")
+    setFilters()
   }
   console.log(typeof AppyFilter, "AppyFilter")
 
@@ -279,6 +282,7 @@ const ChildrenEnrol = () => {
                                     <Dropdown.Toggle
                                       id="extrabtn"
                                       variant="btn-outline"
+
                                     >
                                       <i className="filter-ico"></i> Add Filters
                                     </Dropdown.Toggle>
@@ -321,7 +325,7 @@ const ChildrenEnrol = () => {
                                         <Button
                                           variant="transparent"
                                           type="submit"
-                                          onClick={() => { setFilter(' ') }}
+                                          onClick={ResteFilter}
                                         >
                                           Reset
                                         </Button>

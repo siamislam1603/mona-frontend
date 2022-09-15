@@ -17,11 +17,6 @@ const getFranchisee = localStorage.getItem(`franchisee_id`)
 const { SearchBar } = Search;
 let selectedUserId = '';
 
-const selectRow = {
-    mode: 'checkbox',
-    // clickToSelect: true,
-};
-
 const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
@@ -33,10 +28,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
-
-
-
-    console.log(saveFileId, "saveFileId")
     const [user, setUser] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
@@ -168,7 +159,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 if (response) {
                     setfullLoaderStatus(false)
                 }
-
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -183,7 +173,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
                     }));
                     setUserData(tempData);
-                    console.log('tempData++++++++++++++++++++', tempData)
+
                 }
             }
         } catch (err) {
@@ -197,7 +187,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         if (selectedFranchisees) {
             GetFile();
         }
-    }, [selectedFranchisees]);
+    }, [selectedFranchisees, userData]);
 
     const getUser = async () => {
         var myHeaders = new Headers();
@@ -243,7 +233,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getUser();
         getChildren();
-        handleTrainingDelete();
     }, [formSettings.franchisee])
 
     useEffect(() => {
@@ -254,29 +243,33 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetData()
     }, [saveFileId])
 
+
     const handleTrainingDelete = async (cell) => {
-        let token = localStorage.getItem('token');
-        await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        }).then(function () {
-            SetfileDeleteMessage('Delete successful')
-            GetFile();
-        })
-            .catch(error => {
-                SetfileDeleteMessage("You don't have permission to delete this file !");
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.delete(`${BASE_URL}/fileRepo/${cell}`, {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
             });
+
+            if (response.status === 200) {
+                SetfileDeleteMessage("Delete succussfully")
+                GetFile();
+                setTimeout(() => {
+                    SetfileDeleteMessage(null)
+                }, 3000)
+            }
+        } catch (err) {
+            SetfileDeleteMessage("You don't have permission to delete this file !");
+            setTimeout(() => {
+                SetfileDeleteMessage(null)
+            }, 3000)
+        }
+
     }
 
-    useEffect(() => {
-        setTimeout(() => {
-            SetfileDeleteMessage(null)
-        }, 3000);
-    }, [fileDeleteMessage, userData])
-
-
-    // FETCH FILE DATA
+    
 
 
     const isAllRolesChecked = () => {
@@ -408,7 +401,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             text: 'Shared',
             sort: true,
             formatter: (cell) => {
-                console.log("cell", cell)
+              
                 return (
                     <>
                         <div className="user-list">
@@ -715,7 +708,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <Form.Check
                                                             type="checkbox"
                                                             checked={formSettings.assigned_role.includes("coordinator")}
-                                                            label="Coordinators"
+                                                            label="Coordinator"
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("coordinator")) {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "coordinator");
@@ -736,7 +729,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
                                                         <Form.Check
                                                             type="checkbox"
-                                                            label="Educators"
+                                                            label="Educator"
                                                             checked={formSettings.assigned_role.includes("educator")}
                                                             onChange={() => {
                                                                 if (formSettings.assigned_role.includes("educator")) {
