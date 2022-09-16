@@ -235,6 +235,15 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   // useEffect(() => {
   //   fetchUserList();
   // }, [selectedFranchisee]);
+
+  useEffect(() => {
+    if(formSettings?.assigned_franchisee?.length > 0) {
+      fetchFranchiseeUsers(formSettings?.assigned_franchisee);
+    } else {
+      setFetchedFranchiseeUsers([]);
+    }
+  }, [formSettings?.assigned_franchisee])
+
   useEffect(() => {
     trainingCreatedByMe()
 

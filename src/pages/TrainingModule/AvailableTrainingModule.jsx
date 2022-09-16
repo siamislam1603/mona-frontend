@@ -252,6 +252,14 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 //     }
 
   useEffect(() => {
+    if(formSettings?.assigned_franchisee?.length > 0) {
+      fetchFranchiseeUsers(formSettings?.assigned_franchisee);
+    } else {
+      setFetchedFranchiseeUsers([]);
+    }
+  }, [formSettings?.assigned_franchisee])
+
+  useEffect(() => {
     setTimeout(() => {
       setSuccessMessageToast(null);
     }, 4000)
