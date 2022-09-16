@@ -127,10 +127,8 @@ const DynamicForm = () => {
       .then((result) => {
         let res = result;
 
-
-        if(res?.success==false)
-        {
-          localStorage.setItem('form_error', res?.message)
+        if (res?.success == false) {
+          localStorage.setItem('form_error', res?.message);
           window.location.href = '/form';
         }
 
@@ -165,17 +163,31 @@ const DynamicForm = () => {
             }
           });
         });
-        if(result.form[0]?.form_permissions[0]?.signatories_role.includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")))
-        {
-          console.log("Hello----12121212---->");
+        if (result.form[0]?.form_permissions[0].signatories === true) {
+          if (
+            result.form[0]?.form_permissions[0]?.signatories_role.includes(
+              localStorage.getItem('user_role') === 'guardian'
+                ? 'parent'
+                : localStorage.getItem('user_role')
+            )
+          ) {
+            console.log('Hello----12121212---->');
+            setSignatureAccessFlag(true);
+          } else {
+            setSignatureAccessFlag(false);
+          }
+        } else {
           setSignatureAccessFlag(true);
         }
-        else
-        {
-          setSignatureAccessFlag(false);
-        }
-        console.log("formsData---->",result.form[0].form_permissions[0].signatories_role.includes(localStorage.getItem("user_role")),"-----",signatureAccessFlag);
-        
+        console.log(
+          'formsData---->',
+          result.form[0].form_permissions[0].signatories_role.includes(
+            localStorage.getItem('user_role')
+          ),
+          '-----',
+          signatureAccessFlag
+        );
+
         setForm(formsData);
         setFormData(data);
         if (result) {
@@ -196,8 +208,8 @@ const DynamicForm = () => {
       behalfOfFlag,
       signatureAccessFlag
     );
-    console.log("Behalf of is required--->",behalfOfFlag);
-    console.log("new errors--->",newErrors);
+    console.log('Behalf of is required--->', behalfOfFlag);
+    console.log('new errors--->', newErrors);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
     } else {
@@ -214,8 +226,12 @@ const DynamicForm = () => {
             localStorage.getItem('user_role') === 'guardian'
               ? behalfOfFlag
                 ? childId
-                : behalfOf ? behalfOf :  localStorage.getItem('user_id')
-              : behalfOf ? behalfOf :  localStorage.getItem('user_id'),
+                : behalfOf
+                ? behalfOf
+                : localStorage.getItem('user_id')
+              : behalfOf
+              ? behalfOf
+              : localStorage.getItem('user_id'),
           data: form,
         }),
         redirect: 'follow',
@@ -299,94 +315,104 @@ const DynamicForm = () => {
                 </Row>
                 <Form>
                   <Row className="set-layout-row">
-                    {formPermission?.target_user && !(
-                      formPermission?.target_user?.includes(
-                        localStorage.getItem('user_role') === 'guardian'
-                          ? 'parent'
-                          : localStorage.getItem('user_role')
-                      ) ||
-                      formPermission?.target_user?.includes(
-                        localStorage.getItem('user_id')
-                      )
-                    ) && (
-                      <Col sm={6}>
-                        {console.log("Hello New once",formPermission?.target_user)}
-                        {(behalfOfFlag = true)}
-                        <div className="child_info_field sex">
-                          <span className="form-label">Behalf of:</span>
-                          <div clas Name="d-flex mt-2"></div>
-                          <div className="btn-radio d-flex align-items-center">
-                            {localStorage.getItem('user_role') ===
-                            'guardian' ? (
-                              <Form.Select
-                                name={'behalf_of'}
-                                onChange={(e) => {
-                                  setBehalfOf(e.target.value);
-                                  if (e.target.value !== '') {
-                                    let errorData = { ...errors };
-                                    errorData['behalf_of'] = null;
-                                    setErrors(errorData);
-                                  }
-                                }}
-                                disabled
-                              >
-                                <option value="">Select</option>
-                                {targetUser?.map((item) => {
-                                  return (
-                                    <>
-                                      {item.id === parseInt(childId) ? (
-                                        <option value={item.id} selected>
-                                          {item.child
-                                            ? item.fullname
-                                            : item.email}
-                                        </option>
-                                      ) : (
-                                        <option value={item.id}>
-                                          {item.child
-                                            ? item.fullname
-                                            : item.email}
-                                        </option>
-                                      )}
-                                    </>
-                                  );
-                                })}
-                              </Form.Select>
-                            ) : (
-                              <Form.Select
-                                name={'behalf_of'}
-                                onChange={(e) => {
-                                  setBehalfOf(e.target.value);
-                                  if (e.target.value !== '') {
-                                    let errorData = { ...errors };
-                                    errorData['behalf_of'] = null;
-                                    setErrors(errorData);
-                                  }
-                                }}
-                              >
-                                <option value="">Select Behalf of</option>
-                                {targetUser?.map((item) => {
-                                  return (
-                                    <>
-                                      <option value={item.id}>
-                                        {item.child
-                                          ? item.fullname
-                                          : item.email}
-                                      </option>
-                                    </>
-                                  );
-                                })}
-                              </Form.Select>
-                            )}
+                    {formPermission?.target_user &&
+                      !(
+                        formPermission?.target_user?.includes(
+                          localStorage.getItem('user_role') === 'guardian'
+                            ? 'parent'
+                            : localStorage.getItem('user_role')
+                        ) ||
+                        formPermission?.target_user?.includes(
+                          localStorage.getItem('user_id')
+                        )
+                      ) && (
+                        <Col sm={6}>
+                          {console.log(
+                            'Hello New once',
+                            formPermission?.target_user
+                          )}
+                          {(behalfOfFlag = true)}
+                          <div className="child_info_field sex">
+                            <span className="form-label">Behalf of:</span>
+                            <div clas Name="d-flex mt-2"></div>
+                            <div className="btn-radio d-flex align-items-center">
+                              {localStorage.getItem('user_role') ===
+                              'guardian' ? (
+                                <Form.Select
+                                  name={'behalf_of'}
+                                  onChange={(e) => {
+                                    setBehalfOf(e.target.value);
+                                    if (e.target.value !== '') {
+                                      let errorData = { ...errors };
+                                      errorData['behalf_of'] = null;
+                                      setErrors(errorData);
+                                    }
+                                  }}
+                                  disabled
+                                >
+                                  <option value="">Select</option>
+                                  {targetUser?.map((item) => {
+                                    return (
+                                      <>
+                                        {item.id === parseInt(childId) ? (
+                                          <option value={item.id} selected>
+                                            {item.child
+                                              ? item.fullname
+                                              : item.email}
+                                          </option>
+                                        ) : (
+                                          <option value={item.id}>
+                                            {item.child
+                                              ? item.fullname
+                                              : item.email}
+                                          </option>
+                                        )}
+                                      </>
+                                    );
+                                  })}
+                                </Form.Select>
+                              ) : (
+                                <Form.Select
+                                  name={'behalf_of'}
+                                  onChange={(e) => {
+                                    setBehalfOf(e.target.value);
+                                    if (e.target.value !== '') {
+                                      let errorData = { ...errors };
+                                      errorData['behalf_of'] = null;
+                                      setErrors(errorData);
+                                    }
+                                  }}
+                                >
+                                  <option value="">Select</option>
+                                  {targetUser?.map((item) => {
+                                    return (
+                                      <>
+                                        {(parseInt(
+                                          localStorage.getItem('franchisee_id')
+                                        ) === item.franchisee_id ||
+                                          localStorage.getItem('user_role') ===
+                                            'franchisor_admin') && (
+                                          <option value={item.id}>
+                                            {item.child
+                                              ? item.fullname
+                                              : item.email}
+                                          </option>
+                                        )}
+                                      </>
+                                    );
+                                  })}
+                                </Form.Select>
+                              )}
+                            </div>
+                            <p
+                              className="error"
+                              style={{ marginTop: '-10px !important' }}
+                            >
+                              {errors.behalf_of}
+                            </p>
                           </div>
-                          <p
-                            className="error"
-                            style={{ marginTop: '-10px !important' }}
-                          >
-                            {errors.behalf_of}
-                          </p>
-                        </div>
-                      </Col>
-                    )}
+                        </Col>
+                      )}
                     {Object.keys(formData)?.map((item) => {
                       return item ? (
                         <>

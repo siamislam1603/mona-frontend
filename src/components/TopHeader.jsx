@@ -185,7 +185,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
             "search":`${searchKey}`
           }
         });
-
+        
         if (response.status === 200 && response.data.status === "success") {
       
           setSearchResult(response.data.data[0])

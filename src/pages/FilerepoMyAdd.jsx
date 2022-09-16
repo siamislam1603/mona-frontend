@@ -12,6 +12,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
+
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 const { SearchBar } = Search;
@@ -38,7 +39,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-
+    const [SearchValue, setSearchValue] = useState();
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -47,6 +48,40 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
+
+    const HandelSearch = (event) => {
+        setSearchValue(event.target.value);
+    }
+
+    const SearchApi = async () => {
+        try {
+            // let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
+            let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
+            if (franchiseeId) {
+                let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
+
+                if (response.status === 200 && response.data.status === "success") {
+                    const { files } = response.data;
+                    console.log("responce", files)
+                    let tempData = files.map((dt) => ({
+                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        createdAt: dt.createdAt,
+                        userID: dt.id,
+                        creatorName: dt.creatorName + "," + dt.creatorRole,
+                        categoryId: dt.categoryId,
+                        Shaired: dt.repository_shares.length,
+                        // Shaired: dt.repository.repository_shares[0].length,
+                        filesId: dt.filesId,
+
+                    }));
+                    setUserData(tempData);
+                }
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
@@ -177,7 +212,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
                     }));
                     setUserData(tempData);
-
                 }
             }
         } catch (err) {
@@ -199,14 +233,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             'authorization',
             'Bearer ' + localStorage.getItem('token')
         );
-
         var request = {
             headers: myHeaders,
         };
 
         let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setUser(response.data.users)
 
@@ -237,15 +270,23 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getUser();
         getChildren();
-    }, [formSettings.franchisee])
-
-    useEffect(() => {
-        fetchFranchiseeList();
-    }, [])
-
-    useEffect(() => {
         GetData()
-    }, [saveFileId])
+        fetchFranchiseeList();
+    }, [formSettings.franchisee, saveFileId, fileDeleteMessage]);
+
+    useEffect(() => {
+        if (selectedFranchisees) {
+            GetFile();
+        }
+    }, [selectedFranchisees]);
+
+    useEffect(() => {
+        SearchApi();
+    }, [SearchValue])
+
+    // useEffect(() => {
+    //     GetFile()
+    // }, [fileDeleteMessage]);
 
 
 
@@ -261,11 +302,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
             if (response.status === 200) {
                 SetfileDeleteMessage("Delete succussfully")
-                GetFile();
-                setDeleteCheck(!true)
                 setTimeout(() => {
                     SetfileDeleteMessage(null)
                 }, 3000)
+                GetFile();
             }
         } catch (err) {
             SetfileDeleteMessage("You don't have permission to delete this file !");
@@ -279,7 +319,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const isAllRolesChecked = () => {
         let bool = false;
         if (getUser_Role == "franchisor_admin") {
-            bool = formSettings.assigned_role.length === 4
+            bool = formSettings.assigned_role.length === 4 && formSettings.assigned_role.includes('franchisee_admin')
         }
         else if (getUser_Role == "franchisee_admin") {
             bool = formSettings.assigned_role.length === 3
@@ -405,7 +445,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             text: 'Shared',
             sort: true,
             formatter: (cell) => {
-              
+
                 return (
                     <>
                         <div className="user-list">
@@ -505,7 +545,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         <div className="othpanel">
                                                             <div className="extra-btn">
                                                                 <div className="data-search me-3">
-                                                                    <SearchBar {...props.searchProps} />
+                                                                    <label for="search-bar" className="search-label">
+                                                                        <input
+                                                                            id="search-bar"
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            placeholder="Search"
+                                                                            value={SearchValue}
+                                                                            onChange={HandelSearch} />
+                                                                    </label>
+
                                                                 </div>
                                                                 <FilerepoUploadFile />
                                                             </div>

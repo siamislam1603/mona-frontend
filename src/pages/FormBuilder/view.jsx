@@ -48,6 +48,7 @@ function ViewFormBuilder(props) {
       ? 'created-by-others'
       : 'created-by-me'
   );
+
   const token = localStorage.getItem('token');
   const location = useLocation();
   let no_record = false;
@@ -62,6 +63,46 @@ function ViewFormBuilder(props) {
     getFormData(localStorage.getItem('franchisee_id'));
   }, []);
 
+  const dateCheck = (start_date, start_time, end_date, end_time, form_name) => {
+    let todayDate = new Date();
+    todayDate = new Date(todayDate).toLocaleString('en-ZA', {
+      timeZone: 'Australia/Perth',
+    });
+    todayDate = new Date(todayDate);
+    if (start_date) {
+      let dataAndTime = start_date + ' ' + start_time;
+      let startDate = new Date(dataAndTime);
+      // startDate = new Date(startDate).toLocaleString('en-ZA', {
+      //   timeZone: 'Australia/Perth',
+      // });
+      startDate = new Date(startDate);
+      console.log("todayDate--->",todayDate.getTime());
+      console.log("startDate--->",startDate.getTime());
+      if (todayDate.getTime() < startDate.getTime()) {
+        toast.error(
+          "You can't open this form because this form start date is " +
+            moment(start_date).format('DD/MM/YYYY') + " "+ start_time +
+            '.'
+        );
+      } else {
+        if (end_date) {
+          let dataAndTime = end_date + ' ' + end_time;
+          let endDate = new Date(dataAndTime);
+          // endDate = new Date(endDate).toLocaleString('en-ZA', {
+          //   timeZone: 'Australia/Perth',
+          // });
+          endDate = new Date(endDate);
+          if (todayDate.getTime() > endDate.getTime()) {
+            toast.error(
+              'Your form was expired on ' +
+                moment(end_date).format('DD/MM/YYYY') + " " + end_time +
+                '.'
+            );
+          } else navigate(`/form/dynamic/${form_name}`);
+        } else navigate(`/form/dynamic/${form_name}`);
+      }
+    } else navigate(`/form/dynamic/${form_name}`);
+  };
   const getAllForm = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -115,7 +156,9 @@ function ViewFormBuilder(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-    localStorage.getItem("user_role")==="guardian" ? franchisee_id="all" : franchisee_id=franchisee_id;
+    localStorage.getItem('user_role') === 'guardian'
+      ? (franchisee_id = 'all')
+      : (franchisee_id = franchisee_id);
     fetch(
       `${BASE_URL}/form?search=${search}&id=${localStorage.getItem(
         'user_id'
@@ -135,7 +178,8 @@ function ViewFormBuilder(props) {
           me.forms = [];
           others.forms = [];
 
-          item?.forms?.map((inner_item) => {
+          item?.forms?.map((inner_item,inner_index) => {
+            console.log("inner_item.form_data---->after,",inner_item.form_data);
             if (
               inner_item.created_by ===
               parseInt(localStorage.getItem('user_id'))
@@ -357,48 +401,13 @@ function ViewFormBuilder(props) {
                                             <Col
                                               lg={4}
                                               onClick={() => {
-                                                if (inner_item.end_date) {
-                                                  let todayDate = new Date();
-                                                  todayDate = new Date(
-                                                    todayDate
-                                                  ).toLocaleString('en-ZA', {
-                                                    timeZone: 'Australia/Perth',
-                                                  });
-                                                  todayDate = new Date(
-                                                    todayDate
-                                                  );
-                                                  let dataAndTime =
-                                                    inner_item.end_date +
-                                                    ' ' +
-                                                    inner_item.end_time;
-                                                  let endDate = new Date(
-                                                    dataAndTime
-                                                  );
-                                                  endDate = new Date(
-                                                    endDate
-                                                  ).toLocaleString('en-ZA', {
-                                                    timeZone: 'Australia/Perth',
-                                                  });
-                                                  endDate = new Date(endDate);
-                                                  if (
-                                                    todayDate.getTime() >
-                                                    endDate.getTime()
-                                                  ) {
-                                                    toast.error(
-                                                      'Your form was expired on ' +
-                                                        moment(
-                                                          inner_item.end_date
-                                                        ).format('DD/MM/YYYY') +
-                                                        '.'
-                                                    );
-                                                  } else
-                                                    navigate(
-                                                      `/form/dynamic/${inner_item.form_name}`
-                                                    );
-                                                } else
-                                                  navigate(
-                                                    `/form/dynamic/${inner_item.form_name}`
-                                                  );
+                                                dateCheck(
+                                                  inner_item.start_date,
+                                                  inner_item.start_time,
+                                                  inner_item.end_date,
+                                                  inner_item.end_time,
+                                                  inner_item.form_name
+                                                );
                                               }}
                                             >
                                               <div className="forms-content create-other">
@@ -499,15 +508,21 @@ function ViewFormBuilder(props) {
                                                 </Col>
                                               </>
                                             )}
-                                            <Col lg={4}>
+                                            <Col
+                                              lg={4}
+                                              onClick={() => {
+                                                dateCheck(
+                                                  inner_item.start_date,
+                                                  inner_item.start_time,
+                                                  inner_item.end_date,
+                                                  inner_item.end_time,
+                                                  inner_item.form_name
+                                                );
+                                              }}
+                                            >
                                               <div className="forms-content create-other">
                                                 <div
                                                   className="content-icon-section"
-                                                  onClick={() => {
-                                                    navigate(
-                                                      `/form/dynamic/${inner_item.form_name}`
-                                                    );
-                                                  }}
                                                 >
                                                   <img
                                                     src={
@@ -538,11 +553,6 @@ function ViewFormBuilder(props) {
                                                 </div>
                                                 <div
                                                   className="content-title-section"
-                                                  onClick={() => {
-                                                    navigate(
-                                                      `/form/dynamic/${inner_item.form_name}`
-                                                    );
-                                                  }}
                                                 >
                                                   <h6>
                                                     {inner_item.form_name}
@@ -972,12 +982,15 @@ function ViewFormBuilder(props) {
                                                               formId && (
                                                               <Dropdown.Item
                                                                 onClick={() => {
-                                                                  if (window.confirm('Are you sure you want to delete the form?')) {
+                                                                  if (
+                                                                    window.confirm(
+                                                                      'Are you sure you want to delete the form?'
+                                                                    )
+                                                                  ) {
                                                                     deleteForm(
                                                                       inner_item.id
                                                                     );
                                                                   }
-                                                                  
                                                                 }}
                                                               >
                                                                 <FontAwesomeIcon
@@ -1010,7 +1023,6 @@ function ViewFormBuilder(props) {
                               title="Created by others"
                             >
                               <div className="forms-content-section">
-                                
                                 {OthersFormData?.map((item, index) => {
                                   {
                                     item['title_flag'] = false;
@@ -1020,15 +1032,19 @@ function ViewFormBuilder(props) {
                                       <Row>
                                         {item?.forms?.map(
                                           (inner_item, inner_index) => {
-                                            
-                                            {console.log("inner_item------232132133>>>>",inner_item)}
+                                            {
+                                              console.log(
+                                                'inner_item------232132133>>>>',
+                                                inner_item
+                                              );
+                                            }
                                             return (
                                               inner_item.created_by !==
                                                 parseInt(
                                                   localStorage.getItem(
                                                     'user_id'
                                                   )
-                                                ) && 
+                                                ) &&
                                               ((
                                                 inner_item?.form_permissions[0]
                                                   ?.response_visibility || []
@@ -1218,7 +1234,11 @@ function ViewFormBuilder(props) {
                                                                   formId && (
                                                                   <Dropdown.Item
                                                                     onClick={() => {
-                                                                      if (window.confirm('Are you sure you want to delete the form?')) {
+                                                                      if (
+                                                                        window.confirm(
+                                                                          'Are you sure you want to delete the form?'
+                                                                        )
+                                                                      ) {
                                                                         deleteForm(
                                                                           inner_item.id
                                                                         );
@@ -1478,45 +1498,44 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
-                                  if(OthersFormData[Index]?.forms[innerIndex].form_permissions[0]?.signatories_role || []
-                                  .includes(
-                                    localStorage.getItem(
-                                      'user_id'
+                                  if (
+                                    OthersFormData[Index]?.forms[innerIndex]
+                                      .form_permissions[0]?.signatories_role ||
+                                    [].includes(
+                                      localStorage.getItem('user_id')
+                                    ) ||
+                                    OthersFormData[Index]?.forms[innerIndex]
+                                      .form_permissions[0]?.signatories_role ||
+                                    [].includes(
+                                      localStorage.getItem('user_role') ===
+                                        'guardian'
+                                        ? 'parent'
+                                        : localStorage.getItem('user_role')
                                     )
-                                  ) ||
-                                  OthersFormData[Index]?.forms[innerIndex].form_permissions[0]?.signatories_role || []
-                                  .includes(
-                                    localStorage.getItem(
-                                      'user_role'
-                                    ) === 'guardian'
-                                      ? 'parent'
-                                      : localStorage.getItem(
-                                          'user_role'
-                                        )
-                                  ))
-                                  {
+                                  ) {
                                     navigate('/form/response', {
                                       state: {
                                         id: OthersFormData[Index]?.forms[
                                           innerIndex
                                         ]?.id,
                                         form_name:
-                                          OthersFormData[Index]?.forms[innerIndex]
-                                            ?.form_name,
-                                        signature_access: true
+                                          OthersFormData[Index]?.forms[
+                                            innerIndex
+                                          ]?.form_name,
+                                        signature_access: true,
                                       },
                                     });
-                                  }
-                                  else{
+                                  } else {
                                     navigate('/form/response', {
                                       state: {
                                         id: OthersFormData[Index]?.forms[
                                           innerIndex
                                         ]?.id,
                                         form_name:
-                                          OthersFormData[Index]?.forms[innerIndex]
-                                            ?.form_name,
-                                        signature_access: false
+                                          OthersFormData[Index]?.forms[
+                                            innerIndex
+                                          ]?.form_name,
+                                        signature_access: false,
                                       },
                                     });
                                   }
