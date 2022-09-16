@@ -475,6 +475,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .rtag{position:absolute;top:43px;right:30px;z-index:2;opacity:.7}
 .uploadfile{border:1px solid var(--gray);border-radius:5px;padding:8px 10px;font-weight:600}
 .showfiles ul{margin:0;padding:0;list-style:none}
+.showfiles li { overflow-wrap: break-word; word-break: break-word; }
 .complete-training{border-radius:16px;background-color:#e5c8cd;padding:2rem}
 .thumb-vid{border-radius:16px;overflow:hidden;position:relative}
 .thumb-vid img{width:100%}
