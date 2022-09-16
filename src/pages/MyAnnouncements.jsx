@@ -269,7 +269,7 @@ useEffect(() =>{
                       {detail.fileType == ".mp4"||detail.fileType === ".mkv" && !detail.is_deleted  ? (
                                  <AnnouncementVideo 
                                       data={detail}
-                                      title={`Training Video ${index + 1}`}
+                                      title={`Annoucnement Video ${index + 1}`}
                                                 // duration={trainingDetails.completion_time} 
                                         fun={handleClose}/>
                                    ):(
