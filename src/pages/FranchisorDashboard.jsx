@@ -16,8 +16,6 @@ const FranchisorDashboard = () => {
   const navigate = useNavigate();
   const [count, setcount] = React.useState();
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-
-  console.log(selectedFranchisee, "selectedFranchisee")
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
   const [forms_count, setForms_count] = React.useState([])
   const [formData, setFormData] = useState([])
@@ -87,7 +85,8 @@ const FranchisorDashboard = () => {
 
   const announcement = () => {
     let token = localStorage.getItem('token');
-    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement`;
+    const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
+    const countUrl = `${BASE_URL}/dashboard/franchisor/latest-announcement/${selectedFranchise}`;
 
     axios.get(countUrl, {
       headers: {
