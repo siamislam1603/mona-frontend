@@ -30,8 +30,7 @@ const columns = [
       // cell = cell.split(",");
       return (<>
         <div className="user-list">
-          {/* <span className="user-pic"><img src={cell} alt='' /></span> */}
-          <span className="user-name">{cell === "false" ? "No" : "Yes"} </span>
+          <span className="user-name">{cell === "0" ? "No" : "Yes"} </span>
         </div>
       </>)
     },
