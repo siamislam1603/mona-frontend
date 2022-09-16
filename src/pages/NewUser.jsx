@@ -9,7 +9,7 @@ import DragDropMultiple from '../components/DragDropMultiple';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from '../components/App';
-import { suburbData } from '../assets/data/suburbData';
+// import { suburbData } from '../assets/data/suburbData';
 import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -56,7 +56,7 @@ const NewUser = () => {
   const [countryData, setCountryData] = useState([]);
   const [stateData, setStateData] = useState([]);
   const [userRoleData, setUserRoleData] = useState([]);
-  const [cityData, setCityData] = useState(suburbData);
+  const [cityData, setCityData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [franchiseeData, setFranchiseeData] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
@@ -394,8 +394,8 @@ const NewUser = () => {
   };
 
   // FETCHING SUBURB DATA
-  const fetchSuburbData = () => {
-    const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+  const fetchSuburbData = (state) => {
+    const suburbAPI = `${BASE_URL}/api/suburbs/data/${state}`;
     const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
     axios.all([getSuburbList]).then(
       axios.spread((...data) => {
@@ -532,8 +532,9 @@ const NewUser = () => {
   }, []);
 
   useEffect(() => {
-    fetchSuburbData();
-  }, [suburbSearchString])
+    console.log('STATE:', formData.state);
+    fetchSuburbData(formData.state);
+  }, [formData.state])
 
   useEffect(() => {
     fetchCoordinatorData(formData.franchisee)
