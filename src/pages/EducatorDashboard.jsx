@@ -10,28 +10,7 @@ import { BASE_URL } from "../components/App";
 import "react-sweet-progress/lib/style.css";
 import moment from 'moment';
 
-const products = [
-  {
-    id: 1,
-    name: "../img/user.png, Jones Smith",
-    specialneed: "Yes",
-  },
-  {
-    id: 2,
-    name: "../img/user.png, James Smith",
-    specialneed: "Yes",
-  },
-  {
-    id: 3,
-    name: "../img/user.png, Andraw Smith",
-    specialneed: "No",
-  },
-  {
-    id: 4,
-    name: "../img/user.png, Helan Smith",
-    specialneed: "Yes",
-  },
-];
+
 const columns = [
   {
     dataField: 'name',
@@ -117,11 +96,13 @@ const EducatorDashboard = () => {
         "Authorization": "Bearer " + token
       }
     });
+
     if (response.status === 200) {
       let data = response.data.childrenWithSpecialNeeds;
+      console.log(data, "responseresponseresponse")
       let tempData = data.map((dt) => ({
-        name: `${dt.fullname}`,
-        specialneed: `${dt.child_medical_information.has_special_needs}`
+        name: `${dt?.fullname}`,
+        specialneed: `${dt?.has_special_needs}`
 
       }))
       console.log("THE TEM", tempData)
@@ -199,10 +180,10 @@ const EducatorDashboard = () => {
 
     }
 
-   // Redirect to baseurl when not not specific Role
-   if (localStorage.getItem('user_role')!=='educator') {
-    window.location.href = '/';
-  }
+    // Redirect to baseurl when not not specific Role
+    if (localStorage.getItem('user_role') !== 'educator') {
+      window.location.href = '/';
+    }
 
 
   }, []);
