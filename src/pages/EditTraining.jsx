@@ -42,6 +42,18 @@ const timeqty = [
   },
 ];
 
+function getTimeUnit(unit) {
+  let obj = {
+    "Hour(s)": "Hours",
+    "Minute(s)": "Minutes",
+    "Day(s)": "Days",
+    "Week(s)": "Weeks",
+    "Month(s)": "Months"
+  }
+
+  return obj[unit];
+}
+
 // HELPER FUNCTIONS
 /* FETCHES RELATED FILE NAME*/
 function fetchRealatedFileName(fileURLString) {
@@ -186,7 +198,7 @@ const EditTraining = () => {
       description: training?.description,
       category_id: training?.category_id,
       meta_description: training?.meta_description,
-      time_unit: training?.completion_time?.split(" ")[1],
+      time_unit: getTimeUnit(training?.completion_time?.split(" ")[1]),
       time_required_to_complete: training?.completion_time?.split(" ")[0],
       training_form_id: training?.training_form_id,
       addedBy: training?.addedBy

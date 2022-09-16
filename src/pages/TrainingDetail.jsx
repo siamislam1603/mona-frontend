@@ -3,12 +3,20 @@ import { Container, Col, Row, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
-import { BASE_URL, FRONT_BASE_URL } from "../components/App";
+import { BASE_URL } from "../components/App";
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import { Modal } from "react-bootstrap";
 
+const getRoleName = (role) => {
+  const obj = {
+    "franchisor_admin": "franchisor admin",
+    "franchisee_admin": "franchisee admin"
+  }
+
+  return obj[role];
+}
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
@@ -299,12 +307,14 @@ const TrainingDetail = () => {
                               ?
                                 (
                                   <p style={{ marginBottom: 0 }}>
-                                    `This training was created by you on ${moment(trainingDetails.createdAt).format('DD/MM/YYYY')}.`
+                                    This training was created by you on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}.
                                   </p>
                                 )
                               :
                               (
-                                <>
+                                (localStorage.getItem('user_role') === 'franchisor_admin') && localStorage.getItem('user_id') !== parseInt(trainingDetails?.addedBy)
+                                ? <>This training was created by a {getRoleName(trainingDetails?.user_data.role)} on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}</>
+                                :<>
                                   {hideTrainingFinishButton === true
                                     ? <p> You've finished this training on {moment(trainingFinishedDate).format(
                                       'MMMM Do, YYYY'
