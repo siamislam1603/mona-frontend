@@ -309,9 +309,11 @@ const NewUser = () => {
 
   }
 
-  const checkIfEmailIsValid = (email) => {
+  const checkIfEmailIsValid = (event, email) => {
+    console.log('INSIDE EMAIL VALIDATION FUNCTION');
+    console.log('VALUE OF EMAIL:', email);
     let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-    
+    handleSubmit(event);
     if(!regex.test(email)) {
       console.log('Email is invalid!');
       setFormErrors(prevState => ({
@@ -335,7 +337,7 @@ const NewUser = () => {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
         id: coordinator.id,
-        value: coordinator.fullname,
+        value: coordinator.fullname.split(" ").join("_"),
         label: coordinator.fullname
       })));
     }
@@ -611,7 +613,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                checkIfEmailIsValid(e.target.value);
+                                checkIfEmailIsValid(e, e.target.value);
                                 checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
@@ -675,7 +677,7 @@ const NewUser = () => {
 
                                 setFormErrors(prevState => ({
                                   ...prevState,
-                                  city: null
+                                  state: null
                                 }));
                               }}
                             />
@@ -925,8 +927,9 @@ const NewUser = () => {
                               <Select
                                 isDisabled={formData.role !== 'educator'}
                                 ref={coordinator}
-                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select?" : "Not Applicable"}
                                 closeMenuOnSelect={true}
+                                // placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select" : "Not Applicable"}
+                                placeholder={"Select"}
                                 options={coordinatorData}
                                 onChange={(e) => {
                                   setFormData((prevState) => ({
