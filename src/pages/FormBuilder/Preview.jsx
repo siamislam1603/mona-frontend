@@ -118,6 +118,7 @@ const Preview = (props) => {
                       return (
                         <InputFields
                           {...item}
+                          signature_flag={true}
                           error={errors}
                           onChange={setField}
                         />

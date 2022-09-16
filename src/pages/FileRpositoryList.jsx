@@ -15,23 +15,14 @@ import { FullLoader } from "../components/Loader";
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem('franchisee_id')
 
-const { SearchBar } = Search;
-
-const selectRow = {
-    mode: 'checkbox',
-    clickToSelect: true,
-};
-
 const FileRpositoryList = () => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const [category, setCategory] = useState([]);
     const [userData, setUserData] = useState([]);
-
     const [user, setUser] = useState([]);
     const [Count, setCount] = useState([]);
-
     const [franchiseeList, setFranchiseeList] = useState();
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [formSettings, setFormSettings] = useState({
@@ -42,6 +33,13 @@ const FileRpositoryList = () => {
 
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
     const [child, setChild] = useState([]);
+    const [SearchValue, setSearchValue] = useState();
+
+
+    const HandelSearch = (event) => {
+        setSearchValue(event.target.value);
+
+    }
 
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
@@ -100,7 +98,50 @@ const FileRpositoryList = () => {
             setfullLoaderStatus(false)
         }
     }
+    const GetSearchFile = async () => {
+        var myHeaders = new Headers();
+        myHeaders.append(
+            'authorization',
+            'Bearer ' + localStorage.getItem('token')
+        );
+        var requestOptions = {
+            method: 'GET',
+            redirect: 'follow',
+            headers: myHeaders,
+        };
+        try {
+            let data = selectedFranchisee === "null" ? "all" : selectedFranchisee;
+            let user_Role = localStorage.getItem('user_role');
+            if (SearchValue === "undefined") {
+                console.log("No SearchValue")
+            }
+            else {
+                let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]&search=${SearchValue}` :
+                    `${BASE_URL}/fileRepo/files-by-category/${Params.id}?search=${SearchValue}`
+                if (URL) {
+                    let response = await fetch(URL, requestOptions)
+                    response = await response.json();
+                    setCount(response.result.count)
+                    if (response) {
+                        const users = response.result.files;
+                        let tempData = users.map((dt) => ({
+                            name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
+                            createdAt: dt.createdAt,
+                            userID: dt.id,
+                            creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
+                            Shaired: dt.repository.repository_files[0].length,
+                        }));
+                        setUserData(tempData);
+                    }
+                }
+            }
+        } catch (e) {
 
+        }
+    }
+    useEffect(() => {
+        GetSearchFile();
+    }, [SearchValue])
     const getFileCategory = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -170,10 +211,11 @@ const FileRpositoryList = () => {
         fetchFranchiseeList();
     }, [selectedFranchisee])
 
+    
     useEffect(() => {
         getUser();
         getChildren()
-    }, [formSettings.franchisee])
+    }, [formSettings.franchisee,])
 
     useEffect(() => {
         let role = localStorage.getItem('user_role')
@@ -378,7 +420,16 @@ const FileRpositoryList = () => {
                                                         <div className="othpanel">
                                                             <div className="extra-btn">
                                                                 <div className="data-search me-3">
-                                                                    <SearchBar {...props.searchProps} />
+                                                                    <label for="search-bar" className="search-label">
+                                                                        <input
+                                                                            id="search-bar"
+                                                                            type="text"
+                                                                            className="form-control"
+                                                                            placeholder="Search"
+                                                                            value={SearchValue}
+                                                                            onChange={HandelSearch} />
+                                                                    </label>
+                                                                    {/* <SearchBar {...props.searchProps} /> */}
                                                                 </div>
                                                                 <FilerepoUploadFile />
                                                             </div>
