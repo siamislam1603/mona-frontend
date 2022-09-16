@@ -381,21 +381,21 @@ const UserManagement = () => {
     let filteredData = null;
 
     if (role === 'franchisor_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+      filteredData = data.filter(d => d);
     }
 
     if (role === 'franchisee_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin')
-      filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
+      filteredData = data.filter(d => d)
 
     }
 
     if (role === 'coordinator') {
-      filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
+      filteredData = data.filter(d => d.role !== "franchisor_admin");
     }
 
     if (role === 'educator') {
-      filteredData = data.filter(d => d.role === 'guardian');
+      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+      filteredData = data.filter(d => d.role !== 'franchisee_admin');
     }
 
     setUserData(filteredData);
@@ -476,22 +476,22 @@ const UserManagement = () => {
     let newRoleList = userRoleData;
 
     if (currentRole === "educator") {
-      newRoleList = newRoleList.filter(role => role.id === 4);
-      setDisplayRoles(newRoleList);
-    }
-
-    if (currentRole === "coordinator") {
-      newRoleList = newRoleList.filter(role => role.id > 3);
-      setDisplayRoles(newRoleList);
-    }
-
-    if (currentRole === "franchisee_admin") {
       newRoleList = newRoleList.filter(role => role.id > 2);
       setDisplayRoles(newRoleList);
     }
 
-    if (currentRole === 'franchisor_admin') {
+    if (currentRole === "coordinator") {
       newRoleList = newRoleList.filter(role => role.id > 1);
+      setDisplayRoles(newRoleList);
+    }
+
+    if (currentRole === "franchisee_admin") {
+      newRoleList = newRoleList.filter(role => role);
+      setDisplayRoles(newRoleList);
+    }
+
+    if (currentRole === 'franchisor_admin') {
+      newRoleList = newRoleList.filter(role => role);
       setDisplayRoles(newRoleList);
     }
 

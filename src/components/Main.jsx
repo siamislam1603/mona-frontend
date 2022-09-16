@@ -2,13 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Protected from '../components/Protected';
 import ChildEnrollment from '../pages/ChildEnrollment';
-// import ChildEnrollment1 from '../pages/ChildEnrollment/ChildEnrollment1';
-// import ChildEnrollment2 from '../pages/ChildEnrollment/ChildEnrollment2';
-// import ChildEnrollment3 from '../pages/ChildEnrollment/ChildEnrollment3';
-// import ChildEnrollment4 from '../pages/ChildEnrollment/ChildEnrollment4';
-// import ChildEnrollment5 from '../pages/ChildEnrollment/ChildEnrollment5';
-// import ChildEnrollment6 from '../pages/ChildEnrollment/ChildEnrollment7';
-// import ChildEnrollment7 from '../pages/ChildEnrollment/ChildEnrollment8';
 import SignIn from '../pages/SignIn';
 import ForgotPassword from '../pages/ForgotPassword';
 import UserManagement from '../pages/UserManagement';
@@ -47,6 +40,7 @@ import MyAnnouncements from '../pages/MyAnnouncements';
 import EditAnnouncement from '../pages/EditAnnouncement';
 import ChangePassword from "../pages/ChangePassword"
 import EditUser from '../pages/EditUser';
+import ViewUser from '../pages/ViewUser';
 import EditFranchisees from '../pages/EditFranchisees';
 import ResetPassword from "../pages/ResetPassword"
 import FormSetting from '../pages/FormBuilder/formSetting';
@@ -287,6 +281,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn} controller="user_management" action="edit">
               <SignIn />
               <EditUser />
+            </Protected>
+          }
+        />
+
+        <Route
+          path="/view-user/:userId"
+          element={
+            <Protected isLoggedIn={isLoggedIn} controller="user_management" action="edit">
+              <SignIn />
+              <ViewUser />
             </Protected>
           }
         />

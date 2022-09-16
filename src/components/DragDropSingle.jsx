@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const temp = () => {};
 
-export default function   DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="", setFormErrors=temp }) {
+export default function   DragDropSingle({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto="", setFormErrors=temp, disable="false" }) {
   
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -18,6 +18,7 @@ export default function   DragDropSingle({ onSave, setPopupVisible, croppedImage
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
+    disabled: disable === "true" ? true : false,
     maxFiles: 1,
     multiple: false,
     accept: {

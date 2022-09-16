@@ -288,7 +288,7 @@ const Children = () => {
         },
         {
             dataField: 'Parents',
-            text: 'Parents',
+            text: 'Co-parent',
             formatter: (cell) => {
                 // console.log(cell,"celll")
                 return (
