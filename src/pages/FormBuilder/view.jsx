@@ -72,30 +72,30 @@ function ViewFormBuilder(props) {
     if (start_date) {
       let dataAndTime = start_date + ' ' + start_time;
       let startDate = new Date(dataAndTime);
-      startDate = new Date(startDate).toLocaleString('en-ZA', {
-        timeZone: 'Australia/Perth',
-      });
+      // startDate = new Date(startDate).toLocaleString('en-ZA', {
+      //   timeZone: 'Australia/Perth',
+      // });
       startDate = new Date(startDate);
       console.log("todayDate--->",todayDate.getTime());
       console.log("startDate--->",startDate.getTime());
       if (todayDate.getTime() < startDate.getTime()) {
         toast.error(
-          "You can't open this form because this form start date is" +
-            moment(start_date).format('DD/MM/YYYY') +
+          "You can't open this form because this form start date is " +
+            moment(start_date).format('DD/MM/YYYY') + " "+ start_time +
             '.'
         );
       } else {
         if (end_date) {
           let dataAndTime = end_date + ' ' + end_time;
           let endDate = new Date(dataAndTime);
-          endDate = new Date(endDate).toLocaleString('en-ZA', {
-            timeZone: 'Australia/Perth',
-          });
+          // endDate = new Date(endDate).toLocaleString('en-ZA', {
+          //   timeZone: 'Australia/Perth',
+          // });
           endDate = new Date(endDate);
           if (todayDate.getTime() > endDate.getTime()) {
             toast.error(
               'Your form was expired on ' +
-                moment(end_date).format('DD/MM/YYYY') +
+                moment(end_date).format('DD/MM/YYYY') + " " + end_time +
                 '.'
             );
           } else navigate(`/form/dynamic/${form_name}`);
@@ -178,7 +178,8 @@ function ViewFormBuilder(props) {
           me.forms = [];
           others.forms = [];
 
-          item?.forms?.map((inner_item) => {
+          item?.forms?.map((inner_item,inner_index) => {
+            console.log("inner_item.form_data---->after,",inner_item.form_data);
             if (
               inner_item.created_by ===
               parseInt(localStorage.getItem('user_id'))
