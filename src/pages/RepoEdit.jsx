@@ -212,7 +212,7 @@ const RepoEdit = () => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = data.franchise
+        let franchiseeArr = data.franchise[0] == 'all' ? "all" : data.franchise
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
@@ -764,7 +764,7 @@ const RepoEdit = () => {
                                                                             <Form.Label>Select User</Form.Label>
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
-                                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                                    // disable={sendToAllFranchisee === 'all'}
                                                                                     displayValue="email"
                                                                                     className="multiselect-box default-arrow-select"
                                                                                     selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
@@ -785,7 +785,7 @@ const RepoEdit = () => {
                                                                             <Form.Label>Select Child</Form.Label>
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
-                                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                                    // disable={sendToAllFranchisee === 'all'}
                                                                                     placeholder={"Select"}
                                                                                     displayValue="name"
                                                                                     className="multiselect-box default-arrow-select"
