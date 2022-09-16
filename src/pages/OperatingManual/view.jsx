@@ -60,6 +60,7 @@ const OperatingManual = () => {
   );
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
+  const loginuser = localStorage.getItem('user_role')
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
@@ -638,7 +639,7 @@ const OperatingManual = () => {
                                               inner_item[
                                                 'allow_access_to_edit'
                                               ] === true &&
-                                              count === 1 && (
+                                              count === 1 &&  loginuser ==="franchisor_admin" && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -646,6 +647,9 @@ const OperatingManual = () => {
                                                         true
                                                       );
                                                       setCategoryData(item);
+                                                      
+                                                      // edit:{true}
+
                                                     }}
                                                     active
                                                   >
@@ -737,7 +741,7 @@ const OperatingManual = () => {
                                               inner_item[
                                                 'allow_access_to_edit'
                                               ] === true &&
-                                              count === 1 && (
+                                              count === 1 &&  loginuser ==="franchisor_admin" && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -853,11 +857,12 @@ const OperatingManual = () => {
                                         category_name:
                                           operatingManualdata[Index]
                                             ?.category_name,
+                                        edit:true    
                                       },
                                     });
                                   }}
                                 >
-                                  <FontAwesomeIcon icon={faPen} /> Edit
+                                  <FontAwesomeIcon icon={faPen} /> Edit 
                                 </Dropdown.Item>
                                 <Dropdown.Item
                                   href=""

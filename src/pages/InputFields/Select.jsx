@@ -7,7 +7,7 @@ const Select = (props) => {
       <span className="form-label">{controls.field_label}</span>
       <div className="d-flex mt-2"></div>
       <div className="btn-radio d-flex align-items-center">
-        <Form.Select
+        <Form.Select className="form-input-section"
           name={controls.field_name}
           onChange={(e) => {
             props.onChange(e.target.name, e.target.value,"select");
