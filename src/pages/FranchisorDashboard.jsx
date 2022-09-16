@@ -59,14 +59,6 @@ const FranchisorDashboard = () => {
     }
   ];
 
-
-
-
-
-
-
-
-
   const Forms_count = () => {
     let token = localStorage.getItem('token');
     const selectedFranchise = selectedFranchisee === "all" ? "All" : selectedFranchisee;
