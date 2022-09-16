@@ -28,7 +28,6 @@ const FranchisorDashboard = () => {
       dataField: 'formname',
       text: 'Form Name',
       formatter: (cell) => {
-        console.log("frnahisro cell", cell)
         return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell).format('DD/MM/YYYY')}</small></span></div></>)
       },
     },
@@ -36,7 +35,6 @@ const FranchisorDashboard = () => {
       dataField: 'educatorname',
       text: 'Educator Name',
       formatter: (cell) => {
-        console.log("EDUCATIN CELL", cell)
         cell = cell.split(",");
         return (<><div className="user-list"><span className="user-pic"><img src={cell[0] === "null" ? "../img/upload.jpg" : cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
       },
@@ -86,11 +84,8 @@ const FranchisorDashboard = () => {
       }
     }).then((response) => {
       setlatest_announcement(response.data.recentAnnouncement);
-      console.log(response.data)
     }).catch((e) => {
       setlatest_announcement([])
-      console.log("Error", e);
-
     })
   }
 
@@ -105,7 +100,6 @@ const FranchisorDashboard = () => {
       }
     }).then((response) => {
       setcount(response.data);
-      console.log(count)
     }).catch((e) => {
       console.log(e);
     })
@@ -119,9 +113,7 @@ const FranchisorDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-    //  const date1 = new Date(datae);
-    //  const date2 = new Date(str);
-    // console.log("THE Date1", Added, datae)
+   
     if (datae === Added) {
       return "Added today"
     }
@@ -142,14 +134,12 @@ const FranchisorDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-    console.log("FORM Data", response)
     if (response.status == 200) {
       let data = response.data.data.formData;
       let tempData = data.map((dt) => ({
         formname: `${dt.audited_on}`,
         educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
-        // console.log("THe dt",)
-
+       
       }))
       setFormData(tempData);
     }

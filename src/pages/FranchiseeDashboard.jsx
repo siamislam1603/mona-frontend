@@ -99,9 +99,6 @@ const columns1 = [
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      console.log(cell, "cell")
-      console.log(cell[2], "cell2")
-
       return (<>
         {
           cell[0] != "undefined" &&
@@ -163,7 +160,6 @@ const FranchiseeDashboard = () => {
     }).then((response) => {
       setlatest_announcement(response?.data?.recentAnnouncement);
     }).catch((e) => {
-      console.log("Error", e);
       setlatest_announcement([])
     })
   }
@@ -177,7 +173,7 @@ const FranchiseeDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-    console.log("FORM Data", response)
+  
     if (response.status === 200) {
       let data = response.data.childrenEnrolled;
 
@@ -200,18 +196,16 @@ const FranchiseeDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-    console.log("tempData>>>>>>>>>>>>>", response)
     if (response.status === 200 || "pass") {
 
       let data = response.data.newEnrollments;
-      console.log(data, "FORM+++++++")
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
           educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
         }
       ))
-      console.log(tempData, "FORM+++++++FORM")
+     
       setEnrollments(tempData);
     }
   }
@@ -298,7 +292,6 @@ const FranchiseeDashboard = () => {
 
   }, []);
 
-  console.log("count", countUser)
 
   return (
     <>

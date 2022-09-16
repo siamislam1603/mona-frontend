@@ -80,9 +80,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
-    useEffect(() => {
-        SearchApi();
-    }, [SearchValue])
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
@@ -219,11 +216,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
 
 
-    useEffect(() => {
-        if (selectedFranchisees) {
-            GetFile();
-        }
-    }, [selectedFranchisees]);
 
     const getUser = async () => {
         var myHeaders = new Headers();
@@ -268,23 +260,25 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getUser();
         getChildren();
-    }, [formSettings.franchisee])
-
-    useEffect(() => {
-        fetchFranchiseeList();
-    }, [])
-
-
-    useEffect(() => {
         GetData()
-    }, [saveFileId])
-
+        fetchFranchiseeList();
+    }, [formSettings.franchisee, saveFileId, fileDeleteMessage]);
 
     useEffect(() => {
-        GetFile()
-    }, [fileDeleteMessage]);
+        if (selectedFranchisees) {
+            GetFile();
+        }
+    }, [selectedFranchisees]);
 
-    
+    useEffect(() => {
+        SearchApi();
+    }, [SearchValue])
+
+    // useEffect(() => {
+    //     GetFile()
+    // }, [fileDeleteMessage]);
+
+
     const handleTrainingDelete = async (cell) => {
         const token = localStorage.getItem('token');
         try {
