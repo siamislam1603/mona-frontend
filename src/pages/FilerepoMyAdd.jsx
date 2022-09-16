@@ -22,7 +22,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
 
+
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [deleteCheck,setDeleteCheck] = useState(false)
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
@@ -153,12 +155,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const GetFile = async () => {
         try {
+            console.log("GET FILE FUNCTION CALING")
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response) {
                     setfullLoaderStatus(false)
                 }
+                console.log("DELETE RESPONSE",response)
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -187,7 +191,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         if (selectedFranchisees) {
             GetFile();
         }
-    }, [selectedFranchisees, userData]);
+    }, [selectedFranchisees]);
 
     const getUser = async () => {
         var myHeaders = new Headers();
@@ -244,6 +248,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }, [saveFileId])
 
 
+
+
     const handleTrainingDelete = async (cell) => {
         const token = localStorage.getItem('token');
         try {
@@ -256,6 +262,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             if (response.status === 200) {
                 SetfileDeleteMessage("Delete succussfully")
                 GetFile();
+                setDeleteCheck(!true)
                 setTimeout(() => {
                     SetfileDeleteMessage(null)
                 }, 3000)
@@ -268,9 +275,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
 
     }
-
-    
-
 
     const isAllRolesChecked = () => {
         let bool = false;
@@ -451,6 +455,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             },
         },
     ]);
+    console.log("USER",userData)
     return (
         <>
             <div id="main">
