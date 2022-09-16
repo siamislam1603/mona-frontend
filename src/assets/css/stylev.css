@@ -1,26 +1,26 @@
 :root {
-  --black: #333333;
-  --white: #ffffff;
-  --offwhite: #f7f7f7;
-  --primary: #455C58;
-  --secondary: #3E5D58;
-  --darkblue: #151F6D;
-  --red: #D11A2A;
-  --lhtpink: #ECC7CD;
-  --yellow: #ecf0dd;
-  --green: #9EB356;
-  --purple: #AA0061;
-  --gray: #e5e5e5;
-  --fontxxxl: 22px;
-  --fontxxl: 20px;
-  --fontxl: 18px;
-  --fontlg: 16px;
-  --fontsm: 14px;
-  --fontxs: 12px;
-  --fontxxs: 10px;
-  --fontrubik: 'Rubik', sans-serif;
-  --fontmanrope: 'Manrope', sans-serif;
-  --shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    --black: #333333;
+    --white: #ffffff;
+    --offwhite: #f7f7f7;
+    --primary: #455C58;
+    --secondary: #3E5D58;
+    --darkblue: #151F6D;
+    --red: #D11A2A;
+    --lhtpink: #ECC7CD;
+    --yellow: #ecf0dd;
+    --green: #9EB356;
+    --purple: #AA0061;
+    --gray: #e5e5e5;
+    --fontxxxl: 22px;
+    --fontxxl: 20px;
+    --fontxl: 18px;
+    --fontlg: 16px;
+    --fontsm: 14px;
+    --fontxs: 12px;
+    --fontxxs: 10px;
+    --fontrubik: 'Rubik', sans-serif;
+    --fontmanrope: 'Manrope', sans-serif;
+    --shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
 
 .Accordion-menu {
@@ -213,6 +213,7 @@ button:focus {
     background: transparent;
     border: none;
     color: #909090;
+    width: 42px;
 }
 
 .content-toogle .dropdown-toggle:after {
@@ -1463,7 +1464,7 @@ li.branch {
     display: flex;
     align-items: center;
     margin-bottom: 1rem;
- }
+}
 
 .module_title h3 {
     font-family: 'Noto Sans';
@@ -1502,7 +1503,8 @@ tr {
 span.module_dot {
     margin: 0 15px;
 }
-.print .module_title .title{
+
+.print .module_title .title {
     color: #AA0061;
 }
 
@@ -1859,7 +1861,7 @@ button.add_operating_button.btn.btn-primary {
     min-width: inherit;
     padding: 4px 15px;
     border-radius: 5px;
-    margin:0 0 0 10px;
+    margin: 0 0 0 10px;
 }
 
 .tree_search_box .tree_view_search {
@@ -2927,7 +2929,7 @@ li.child_tag {
 h6.text-capitalize {
     color: var(--purple);
     font-size: 20px;
-}  
+}
 
 .create-by img {
     height: auto;
@@ -3036,17 +3038,30 @@ p.error {
 }
 
 .set-layout-row h6.text-capitalize {
-    margin: 20px 0 10px 0;
+    margin: 10px 0 7px 0;
 }
 
-.set-layout-row .col-sm-6:nth-child(3)~div {
+/* .set-layout-row .col-sm-6:nth-child(4)~div {
     margin-top: 15px;
-}
+} */
 
 p.error:empty {
     display: none;
 }
 
+.form-label {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.form-input-section {
+    margin-bottom: 15px;
+}
+
+.main-form-heading-title label {
+    font-size: 19px !important;
+    padding-bottom: 13px !important;
+}
 /*Responsive Start*/
 @media only screen and (max-width: 1140px) {
     .new-form-radio-box {
@@ -3064,23 +3079,26 @@ p.error:empty {
         padding-top: 0 !important;
     }
 
-    .responses_model .modal-dialog{
+    .responses_model .modal-dialog {
         min-width: auto;
     }
-    .modal-body{
+
+    .modal-body {
         padding: 20px 15px;
         overflow: hidden;
         overflow-x: scroll;
     }
+
     .user_list_wrp {
         min-width: calc(700px - 24px);
     }
+
     .extra-btn .btn-btn-outline,
     .extra-btn .ctaact {
         min-width: 110px !important;
     }
- 
-    
+
+
 }
 
 @media only screen and (max-width: 575px) {
@@ -3092,35 +3110,41 @@ p.error:empty {
     .responses-header-right {
         padding-top: 10px !important;
     }
- 
-    .user_role_table{
+
+    .user_role_table {
         overflow-x: scroll;
     }
+
     .user_role_table table {
         margin-top: 18px;
         width: 700px;
     }
+
     .form_setting {
         margin-top: 0;
     }
 }
 
 @media only screen and (max-width: 375px) {
-    .responses_model .modal-header .modal-title h1{
+    .responses_model .modal-header .modal-title h1 {
         font-size: 18px;
     }
-    .content-icon-section img{
+
+    .content-icon-section img {
         width: 35px;
         height: 35px;
     }
-    .content-icon-section{
+
+    .content-icon-section {
         flex: 0 0 auto !important;
     }
-    .create-other{
+
+    .create-other {
         padding: 15px 10px;
         flex-wrap: wrap;
     }
-    .applicable_section_card{
+
+    .applicable_section_card {
         padding: 12px 15px 15px;
     }
 }

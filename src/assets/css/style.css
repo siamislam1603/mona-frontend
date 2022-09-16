@@ -480,9 +480,9 @@ input:-webkit-autofill {
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
 .show>.btn-primary.dropdown-toggle {
-  color: var(--white);
-  background-color: var(--black);
-  border-color: var(--gray)
+  color: #909090;
+  background-color: #f7f7f7;
+  border-color: #909090;
 }
 
 .btn-secondary {
@@ -4248,6 +4248,10 @@ canvas.react-pdf__Page__canvas {
   max-width: 100px;
 }
 
+.form-label {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
 
 
