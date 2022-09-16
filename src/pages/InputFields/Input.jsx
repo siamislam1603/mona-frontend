@@ -4,7 +4,7 @@ const Input = (props) => {
   const { ...controls } = props;
   return (
     <Col sm={6}>
-    <Form.Group>
+    <Form.Group className="form-input-section">
       <Form.Label>{controls.field_label}</Form.Label>
 
       <Form.Control

@@ -237,7 +237,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
         let franchiseeArr = formSettings.franchisee
 
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisees`, { franchisee_id: franchiseeArr }, request)
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setUser(response.data.users)
 
@@ -314,7 +314,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const isAllRolesChecked = () => {
         let bool = false;
         if (getUser_Role == "franchisor_admin") {
-            bool = formSettings.assigned_role.length === 4
+            bool = formSettings.assigned_role.length === 4 && formSettings.assigned_role.includes('franchisee_admin')
         }
         else if (getUser_Role == "franchisee_admin") {
             bool = formSettings.assigned_role.length === 3
