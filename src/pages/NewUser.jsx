@@ -210,10 +210,9 @@ const NewUser = () => {
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        data.append('images', blob);
-      })
+      trainingDocuments?.map(item => {
+        data.append('images', item);
+      });
       
       if(croppedImage) {
         const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
@@ -313,7 +312,11 @@ const NewUser = () => {
     console.log('INSIDE EMAIL VALIDATION FUNCTION');
     console.log('VALUE OF EMAIL:', email);
     let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-    handleSubmit(event);
+
+    if(Object.keys(formErrors).length > 0) {
+      handleSubmit(event);
+    }
+    
     if(!regex.test(email)) {
       console.log('Email is invalid!');
       setFormErrors(prevState => ({
@@ -560,7 +563,7 @@ const NewUser = () => {
 
   formErrors && console.log('FORM ERRORS:', formErrors);
   formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
-
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       <div id="main">

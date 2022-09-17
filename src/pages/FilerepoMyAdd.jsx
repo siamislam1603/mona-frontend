@@ -116,7 +116,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
-        data?.repository_shares[0].accessibleToAll == true ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+
+        data?.repository_shares[0].franchisee[0] == "all" ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
 
 
@@ -141,8 +142,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         let token = localStorage.getItem('token');
         setLoaderFlag(true);
         
-        sendToAllFranchisee == "all" ? formSettings.accessibleToAll = true : formSettings.accessibleToAll = false
-        formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
+        formSettings.franchisee = formSettings.franchisee[0] == "all" ? ["all"] : formSettings.franchisee
 
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
@@ -210,7 +210,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = formSettings.franchisee
+        let franchiseeArr = formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
