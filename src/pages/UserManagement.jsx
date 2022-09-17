@@ -622,9 +622,9 @@ const UserManagement = () => {
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
-                                <header>Filter by:</header>
+                                <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
-                                  <label>Users:</label>
+                                  <label>Users</label>
                                   <Form.Group>
                                     {
                                       displayRoles &&

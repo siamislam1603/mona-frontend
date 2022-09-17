@@ -689,6 +689,14 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                   label="All Roles"
                                   checked={formSettings.assigned_roles.length === 3}
                                   onChange={() => {
+
+                                    if(formSettings?.assigned_roles?.length > 0) {
+                                      setFormSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                      }));
+                                    }
+
                                     if (formSettings.assigned_roles.includes("franchisee_admin")
                                       && formSettings.assigned_roles.includes("coordinator")
                                       && formSettings.assigned_roles.includes("educator")) {
@@ -960,6 +968,14 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                     label="All Roles"
                                     checked={formSettings.assigned_roles.length === 2}
                                     onChange={() => {
+                                      
+                                      if(formSettings?.assigned_roles?.length > 0) {
+                                        setFormSettings(prevState => ({
+                                          ...prevState,
+                                          assigned_roles: ["coordinator", "educator"]
+                                        }));
+                                      }
+                                      
                                       if (formSettings.assigned_roles.includes("coordinator")
                                         && formSettings.assigned_roles.includes("educator")) {
                                         setFormSettings(prevState => ({
@@ -984,6 +1000,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                   label="All Roles"
                                   checked={formSettings.assigned_roles.length === 1}
                                   onChange={() => {
+
                                     if (formSettings.assigned_roles.includes("educator")) {
                                       setFormSettings(prevState => ({
                                         ...prevState,

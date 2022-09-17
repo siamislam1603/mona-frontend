@@ -1018,6 +1018,14 @@ const EditTraining = () => {
                               label="All Roles"
                               checked={trainingSettings.assigned_roles?.length === 3}
                               onChange={() => {
+
+                                if(trainingSettings?.assigned_roles?.length > 0) {
+                                  setTrainingSettings(prevState => ({
+                                    ...prevState,
+                                    assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                  }));
+                                }
+
                                 if (trainingSettings.assigned_roles?.includes("franchisee_admin")
                                   && trainingSettings.assigned_roles.includes("coordinator")
                                   && trainingSettings.assigned_roles.includes("educator")) {
@@ -1289,6 +1297,14 @@ const EditTraining = () => {
                                     label="All Roles"
                                     checked={trainingSettings.assigned_roles?.length === 3}
                                     onChange={() => {
+
+                                      if(trainingSettings?.assigned_roles?.length > 0) {
+                                        setTrainingSettings(prevState => ({
+                                          ...prevState,
+                                          assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                        }));
+                                      }
+
                                       if (trainingSettings.assigned_roles?.includes("franchisee_admin")
                                         && trainingSettings.assigned_roles.includes("coordinator")
                                         && trainingSettings.assigned_roles.includes("educator")) {
@@ -1360,6 +1376,14 @@ const EditTraining = () => {
                                     label="All Roles"
                                     checked={trainingSettings.assigned_roles?.length === 2}
                                     onChange={() => {
+
+                                      if(trainingSettings?.assigned_roles?.length > 0) {
+                                        setTrainingSettings(prevState => ({
+                                          ...prevState,
+                                          assigned_roles: ["coordinator", "educator"]
+                                        }));
+                                      }
+
                                       if (trainingSettings.assigned_roles.includes("coordinator")
                                         && trainingSettings.assigned_roles.includes("educator")) {
                                         setTrainingSettings(prevState => ({
