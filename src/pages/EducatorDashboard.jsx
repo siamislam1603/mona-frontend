@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import { Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import { Link } from 'react-router-dom';
 import BootstrapTable from "react-bootstrap-table-next";
-import { Progress } from 'react-sweet-progress';
 import axios from 'axios';
 import { BASE_URL } from "../components/App";
 import "react-sweet-progress/lib/style.css";
@@ -26,13 +25,12 @@ const columns = [
     dataField: 'specialneed',
     text: 'Child with special needs',
     formatter: (cell) => {
-      console.log("The cell", cell)
-      // cell = cell.split(",");
-      return (<>
-        <div className="user-list">
-          <span className="user-name">{cell === "0" ? "No" : "Yes"} </span>
-        </div>
-      </>)
+      return (
+        <>
+          <div className="user-list">
+            <span className="user-name">{cell === "0" ? "No" : "Yes"} </span>
+          </div>
+        </>)
     },
   },
   {
@@ -66,9 +64,6 @@ const EducatorDashboard = () => {
 
   // 👇️ Make sure first is not undefined
 
-
-
-
   const Userannouncements = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -86,7 +81,6 @@ const EducatorDashboard = () => {
       setannouncements([])
       console.log("error", error)
     }
-
   };
   const Children = async () => {
     const token = localStorage.getItem('token');
@@ -263,14 +257,14 @@ const EducatorDashboard = () => {
                           <Row>
                             <Col md={12}>
                               <div className="training-column">
-                                {console.log(training[0], "training")}
+
                                 {training.length !== 0 ? (
                                   <div className="item">
                                     <div className="pic"><a href="/training"><img src={first?.coverImage} alt="" /></a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/" className="nowrap">{first?.title}</a>
+                                        <a href="/training" className="nowrap">{first?.title}</a>
                                         <div className="datecol">
                                           <span className="red-date">Due Date:{' '}{moment(first?.createdAt).format('DD/MM/YYYY')}</span>
                                           <span className="time">{first?.completion_time}</span>
@@ -282,7 +276,7 @@ const EducatorDashboard = () => {
                                             <img src="../img/dot-ico.svg" alt="" />
                                           </Dropdown.Toggle>
                                           <Dropdown.Menu>
-                                            <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                            <Dropdown.Item href="/training">View</Dropdown.Item>
                                           </Dropdown.Menu>
                                         </Dropdown>
                                       </div>
@@ -298,13 +292,13 @@ const EducatorDashboard = () => {
                                 < div className="training-column">
                                   <div className="item">
                                     <div className="pic">
-                                      <a href="/">
+                                      <a href="/training">
                                         <img src={second?.coverImage} alt="" />
                                       </a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/" className="nowrap">{second?.title}</a>
+                                        <a href="/training" className="nowrap">{second?.title}</a>
                                         <div className="datecol">
                                           <span className="time">{second?.completion_time}</span>
                                         </div>
@@ -319,13 +313,13 @@ const EducatorDashboard = () => {
                                 < div className="training-column">
                                   <div className="item">
                                     <div className="pic">
-                                      <a href="/">
+                                      <a href="/training">
                                         <img src={third?.coverImage} alt="" />
                                       </a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/" className="nowrap">{third?.title}</a>
+                                        <a href="/training" className="nowrap">{third?.title}</a>
                                         <div className="datecol">
                                           <span className="time">{third?.completion_time}</span>
                                         </div>
