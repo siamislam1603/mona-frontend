@@ -55,6 +55,7 @@ const RepoEdit = () => {
             copyFetchedData(file);
         }
     }
+    console.log('fileName', data)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -64,6 +65,7 @@ const RepoEdit = () => {
             title: data?.title,
             categoryId: data?.repository_files[0].categoryId,
             image: data?.repository_files[0].filesPath,
+            fileName: data?.repository_files[0].fileName,
             franchise: data?.repository_shares[0].franchisee,
             accessibleToRole: data?.repository_shares[0].accessibleToRole || 1,
             accessibleToAll: data?.repository_shares[0].accessibleToAll,
@@ -117,7 +119,7 @@ const RepoEdit = () => {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
                 console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
-                    
+
                     navigate(`/file-repository-List-me/${data.categoryId}`);
                 }
             }
@@ -210,7 +212,7 @@ const RepoEdit = () => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = data.franchise
+        let franchiseeArr = data.franchise[0] == 'all' ? "all" : data.franchise
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
@@ -328,7 +330,7 @@ const RepoEdit = () => {
                                                                                     </a>
                                                                                 </span>
                                                                                 <span className="user-name">
-                                                                                    {data.image}.Doc
+                                                                                    {data.fileName}.Doc
                                                                                 </span>
                                                                             </>) :
                                                                                 data.file_type === "video/mp4" ? (
@@ -347,7 +349,7 @@ const RepoEdit = () => {
                                                                                             </a>
                                                                                         </span>
                                                                                         <span className="user-name">
-                                                                                            data={data.image}
+                                                                                            data={data.fileName}
                                                                                         </span>
                                                                                     </>
                                                                                 )}
@@ -700,11 +702,13 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            else {setData(prevState => ({
+                                                                                            else {
+                                                                                                setData(prevState => ({
                                                                                                     ...prevState,
                                                                                                     user_roles: ["coordinator", "educator", "guardian", "franchisee_admin"]
                                                                                                 })
-                                                                                                )}
+                                                                                                )
+                                                                                            }
                                                                                         }
 
                                                                                         if (getUser_Role == 'franchisee_admin') {
@@ -718,11 +722,13 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            else{setData(prevState => ({
-                                                                                                ...prevState,
-                                                                                                user_roles: ["coordinator", "educator", "guardian"]
-                                                                                            })
-                                                                                            )}
+                                                                                            else {
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: ["coordinator", "educator", "guardian"]
+                                                                                                })
+                                                                                                )
+                                                                                            }
                                                                                         }
 
                                                                                         if (getUser_Role == 'coordinator') {
@@ -736,12 +742,14 @@ const RepoEdit = () => {
                                                                                                 }));
                                                                                             }
 
-                                                                                            
-                                                                                            else{setData(prevState => ({
-                                                                                                ...prevState,
-                                                                                                user_roles: ["educator", "guardian"]
-                                                                                            })
-                                                                                            )}
+
+                                                                                            else {
+                                                                                                setData(prevState => ({
+                                                                                                    ...prevState,
+                                                                                                    user_roles: ["educator", "guardian"]
+                                                                                                })
+                                                                                                )
+                                                                                            }
                                                                                         }
                                                                                     }} />
                                                                                 <span className="checkmark"></span>
@@ -756,7 +764,7 @@ const RepoEdit = () => {
                                                                             <Form.Label>Select User</Form.Label>
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
-                                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                                    // disable={sendToAllFranchisee === 'all'}
                                                                                     displayValue="email"
                                                                                     className="multiselect-box default-arrow-select"
                                                                                     selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
@@ -777,7 +785,7 @@ const RepoEdit = () => {
                                                                             <Form.Label>Select Child</Form.Label>
                                                                             <div className="select-with-plus">
                                                                                 <Multiselect
-                                                                                    disable={sendToAllFranchisee === 'all'}
+                                                                                    // disable={sendToAllFranchisee === 'all'}
                                                                                     placeholder={"Select"}
                                                                                     displayValue="name"
                                                                                     className="multiselect-box default-arrow-select"

@@ -27,6 +27,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [successMessageToast, setSuccessMessageToast] = useState(null);
+  const [errorMessageToast, setErrorMessageToast] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchAvailableTrainings = async () => {
@@ -217,11 +218,13 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       }
     });
 
+    console.log('SHARE RESPONSE:', response);
     if (response.status === 201 && response.data.status === "success") {
-      if (response.status === 201 && response.data.status === "success") {
-        let { msg: successMessage } = response.data;
-        setSuccessMessageToast('Training re-shared successfully.');
-      }
+      let { msg: successMessage } = response.data;
+      setSuccessMessageToast('Training re-shared successfully.');
+    } else if(response.status === 200 && response.data.status === "fail") {
+      let { msg: failureMessage } = response.data;
+      setErrorMessageToast(failureMessage);
     }
   }
 
@@ -248,11 +251,25 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 //         }
 //     }
 
-//   useEffect(() => {
-//     setTimeout(() => {
-//       setSuccessMessageToast(null);
-//     }, 4000)
-//   }, [successMessageToast]);
+  useEffect(() => {
+    if(formSettings?.assigned_franchisee?.length > 0) {
+      fetchFranchiseeUsers(formSettings?.assigned_franchisee);
+    } else {
+      setFetchedFranchiseeUsers([]);
+    }
+  }, [formSettings?.assigned_franchisee])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setSuccessMessageToast(null);
+    }, 4000)
+  }, [successMessageToast]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setErrorMessageToast(null);
+    }, 4000);
+  }, [errorMessageToast]);
 
   useEffect(() => {
     fetchAvailableTrainings();
@@ -277,6 +294,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 
         <div className="training-column">
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
+        {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
           <Row>
 
           {availableTrainingData
@@ -671,6 +689,14 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                   label="All Roles"
                                   checked={formSettings.assigned_roles.length === 3}
                                   onChange={() => {
+
+                                    if(formSettings?.assigned_roles?.length > 0) {
+                                      setFormSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                      }));
+                                    }
+
                                     if (formSettings.assigned_roles.includes("franchisee_admin")
                                       && formSettings.assigned_roles.includes("coordinator")
                                       && formSettings.assigned_roles.includes("educator")) {
@@ -942,6 +968,14 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                     label="All Roles"
                                     checked={formSettings.assigned_roles.length === 2}
                                     onChange={() => {
+                                      
+                                      if(formSettings?.assigned_roles?.length > 0) {
+                                        setFormSettings(prevState => ({
+                                          ...prevState,
+                                          assigned_roles: ["coordinator", "educator"]
+                                        }));
+                                      }
+                                      
                                       if (formSettings.assigned_roles.includes("coordinator")
                                         && formSettings.assigned_roles.includes("educator")) {
                                         setFormSettings(prevState => ({
@@ -966,6 +1000,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                   label="All Roles"
                                   checked={formSettings.assigned_roles.length === 1}
                                   onChange={() => {
+
                                     if (formSettings.assigned_roles.includes("educator")) {
                                       setFormSettings(prevState => ({
                                         ...prevState,

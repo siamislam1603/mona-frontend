@@ -20,6 +20,8 @@ let upperRoleUser = '';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  console.log("Dsa",location?.state?.edit)
+
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
   });
@@ -41,7 +43,10 @@ const AddOperatingManual = () => {
   const [categoryError, setCategoryError] = useState({});
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
+  const [pageTitle,setPageTitle] = useState("Create New")
   const token = localStorage.getItem('token');
+  const loginuser = localStorage.getItem('user_role')
+
   useEffect(() => {
     getUserRoleData();
   }, []);
@@ -88,6 +93,8 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   const getOneOperatingManual = async () => {
+    setPageTitle("Edit Operating manual")
+
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -478,7 +485,7 @@ console.log("Oepratiing",errors)
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
-                        <h4 className="mynewForm">Create New</h4>
+                        <h4 className="mynewForm">{location?.state?.edit=== true  ? "Edit Operating Manual":"Create new" }</h4>
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
@@ -530,15 +537,17 @@ console.log("Oepratiing",errors)
                         </Form.Group>
                       </div>
                     </Col>
-                    <Col sm={6} className="add_fields">
-                      <Button
-                        onClick={() => {
-                          setCategoryModalFlag(true);
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPlus} /> Add New Module
-                      </Button>
-                    </Col>
+                   {
+                    loginuser === "franchisor_admin" &&  <Col sm={6} className="add_fields">
+                    <Button
+                      onClick={() => {
+                        setCategoryModalFlag(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faPlus} /> Add New Module
+                    </Button>
+                  </Col>
+                   }
                   </Row>
                   <div className="my-new-formsection">
                     <Row>

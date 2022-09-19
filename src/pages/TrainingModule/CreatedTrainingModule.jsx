@@ -28,6 +28,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     assigned_users: []
   });
   const [successMessageToast, setSuccessMessageToast] = useState(null);
+  const [errorMessageToast, setErrorMessageToast] = useState(null);
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -78,7 +79,11 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
 
     if (response.status === 201 && response.data.status === "success") {
       let { msg: successMessage } = response.data;
+      setSuccessMessageToast(successMessage);
       setSuccessMessageToast('Training re-shared successfully.');
+    } else if(response.status === 200 && response.data.status === "fail") {
+      let { msg: failureMessage } = response.data;
+      setErrorMessageToast(failureMessage);
     }
   }
 
@@ -217,6 +222,12 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }, 4000)
   }, [successMessageToast]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setErrorMessageToast(null);
+    }, 4000);
+  }, [errorMessageToast]);
+
   // useEffect(() => {
   //   fetchCreatedTrainings();
   // }, [filter, trainingDeleteMessage]);
@@ -224,6 +235,15 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
   // useEffect(() => {
   //   fetchUserList();
   // }, [selectedFranchisee]);
+
+  useEffect(() => {
+    if(formSettings?.assigned_franchisee?.length > 0) {
+      fetchFranchiseeUsers(formSettings?.assigned_franchisee);
+    } else {
+      setFetchedFranchiseeUsers([]);
+    }
+  }, [formSettings?.assigned_franchisee])
+
   useEffect(() => {
     trainingCreatedByMe()
 
@@ -260,6 +280,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
       <div id="main">
         <FullLoader loading={fullLoaderStatus} />
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
+        {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
@@ -615,6 +636,14 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                       label="All Roles"
                                       checked={formSettings.assigned_roles.length === 3}
                                       onChange={() => {
+
+                                        if(formSettings?.assigned_roles?.length > 0) {
+                                          setFormSettings(prevState => ({
+                                            ...prevState,
+                                            assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                          }));
+                                        }
+
                                         if (formSettings.assigned_roles.includes("franchisee_admin")
                                           && formSettings.assigned_roles.includes("coordinator")
                                           && formSettings.assigned_roles.includes("educator")) {
@@ -883,8 +912,16 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                     <Form.Check
                                       type="checkbox"
                                       label="All Roles"
-                                      checked={formSettings.assigned_roles.length === 3}
+                                      checked={formSettings.assigned_roles.length === 2}
                                       onChange={() => {
+
+                                        if(formSettings?.assigned_roles?.length > 0) {
+                                          setFormSettings(prevState => ({
+                                            ...prevState,
+                                            assigned_roles: ["coordinator", "educator"]
+                                          }));
+                                        }
+
                                         if (formSettings.assigned_roles.includes("coordinator")
                                           && formSettings.assigned_roles.includes("educator")) {
                                           setFormSettings(prevState => ({

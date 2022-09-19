@@ -99,9 +99,6 @@ const columns1 = [
     text: 'Educator Name',
     formatter: (cell) => {
       cell = cell.split(",");
-      console.log(cell, "cell")
-      console.log(cell[2], "cell2")
-
       return (<>
         {
           cell[0] != "undefined" &&
@@ -161,9 +158,8 @@ const FranchiseeDashboard = () => {
         "Authorization": `Bearer ${token}`
       }
     }).then((response) => {
-      setlatest_announcement(response.data.recentAnnouncement);
+      setlatest_announcement(response?.data?.recentAnnouncement);
     }).catch((e) => {
-      console.log("Error", e);
       setlatest_announcement([])
     })
   }
@@ -177,7 +173,7 @@ const FranchiseeDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-    console.log("FORM Data", response)
+  
     if (response.status === 200) {
       let data = response.data.childrenEnrolled;
 
@@ -200,40 +196,18 @@ const FranchiseeDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-    console.log("tempData>>>>>>>>>>>>>", response)
     if (response.status === 200 || "pass") {
 
       let data = response.data.newEnrollments;
-      console.log(data, "FORM+++++++")
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
           educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
         }
       ))
-      console.log(tempData, "FORM+++++++FORM")
+     
       setEnrollments(tempData);
-
-
-
-
-
-      // const users = response.data.newEnrollments[0]
-      // console.log(users, 'tempData>>>>>>>>>>>>>',)
-
-      // let tempDataTow = users.map((dt) => (
-      //   {
-      //     name: dt.fullname,
-      //     // educatatoName: dt.users[0].fullname + "," + dt.users[0].profile_photo + "," + dt.users[1].fullname + "," + dt.users[1].profile_photo,
-      //   }
-      // ));
-      // console.log(tempDataTow, 'tempData>>>>>>>>>>>>>', enrollments)
-      // setEnrollments(tempDataTow);
-      // console.log("response", response)
     }
-
-
-
   }
 
 
@@ -293,10 +267,10 @@ const FranchiseeDashboard = () => {
 
 
 
-  
 
-useEffect(() => {
-  
+
+  useEffect(() => {
+
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
 
@@ -310,7 +284,7 @@ useEffect(() => {
     }
 
     // Redirect to baseurl when not not specific Role
-    if (localStorage.getItem('user_role')!=='franchisee_admin') {
+    if (localStorage.getItem('user_role') !== 'franchisee_admin') {
       window.location.href = '/';
     }
 
@@ -318,7 +292,6 @@ useEffect(() => {
 
   }, []);
 
-  console.log("count",countUser)
 
   return (
     <>
@@ -335,7 +308,7 @@ useEffect(() => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader />
+                <TopHeader/>
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
@@ -476,7 +449,7 @@ useEffect(() => {
                           </header>
                           <div className="column-list announcements-list">
                             {
-                              latest_announcement?.length>0 ? 
+                              latest_announcement?.length > 0 ?
                                 (
                                   latest_announcement?.map((data) => {
                                     return (
@@ -486,21 +459,21 @@ useEffect(() => {
                                           <div className="name">{!data.title ? "No Announcement" : data.title}
                                             <div>
                                               <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-      
+
                                             </div>
                                           </div>
                                         </a>
                                       </div>
                                     );
                                   }
-                                )
-                               
-                            )
-                            :(
-                              <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                                  )
 
-                           )
-                          }
+                                )
+                                : (
+                                  <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+
+                                )
+                            }
                             {/* <div className="listing">
                               <a href="/" className="item">
                                 <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>

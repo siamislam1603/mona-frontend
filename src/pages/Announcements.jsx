@@ -540,7 +540,7 @@ const Announcements =  () => {
         }
       });
       // console.log("The All Announcement",response.data.result);
-      console.log("ALL EVENTS",response)
+      // console.log("ALL EVENTS",response)
       if(response.status === 200 && response.data.status === "success") {
         setEventCount(response.data.result.count)
         setMyDataLength(response.data.result.searchedData.length)

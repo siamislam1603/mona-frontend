@@ -142,6 +142,7 @@ const PopColumns = [
                             /> */}
                             <SearchBar {...props.searchProps}/>
                         </label>
+                        <div className="mb-3"></div>
                     {/* </div>
                     <div className="column-table user-management-sec user_management_sec"> */}
                         <BootstrapTable

@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
@@ -9,24 +8,14 @@ import { FullLoader } from "../components/Loader";
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true,
-};
-
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
-
-  console.log(selectedFranchisee, "selectedFranchisee")
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-
+  const { SearchBar } = Search;
   const GetData = async () => {
     try {
       let User = localStorage.getItem('user_role');
-
       let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${selectedFranchisee}]` : `${BASE_URL}/fileRepo/`
-      // let ulr = `${BASE_URL}/fileRepo/`
-
       let response = await axios.get(URL, {
         headers: {
           authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -56,7 +45,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     GetData();
   }, [selectedFranchisee]);
 
-
   const [columns, setColumns] = useState([
     {
       dataField: 'name',
@@ -66,7 +54,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         cell = cell.split(',');
         return (
           <>
-
             <div className="user-list">
               <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
                 <span>
@@ -85,9 +72,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
                 }
                 <small>{cell[1]} Files</small>
               </span>
-
             </div>
-
           </>
         );
       },
@@ -159,6 +144,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         >
           {(props) => (
             <>
+              <SearchBar {...props.searchProps} />
               <BootstrapTable
                 {...props.baseProps}
               />

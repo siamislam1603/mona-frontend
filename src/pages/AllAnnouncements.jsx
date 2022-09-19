@@ -234,7 +234,7 @@ console.log("Announcemen detal",announcementDetails)
                                               {detail.fileType == ".mp4"||detail.fileType == ".mkv" ? (
                                                  <AnnouncementVideo 
                                                    data={detail}
-                                                   title={`Training Video ${index + 1}`}
+                                                   title={`Annoucnement Video ${index + 1}`}
                                                    // duration={trainingDetails.completion_time} 
                                                    fun={handleClose}/>
                                                 ):(

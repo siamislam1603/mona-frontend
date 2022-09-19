@@ -18,7 +18,7 @@ const Radio = (props) => {
   return (
     <>
       <Col sm={6}>
-        <Form.Group>
+        <Form.Group className='form-input-section'>
           <Form.Label>{controls.field_label}</Form.Label>
           <div className="new-form-radio flex_wrap_radio">
             {eval(controls.option)?.map((item, index) => {
