@@ -487,7 +487,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <div className="select-with-plus">
                               <Multiselect
                                 disable={formSettings?.send_to_all_franchisee === true}
-                                placeholder={"Select User Names"}
+                                placeholder={"Select"}
                                 // singleSelect={true}
                                 displayValue="key"
                                 selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
@@ -611,7 +611,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                   <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                     <Form.Check
                                       type="checkbox"
-                                      label="Educators"
+                                      label="Educator"
                                       checked={formSettings.assigned_roles.includes("educator")}
                                       onChange={() => {
                                         if (formSettings.assigned_roles.includes("educator")) {
@@ -668,7 +668,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 <Form.Label>Select User</Form.Label>
                                 <div className="select-with-plus">
                                   <Multiselect
-                                    placeholder={"Select User Names"}
+                                    placeholder={"Select"}
                                     displayValue="key"
                                     className="multiselect-box default-arrow-select"
                                     selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + ""))}
@@ -889,7 +889,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                   <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
                                     <Form.Check
                                       type="checkbox"
-                                      label="Educators"
+                                      label="Educator"
                                       checked={formSettings.assigned_roles.includes("educator")}
                                       onChange={() => {
                                         if (formSettings.assigned_roles.includes("educator")) {
@@ -944,7 +944,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                                 <Form.Label>Select User</Form.Label>
                                 <div className="select-with-plus">
                                   <Multiselect
-                                    placeholder={"Select User Names"}
+                                    placeholder={"Select"}
                                     displayValue="key"
                                     className="multiselect-box default-arrow-select"
                                     selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + ""))}

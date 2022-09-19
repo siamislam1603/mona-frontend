@@ -540,7 +540,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                         <div className="select-with-plus">
                           <Multiselect
                             disable={formSettings?.send_to_all_franchisee === true}
-                            placeholder={"Select User Names"}
+                            placeholder={"Select"}
                             // singleSelect={true}
                             displayValue="key"
                             selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
@@ -721,7 +721,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Label>Select User</Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                placeholder={"Select User Names"}
+                                placeholder={"Select"}
                                 displayValue="key"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + ""))}
@@ -1022,7 +1022,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Label>Select User</Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                placeholder={"Select User Names"}
+                                placeholder={"Select"}
                                 displayValue="key"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + "")) || ""}
