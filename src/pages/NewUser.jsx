@@ -300,7 +300,7 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
           // console.log('IS AVAILABLE>>>>>>>>>>>>>>>>>', query.searchParams.get('sdfsdf'))
@@ -329,7 +329,7 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
             window.location.href=`/children/${data.id}`;
@@ -784,7 +784,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Post Code</Form.Label>
                             <Form.Control
-                              type="tel"
+                              type="text"
                               name="postalCode"
                               ref={postalCode}
                               maxLength="4"
@@ -826,7 +826,7 @@ const NewUser = () => {
                                   }));
                                 }}
                               />
-                              { formErrors.crn !== null && <span className="error">{formErrors.postalCode}</span> }
+                              { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
                             </Form.Group>
                           }
                             
