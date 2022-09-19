@@ -56,7 +56,6 @@ const Announcements = () => {
 
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
-
     setTabLinkPath(path);
 
   }
@@ -634,12 +633,19 @@ const Announcements = () => {
   useEffect(() => {
     setEventLength(loadMoreEvent.length)
   }, [loadMoreEvent])
+
+
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'franchisor_admin') {
       setTabLinkPath('/my-announcements');
-    } else {
+    }
+    else if (Params.id === "all-events") {
+      setTabLinkPath('/all-events');
+    }
+    else {
       setTabLinkPath('/all-announcements');
     }
+
     if (localStorage.getItem('success_msg')) {
       setTopMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
