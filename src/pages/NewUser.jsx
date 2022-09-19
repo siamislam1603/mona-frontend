@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 import { compact } from 'lodash';
-
+import { useNavigate } from 'react-router-dom';
 const animatedComponents = makeAnimated();
 
 const NewUser = () => {
@@ -23,6 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
+  const navigate = useNavigate();
   console.log('>>>>>>>>>>>>>>>>', queryRole, childId, childfranchise);
 
   // REF DECLARATIONS
@@ -300,14 +301,15 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
           // console.log('IS AVAILABLE>>>>>>>>>>>>>>>>>', query.searchParams.get('sdfsdf'))
           window.location.href=`/children/${data.id}`;
         } else {
           if(query.searchParams.get('childId')) { 
-            window.location.href=`/children/${query.searchParams.get('parentId')}`
+            // window.location.href=`/children/${query.searchParams.get('parentId')}`
+            navigate(`/children/${query.searchParams.get('parentId')}`, { state: { franchisee_id: formData.franchisee } })
           } else {
             window.location.href="/user-management";
           }
@@ -329,7 +331,7 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
             window.location.href=`/children/${data.id}`;
@@ -784,7 +786,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Post Code</Form.Label>
                             <Form.Control
-                              type="tel"
+                              type="text"
                               name="postalCode"
                               ref={postalCode}
                               maxLength="4"
@@ -826,7 +828,7 @@ const NewUser = () => {
                                   }));
                                 }}
                               />
-                              { formErrors.crn !== null && <span className="error">{formErrors.postalCode}</span> }
+                              { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
                             </Form.Group>
                           }
                             

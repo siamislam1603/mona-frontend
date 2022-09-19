@@ -69,7 +69,7 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
   let loggedInRoleId = roleObj.filter(d => d.role_name === loggedInRole)
   loggedInRoleId = loggedInRoleId[0].id;
 
-  return parseInt(loggedInRoleId) < parseInt(detailRoleId) || parseInt(loggedInRoleId) === parseInt(detailRoleId);
+  return parseInt(loggedInRoleId) < parseInt(detailRoleId);
 }
 
 const UserManagement = () => {
@@ -649,7 +649,7 @@ const UserManagement = () => {
                               <Dropdown.Menu>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
-                                  <label>Users</label>
+                                  <label style={{ marginBottom: '5px' }}>Role</label>
                                   <Form.Group>
                                     {
                                       displayRoles &&

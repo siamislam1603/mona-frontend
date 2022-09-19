@@ -17,6 +17,10 @@ import { useParams } from "react-router-dom";
 const Announcements = () => {
   const Params = useParams();
 
+  console.log("index", Params.key)
+
+  let ActiveLink = Params.key
+
   const [allAnnouncement, setAllAnnouncement] = useState([])
   const [theMyAnnouncement, setTheMyAnnoucemenet] = useState([])
 

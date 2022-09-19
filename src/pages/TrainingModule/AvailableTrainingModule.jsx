@@ -53,10 +53,10 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
           ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
         ];
         setfullLoaderStatus(false)
-        setAvailableTrainingData(searchedData)
-         console.log("Search data",searchedData)
-         setNoDueData(false)
-         setDueDataTraining(false)
+        setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0));
+        console.log("Search data",searchedData)
+        setNoDueData(false)
+        setDueDataTraining(false)
         searchedData?.length>0 &&  searchedData?.map((item) => {
         
           console.log("Indside Mao",dueDataTraining)
