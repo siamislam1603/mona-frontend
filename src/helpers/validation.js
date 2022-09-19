@@ -527,6 +527,13 @@ export const UserFormValidation = (formObj) => {
   if (!address) errors.address = 'Address is required';
   
   if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if(postalCode.length > 0 && postalCode.length < 4)
+    errors.postalCode = 'Post code must be 4-digit long';
+
+  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+    errors.postalCode = 'Post code must be a number';
+
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   

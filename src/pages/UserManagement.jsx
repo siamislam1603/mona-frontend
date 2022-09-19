@@ -69,7 +69,7 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
   let loggedInRoleId = roleObj.filter(d => d.role_name === loggedInRole)
   loggedInRoleId = loggedInRoleId[0].id;
 
-  return parseInt(loggedInRoleId) < parseInt(detailRoleId) || parseInt(loggedInRoleId) === parseInt(detailRoleId);
+  return parseInt(loggedInRoleId) < parseInt(detailRoleId);
 }
 
 const UserManagement = () => {
