@@ -39,6 +39,39 @@ const training = [
 
 let DeleteId = [];
 
+function isLoggedInRoleSmaller(detailRole, loggedInRole) {
+  let roleObj = [
+    {
+      id: 1,
+      role_name: 'franchisor_admin'
+    },
+    {
+      id: 2,
+      role_name: 'franchisee_admin'
+    },
+    {
+      id: 3,
+      role_name: 'coordinator'
+    },
+    {
+      id: 4,
+      role_name: 'educator'
+    },
+    {
+      id: 5,
+      role_name: 'guardian'
+    }
+  ];
+
+  let detailRoleId = roleObj.filter(d => d.role_name === detailRole);
+  detailRoleId = detailRoleId[0].id;
+
+  let loggedInRoleId = roleObj.filter(d => d.role_name === loggedInRole)
+  loggedInRoleId = loggedInRoleId[0].id;
+
+  return parseInt(loggedInRoleId) < parseInt(detailRoleId) || parseInt(loggedInRoleId) === parseInt(detailRoleId);
+}
+
 const UserManagement = () => {
   const Key = useParams()
 
@@ -49,7 +82,7 @@ const UserManagement = () => {
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
@@ -207,7 +240,7 @@ const UserManagement = () => {
                 <img src={cell[0] === 'null' ? '../img/upload.jpg' : cell[0]} alt="" />
               </span>
               <span className="user-name">
-                <a href={`/edit-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+                <a href={`/view-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
               </span>
             </div>
           </>
@@ -257,24 +290,30 @@ const UserManagement = () => {
       text: '',
       formatter: (cell) => {
         let button = null;
+        console.log('CELL:>>>>>>', cell);
+        cell = cell.split(",");
+        console.log('CELL AFTER SPLIT:>>>>>>', cell);
 
-        if (cell === 1) {
+        if (parseInt(cell[0]) === 1) {
           button = "Deactivate";
-        } else if (cell === 0) {
+        } else if (parseInt(cell[0]) === 0) {
           button = "Activate";
         }
         return (
           <>
             <div className="cta-col">
-              <Dropdown>
-                <Dropdown.Toggle variant="transparent" id="ctacol">
-                  <img src="../img/dot-ico.svg" alt="" />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {cell === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
-                  <Dropdown.Item href="#">{button}</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              {
+                isLoggedInRoleSmaller(cell[1], localStorage.getItem('user_role')) &&
+                <Dropdown>
+                  <Dropdown.Toggle variant="transparent" id="ctacol">
+                    <img src="../img/dot-ico.svg" alt="" />
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {parseInt(cell[0]) === 1 && <Dropdown.Item href="#">Edit</Dropdown.Item>}
+                    <Dropdown.Item href="#">{button}</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              }
             </div>
           </>
         );
@@ -294,25 +333,10 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
 
-
-
     let api_url = '';
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
 
-    if (search) {
-      api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
-    }
-    if (filter) {
-      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
-    }
-    if (search && filter) {
-      api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
-    }
-
-    if (!search && !filter) {
-      api_url = `${BASE_URL}/role/user/${id}`;
-    }
-
+    api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -335,10 +359,9 @@ const UserManagement = () => {
         location: dt.city,
         role: dt.role,
         is_deleted: dt.is_deleted,
-        role: dt.role,
         userID: dt.id,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active
+        action: dt.is_active + "," + dt.role
       }));
       if (localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
@@ -381,21 +404,20 @@ const UserManagement = () => {
     let filteredData = null;
 
     if (role === 'franchisor_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+      filteredData = data.filter(d => d);
     }
 
     if (role === 'franchisee_admin') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin')
-      filteredData = filteredData.filter(d => d.role !== 'franchisee_admin')
-
+      filteredData = data.filter(d => d)
     }
 
     if (role === 'coordinator') {
-      filteredData = data.filter(d => d.role === 'educator' || d.role === 'guardian');
+      filteredData = data.filter(d => d.role !== "franchisor_admin");
     }
 
     if (role === 'educator') {
-      filteredData = data.filter(d => d.role === 'guardian');
+      filteredData = data.filter(d => d.role !== 'franchisor_admin');
+      filteredData = data.filter(d => d.role !== 'franchisee_admin');
     }
 
     setUserData(filteredData);
@@ -476,22 +498,22 @@ const UserManagement = () => {
     let newRoleList = userRoleData;
 
     if (currentRole === "educator") {
-      newRoleList = newRoleList.filter(role => role.id === 4);
-      setDisplayRoles(newRoleList);
-    }
-
-    if (currentRole === "coordinator") {
-      newRoleList = newRoleList.filter(role => role.id > 3);
-      setDisplayRoles(newRoleList);
-    }
-
-    if (currentRole === "franchisee_admin") {
       newRoleList = newRoleList.filter(role => role.id > 2);
       setDisplayRoles(newRoleList);
     }
 
-    if (currentRole === 'franchisor_admin') {
+    if (currentRole === "coordinator") {
       newRoleList = newRoleList.filter(role => role.id > 1);
+      setDisplayRoles(newRoleList);
+    }
+
+    if (currentRole === "franchisee_admin") {
+      newRoleList = newRoleList.filter(role => role);
+      setDisplayRoles(newRoleList);
+    }
+
+    if (currentRole === 'franchisor_admin') {
+      newRoleList = newRoleList.filter(role => role);
       setDisplayRoles(newRoleList);
     }
 
@@ -622,9 +644,9 @@ const UserManagement = () => {
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
-                                <header>Filter by:</header>
+                                <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
-                                  <label>Users:</label>
+                                  <label>Users</label>
                                   <Form.Group>
                                     {
                                       displayRoles &&

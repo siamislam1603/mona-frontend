@@ -210,10 +210,9 @@ const NewUser = () => {
     } else {
       console.log('Erorrs removed!');
       let data=new FormData();
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
-        data.append('images', blob);
-      })
+      trainingDocuments?.map(item => {
+        data.append('images', item);
+      });
       
       if(croppedImage) {
         const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
@@ -309,8 +308,14 @@ const NewUser = () => {
 
   }
 
-  const checkIfEmailIsValid = (email) => {
+  const checkIfEmailIsValid = (event, email) => {
+    console.log('INSIDE EMAIL VALIDATION FUNCTION');
+    console.log('VALUE OF EMAIL:', email);
     let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+
+    if(Object.keys(formErrors).length > 0) {
+      handleSubmit(event);
+    }
     
     if(!regex.test(email)) {
       console.log('Email is invalid!');
@@ -335,7 +340,7 @@ const NewUser = () => {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
         id: coordinator.id,
-        value: coordinator.fullname,
+        value: coordinator.fullname.split(" ").join("_"),
         label: coordinator.fullname
       })));
     }
@@ -558,7 +563,7 @@ const NewUser = () => {
 
   formErrors && console.log('FORM ERRORS:', formErrors);
   formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
-
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       <div id="main">
@@ -611,7 +616,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                checkIfEmailIsValid(e.target.value);
+                                checkIfEmailIsValid(e, e.target.value);
                                 checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
@@ -675,7 +680,7 @@ const NewUser = () => {
 
                                 setFormErrors(prevState => ({
                                   ...prevState,
-                                  city: null
+                                  state: null
                                 }));
                               }}
                             />
@@ -925,8 +930,9 @@ const NewUser = () => {
                               <Select
                                 isDisabled={formData.role !== 'educator'}
                                 ref={coordinator}
-                                placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select?" : "Not Applicable"}
                                 closeMenuOnSelect={true}
+                                // placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select" : "Not Applicable"}
+                                placeholder={"Select"}
                                 options={coordinatorData}
                                 onChange={(e) => {
                                   setFormData((prevState) => ({

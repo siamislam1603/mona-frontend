@@ -55,7 +55,8 @@ const EditUser = () => {
   const [trainingCategoryData, setTrainingCategoryData] = useState([]);
   const [pdcData, setPdcData] = useState([]);
   const [businessAssetData, setBuinessAssetData] = useState([]);
-  const [trainingDocuments, setTrainingDocuments] = useState();
+  const [trainingDocuments, setTrainingDocuments] = useState([]);
+  const [fetchedTrainingDocuments, setFetchedTrainingDocuments] = useState([]);
   const [editUserData, setEditUserData] = useState();
   const [suburbSearchString, setSuburbSearchString] = useState("");
 
@@ -77,6 +78,7 @@ const EditUser = () => {
 
   // ERROR HANDLING
   const [errors, setErrors] = useState({});
+  const [fileDeleteMessage, setFileDeleteMessage] = useState(null);
 
   // FETCHES THE DATA OF USER FOR EDITING
   const fetchEditUserData = async () => {
@@ -89,9 +91,10 @@ const EditUser = () => {
     console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
+      const { userFiles } = response.data;
 
       if(Object.keys(user).length > 0) {
-        copyDataToState(user);
+        copyDataToState(user, userFiles);
       } else {
         localStorage.setItem('success_msg', 'User doesn\'t exist!');
         const userRole = localStorage.getItem('user_role');
@@ -103,7 +106,7 @@ const EditUser = () => {
     }
   };
 
-  const copyDataToState = (user) => {
+  const copyDataToState = (user, files) => {
     setCurrentRole(user?.role);
     setFormData(prevState => ({
       id: user?.id,
@@ -131,6 +134,15 @@ const EditUser = () => {
       change_pwd_next_login: user?.change_pwd_next_login ? true : false
     }));
     setCroppedImage(user?.profile_photo);
+
+    if(files?.length > 0) {
+      setFetchedTrainingDocuments(files?.map(f => ({
+        id: f.id,
+        link: f.file,
+        user_id: f.user_id,
+        file_name: f.name
+      })));
+    }
   }
 
   // CREATES NEW USER INSIDE THE DATABASE
@@ -528,6 +540,22 @@ const EditUser = () => {
     }
   }
 
+  const handleUserFileDelete = async (fileId) => {
+    console.log('FILE ID:', fileId);
+    let response = await axios.delete(`${BASE_URL}/auth/user/files/${fileId}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+
+    if(response.status === 201 && response.data.status === "success") {
+      setFileDeleteMessage('File deleted successfully');
+
+      let newData = fetchedTrainingDocuments.filter(d => parseInt(d.id) !== parseInt(fileId));
+      setFetchedTrainingDocuments(newData);
+    }
+  }
+
   useEffect(() => {
     fetchCountryData();
     fetchUserRoleData();
@@ -547,28 +575,25 @@ const EditUser = () => {
     copyDataToState();
   }, [editUserData]);
 
-  // useEffect(() => {
-  //   fetchCoordinatorData();
-  // }, [selectedFranchisee]);
-
   useEffect(() => {
     fetchCoordinatorData(formData.franchisee_id);
   }, [formData.franchisee_id]);
 
   useEffect(() => {
-    console.log('CURRENT ROLE HAS BEEN LOADED!');
     trimRoleList();
   }, [currentRole]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
-  // formData && console.log('FORM DATA:', formData);
-  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  // formData && console.log('FORM DATA:', formData);
-  // signatureImage && console.log('Signature Image:', signatureImage);
-  userRoleData && console.log('USER ROLE DATA:', userRoleData);
-  // currentRole && console.log('Current Role:', currentRole);
+  useEffect(() => {
+    setTimeout(() => {
+      setFileDeleteMessage(null);
+    }, 3000)
+  }, [fileDeleteMessage]);
+
   return (
     <>
+      {
+        fileDeleteMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{fileDeleteMessage}</p>
+      }
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -670,7 +695,7 @@ const EditUser = () => {
                               placeholder="Select"
                               closeMenuOnSelect={true}
                               options={cityData}
-                              value={[{value: `${formData?.city}`, label: `${formData?.city}`}] || "Select"}
+                              value={cityData?.filter(d => d.label === formData?.city)}
                               onInputChange={(e) => {
                                 setSuburbSearchString(e);
                               }}
@@ -1033,6 +1058,21 @@ const EditUser = () => {
                             <DragDropMultiple
                               module="user-management"
                               onSave={setTrainingDocuments} />
+                            {
+                              fetchedTrainingDocuments &&
+                              fetchedTrainingDocuments.map(doc => {
+                                return (
+                                  <div>
+                                    <a href={ doc?.link}><p>{doc.file_name || doc.name}</p></a>
+                                    <img
+                                      onClick={() => handleUserFileDelete(doc?.id)}
+                                      style={{ width: "18px", height: "auto", cursor: "pointer", marginLeft: "5px" }}
+                                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Delete-button.svg/862px-Delete-button.svg.png"
+                                      alt="" />
+                                  </div>
+                                )
+                              })
+                            }
                             <small className="fileinput">(Upload 5 files max.)</small>
                           </Form.Group>
 

@@ -23,7 +23,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
 
+
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [deleteCheck,setDeleteCheck] = useState(false)
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
@@ -115,6 +117,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             file_type: data?.repository_files[0].fileType,
         }));
 
+        data?.repository_shares[0].franchisee[0] == "all" ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
 
 
@@ -138,28 +141,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         setLoaderFlag(true);
-        if (
-            formSettingData.accessible_to_role === null ||
-            formSettingData.accessible_to_role === undefined
-        ) {
-            formSettings.accessibleToRole = null
-            formSettings.accessibleToAll = true
-        }
-        else {
-            if (formSettingData.accessible_to_role === 1) {
-                formSettings.user_roles = formSettingData.shared_role.slice(0, -1)
-                formSettings.assigned_users = ""
-                formSettings.accessibleToRole = formSettingData.accessible_to_role
-                formSettings.accessibleToAll = false
-            } else {
-                formSettings.user_roles = ""
-                formSettings.assigned_users = selectedUserId.slice(0, -1)
-                // formSettings.accessibleToRole = formSettingData.accessible_to_role
-                // formSettings.accessibleToAll = false
-            }
-        }
-
-        formSettings.franchisee = formSettings.franchisee[0] == "all" ? [] : formSettings.franchisee
+        
+        formSettings.franchisee = formSettings.franchisee[0] == "all" ? ["all"] : formSettings.franchisee
 
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
@@ -169,12 +152,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             }
         });
 
-        if (response.status === 201 && response.data.status === "success") {
+        if (response.status === 200 && response.data.status === "success") {
             setLoaderFlag(false);
-            // window.location.reload()
+            window.location.reload()
         } else {
             setLoaderFlag(false);
-            // window.location.reload()
+            window.location.reload()
         }
     }
 
@@ -188,12 +171,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const GetFile = async () => {
         try {
+            console.log("GET FILE FUNCTION CALING")
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response) {
                     setfullLoaderStatus(false)
                 }
+                console.log("DELETE RESPONSE",response)
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -215,8 +200,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
-
-
     const getUser = async () => {
         var myHeaders = new Headers();
         myHeaders.append(
@@ -227,7 +210,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = formSettings.franchisee
+        let franchiseeArr = formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
@@ -256,13 +239,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
+    useEffect(()=>{
+        GetData()
+        fetchFranchiseeList();
+    },[saveFileId])
+
     useEffect(() => {
         GetFile();
         getUser();
         getChildren();
-        GetData()
-        fetchFranchiseeList();
-    }, [formSettings.franchisee, saveFileId, fileDeleteMessage]);
+    }, [formSettings.franchisee, , fileDeleteMessage]);
 
     useEffect(() => {
         if (selectedFranchisees) {
@@ -277,6 +263,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     // useEffect(() => {
     //     GetFile()
     // }, [fileDeleteMessage]);
+
+
 
 
     const handleTrainingDelete = async (cell) => {
@@ -303,7 +291,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
 
     }
-
 
     const isAllRolesChecked = () => {
         let bool = false;
@@ -484,6 +471,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             },
         },
     ]);
+    console.log("USER",userData)
     return (
         <>
             <div id="main">
@@ -675,7 +663,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                         type="radio"
                                                         value={1}
                                                         checked={formSettings.accessibleToRole === 1}
-                                                        name="accessible_to_role"
+                                                        name="accessibleToRole"
                                                         id="roles"
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
@@ -696,9 +684,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                 <label for="users">
                                                     <input
                                                         type="radio"
-                                                        name="accessible_to_role"
+                                                        name="accessibleToRole"
                                                         value={0}
-                                                        checked={formSettings.accessibleToRole === 0 || formSettings.accessibleToRole === null}
+                                                        checked={formSettings.accessibleToRole === 0}
                                                         id="users"
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
@@ -734,14 +722,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "franchisee_admin");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...data]
+                                                                        assigned_role: [...data],
+                                                                        accessibleToRole: 1
                                                                     }));
                                                                 }
 
                                                                 if (!formSettings.assigned_role.includes("franchisee_admin"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "franchisee_admin"]
+                                                                        assigned_role: [...formSettings.assigned_role, "franchisee_admin"],
+                                                                        accessibleToRole: 1
                                                                     }))
                                                             }} />
                                                     </Form.Group>) : null}
@@ -756,14 +746,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "coordinator");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...data]
+                                                                        assigned_role: [...data],
+                                                                        accessibleToRole: 1
                                                                     }));
                                                                 }
 
                                                                 if (!formSettings.assigned_role.includes("coordinator"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "coordinator"]
+                                                                        assigned_role: [...formSettings.assigned_role, "coordinator"],
+                                                                        accessibleToRole: 1
                                                                     }))
                                                             }} />
                                                     </Form.Group>) : null}
@@ -778,14 +770,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "educator");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...data]
+                                                                        assigned_role: [...data],
+                                                                        accessibleToRole: 1
                                                                     }));
                                                                 }
 
                                                                 if (!formSettings.assigned_role.includes("educator"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "educator"]
+                                                                        assigned_role: [...formSettings.assigned_role, "educator"],
+                                                                        accessibleToRole: 1
                                                                     }))
                                                             }} />
                                                     </Form.Group>) : null}
@@ -800,14 +794,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     let data = formSettings.assigned_role.filter(t => t !== "guardian");
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...data]
+                                                                        assigned_role: [...data],
+                                                                        accessibleToRole: 1
                                                                     }));
                                                                 }
 
                                                                 if (!formSettings.assigned_role.includes("guardian"))
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "guardian"]
+                                                                        assigned_role: [...formSettings.assigned_role, "guardian"],
+                                                                        accessibleToRole: 1
                                                                     }))
                                                             }} />
                                                     </Form.Group>) : null}
@@ -832,7 +828,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
-                                                                            assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"]
+                                                                            assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"],
+                                                                            accessibleToRole: 1
                                                                         }))
                                                                     }
 
@@ -852,7 +849,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
-                                                                            assigned_role: ["coordinator", "educator", "guardian"]
+                                                                            assigned_role: ["coordinator", "educator", "guardian"],
+                                                                            accessibleToRole: 1
                                                                         })
                                                                         )
                                                                     }
@@ -872,7 +870,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                     else {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
-                                                                            assigned_role: ["educator", "guardian"]
+                                                                            assigned_role: ["educator", "guardian"],
+                                                                            accessibleToRole: 1
                                                                         })
                                                                         )
                                                                     }
@@ -898,7 +897,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onSelect={(selectedOptions) => {
                                                                 setFormSettings((prevState) => ({
                                                                     ...prevState,
-                                                                    assigned_users: [...selectedOptions.map(option => option.id + "")]
+                                                                    assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                    accessibleToRole:0
                                                                 }))
                                                             }}
                                                             options={user}
@@ -920,7 +920,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                             onSelect={(selectedOptions) => {
                                                                 setFormSettings((prevState) => ({
                                                                     ...prevState,
-                                                                    assigned_childs: [...selectedOptions.map(option => option.id + "")]
+                                                                    assigned_childs: [...selectedOptions.map(option => option.id + "")],
+                                                                    accessibleToRole:0
                                                                 }))
                                                             }}
                                                             options={child}

@@ -79,7 +79,9 @@ const ChildrenEnrol = () => {
     }
   }
   useEffect(() => {
-    ChildernEnrolled()
+    if(selectedFranchisee){
+      ChildernEnrolled()
+    }
   }, [selectedFranchisee, AppyFilter, Filters])
   const columns = [
     {
@@ -240,7 +242,6 @@ const ChildrenEnrol = () => {
       }, 3000);
     }
   }, []);
-  const csvLink = useRef();
   return (
     <>
       <div id="main">
@@ -349,6 +350,7 @@ const ChildrenEnrol = () => {
                                   pagination={paginationFactory()}
                                 />
                               ) : (
+                                !fullLoaderStatus && 
                                 <div className="text-center mb-5 mt-5"><strong>
                                   No child enrol yet
                                 </strong></div>

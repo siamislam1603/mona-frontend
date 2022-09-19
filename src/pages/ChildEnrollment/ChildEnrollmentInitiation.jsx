@@ -144,7 +144,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                       <div className="enrollment-form-column">
                         <div className="grayback">
                           <h2 className="title-xs mb-2">Basic details about the child</h2>
-                          <p className="form_info mb-4">A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p>
+                          {/* <p className="form_info mb-4">A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p> */}
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
