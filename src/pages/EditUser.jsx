@@ -175,7 +175,7 @@ const EditUser = () => {
           updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
-          localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
+          localStorage.setItem('success_msg', 'User updated successfully Termination date set!');
           const userRole = localStorage.getItem('guardian');
           if(userRole === 'guardian')
             window.location.href = '/';
@@ -225,7 +225,7 @@ const EditUser = () => {
   
       if(createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
-        localStorage.setItem('success_msg', 'User updated successfully!');
+        localStorage.setItem('success_msg', 'User updated successfully');
 
         const userRole = localStorage.getItem('user_role');
         if(userRole === 'guardian')
@@ -246,7 +246,7 @@ const EditUser = () => {
       if(updateResponse.status === 201 && updateResponse.data.status === "success") {
         
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
-        localStorage.setItem('success_msg', 'User updated successfully!');
+        localStorage.setItem('success_msg', 'User updated successfully');
         
         const userRole = localStorage.getItem('user_role');
         if(userRole=== 'guardian')
