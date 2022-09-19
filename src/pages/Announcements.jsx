@@ -16,6 +16,10 @@ import { useParams } from "react-router-dom";
 const Announcements = () => {
   const Params = useParams();
 
+  console.log("index", Params.key)
+
+  let ActiveLink = Params.key
+
   const [allAnnouncement, setAllAnnouncement] = useState([])
   const [theMyAnnouncement, setTheMyAnnoucemenet] = useState([])
 
@@ -795,13 +799,13 @@ const Announcements = () => {
                   </div>
 
                   {/* searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData} */}
-            <div className="training-column">
-                    {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue}  loadCheck ={loadAllAnnouncement}/>}
-                    {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements theMyAnnouncement={theMyAnnouncement} myLoadData={myLoadData} selectedFranchisee = {selectedFranchisee} theLoad = {loadMy} />}
-                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent} loadEvent = {loadMoreEvent}  theloadevent = {loadEvent}/>}   
-                    
+                  <div className="training-column">
+                    {tabLinkPath === "/all-announcements"
+                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData={loadMoreData} search={searchvalue} Params={Params.id} />}
+                    {tabLinkPath === "/my-announcements"
+                      && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
+                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} Rarams={ActiveLink} />}
+
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
                   {/* {theCommon && theCommon ===theCount ? (

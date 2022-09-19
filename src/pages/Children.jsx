@@ -16,7 +16,8 @@ const Children = () => {
     const { id: paramsParentId } = useParams();
     console.log('PARAMS PARENT ID:', paramsParentId);
     useEffect(()=>{
-        init()                         
+        init()
+        console.log("aa gye hum")                         
     },[]);
 
     // Modal start
