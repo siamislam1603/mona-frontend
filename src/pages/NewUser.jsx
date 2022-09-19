@@ -676,7 +676,6 @@ const NewUser = () => {
                             <Form.Label>User Role</Form.Label>
                             <Select
                               placeholder="Select"
-                              isDisabled={formData?.role === 'guardian'}
                               ref={role}
                               closeMenuOnSelect={true}
                               options={userRoleData}
