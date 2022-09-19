@@ -37,13 +37,15 @@ const columns = [
     dataField: "action",
     text: "",
     formatter: (cell) => {
+      cell = cell?.split(",");
+  
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/children-all">View</Dropdown.Item>
+            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -95,8 +97,9 @@ const EducatorDashboard = () => {
       console.log(data, "responseresponseresponse")
       let tempData = data.map((dt) => ({
         name: `${dt?.fullname}`,
-        specialneed: `${dt?.has_special_needs}`
-
+        specialneed: `${dt?.has_special_needs}`,
+        action: `${dt?.id},${dt?.parents[0]?.id}`,
+        
       }))
       console.log("THE TEM", tempData)
       setChildrenData(tempData)
@@ -260,11 +263,11 @@ const EducatorDashboard = () => {
 
                                 {training.length !== 0 ? (
                                   <div className="item">
-                                    <div className="pic"><a href="/training"><img src={first?.coverImage} alt="" /></a></div>
+                                    <div className="pic"><a href={`/training-detail/${first?.id}`}><img src={first?.coverImage} alt="" /></a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/training" className="nowrap">{first?.title}</a>
+                                        <a href={`/training-detail/${first?.id}`} className="nowrap">{first?.title}</a>
                                         <div className="datecol">
                                           <span className="red-date">Due Date:{' '}{moment(first?.createdAt).format('DD/MM/YYYY')}</span>
                                           <span className="time">{first?.completion_time}</span>
@@ -292,13 +295,14 @@ const EducatorDashboard = () => {
                                 < div className="training-column">
                                   <div className="item">
                                     <div className="pic">
-                                      <a href="/training">
+                                      <a href={`/training-detail/${second?.id}`}>
+
                                         <img src={second?.coverImage} alt="" />
                                       </a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/training" className="nowrap">{second?.title}</a>
+                                        <a href={`/training-detail/${second?.id}`} className="nowrap">{second?.title}</a>
                                         <div className="datecol">
                                           <span className="time">{second?.completion_time}</span>
                                         </div>
@@ -313,13 +317,13 @@ const EducatorDashboard = () => {
                                 < div className="training-column">
                                   <div className="item">
                                     <div className="pic">
-                                      <a href="/training">
+                                      <a href={`/training-detail/${third?.id}`}>
                                         <img src={third?.coverImage} alt="" />
                                       </a></div>
                                     <div className="fixcol">
                                       <div className="icopic"><img src="../img/traning-audio-ico.png" alt="" /></div>
                                       <div className="iconame">
-                                        <a href="/training" className="nowrap">{third?.title}</a>
+                                        <a href={`/training-detail/${third?.id}`} className="nowrap">{third?.title}</a>
                                         <div className="datecol">
                                           <span className="time">{third?.completion_time}</span>
                                         </div>
@@ -339,10 +343,10 @@ const EducatorDashboard = () => {
                           <div className="column-list announcements-list">
                             <div className="listing">
                               {announcements?.length > 0 ?
-                                (announcements?.map((item) => {
+                                (announcements?.map((item, index) => {
                                   return <>
                                     <div className="listing">
-                                      <a href="/announcements" className="item">
+                                      <a href={`/announcements-announcement/${index}`} className="item">
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                         <div className="name">{item?.title}
 

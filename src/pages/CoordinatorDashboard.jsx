@@ -49,65 +49,65 @@ const columns = [
       console.log("THE ECUTOR", cell)
       cell = cell.split(",");
       return (
-      <>
-        <div className="user-list">
-          <span className="user-pic">
+        <>
+          <div className="user-list">
+            <span className="user-pic">
 
-            {cell[2] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[2]} alt="" /></>)}
+              {cell[2] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[2]} alt="" /></>)}
 
-          </span>
-          <span className="user-name">
-            {cell[0]}
-          </span>
+            </span>
+            <span className="user-name">
+              {cell[0]}
+            </span>
 
-          </div> 
-           {
-          cell[1] === "undefined" || cell[1] === "null" ? (
-            <>
+          </div>
+          {
+            cell[1] === "undefined" || cell[1] === "null" ? (
+              <>
 
-            </>
-          ) : (
-            <>
-              <div className="user-list">
-                <span className="user-pic">
+              </>
+            ) : (
+              <>
+                <div className="user-list">
+                  <span className="user-pic">
 
-                  {/* <img src={cell[3]} alt='' /> */}
-                  {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+                    {/* <img src={cell[3]} alt='' /> */}
+                    {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
 
-                </span>
-                <span className="user-name">
-                  {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
+                  </span>
+                  <span className="user-name">
+                    {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
 
-                </span>
-              </div>
-            </>
-          )
-        }
-      
-        {
-          cell[1] === "undefined" || cell[1] === "null" ? (
-            <>
+                  </span>
+                </div>
+              </>
+            )
+          }
 
-            </>
-          ) : (
-            <>
-              <div className="user-list">
-                <span className="user-pic">
+          {
+            cell[1] === "undefined" || cell[1] === "null" ? (
+              <>
 
-                  {/* <img src={cell[3]} alt='' /> */}
-                  {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
+              </>
+            ) : (
+              <>
+                <div className="user-list">
+                  <span className="user-pic">
 
-                </span>
-                <span className="user-name">
-                  {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
+                    {/* <img src={cell[3]} alt='' /> */}
+                    {cell[3] === "null" ? (<><img src="../img/upload.jpg" alt="" /></>) : (<><img src={cell[3]} alt="" /></>)}
 
-                </span>
-              </div>
-            </>
-          )
-        }
+                  </span>
+                  <span className="user-name">
+                    {cell[1] === " " || cell[1] === "undefined" ? (null) : (cell[1])}
 
-        {/* {
+                  </span>
+                </div>
+              </>
+            )
+          }
+
+          {/* {
           cell[1]? (
             
           )
@@ -115,20 +115,22 @@ const columns = [
            <></>
           )
         } */}
-      </>)
+        </>)
     },
   },
   {
     dataField: "action",
     text: "",
     formatter: (cell) => {
+      cell = cell?.split(",");
+
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/children-all">View</Dropdown.Item>
+            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -154,7 +156,7 @@ const CoordinatorDashboard = () => {
       }
     }).then((response) => {
       setlatest_announcement(response.data.recentAnnouncement);
-      console.log("response ",response.data)
+      console.log("response ", response.data)
     }).catch((e) => {
       setlatest_announcement([])
       console.log("Error", e);
@@ -200,7 +202,7 @@ const CoordinatorDashboard = () => {
 
     let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
     response = await response.json();
-    console.log("Response chikd",response)
+    console.log("Response chikd", response)
     if (response.status === "pass") {
       console.log(" data repsonse", response)
 
@@ -208,11 +210,12 @@ const CoordinatorDashboard = () => {
       let tempData = data.map((dt) => ({
         name: `${dt.fullname}`,
         educatorname: `${dt?.users[0]?.fullname},${dt?.users[1]?.fullname},${dt?.users[0]?.profile_photo},${dt?.users[1]?.profile_photo}`,
+        action: `${dt.id},${dt.parents[0].id}`
       }))
       console.log("THE TEMPDATA", tempData)
       setUserData(tempData);
     }
-    if(response.status=== "success"){
+    if (response.status === "success") {
       setUserData([])
     }
 
@@ -458,10 +461,10 @@ const CoordinatorDashboard = () => {
                             {
                               latest_announcement?.length > 0 ?
                                 (
-                                  latest_announcement?.map((data) => {
+                                  latest_announcement?.map((data, index) => {
                                     return (
                                       <div className="listing">
-                                        <a href="/announcements" className="item">
+                                        <a href={`/announcements-announcement/${index}`} className="item">
                                           <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                           <div className="name">{data?.title}
                                             <div>

@@ -5,16 +5,12 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
 const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const { SearchBar } = Search;
-
-
-
 
   const GetData = async () => {
     try {
@@ -44,6 +40,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
     }
 
   }
+
   const GetSaachhData = async () => {
     try {
       let User = localStorage.getItem('user_role');
