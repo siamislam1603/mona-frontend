@@ -308,29 +308,29 @@ const NewUser = () => {
 
   }
 
-  const checkIfEmailIsValid = (event, email) => {
-    console.log('INSIDE EMAIL VALIDATION FUNCTION');
-    console.log('VALUE OF EMAIL:', email);
-    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  // const checkIfEmailIsValid = (event, email) => {
+  //   console.log('INSIDE EMAIL VALIDATION FUNCTION');
+  //   console.log('VALUE OF EMAIL:', email);
+  //   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-    if(Object.keys(formErrors).length > 0) {
-      handleSubmit(event);
-    }
+  //   if(Object.keys(formErrors).length > 0) {
+  //     handleSubmit(event);
+  //   }
     
-    if(!regex.test(email)) {
-      console.log('Email is invalid!');
-      setFormErrors(prevState => ({
-        ...prevState,
-        email: "Email format is invalid"
-      }))
-    } else {
-      console.log('Email.invalid!');
-      setFormErrors(prevState => ({
-        ...prevState,
-        email: null
-      }));
-    }
-  }
+  //   if(!regex.test(email)) {
+  //     console.log('Email is invalid!');
+  //     setFormErrors(prevState => ({
+  //       ...prevState,
+  //       email: "Email format is invalid"
+  //     }))
+  //   } else {
+  //     console.log('Email.invalid!');
+  //     setFormErrors(prevState => ({
+  //       ...prevState,
+  //       email: null
+  //     }));
+  //   }
+  // }
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
@@ -604,7 +604,7 @@ const NewUser = () => {
                         <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
-                              type="email"
+                              type="text"
                               name="email"
                               ref={email}
                               value={formData?.email}
@@ -616,7 +616,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                checkIfEmailIsValid(e, e.target.value);
+                                // checkIfEmailIsValid(e, e.target.value);
                                 checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
