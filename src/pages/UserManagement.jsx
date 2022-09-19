@@ -650,7 +650,7 @@ const UserManagement = () => {
                               <Dropdown.Menu>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
-                                  <label>Users</label>
+                                  <label style={{ marginBottom: '5px' }}>Role</label>
                                   <Form.Group>
                                     {
                                       displayRoles &&
