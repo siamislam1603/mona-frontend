@@ -169,7 +169,7 @@ const Announcements = () => {
     LoadMoreALl()
 
   }
-  const LoadMoreALl = async () => {
+  const LoadMoreALl = async (e) => {
     console.log("THE PAGE Outside LOADMORE DATA", page)
 
     try {
@@ -252,6 +252,9 @@ const Announcements = () => {
           setAllAnnouncement(response.data.result.searchedData);
           setTheCommon(theCount)
         }
+        if(response.data.result.searchedData.length===0){
+          setLoadAllAnnouncement(false)
+        }
         else {
           console.log("NO DATA TO SEARCH")
         }
@@ -276,6 +279,10 @@ const Announcements = () => {
           setAllAnnouncement(response.data.result.searchedData);
           setTheCommon(response.data.result.searchedData.length)
           setLoadAllAnnouncement(true)
+          
+        }
+        if(response.data.result.searchedData.length===0){
+          setLoadAllAnnouncement(false)
         }
       }
     } catch (error) {
@@ -466,28 +473,7 @@ const Announcements = () => {
               
        
       }
-      if (searchvalue) {
-        console.log("THE SERACH VALUE IN MY", searchvalue)
-        let usedId = localStorage.getItem("user_id")
-        // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=1000`
-
-        // api_url = `${BASE_URL}/announcement/createdAnnouncement/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${search === " " ? "":search}&offset${offset}=&limit=5`
-        let userId = localStorage.getItem("user_id")
-        api_url = `${BASE_URL}/announcement/created-announcement-events/${userId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "" : searchvalue}&offset=0&limit=${myCount}`
-        const response = await axios.get(api_url, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-
-        console.log("THE MY ANNOUCOUNCEMENT in SEARCH", response, api_url)
-        setTheMyAnnoucemenet(response.data.result.searchedData)
-        console.log("THE SEARCH LENGHT", response.data.result.searchedData.length)
-        // setMyCount(0)
-        setMyDataLength(myCount)
-
-
-      }
+     
       else {
         console.log("NO SEARCH VALUE", mypage)
         setMyPage(5)
@@ -568,7 +554,6 @@ const Announcements = () => {
           }
 
         }
-      }
     } catch (error) {
       console.log("THE ERROR", error)
       setAllEvent([])
@@ -646,6 +631,7 @@ const Announcements = () => {
         setLoadMoreEvent(loadMoreEvent.slice(0, 5))
         // console.log("THE LOADDER DATA",loadMoreData.slice(0,5))
       }
+    } 
 
 
 },[tabLinkPath])
