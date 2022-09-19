@@ -55,6 +55,9 @@ function ViewFormBuilder(props) {
   let form_history_no_record = false;
 
   useEffect(() => {
+    console.log("frnachisee_id----->",localStorage.getItem("franchisee_id"));
+    console.log("user_id----->",localStorage.getItem("user_id"));
+    
     getAllForm();
     if (location?.state?.message) {
       toast.success(location?.state?.message);
@@ -246,6 +249,7 @@ function ViewFormBuilder(props) {
 
   return (
     <>
+    {console.log("child_id----->",localStorage.getItem("child_id"))}
       {console.log('others form data----->', OthersFormData)}
       <div id="main">
         <section className="mainsection">
@@ -258,9 +262,10 @@ function ViewFormBuilder(props) {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
+                    console.log("id---->",id);
                     id =
                       localStorage.getItem('user_role') === 'guardian'
-                        ? localStorage.getItem('franchisee_id')
+                        ? localStorage.setItem('child_id',id)
                         : id;
                     getFormData('', id);
                     setSelectedFranchisee(id);
@@ -343,11 +348,17 @@ function ViewFormBuilder(props) {
                                     {(item['title_flag'] = false)}
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
+                                        {console.log("inner_item?.form_filled_user---->,",inner_item?.form_filled_user,"-----",inner_item.form_name,"-----",localStorage.getItem('user_role'),"--------",localStorage.getItem("child_id"),"-----",!(inner_item?.form_filled_user || []).includes(localStorage.getItem("child_id")),"------",inner_item.form_permissions[0]
+                                        ?.fill_access_users)}
                                         return inner_item.end_date &&
                                           !(
                                             inner_item?.form_filled_user || []
                                           ).includes(
-                                            localStorage.getItem('user_id')
+                                            localStorage.getItem(
+                                              'user_role'
+                                            ) === 'guardian'
+                                              ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
+                                            : localStorage.getItem('user_id')
                                           ) &&
                                           ((
                                             inner_item.form_permissions[0]
@@ -365,6 +376,10 @@ function ViewFormBuilder(props) {
                                               inner_item.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
+                                              localStorage.getItem(
+                                                'user_role'
+                                              ) === 'guardian'
+                                                ? (localStorage.getItem("child_id") || localStorage.getItem("user_id")) :
                                               localStorage.getItem('user_id')
                                             )) ? (
                                           // ||
@@ -464,7 +479,11 @@ function ViewFormBuilder(props) {
                                           !(
                                             inner_item?.form_filled_user || []
                                           ).includes(
-                                            localStorage.getItem('user_id')
+                                            localStorage.getItem(
+                                              'user_role'
+                                            ) === 'guardian'
+                                              ? localStorage.getItem("child_id")
+                                            : localStorage.getItem('user_id')
                                           ) &&
                                           ((
                                             inner_item?.form_permissions[0]
@@ -482,7 +501,11 @@ function ViewFormBuilder(props) {
                                               inner_item.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
-                                              localStorage.getItem('user_id')
+                                              localStorage.getItem(
+                                                'user_role'
+                                              ) === 'guardian'
+                                                ? localStorage.getItem("child_id")
+                                              : localStorage.getItem('user_id')
                                             )) ? (
                                           // ||
                                           // (
@@ -604,7 +627,11 @@ function ViewFormBuilder(props) {
                                         return (
                                           inner_item?.form_filled_user || []
                                         ).includes(
-                                          localStorage.getItem('user_id')
+                                          localStorage.getItem(
+                                            'user_role'
+                                          ) === 'guardian'
+                                            ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
+                                          : localStorage.getItem('user_id')
                                         ) &&
                                           ((
                                             inner_item?.form_permissions[0]
@@ -622,7 +649,11 @@ function ViewFormBuilder(props) {
                                               inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
-                                              localStorage.getItem('user_id')
+                                              localStorage.getItem(
+                                                'user_role'
+                                              ) === 'guardian'
+                                                ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
+                                              : localStorage.getItem('user_id')
                                             )) ? (
                                           // ||
                                           // (

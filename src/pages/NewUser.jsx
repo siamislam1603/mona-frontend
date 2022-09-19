@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 import { compact } from 'lodash';
-
+import { useNavigate } from 'react-router-dom';
 const animatedComponents = makeAnimated();
 
 const NewUser = () => {
@@ -23,6 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
+  const navigate = useNavigate();
   console.log('>>>>>>>>>>>>>>>>', queryRole, childId, childfranchise);
 
   // REF DECLARATIONS
@@ -307,7 +308,8 @@ const NewUser = () => {
           window.location.href=`/children/${data.id}`;
         } else {
           if(query.searchParams.get('childId')) { 
-            window.location.href=`/children/${query.searchParams.get('parentId')}`
+            // window.location.href=`/children/${query.searchParams.get('parentId')}`
+            navigate(`/children/${query.searchParams.get('parentId')}`, { state: { franchisee_id: formData.franchisee } })
           } else {
             window.location.href="/user-management";
           }
