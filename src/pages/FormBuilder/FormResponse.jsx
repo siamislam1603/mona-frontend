@@ -20,6 +20,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function FormResponse(props) {
   const Params = useParams();
+
+  const ParamsKey = Params.key
+
+  console.log(ParamsKey, 'Params')
   const location = useLocation();
   const sigPad = useRef({});
   const navigate = useNavigate();
@@ -122,10 +126,7 @@ function FormResponse(props) {
       headers: myHeaders,
     };
 
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1
-      }&user_id=${localStorage.getItem(
-        'user_id'
-      )}&user_role=${localStorage.getItem('user_role')}`
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -134,18 +135,17 @@ function FormResponse(props) {
           setfullLoaderStatus(false);
         }
         result?.result.map((item, index) => {
-          item["signature_button"]=true;
-          console.log("item--->",item);
-          
-          result?.result[index]?.map((inner_item,inner_index)=>{
+          item["signature_button"] = true;
+          console.log("item--->", item);
+
+          result?.result[index]?.map((inner_item, inner_index) => {
             // if(inner_item.fields)
-            
-            console.log("inner_item--->first",inner_item);
-            Object.keys(JSON.parse(inner_item.fields)).map((field_item)=>{
-              console.log("inner_item--->",field_item);
-              if(field_item==="signature")
-              {
-                item["signature_button"]=false;
+
+            console.log("inner_item--->first", inner_item);
+            Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+              console.log("inner_item--->", field_item);
+              if (field_item === "signature") {
+                item["signature_button"] = false;
               }
             })
           })
@@ -159,19 +159,19 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  const getResponseTow = (id) => {
+  const getResponseTow = (search) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
       method: 'GET',
       redirect: 'follow',
       headers: myHeaders,
-    };
-
-    fetch(
-      `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem(
-        'user_id'
-      )}&user_role=franchisee_admin`,
+    };  
+    const Url = ParamsKey === "form-visit" ? `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}` : `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem(
+      'user_id'
+    )}&user_role=franchisee_admin`
+    fetch(Url
+      ,
       requestOptions
     )
       .then((response) => response.json())
