@@ -112,7 +112,7 @@ const Main = () => {
       localStorage.setItem('is_user_logged_in', false);
     }
   }, []);
-  
+
 
   return (
 
@@ -137,7 +137,7 @@ const Main = () => {
             </Protected>
           }
         />
-        
+
         <Route
           path="/child-enrollment-init/edit/:childId/:parentId"
           element={
@@ -625,20 +625,27 @@ const Main = () => {
           path="/announcements"
           element={
             <Protected isLoggedIn={isLoggedIn} controller='announcements' action='listing'>
-            <SignIn />
-            <Announcements />
-          </Protected>
-           
+              <SignIn />
+              <Announcements />
+            </Protected>
           }
         />
-
+        <Route
+          path="/announcements-announcement/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn} controller='announcements' action='listing'>
+              <SignIn />
+              <Announcements />
+            </Protected>
+          }
+        />
         <Route
           path="/new-announcements"
           element={
             <Protected isLoggedIn={isLoggedIn} controller='announcements' action='add'>
-            <SignIn />
-            <AddNewAnnouncements />
-          </Protected>
+              <SignIn />
+              <AddNewAnnouncements />
+            </Protected>
 
           }
         />
@@ -646,9 +653,9 @@ const Main = () => {
           path="/edit-announcement/:id"
           element={
             <Protected isLoggedIn={isLoggedIn} controller='announcements' action='edit'>
-            <SignIn />
-            <EditAnnouncement />
-          </Protected>
+              <SignIn />
+              <EditAnnouncement />
+            </Protected>
 
           }
         />
