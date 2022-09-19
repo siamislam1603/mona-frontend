@@ -2,28 +2,15 @@ import React, { useState,useEffect } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
 import axios from "axios";
 import AllAnnouncements from "./AllAnnouncements";
 import MyAnnouncements from "./MyAnnouncements";
 import AllEvent from "./AllEvent";
-import { debounce, slice } from 'lodash';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 
 
-const animatedComponents = makeAnimated();
-const training = [
-  {
-    value: "sydney",
-    label: "Sydney",
-  },
-  {
-    value: "melbourne",
-    label: "Melbourne",
-  },
-];
+
 
 const Announcements =  () => {
   const [allAnnouncement,setAllAnnouncement] = useState([])
@@ -51,6 +38,9 @@ const Announcements =  () => {
   const [allEvent,setAllEvent] = useState([])
   const [topMessage,setTopMessage] = useState(null);
 
+  const [loadMy,setLoadMy] = useState(true);
+  const [loadEvent,setLoadEvent] = useState(true)
+  const [loadAllAnnouncement,setLoadAllAnnouncement]= useState(true)
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -58,7 +48,6 @@ const Announcements =  () => {
 
   // NEW CODE
   let searchvalue  = ""
-  let loadError = " "
   let count =""
 
   const handleSearchOnChange =(e) => {
@@ -83,7 +72,7 @@ const Announcements =  () => {
   } 
   const LoadMoreEvent = async() =>{
     try {
-      console.log("THE R")
+
       setpageEvent(pageEvent+5)
       let api_url = '';
       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&&isEvent=1search=${searchvalue === " " ? "":searchvalue}&offset=${pageEvent}&limit=5`
@@ -237,7 +226,12 @@ const Announcements =  () => {
           console.log("THE Search in all announcement Data")
           setAllAnnouncement(response.data.result.searchedData);
           setTheCommon(theCount)
+
+          if(response.data.result.searchedData.length===0){
+            setLoadAllAnnouncement(false)
+          }
         }
+
         else{
           console.log("NO DATA TO SEARCH")
         }
@@ -261,13 +255,14 @@ const Announcements =  () => {
         if(response.status === 200 && response.data.status === "success") {
           setAllAnnouncement(response.data.result.searchedData);
           setTheCommon(response.data.result.searchedData.length)
-         
+          setLoadAllAnnouncement(true)
         }
       }
     } catch (error) {
         if(error.response.status === 404){
           console.log("The Error in Search all announcement",error)
           setAllAnnouncement([])
+          setLoadAllAnnouncement(false)
         }
 
     }
@@ -302,6 +297,7 @@ const Announcements =  () => {
       //  setLoadMoreData(loadMoreData.slice(0,5))
       //  setPage(5)
       setLoadMoreData(response.data.result.searchedData)
+      setLoadAllAnnouncement(true)
       if(response.data.result.searchedData.length>5){
         console.log(" DATA LENGTH IS GREATER THEN 5")
         setPage(0)
@@ -322,6 +318,7 @@ const Announcements =  () => {
       setAllAnnouncement([])
       setCount(0)
       setTheCommon(0)
+      setLoadAllAnnouncement(false)
 
     }
   }
@@ -351,7 +348,7 @@ const Announcements =  () => {
         setEventLength(response.data.result.searchedData.length)
         setEventCount(response.data.result.count)
         setLoadMoreEvent(response.data.result.searchedData)
-        
+        setLoadEvent(true)
       }
     } catch (error) {
         if(error.response.status === 404){
@@ -360,6 +357,7 @@ const Announcements =  () => {
           setEventCount(0)
           setEventLength(0)
           setAllEvent([])
+          setLoadEvent(false)
         }
 
     }
@@ -383,7 +381,6 @@ const Announcements =  () => {
        },
      }); 
      console.log("ON LOAD MY ANNOUNCEMENT  2125555",response.data.result.searchedData,)
-   
         setTheMyAnnoucemenet(response.data.result.searchedData)
         setMyLoadData(response.data.result.searchedData)
         let datalength  = response.data.result.searchedData.length
@@ -391,6 +388,7 @@ const Announcements =  () => {
         setMyDataLength(response.data.result.searchedData.length)
         setMyCount(response.data.result.count)
         console.log("THE MYPAGE INSIDE LOAD",mypage)
+        setLoadMy(true)
         setMyLoadData(response.data.result.searchedData)
         // if(datalength>5){
         //   setPage(0)
@@ -405,6 +403,8 @@ const Announcements =  () => {
       setTheMyAnnoucemenet([])
       setMyCount(0)
       setMyDataLength(0)
+      setLoadMy(false)
+
     }
   }
   const myAnnnoucementData = async(e) =>{
@@ -431,9 +431,14 @@ const Announcements =  () => {
               
               console.log("THE MY ANNOUCOUNCEMENT in SEARCH",response,api_url)
                 setTheMyAnnoucemenet(response.data.result.searchedData)
+                setLoadMy(true)
                 console.log("THE SEARCH LENGHT",response.data.result.searchedData.length)
                 // setMyCount(0)
                 setMyDataLength(myCount)
+
+                if(response.data.result.searchedData.length===0){
+                  setLoadMy(false)
+                }
               
        
       }
@@ -450,19 +455,17 @@ const Announcements =  () => {
             authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        console.log("THE MY ANNOUNCEMENT DATA",response)
-        console.log("THE MY NO search  SEARCH URL  ",api_url)
+    
         // console.log("THE Search value have nothing",myAnnouncementData)
           console.log("The MY page and My daa LEnght",mypage,myDataLength)
           setTheMyAnnoucemenet(response.data.result.searchedData)
           setMyDataLength(response.data.result.searchedData.length)
-          
-          
-        
+          setLoadMy(true)
       }
     } catch (error) {
-        console.log("THE ERROR INSIDE MY ANNOUNCEMENT",error)
+        console.log("THE ERROR INSIDE search MY ANNOUNCEMENT",error)
         setTheMyAnnoucemenet([])
+        setLoadMy(false)
     }
   }
   const AllEventSearch = async(e) =>{
@@ -490,6 +493,10 @@ const Announcements =  () => {
           if(response.status === 200 &&  response.data.status === "success"){
             setAllEvent(response.data.result.searchedData)
             setEventLength(eventCount)
+            setLoadEvent(true)
+          }
+          if(response.data.result.searchedData.length===0){
+            setLoadEvent(false)
           }
    
         }
@@ -510,11 +517,15 @@ const Announcements =  () => {
           if(response.status === 200 &&  response.data.status === "success"){
             setAllEvent(response.data.result.searchedData)
             setEventLength(response.data.result.searchedData.length)
+          setLoadEvent(true)
+
           }
+
         }
     } catch (error) {
       console.log("THE ERROR",error)
       setAllEvent([])
+      setLoadEvent(false)
     }
   }
   const TheCount = async() =>{
@@ -596,7 +607,6 @@ useEffect(() =>{
   useEffect(() =>{
     if(selectedFranchisee && tabLinkPath==="/all-announcements"){
       onLoadAnnouncement()
-      console.log(" SELECT FRANHSIE ON LOADANNOUNCEMENT",loadMoreData,allAnnouncement)
     }
     else if(selectedFranchisee && tabLinkPath==="/my-announcements" ){
       // console.log("INSIDE MY ANNOUNCEMENT USEEFFCT")
@@ -619,15 +629,14 @@ useEffect(() =>{
   },[])
   useEffect(()=>{
     setTheCommon(loadMoreData.length)
-    console.log("ALL CNN ",loadMoreData, loadMoreData.length)
   },[loadMoreData])
   useEffect(() =>{
-    console.log("my data length",myLoadData,myLoadData.length)
     setMyDataLength(myLoadData.length)
   },[myLoadData])
   useEffect(() =>{
     setEventLength(loadMoreEvent.length)
   },[loadMoreEvent])
+
   useEffect(() => {
           if (localStorage.getItem('user_role') === 'franchisor_admin') {
         setTabLinkPath('/my-announcements');
@@ -671,7 +680,7 @@ useEffect(() =>{
   
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
-  console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,)
+  console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMy)
   return (
     <>
    {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
@@ -708,15 +717,7 @@ useEffect(() =>{
                           verifyPermission("announcements", "add") && 
                           <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
                         }
-                           {/* {
-                          verifyPermission("training_files", "add") &&
-                          <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
-                        } */}
-                        {/* {userRole === "franchisor_admin" || userRole === "franchisee_admin" ? (
-                        <a href="/new-announcements" className="btn btn-primary me-3">+ Add New</a>
-                        ): (
-                          null
-                        )} */}
+                          
                       </div>
                     </div>
                   </header>
@@ -740,10 +741,10 @@ useEffect(() =>{
                   {/* searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData} */}
             <div className="training-column">
                     {tabLinkPath === "/all-announcements" 
-                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue} />}
+                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue}  loadCheck ={loadAllAnnouncement}/>}
                     {tabLinkPath === "/my-announcements" 
-                      && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
-                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent} loadEvent = {loadMoreEvent}/>}   
+                      && <MyAnnouncements theMyAnnouncement={theMyAnnouncement} myLoadData={myLoadData} selectedFranchisee = {selectedFranchisee} theLoad = {loadMy} />}
+                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent} loadEvent = {loadMoreEvent}  theloadevent = {loadEvent}/>}   
                     
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
