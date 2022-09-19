@@ -457,10 +457,16 @@ export const FranchiseeFormValidation = (formObj) => {
   if (!abn) {
     errors.abn = 'Australian business number is required';
   }
+
+  if(abn.length > 0 && (/^[a-zA-Z ]+$/i.test(abn)))
+    errors.abn = "Field should only contain digits"
   
   if (!acn) {
     errors.acn = 'Australian company number is required';
   }
+
+  if(acn.length > 0 && (/^[a-zA-Z ]+$/i.test(acn)))
+    errors.acn = "Field should only contain digits"
   
   if (!city) {
     errors.city = 'Suburb is required';
@@ -499,12 +505,16 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
+
+  if(email.length > 0 && !regex.test(email)) {
+    errors.email = "Email format is invalid";
+  }
 
   if (!role) errors.role = 'User role is required';
   
@@ -517,6 +527,13 @@ export const UserFormValidation = (formObj) => {
   if (!address) errors.address = 'Address is required';
   
   if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if(postalCode.length > 0 && postalCode.length < 4)
+    errors.postalCode = 'Post code must be 4-digit long';
+
+  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+    errors.postalCode = 'Post code must be a number';
+
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   

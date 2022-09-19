@@ -311,7 +311,7 @@ console.log("Announcemen detal",announcementDetails)
                            
                            ))
                         ): (
-                          <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
+                          <div className="text-center mb-5 mt-5"> {isLoading && props.loadCheck? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
                         )
                       }
                     </Accordion>

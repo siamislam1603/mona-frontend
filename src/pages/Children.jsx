@@ -14,7 +14,7 @@ let DeleteId = [];
 const Children = () => {
 
     const { id: paramsParentId } = useParams();
-
+    console.log('PARAMS PARENT ID:', paramsParentId);
     useEffect(()=>{
         init()                         
     },[]);
@@ -55,6 +55,8 @@ const Children = () => {
     const [selectedEducators,setSelectedEducators] = useState([]);
     const [educators, setEducators] = useState([]); 
     const [parents, setParents] = useState([]);
+    const [childFranchise, setChildFranchise] = useState(null);
+    const [enroledChildId, setEnroledChildId] = useState(null);
     const [reloadFlag, setReloadFlag] = useState(false);
 
     const init = async() => {
@@ -163,20 +165,16 @@ const Children = () => {
             })
 
             localStorage.setItem("DefaultParents",JSON.stringify(defaultparents))
+
+            response = await axios.get(`${BASE_URL}/enrollment/child/franchise/${childId || id}`);
+
+            if(response.status === 200 && response.data.status === 'success') {
+                let { franchise } = response.data;
+                setChildFranchise(franchise);
+                setEnroledChildId(childId || id);
+            }
         }
 
-        // let response = await axios.get(`${BASE_URL}/user-group/users/guardian`, {    
-        //     headers: {
-        //         "Authorization": `Bearer ${localStorage.getItem('token')}`
-        //     }
-        // });
-        // console.log('RESPONSE FROM PARENT:', response.data);
-        // if(response.status === 200 && response.data.status === "success") {
-        //     let { users} = response.data;
-        //     let defaultParents = users.map(d => d.id);
-        //     console.log('DEFAULT PARENTS:', defaultParents);
-        //     localStorage.setItem("DefaultParents", JSON.stringify(defaultParents));
-        // }
     }
     
     const rowEvents = {
@@ -290,7 +288,7 @@ const Children = () => {
             dataField: 'Parents',
             text: 'Co-parent',
             formatter: (cell) => {
-                // console.log(cell,"celll")
+                console.log(cell,"celll>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 return (
                     <>
                         {cell.parents.length === 0 ?
@@ -302,7 +300,7 @@ const Children = () => {
                                 <div className="childern-list">
                                     <div className="user-list">
                                         <span className="user-pic">
-                                            <img src={item.profile_photo ? item.profile_photo : "../img/user.png" } alt='' />
+                                            <img src={item.profile_pic ? item.profile_pic : "../img/user.png" } alt='' />
                                         </span>
                                         <span className="user-name">
                                             {item.parent_family_name ? item.parent_family_name : "Parent"}
@@ -529,7 +527,12 @@ const Children = () => {
                 </Modal.Footer>
             </Modal > */}
             {show ? <EducatorAssignPopup educators={educators} handleClose={()=>handleClose()} show={show}/> : ""}
-            {cpShow ? <CoparentAssignPopup parents={parents} handleClose={()=>handleCpClose()} show={cpShow}/> : ""}
+            {cpShow ? <CoparentAssignPopup 
+                        parents={parents} 
+                        franchise={childFranchise} 
+                        childId={enroledChildId}
+                        paramsParentId={paramsParentId}
+                        handleClose={()=>handleCpClose()} show={cpShow}/> : ""}
         </>
     );
 };

@@ -65,13 +65,15 @@ const columns = [
     dataField: "action",
     text: "",
     formatter: (cell) => {
+      cell = cell?.split(",");
+
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/children-all">View</Dropdown.Item>
+            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -129,13 +131,15 @@ const columns1 = [
     dataField: "action",
     text: "",
     formatter: (cell) => {
+      cell = cell?.split(",");
+
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
             <img src="../img/dot-ico.svg" alt="" />
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item href="/form/response">View</Dropdown.Item>
+            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div></>)
@@ -173,17 +177,18 @@ const FranchiseeDashboard = () => {
         "Authorization": "Bearer " + token
       }
     })
-  
+
     if (response.status === 200) {
       let data = response.data.childrenEnrolled;
 
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
-          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
+          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo,
+          action: `${dt.id},${dt.parents[0].id}`
         }
       ))
-
+      console.log("tempData", tempData)
       setUserData(tempData);
     }
   }
@@ -202,10 +207,11 @@ const FranchiseeDashboard = () => {
       const tempData = data.map((dt, index) => (
         {
           name: `${dt.fullname}`,
-          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo
+          educatatoName: dt.users[0]?.fullname + "," + dt.users[0]?.profile_photo + "," + dt.users[1]?.fullname + "," + dt.users[1]?.profile_photo,
+          action: `${dt.id},${dt.parents[0].id}`
         }
       ))
-     
+
       setEnrollments(tempData);
     }
   }
@@ -308,7 +314,7 @@ const FranchiseeDashboard = () => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <Row>
                     <Col md={7}>
@@ -451,10 +457,10 @@ const FranchiseeDashboard = () => {
                             {
                               latest_announcement?.length > 0 ?
                                 (
-                                  latest_announcement?.map((data) => {
+                                  latest_announcement?.map((data, index) => {
                                     return (
                                       <div className="listing">
-                                        <a href="/announcements" className="item">
+                                        <a href={`/announcements-announcement/${index}`} className="item">
                                           <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                           <div className="name">{!data.title ? "No Announcement" : data.title}
                                             <div>

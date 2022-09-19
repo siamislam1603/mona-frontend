@@ -22,10 +22,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-
-
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
-    const [deleteCheck,setDeleteCheck] = useState(false)
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
@@ -55,11 +52,9 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const SearchApi = async () => {
         try {
-            // let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     console.log("responce", files)
@@ -81,8 +76,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             console.log(e);
         }
     }
-
-
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
             headers: {
@@ -116,10 +109,8 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
-
         data?.repository_shares[0].franchisee[0] == "all" ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
-
 
     const fetchFranchiseeList = async () => {
         const token = localStorage.getItem('token');
@@ -141,7 +132,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         setLoaderFlag(true);
-        
+
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? ["all"] : formSettings.franchisee
 
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
@@ -171,14 +162,13 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
 
     const GetFile = async () => {
         try {
-            console.log("GET FILE FUNCTION CALING")
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response) {
                     setfullLoaderStatus(false)
                 }
-                console.log("DELETE RESPONSE",response)
+                console.log("DELETE RESPONSE", response)
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -190,7 +180,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         Shaired: dt.repository_shares.length,
                         // Shaired: dt.repository.repository_shares[0].length,
                         filesId: dt.filesId,
-
                     }));
                     setUserData(tempData);
                 }
@@ -215,7 +204,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
             setUser(response.data.users)
-
         }
     };
 
@@ -239,10 +227,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         GetData()
         fetchFranchiseeList();
-    },[saveFileId])
+    }, [saveFileId])
 
     useEffect(() => {
         GetFile();
@@ -259,13 +247,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     useEffect(() => {
         SearchApi();
     }, [SearchValue])
-
-    // useEffect(() => {
-    //     GetFile()
-    // }, [fileDeleteMessage]);
-
-
-
 
     const handleTrainingDelete = async (cell) => {
         const token = localStorage.getItem('token');
@@ -471,7 +452,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             },
         },
     ]);
-    console.log("USER",userData)
+
     return (
         <>
             <div id="main">
@@ -898,7 +879,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 setFormSettings((prevState) => ({
                                                                     ...prevState,
                                                                     assigned_users: [...selectedOptions.map(option => option.id + "")],
-                                                                    accessibleToRole:0
+                                                                    accessibleToRole: 0
                                                                 }))
                                                             }}
                                                             options={user}
@@ -921,7 +902,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                 setFormSettings((prevState) => ({
                                                                     ...prevState,
                                                                     assigned_childs: [...selectedOptions.map(option => option.id + "")],
-                                                                    accessibleToRole:0
+                                                                    accessibleToRole: 0
                                                                 }))
                                                             }}
                                                             options={child}

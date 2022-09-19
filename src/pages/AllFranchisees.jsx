@@ -48,6 +48,12 @@ const training = [
     },
 ];
 
+function getChildCount(childList, franchisee_id) {
+    console.log('CHILD LIST:', childList);
+    let count = childList?.filter(d => parseInt(d.franchisee_id) === parseInt(franchisee_id));
+    count = count?.length
+    return count < 10 ? `0${count}` : `${count}`;
+}
 
 const AllFranchisees = () => {
 
@@ -61,6 +67,7 @@ const AllFranchisees = () => {
     const [topSuccessMessage, setTopSuccessMessage] = useState();
     const [deleteResponseMessage, setDeleteResponseMessage] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [childList, setChildList] = useState(null);
 
     const handleCancelFilter = () => {
         setFilter({});
@@ -120,7 +127,7 @@ const AllFranchisees = () => {
 
         }
 
-        const response = await axios.get(api_url, {
+        let response = await axios.get(api_url, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -148,6 +155,12 @@ const AllFranchisees = () => {
             console.log("franchise data  franchise datafranchise datafranchise datafranchise data", temp)
             let tempData = temp.filter((data) => data.isDeleted === null || data.isDeleted === 0);
             setFranchiseeData(tempData)
+
+            response = await axios.get(`${BASE_URL}/api/list/children`);
+            if(response.status === 200 && response.data.status === "success") {
+                let { children } = response.data;
+                setChildList(children);
+            }
         }
 
     };
@@ -395,10 +408,10 @@ const AllFranchisees = () => {
                                                                                     <img src="../img/dot-ico.svg" alt="" />
                                                                                 </Dropdown.Toggle>
                                                                                 <Dropdown.Menu>
+                                                                                    <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
                                                                                     <Dropdown.Item onClick={() => {
                                                                                         deleteAlert(data.id)
                                                                                     }}>Delete</Dropdown.Item>
-                                                                                    <Dropdown.Item href={`/edit-franchisees/${data.id}`}>Edit</Dropdown.Item>
                                                                                 </Dropdown.Menu>
                                                                             </Dropdown>
                                                                         </div>
@@ -414,7 +427,7 @@ const AllFranchisees = () => {
                                                                             </div>
                                                                             <div className="d-flex justify-content-between align-items-center">
                                                                                 <p className="mb-0 px-2" style={{ borderRight: "2px solid #AA0061", fontWeight: "500", fontSize: "14px" }}>Children</p>
-                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{data.children < 10 ? `0${data.children}` : data.children}</p>
+                                                                                <p className="mb-0 px-2" style={{ color: '#151F6D', fontWeight: '600', fontSize: "20px" }}>{getChildCount(childList, data.id)}</p>
                                                                             </div>
                                                                         </div>
                                                                     </Card.Footer>

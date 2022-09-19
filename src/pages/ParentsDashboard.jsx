@@ -72,28 +72,28 @@ const ParentsDashboard = () => {
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
 
-      console.log("The event",training)
+      console.log("The event", training)
       setEvent(training);
     }
   };
 
   const Userannouncements = async () => {
-   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
 
-    if (response.status === 200 && response.data.status === "success") {
-      const training = response.data.recentAnnouncement;
-      setannouncements(training);
+      if (response.status === 200 && response.data.status === "success") {
+        const training = response.data.recentAnnouncement;
+        setannouncements(training);
+      }
+    } catch (error) {
+      setannouncements([])
+      console.log("error", error)
     }
-   } catch (error) {
-    setannouncements([])
-    console.log("error",error)
-   }
   };
 
   const assignededucators = async () => {
@@ -106,7 +106,7 @@ const ParentsDashboard = () => {
     console.log(response, "response??????????????")
     if (response.status === 200 && response.data.status === "pass") {
       const result = response.data.assignedEducatorData.users;
-     
+
       setEditTrainingData(result);
     }
   }
@@ -136,7 +136,7 @@ const ParentsDashboard = () => {
     // return Added
 
   }
-  
+
 
   const handleParentLogout = async () => {
     setLogUserOutDialog(false);
@@ -215,8 +215,8 @@ const ParentsDashboard = () => {
     // }
 
     // Redirect to baseurl when not not specific Role
-      if (localStorage.getItem('user_role')!=='guardian') {
-        window.location.href = '/';
+    if (localStorage.getItem('user_role') !== 'guardian') {
+      window.location.href = '/';
     }
 
 
@@ -271,8 +271,8 @@ const ParentsDashboard = () => {
                         <header className="title-head mb-4 justify-content-between">
                           <h4 className="title-sm mb-0"><strong>Educators</strong></h4>
                         </header>
-                      
-                        {editTrainingData&& editTrainingData?.length >0 ? (
+
+                        {editTrainingData && editTrainingData?.length > 0 ? (
                           editTrainingData?.map((item) => {
                             return <>
                               <div className="educator-sec mb-5">
@@ -287,16 +287,14 @@ const ParentsDashboard = () => {
                             </>
                           })
                         ) : (
-                        <div className="text-center mb-5 mt-5"><strong>No educators assigned</strong></div>
+                          <div className="text-center mb-5 mt-5"><strong>No educators assigned</strong></div>
                         )}
-                            <header className="title-head mb-4 justify-content-between">
-                              <h4 className="title-sm mb-0"><strong>Events</strong></h4>
-                              <Link to="/announcements" className="viewall">View All</Link>
-                            </header>
-
+                        <header className="title-head mb-4 justify-content-between">
+                          <h4 className="title-sm mb-0"><strong>Events</strong></h4>
+                          <Link to="/announcements-announcement/all-events" className="viewall">View All</Link>
+                        </header>
                         {event ? (<>
                           <div className="event-sec pb-5">
-                           
                             <div className="column-list event-list">
                               {event.map((item) => {
                                 return <>
@@ -309,7 +307,7 @@ const ParentsDashboard = () => {
                                           <img src="../img/dot-ico.svg" alt="" />
                                         </Dropdown.Toggle>
                                         <Dropdown.Menu>
-                                          <Dropdown.Item href="/announcements">View</Dropdown.Item>
+                                          <Dropdown.Item href="/announcements-announcement/all-events">View</Dropdown.Item>
                                         </Dropdown.Menu>
                                       </Dropdown>
                                     </div>
@@ -319,7 +317,7 @@ const ParentsDashboard = () => {
                             </div>
                           </div>
                         </>) : (
-                        <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
+                          <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
 
                         )}
                       </div>
@@ -352,27 +350,27 @@ const ParentsDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
                             {
-                              announcements?.length>0? (
-                                announcements.map((item) => {
+                              announcements?.length > 0 ? (
+                                announcements.map((item, index) => {
                                   return <>
                                     <div className="listing">
-                                      <a href="/announcements" className="item">
+                                      <a href={`/announcements-announcement/${index}`} className="item">
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                         <div className="name">{item.title}
                                           <div>
                                             <span className="timesec">{getAddedTime(item?.createdAt)}</span>
                                           </div>
                                         </div>
-    
+
                                       </a>
                                     </div>
                                   </>
                                 })
-                              )  :
-                              (
-                                <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                              ) :
+                                (
+                                  <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
 
-                              )
+                                )
                             }
 
 
