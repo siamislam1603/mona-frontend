@@ -9,9 +9,10 @@ import AnnouncementVideo from "./AnnouncementVideo";
 import moment from 'moment';
 
 
-const MyAnnouncements = (props) => {
+const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoad}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
+  const[myAnnoncementCheck,setMyAnnoncementCheck]= useState([])
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [topMessage,setTopMessage] = useState(null);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
@@ -40,11 +41,13 @@ const MyAnnouncements = (props) => {
      if(response.status === 200) {
         setmyAnnouncement(response.data.result.searchedData)
         setIsLoading(true)
+        console.log("The response",response)
 
      }
     } catch (error) {
        setmyAnnouncement([])
        setIsLoading(false)
+       console.log("THe err myanno",error)
 
     }
   }
@@ -73,8 +76,7 @@ const MyAnnouncements = (props) => {
       },3000)
     }
   }
-  const userName = localStorage.getItem("user_name");
-  const userROle = localStorage.getItem("user_role")
+
   const getRelatedFileName = (str) => {
     let arr = str.split("/");
     let fileName = arr[arr.length - 1].split("_")[0];
@@ -85,7 +87,7 @@ const MyAnnouncements = (props) => {
 
 
   const getAddedTime = (str) =>{
-    console.log("Date rohan",str)
+  
     const Added= moment(str).format('DD/MM/YYYY')
     var today = new Date();
     let d = new Date(today);
@@ -108,49 +110,53 @@ const MyAnnouncements = (props) => {
     // return Added
   
   }
-  // const getAddedTime = (str) =>{
-  //   const Added= moment(str).format('DD/MM/YYYY')
-  //   var today = new Date();
-  //   let d = new Date(today);
-  //   let month = (d.getMonth() + 1).toString().padStart(2, '0');
-  //   let day = d.getDate().toString().padStart(2, '0');
-  //   let year = d.getFullYear();
-  //    let datae =  [year, month, day].join('/');
-     
-  //    if(datae == Added){
-  //     return "Added today"
-  //    }
-  //    if(Added<datae){
-  //     return Added
-  //    }
-  // }
+
   useEffect(() =>{
-    myAnnouncementData()
+    // myAnnouncementData()
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
   },[])
   useEffect(() =>{
-    if(props.myLoadData?.length>0){
+    if(myLoadData?.length>0){
       console.log("MY LOAD MORE DATA")
-      setmyAnnouncement(props.myLoadData)
+      setmyAnnouncement(myLoadData)
     }
     else{
          
     }
-  },[props.myLoadData])
+  },[myLoadData])
 
   useEffect(()=>{
-      if(props.myAnnouncementData) {
-        setmyAnnouncement(props.myAnnouncementData)
+
+      if(theMyAnnouncement?.length>0) {
+        // setIsLoading(true)
+        setmyAnnouncement(theMyAnnouncement)
       }
-  },[props.myAnnouncementData])
-  
+      else{
+        // setIsLoading(false)
+
+        setmyAnnouncement([])
+      }
+  },[theMyAnnouncement])
+
 useEffect(() =>{
   setTimeout(() => {
     setTopErrorMessage(null);
   }, 3000)
 },[topErrorMessage])
 
+useEffect(() =>{
+  console.log("select rohan",selectedFranchisee)
+},[])
+useEffect(() =>{
+  if(selectedFranchisee){
+
+  }
+},[selectedFranchisee])
+
+
+
+console.log("poprs my announcemet",theLoad)
 // {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
  return (
  
@@ -328,7 +334,7 @@ useEffect(() =>{
         ))
        )
        :(
-        <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
+        <div className="text-center mb-5 mt-5"> {isLoading ===true && theLoad === true? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
 
        )
       }

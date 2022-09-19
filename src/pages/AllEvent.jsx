@@ -19,7 +19,7 @@ const AllEvent = (props) => {
   const [isLoading, setIsLoading] = useState(true)
 
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-
+  
  
 
   const allEvent = async () =>{
@@ -260,7 +260,7 @@ useEffect(() =>{
         ))
        )
        :(
-        <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
+        <div className="text-center mb-5 mt-5"> {isLoading && props.theloadevent ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
        )
       }
    
