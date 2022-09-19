@@ -16,7 +16,9 @@ let selectedFranchisee = [
 ];
 
 const FileRepository = () => {
-  const [tabLinkPath, setTabLinkPath] = useState("/available-Files");
+  const User_role = localStorage.getItem('user_role');
+  let ActiveLInk = User_role === "franchisor_admin" ? "/created-by-me" : "/available-Files";
+  const [tabLinkPath, setTabLinkPath] = useState(ActiveLInk);
   const [userData, setUserData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [filterData, setFilterData] = useState({
@@ -29,7 +31,12 @@ const FileRepository = () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
+  const [SearchValue, setSearchValue] = useState();
 
+
+  const HandelSearch = (event) => {
+    setSearchValue(event.target.value);
+  }
   return (
     <>
       <div id="main">
@@ -57,32 +64,50 @@ const FileRepository = () => {
                             <div className="othpanel">
                               <div className="extra-btn">
                                 <div className="data-search me-3">
-                                  <SearchBar {...props.searchProps} />
+                                  <label for="search-bar" className="search-label">
+                                    <input
+                                      id="search-bar"
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Search"
+                                      value={SearchValue}
+                                      onChange={HandelSearch} />
+                                  </label>
+                                  {/* <SearchBar {...props.searchProps} /> */}
                                 </div>
                                 <FilerepoUploadFile />
                               </div>
                             </div>
                           </header>
                           <div className="training-cat mb-3">
-
                             <ul>
-                              <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files Shared With Me</a></li>
+                              {localStorage.getItem('user_role') === "franchisor_admin" ? (<>
+                                {
+                                  verifyPermission("file_repository", "add") &&
+                                  <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
+                                }
+                              </>) : (<>
+                                <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files Shared With Me</a></li>
+                                {
+                                  verifyPermission("file_repository", "add") &&
+                                  <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
+                                }
+                              </>)}
 
-                              {
-                                verifyPermission("file_repository", "add") &&
-                                <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
-                              }
                             </ul>
                           </div>
                           <div className="training-column">
                             {tabLinkPath === "/available-Files"
                               && <FileRepoShairWithme
                                 selectedFranchisee={selectedFranchisee}
-                                filter={filterData} />}
+                                filter={filterData}
+                                SearchValue={SearchValue}
+                              />}
                             {tabLinkPath === "/created-by-me"
                               && <FileRepodAddbyMe
                                 filter={filterData}
                                 selectedFranchisee={selectedFranchisee}
+                                SearchValue={SearchValue}
                               />}
                           </div>
                         </>

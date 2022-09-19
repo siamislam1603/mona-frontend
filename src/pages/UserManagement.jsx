@@ -361,15 +361,16 @@ const UserManagement = () => {
         is_deleted: dt.is_deleted,
         userID: dt.id,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active + "," + dt.role
+        action: `${dt.is_active},${dt.role}`
       }));
-      if (localStorage.getItem('user_role') === 'guardian') {
-        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      }
+      // console.log('TEMP DATA:', tempData);
+      // if (localStorage.getItem('user_role') === 'guardian') {
+      //   tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
+      // }
 
-      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-        tempData = tempData.filter(d => d.action === 1);
-      }
+      // if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+      //   tempData = tempData.filter(d => d.action === 1);
+      // }
 
       setUserDataAfterFilter(tempData);
       setIsLoading(false)
@@ -419,6 +420,8 @@ const UserManagement = () => {
       filteredData = data.filter(d => d.role !== 'franchisor_admin');
       filteredData = data.filter(d => d.role !== 'franchisee_admin');
     }
+
+    console.log(`FILTERED DATA for ${localStorage.getItem('user_role')}:`, filteredData);
 
     setUserData(filteredData);
   };
