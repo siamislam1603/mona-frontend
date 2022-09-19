@@ -9,7 +9,7 @@ import {
   Modal,
   Row,
 } from 'react-bootstrap';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL, IGNORE_REMOVE_FORM } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
 import { FullLoader } from '../../components/Loader';
@@ -19,6 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function FormResponse(props) {
+  const Params = useParams();
   const location = useLocation();
   const sigPad = useRef({});
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ function FormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
-  let hideFlag=false;
+  let hideFlag = false;
 
   useEffect(() => {
     console.log(':location?.state--->', location?.state);
@@ -41,7 +42,6 @@ function FormResponse(props) {
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
-    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),"");
   };
   const trim = (e, index) => {
     e.preventDefault();
@@ -79,12 +79,12 @@ function FormResponse(props) {
     fetch(`${BASE_URL}/form/form_data`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        
+
         getResponse('');
         setSignatureModel(false);
         if (result) {
           toast.success('Signature added successfully');
-          hideFlag=true;
+          hideFlag = true;
         }
       });
 
@@ -122,40 +122,35 @@ function FormResponse(props) {
       headers: myHeaders,
     };
 
-    fetch(
-      `${BASE_URL}/form/response?search=${search}&form_id=${
-        location?.state?.id ? location?.state?.id : 1
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1
       }&user_id=${localStorage.getItem(
         'user_id'
-      )}&user_role=${localStorage.getItem('user_role')}`,
-      requestOptions
-    )
+      )}&user_role=${localStorage.getItem('user_role')}`
+    fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        
+
         if (result) {
           setfullLoaderStatus(false);
         }
         result?.result.map((item, index) => {
-          item["signature_button"]=true;
-          console.log("item--->",item);
-          result?.result[index]?.map((inner_item,inner_index)=>{
+          item["signature_button"] = true;
+          console.log("item--->", item);
+          result?.result[index]?.map((inner_item, inner_index) => {
             // if(inner_item.fields)
-            Object.keys(JSON.parse(inner_item.fields)).map((field_item)=>{
-              console.log("inner_item--->",field_item);
-              if(field_item==="signature")
-              {
-                item["signature_button"]=false;
+            Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+              console.log("inner_item--->", field_item);
+              if (field_item === "signature") {
+                item["signature_button"] = false;
               }
             })
           })
-          if(result?.result?.length-1===index)
-          {
+          if (result?.result?.length - 1 === index) {
             setResponseData(result?.result);
             setFormData(result?.form);
           }
         });
-        
+
       })
       .catch((error) => console.log('error', error));
   };
@@ -170,7 +165,9 @@ function FormResponse(props) {
     };
 
     fetch(
-      `${BASE_URL}/form/response?search=&form_id=${id}&user_id=2&user_role=franchisor_admin`,
+      `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem(
+        'user_id'
+      )}&user_role=franchisee_admin`,
       requestOptions
     )
       .then((response) => response.json())
@@ -265,13 +262,13 @@ function FormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                            (inner_index > 0 &&
-                                              responseData[index][
-                                                inner_index - 1
-                                              ]?.filled_user?.fullname?.includes(
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              ))
+                                              (inner_index > 0 &&
+                                                responseData[index][
+                                                  inner_index - 1
+                                                ]?.filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -284,48 +281,48 @@ function FormResponse(props) {
                                           <h5>
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user
-                                                    ?.fullname
-                                                ) &&
+                                                inner_index - 1
+                                              ].filled_user?.fullname?.includes(
                                                 inner_item?.filled_user
                                                   ?.fullname
+                                              ) &&
+                                              inner_item?.filled_user
+                                                ?.fullname
                                               : inner_item?.filled_user
-                                                  ?.fullname}
+                                                ?.fullname}
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                    inner_index - 1
-                                                  ]?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ')
-                                                    .includes(
-                                                      inner_item?.filled_user?.role
-                                                        .split('_')
-                                                        .join(' ')
-                                                    ) &&
-                                                  inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','
+                                                  inner_index - 1
+                                                ]?.filled_user?.role
+                                                  .split('_')
+                                                  .join(' ')
+                                                  .includes(
+                                                    inner_item?.filled_user?.role
+                                                      .split('_')
+                                                      .join(' ')
+                                                  ) &&
+                                                inner_item?.filled_user?.role
+                                                  .split('_')
+                                                  .join(' ') + ','
                                                 : inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','}
+                                                  .split('_')
+                                                  .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.franchisee?.franchisee_name.includes(
-                                                  inner_item?.filled_user
-                                                    ?.franchisee
-                                                    ?.franchisee_name
-                                                ) &&
+                                                inner_index - 1
+                                              ].filled_user?.franchisee?.franchisee_name.includes(
                                                 inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name
+                                                  ?.franchisee
+                                                  ?.franchisee_name
+                                              ) &&
+                                              inner_item?.filled_user
+                                                ?.franchisee?.franchisee_name
                                               : inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name}
+                                                ?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -392,28 +389,27 @@ function FormResponse(props) {
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.png'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpg'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpeg'
-                                              ) ? (
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.png'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpg'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpeg'
+                                                ) ? (
                                                 <>
                                                   <img
-                                                    src={`${
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }`}
+                                                    src={`${Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                      }`}
                                                   ></img>
                                                 </>
                                               ) : (

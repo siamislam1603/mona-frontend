@@ -29,6 +29,10 @@ const training = [
 const Announcements = () => {
   const Params = useParams();
 
+  console.log("index", Params.key)
+
+  let ActiveLink = Params.key
+
   const [allAnnouncement, setAllAnnouncement] = useState([])
   const [theMyAnnouncement, setTheMyAnnoucemenet] = useState([])
 
@@ -755,7 +759,7 @@ const Announcements = () => {
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData={loadMoreData} search={searchvalue} Params={Params.id} />}
                     {tabLinkPath === "/my-announcements"
                       && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
-                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} />}
+                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} Rarams={ActiveLink} />}
 
                   </div>
                   {/* {franchiseeData && franchiseeData.searchedData.length} */}
