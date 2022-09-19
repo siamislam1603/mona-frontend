@@ -13,7 +13,7 @@ const selectRow = {
     clickToSelect: true,
 };
 
-const FileRepodAddbyMe = ({ selectedFranchisee }) => {
+const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -31,7 +31,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryId}, ${dt.count}`,
+                    name: `${dt.categoryName}, ${dt.count}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -43,6 +43,35 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
         }
 
     }
+    const GetSaachhData = async () => {
+        try {
+            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}&search=${SearchValue}`, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+            if (response) {
+                setfullLoaderStatus(false)
+            }
+            if (response.status === 200) {
+                const users = response.data.dataDetails;
+                let tempData = users.map((dt) => ({
+                    name: `${dt.categoryName}, ${dt.count}`,
+                    createdAt: dt.updatedAt,
+                    userID: dt.id,
+                    creatorName: dt.ModifierName + "," + dt.updatedBy
+                }));
+                setUserData(tempData);
+            }
+        } catch (err) {
+            setfullLoaderStatus(false)
+        }
+
+    }
+    useEffect(() => {
+        GetSaachhData();
+    }, [SearchValue])
+
     useEffect(() => {
         GetData();
     }, []);
@@ -71,18 +100,9 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
                                 </span>
                             </Link>
                             <span className="user-name">
-                                {cell[0] === "1" ? "Daily Use" :
-                                    cell[0] === "2" ? "Business Management" :
-                                        cell[0] === "3" ? "Employment" :
-                                            cell[0] === "4" ? "Compliance" :
-                                                cell[0] === "5" ? "Care Giving" :
-                                                    cell[0] === "6" ? "Curriculum & Planning" :
-                                                        cell[0] === "7" ? "Resources" :
-                                                            cell[0] === "8" ? "General" : "Null"
-                                }
+                                {cell[0]}
                                 <small>{cell[1]} Files</small>
                             </span>
-
                         </div>
 
                     </>
@@ -115,7 +135,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee }) => {
                                                             cell[1]
                                     }
                                 </small>
-                                
+
                             </span>
                         </div>
                     </>

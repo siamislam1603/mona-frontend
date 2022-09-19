@@ -8,10 +8,14 @@ import { FullLoader } from "../components/Loader";
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 
-const FileRepoShairWithme = ({ selectedFranchisee }) => {
+const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const { SearchBar } = Search;
+
+
+
+
   const GetData = async () => {
     try {
       let User = localStorage.getItem('user_role');
@@ -24,11 +28,10 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
       if (response) {
         setfullLoaderStatus(false)
       }
-
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryId}, ${dt.count}`,
+          name: `${dt.categoryName}, ${dt.count}`,
           createdAt: dt.updatedAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -41,9 +44,41 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     }
 
   }
+  const GetSaachhData = async () => {
+    try {
+      let User = localStorage.getItem('user_role');
+      let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${selectedFranchisee}]&search=${SearchValue}` : `${BASE_URL}/fileRepo?search=${SearchValue}`
+      let response = await axios.get(URL, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      if (response) {
+        setfullLoaderStatus(false)
+      }
+      if (response.status === 200) {
+        const users = response.data.dataDetails;
+        let tempData = users.map((dt) => ({
+          name: `${dt.categoryName}, ${dt.count}`,
+          createdAt: dt.updatedAt,
+          userID: dt.id,
+          creatorName: dt.ModifierName + "," + dt.updatedBy
+        }));
+        setUserData(tempData);
+      }
+
+    } catch (e) {
+      setfullLoaderStatus(false)
+    }
+  }
   useEffect(() => {
     GetData();
-  }, [selectedFranchisee]);
+  }, [selectedFranchisee,]);
+
+  useEffect(() => {
+    GetSaachhData();
+  }, [SearchValue])
+
 
   const [columns, setColumns] = useState([
     {
@@ -61,15 +96,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
                 </span>
               </Link>
               <span className="user-name">
-                {cell[0] === "1" ? "Daily Use" :
-                  cell[0] === "2" ? "Business Management" :
-                    cell[0] === "3" ? "Employment" :
-                      cell[0] === "4" ? "Compliance" :
-                        cell[0] === "5" ? "Care Giving" :
-                          cell[0] === "6" ? "Curriculum & Planning" :
-                            cell[0] === "7" ? "Resources" :
-                              cell[0] === "8" ? "General" : "Null"
-                }
+                {cell[0]}
                 <small>{cell[1]} Files</small>
               </span>
             </div>
@@ -144,7 +171,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         >
           {(props) => (
             <>
-              <SearchBar {...props.searchProps} />
               <BootstrapTable
                 {...props.baseProps}
               />
