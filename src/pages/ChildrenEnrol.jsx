@@ -19,7 +19,6 @@ const ChildrenEnrol = () => {
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
-
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
   const [Filters, setFilters] = useState(null);

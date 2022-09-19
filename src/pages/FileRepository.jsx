@@ -64,7 +64,6 @@ const FileRepository = () => {
                             </div>
                           </header>
                           <div className="training-cat mb-3">
-
                             <ul>
                               <li><a onClick={handleLinkClick} path="/available-Files" className={`${tabLinkPath === "/available-Files" ? "active" : ""}`}>Files Shared With Me</a></li>
 
@@ -78,7 +77,8 @@ const FileRepository = () => {
                             {tabLinkPath === "/available-Files"
                               && <FileRepoShairWithme
                                 selectedFranchisee={selectedFranchisee}
-                                filter={filterData} />}
+                                filter={filterData}
+                              />}
                             {tabLinkPath === "/created-by-me"
                               && <FileRepodAddbyMe
                                 filter={filterData}

@@ -11,7 +11,7 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 const FileRepoShairWithme = ({ selectedFranchisee }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-
+  const { SearchBar } = Search;
   const GetData = async () => {
     try {
       let User = localStorage.getItem('user_role');
@@ -45,7 +45,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     GetData();
   }, [selectedFranchisee]);
 
-
   const [columns, setColumns] = useState([
     {
       dataField: 'name',
@@ -55,7 +54,6 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         cell = cell.split(',');
         return (
           <>
-
             <div className="user-list">
               <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
                 <span>
@@ -74,9 +72,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
                 }
                 <small>{cell[1]} Files</small>
               </span>
-
             </div>
-
           </>
         );
       },
@@ -148,6 +144,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         >
           {(props) => (
             <>
+              <SearchBar {...props.searchProps} />
               <BootstrapTable
                 {...props.baseProps}
               />
