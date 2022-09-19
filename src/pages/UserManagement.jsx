@@ -299,6 +299,8 @@ const UserManagement = () => {
     let api_url = '';
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
 
+    console.log("USER IDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD", id)
+
     if (search) {
       api_url = `${BASE_URL}/role/user/${id}?search=${search}`;
     }
