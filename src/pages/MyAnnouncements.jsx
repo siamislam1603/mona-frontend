@@ -7,9 +7,10 @@ import axios from "axios";
 
 import AnnouncementVideo from "./AnnouncementVideo";
 import moment from 'moment';
+import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 
 
-const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoad}) => {
+const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoad,removeItem}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const[myAnnoncementCheck,setMyAnnoncementCheck]= useState([])
@@ -51,10 +52,13 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
 
     }
   }
+  
   const deleteAnnouncementAlert = (id) =>{
     if (window.confirm('Are you sure you want to delete ?')) {
       console.log("Console yes")
       deleteAnnouncement(id)
+
+
     }
     else{
       console.log("Console no")
@@ -70,7 +74,9 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
     console.log("The response after delete",response)
     if(response.status === 200){
         setTopMessage("Delete succussfully")
-        myAnnouncementData()
+        // myAnnouncementData()
+        removeItem(id)
+
         setTimeout(() =>{
           setTopMessage(null)
       },3000)
@@ -156,7 +162,7 @@ useEffect(() =>{
 
 
 
-console.log("poprs my announcemet",theLoad)
+
 // {myAnnouncement &&  console.log("schedule time",myAnnouncement[0].scheduled_date)}
  return (
  
@@ -331,6 +337,7 @@ console.log("poprs my announcemet",theLoad)
             </Row>
           </Accordion.Body>
         </Accordion.Item>
+
         ))
        )
        :(
@@ -340,6 +347,8 @@ console.log("poprs my announcemet",theLoad)
       }
    
     </Accordion>
+    {/* <button type="button"  className="btn btn-primary">Load More</button> */}
+
   </div>
   )
 }
