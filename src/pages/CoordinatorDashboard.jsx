@@ -365,7 +365,7 @@ const CoordinatorDashboard = () => {
                               </a>
                             </div>
                             <div className="item">
-                              <a className="item" href="/form/response">
+                              <a className="item" href="/form">
                                 <span className="name">New Forms Submitted</span>
                                 <span className="separator">|</span>
                                 <span className="num">{onboarding?.newForms}</span>
