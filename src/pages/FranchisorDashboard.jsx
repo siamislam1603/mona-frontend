@@ -329,15 +329,14 @@ const FranchisorDashboard = () => {
                             {
                               latest_announcement?.length > 0 ?
                                 (
-                                  latest_announcement?.map((data) => {
+                                  latest_announcement?.map((data, index) => {
                                     return (
                                       <div className="listing">
-                                        <a href="/announcements" className="item">
+                                        <a href={`/announcements-announcement/${index}/all-announcement`} className="item">
                                           <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                           <div className="name">{data?.title}
                                             <div>
                                               <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-
                                             </div>
 
                                           </div>
@@ -349,20 +348,12 @@ const FranchisorDashboard = () => {
                                 :
                                 (
                                   <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
-
                                 )
                             }
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
-                        {/*<div className="ads text-center pb-5">
-                          <img src="../img/icon-column.png" alt=""/>
-                        </div>*/}
+
                       </aside>
                     </Col>
                   </Row>
