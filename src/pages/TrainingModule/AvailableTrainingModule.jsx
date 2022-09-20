@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const AvailableTraining = ({ filter, selectedFranchisee }) => {

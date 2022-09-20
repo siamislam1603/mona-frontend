@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Container } from "react-bootstrap";
 import LeftNavbar from "../../components/LeftNavbar";
 import TopHeader from "../../components/TopHeader";
@@ -12,6 +12,16 @@ import { enrollmentInitiationFormValidation } from '../../helpers/validation';
 
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
+
+  // REFS
+  let fullname = useRef(null);
+  let family_name = useRef(null);
+  let dob = useRef(null);
+  let start_date = useRef(null);
+  let home_address = useRef(null);
+  let child_crn = useRef(null);
+  let name_of_school = useRef(null);
+  let educator = useRef(null);
 
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -100,6 +110,28 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }
   }
 
+  const setAutoFocus = (errObj) => {
+    let errArray = Object.keys(errObj);
+
+    if(errArray.includes('fullname')) {
+      fullname?.current?.focus();
+    } else if(errArray?.includes('family_name')) {
+      family_name?.current?.focus();
+    } else if(errArray?.includes('dob')) {
+      dob?.current?.focus();
+    } else if(errArray?.includes('start_date')) {
+      start_date?.current?.focus();
+    } else if(errArray?.includes('home_address')) {
+      home_address?.current?.focus();
+    } else if(errArray?.includes('educatorData')) {
+      educator?.current?.focus();
+    } else if(errArray?.includes('child_crn')) {
+      child_crn?.current?.focus();
+    } else if(errArray?.includes('name_of_school')) {
+      name_of_school?.current?.focus();
+    } 
+  }
+
   const submitFormData = (event) => {
     event.preventDefault();
     console.log('SUBMITTING FORM DATA');
@@ -107,6 +139,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     let errorObj = enrollmentInitiationFormValidation(formOneChildData);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
+      setAutoFocus(errorObj)
     } else {
       setLoader(true);
       initiateEnrollment();
@@ -122,7 +155,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fetchEducatorList();
   }, [selectedFranchisee])
   
-  formOneChildData && console.log('CHILD DATA:', formOneChildData);
+  // formOneChildData && console.log('CHILD DATA:', formOneChildData);
+  errors && console.log('Errors:', errors);
   return (
     <>
       <div id="main">
@@ -153,6 +187,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="text"
                                   name="fullname"
+                                  ref={fullname}
                                   value={formOneChildData?.fullname || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
@@ -171,6 +206,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="text"
                                   minLenth={3}
+                                  ref={family_name}
                                   maxLength={50}
                                   name="family_name"
                                   value={formOneChildData?.family_name || ""}
@@ -195,6 +231,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="date"
                                   name="dob"
+                                  ref={dob}
                                   max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.dob || ""}
                                   onChange={(e) => {
@@ -214,6 +251,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="date"
                                   name="start_date"
+                                  ref={start_date}
                                   max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
@@ -261,6 +299,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
+                                  ref={home_address}
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {
                                     setFormOneChildData(prevState => ({
@@ -283,6 +322,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   placeholder={formOneChildData?.language || "Select"}
                                   closeMenuOnSelect={true}
                                   isMulti
+                                  ref={educator}
                                   options={educatorData}
                                   onChange={(e) => {
                                     setFormOneChildData((prevState) => ({
@@ -306,6 +346,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="text"
                                   name="child_crn"
+                                  ref={child_crn}
                                   // ref={child_crn}
                                   value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
@@ -366,6 +407,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Control
                                     type="text"
                                     name="name_of_school"
+                                    ref={name_of_school}
                                     value={formOneChildData?.name_of_school || ""}
                                     onChange={(e) => {
                                       handleChildData(e);
