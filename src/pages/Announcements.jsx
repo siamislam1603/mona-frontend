@@ -381,7 +381,6 @@ const Announcements = () => {
   const onLoadMyAnnouncement = async () => {
 
     try {
-
       console.log("LOAD MY ANNOUCNEMENT CALL FUNCTION")
       let userId = localStorage.getItem("user_id")
       let api_url = " "
@@ -486,7 +485,6 @@ const Announcements = () => {
             authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-
         // console.log("THE Search value have nothing",myAnnouncementData)
         console.log("The MY page and My daa LEnght", mypage, myDataLength)
         setTheMyAnnoucemenet(response.data.result.searchedData)
@@ -679,6 +677,7 @@ const Announcements = () => {
 
   const UserRole = Params.key === "all-announcement" ? "" : localStorage.getItem('user_role');
   console.log('UserRole', UserRole)
+
   useEffect(() => {
     if (UserRole === 'franchisor_admin') {
       setTabLinkPath('/my-announcements');
@@ -686,6 +685,7 @@ const Announcements = () => {
     else if (Params.key === "all-announcement") {
       setTabLinkPath('/all-announcements');
     }
+
     else if (Params.id === "all-events") {
       setTabLinkPath('/all-events');
     }

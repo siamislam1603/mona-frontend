@@ -45,7 +45,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
-
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
     }
@@ -76,6 +75,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
             console.log(e);
         }
     }
+
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
             headers: {
@@ -236,11 +236,12 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         GetFile();
         getUser();
         getChildren();
-    }, [formSettings.franchisee, , fileDeleteMessage]);
+    }, [formSettings.franchisee, fileDeleteMessage]);
 
     useEffect(() => {
         if (selectedFranchisees) {
             GetFile();
+            
         }
     }, [selectedFranchisees]);
 
@@ -496,7 +497,14 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                                         Params?.id === "7" ? "Resources" :
                                                                                             Params?.id === "8" ? "General" : "Null"
                                                                 }
-                                                                <small>{userData?.length} files</small>
+                                                                <small>
+                                                                    {userData?.length > 1 ? (<>
+                                                                        {userData?.length} Files
+                                                                    </>) : (<>
+                                                                        {userData?.length} File
+                                                                    </>)}
+                                                                </small>
+                                                                {/* <small>{userData?.length} files</small> */}
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -511,7 +519,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                                             value={SearchValue}
                                                                             onChange={HandelSearch} />
                                                                     </label>
-
                                                                 </div>
                                                                 <FilerepoUploadFile />
                                                             </div>
@@ -519,7 +526,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                                     </header>
                                                     <BootstrapTable
                                                         {...props.baseProps}
-                                                        // selectRow={selectRow}
+
                                                         pagination={paginationFactory()}
                                                     />
                                                 </>

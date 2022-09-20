@@ -67,6 +67,8 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       setfullLoaderStatus(false)
     }
   }
+
+
   useEffect(() => {
     GetData();
   }, []);
@@ -96,7 +98,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
               </Link>
               <span className="user-name">
                 {cell[2]}
-                <small>{cell[1]} Files</small>
+                <small>
+                  {cell[1] > 1 ? (<>
+                    {cell[1]} Files
+                  </>) : (<>
+                    {cell[1]} File
+                  </>)}
+                </small>
               </span>
             </div>
           </>

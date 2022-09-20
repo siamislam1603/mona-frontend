@@ -17,7 +17,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
-
     const GetData = async () => {
         try {
             let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
@@ -25,9 +24,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             })
-            if (response) {
-                setfullLoaderStatus(false)
-            }
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
@@ -37,6 +33,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     creatorName: dt.ModifierName + "," + dt.updatedBy
                 }));
                 setUserData(tempData);
+                setfullLoaderStatus(false)
             }
         } catch (err) {
             setfullLoaderStatus(false)
@@ -69,18 +66,17 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
 
     }
     useEffect(() => {
+        GetData();
+    }, []);
+
+    useEffect(() => {
         GetSaachhData();
     }, [SearchValue])
 
     useEffect(() => {
-        GetData();
-    }, []);
-
-
-    useEffect(() => {
         if (selectedFranchisee) {
             GetData();
-            setUserData();
+            // setUserData();
         }
     }, [selectedFranchisee]);
 
@@ -101,7 +97,15 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                             </Link>
                             <span className="user-name">
                                 {cell[2]}
-                                <small>{cell[1]} Files</small>
+                                {console.log(cell[1], cell[1].length, "cell[1]")}
+                                {console.log(cell[1], typeof cell[1], "cell[1]")}
+                                <small>
+                                    {cell[1] > 1 ? (<>
+                                        {cell[1]} Files
+                                    </>) : (<>
+                                        {cell[1]} File
+                                    </>)}
+                                </small>
                             </span>
                         </div>
 
@@ -166,7 +170,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     return (
         <div>
             <FullLoader loading={fullLoaderStatus} />
-            {userData ? (
+            {userData.length > 0 ? (
                 <ToolkitProvider
                     keyField="name"
                     data={userData}
@@ -182,10 +186,15 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     )}
 
                 </ToolkitProvider>
-            ) : null}
-            {!userData ?
-                <div className="text-center mb-5 mt-5">  <strong>No File Added By You</strong> </div>
-                : null}
+            ) : (
+                <>
+                    <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
+                </>
+            )}
+
+            {/* {!userData && !fullLoaderStatus ?
+                <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
+                : null} */}
             {/* <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div> */}
         </div>
     )
