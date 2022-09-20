@@ -150,13 +150,6 @@ const Children = () => {
             }
         }
     }
-    
-    function toastMessage(msg, timer) {
-        setTopSuccessMessage('Child reactiavted');
-        setTimeout(() => {
-            setTopSuccessMessage(null);
-        }, timer * 1000);
-    }
 
     const handleEnrollmentPageRedirection = async (childId, parentId) => {
         window.location.href=`/child-enrollment/${childId}/${parentId}?page=1`    
@@ -168,12 +161,18 @@ const Children = () => {
         console.log('RESPONSE:', response);
 
         if(response.status === 200 && response.data.status === "reactivated") {
-            toastMessage('Child reactivated', 3);
             updateChildList();
+            setTopSuccessMessage('Child activated');
+            setTimeout(() => {
+                setTopSuccessMessage(null);
+            }, 3000);
             
         } else if(response.status === 200 && response.data.status === "deactivated") {
-            toastMessage('Child deactivated', 3);
             updateChildList();
+            setTopSuccessMessage('Child deactivated');
+            setTimeout(() => {
+                setTopSuccessMessage(null);
+            }, 3000);
         }
     }
 
@@ -220,8 +219,10 @@ const Children = () => {
                 handleCpShow(row.id)
                 // addCoparentToChild()
             }
-            if (e.target.text === 'Deactivate'){
-                DeactivateChild(row.id)
+            if (e.target.text === 'Deactivate' || e.target.text === 'Activate'){
+                if (window.confirm(`Are you sure you want to ${e.target.text} this child?`)) {
+                    DeactivateChild(row.id)
+                }
             }
         },
     };
@@ -265,7 +266,7 @@ const Children = () => {
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
-        action: { enrollFlag: child.isChildEnrolled },
+        action: { enrollFlag: child.isChildEnrolled, active: child.is_active },
         Parents: {parents:child.parents, childId:child.id},
         status: child.is_active
     }));
@@ -342,7 +343,6 @@ const Children = () => {
             dataField: 'status',
             text: 'Status',
             formatter: (cell) => {
-                console.log('CELL>??????????????', cell);
                 let state = "";
                 state = parseInt(cell) === 1 ? "Active" : "Inactive";
                 return (
@@ -357,70 +357,28 @@ const Children = () => {
             dataField: 'Location',
             text: 'Location',
         },
-        // {
-        //     dataField: 'EnrollFlag',
-        //     text: '',
-        //     formatter: (cell) => {
-        //         // console.log(cell, 'ENROLLED CELL');
-        //         return (
-        //             <>  {
-        //                     cell.enrollFlag === 0 ?
-        //                     (   
-        //                         localStorage.getItem('user_role') !== 'guardian' ?
-        //                         <div className="cta-col">
-        //                             <button 
-        //                                 className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-        //                                 disabled={cell.initiationFlag === true}
-        //                                 onClick={() => sendInitiationMail(cell.childId)}>
-        //                                 {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
-        //                             </button>
-        //                         </div>
-        //                         : 
-        //                         <div className="cta-col">
-        //                             <button 
-        //                                 className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-        //                                 // disabled={cell.initiationFlag === true}
-        //                                 onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-        //                                 View Enrolment
-        //                             </button>
-        //                         </div>
-        //                     )
-        //                     :
-        //                     <div className="cta-col">
-        //                         <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800", textAlign: 'center'}}
-        //                         onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-        //                             View Enrolment
-        //                         </button>
-        //                         {
-        //                             (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
-        //                             <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
-        //                         }
-        //                     </div>
-        //                 }
-        //             </>
-        //         );
-        //     },
-        // },
         {
             dataField: 'action',
             text: '',
             formatter: (cell) => {
-                // console.log('CELL DATA CHILDREN:', cell);
+                let Button = parseInt(cell.active) === 1 ? "Deactivate" : "Activate";
                 return (
                     <>  {
-                            // localStorage.getItem('user_role') !== 'guardian' &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
                                         <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                        {/* {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>} */}
-                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                        <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                        <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
+                                        {
+                                            cell.active === 1 &&
+                                            <>
+                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
+                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                            </>
+                                        }
+                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
@@ -452,6 +410,7 @@ const Children = () => {
 
     return (
         <>
+        {topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>}
             <div id="main">
                 <section className="mainsection">
                     <Container>
