@@ -80,8 +80,8 @@ const Training = () => {
       setTrainingCategory([
         {
           id: 0,
-          value: 'select category',
-          label: 'Select Category'
+          value: 'all category',
+          label: 'All Category'
         },
         ...categoryList.map((data) => ({
           id: data.id,
@@ -98,7 +98,6 @@ const Training = () => {
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
-
       setTimeout(() => {
         setTopSuccessMessage(null);
       }, 3000);
@@ -230,6 +229,7 @@ const Training = () => {
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
+                          placeholder={"Select"}
                           components={animatedComponents}
                           options={trainingCategory}
                           className="selectdropdown-col"

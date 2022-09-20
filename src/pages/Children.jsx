@@ -10,6 +10,7 @@ import { BASE_URL } from '../components/App';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
+import { FullLoader } from "../components/Loader";
 let DeleteId = [];
 
 const Children = () => {
@@ -60,6 +61,7 @@ const Children = () => {
     const [enroledChildId, setEnroledChildId] = useState(null);
     const [reloadFlag, setReloadFlag] = useState(false);
     const [topSuccessMessage, setTopSuccessMessage] = useState(null);
+    const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const init = async() => {
         // Set Parents Franchisee
@@ -87,8 +89,10 @@ const Children = () => {
           if (response.status === 200) {
             const { parentData } = response.data;
             if(parentData !== null) {
+                setfullLoaderStatus(false)
                 setChildrenList(parentData?.children)
              } else {
+                setfullLoaderStatus(false)
                 setChildrenList([]);
              }
           }
@@ -413,6 +417,7 @@ const Children = () => {
     return (
         <>
         {topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>}
+        <FullLoader loading={fullLoaderStatus} />
             <div id="main">
                 <section className="mainsection">
                     <Container>

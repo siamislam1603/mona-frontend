@@ -81,6 +81,7 @@ const NewUser = () => {
   const [userActiveStatus, setUserActiveStatus] = useState(null);
   const [statusPopup, setStatusPopup] = useState(false);
   const [currentRole, setCurrentRole] = useState(null);
+  const [uploadError, setUploadError] = useState(null)
 
 
   // LOADER STATES
@@ -628,7 +629,7 @@ const NewUser = () => {
                       <form className="user-form" onSubmit={handleSubmit}>
                         <Row>
                         <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Email Address</Form.Label>
+                            <Form.Label>Email Address *</Form.Label>
                             <Form.Control
                               type="text"
                               name="email"
@@ -650,7 +651,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>User Role</Form.Label>
+                            <Form.Label>User Role *</Form.Label>
                             <Select
                               placeholder="Select"
                               ref={role}
@@ -673,7 +674,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Full Name</Form.Label>
+                            <Form.Label>Full Name *</Form.Label>
                             <Form.Control
                               type="text"
                               name="fullname"
@@ -691,7 +692,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>State</Form.Label>
+                            <Form.Label>State *</Form.Label>
                             <Select
                               placeholder="Select"
                               closeMenuOnSelect={true}
@@ -714,7 +715,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Suburb</Form.Label>
+                            <Form.Label>Suburb *</Form.Label>
                             <Select
                               placeholder="Select"
                               ref={city}
@@ -741,7 +742,7 @@ const NewUser = () => {
                           
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Address</Form.Label>
+                            <Form.Label>Address *</Form.Label>
                             <Form.Control
                               type="text"
                               name="address"
@@ -759,7 +760,7 @@ const NewUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Post Code</Form.Label>
+                            <Form.Label>Post Code *</Form.Label>
                             <Form.Control
                               type="text"
                               name="postalCode"
@@ -848,7 +849,7 @@ const NewUser = () => {
                           }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Label>Contact Number *</Form.Label>
                             <div className="tel-col">
                               <Select
                                 closeMenuOnSelect={true}
@@ -910,7 +911,7 @@ const NewUser = () => {
                           }
                             
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>Select Franchise</Form.Label>
+                            <Form.Label>Select Franchise *</Form.Label>
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' &&
                               <Select
@@ -954,7 +955,7 @@ const NewUser = () => {
                           {
                             formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3">
-                              <Form.Label>Select Primary Coordinator</Form.Label>
+                              <Form.Label>Select Primary Coordinator *</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
                                 ref={coordinator}
@@ -1031,8 +1032,19 @@ const NewUser = () => {
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               module="user-management"
-                              onSave={setTrainingDocuments} />
-                            <small className="fileinput">(Upload 5 files max.)</small>
+                              onSave={setTrainingDocuments}
+                              setUploadError={setUploadError} />
+                            <small className="fileinput">((pdf, doc, ppt & xslx))</small>
+                            <small className="fileinput">(max. 5 files, 5MB each)</small>
+                            {
+                              uploadError  &&
+                              uploadError.map(errorObj => {
+                                return (
+                                  // errorObj?.error[0].message
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File is greater than 5MB"}</p>
+                                )
+                              })
+                            }
                           </Form.Group>
 
                           <Col md={12}>
