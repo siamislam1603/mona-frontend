@@ -68,9 +68,12 @@ const Announcements = () => {
       console.log("THE SEARCH ALL ANNOUNCMENT")
       AllannoucementData(e)
     }
+
     else if(tabLinkPath=== "/my-announcements"){
-      myAnnnoucementData(e)
+      myAnnnoucementData(e)  
+
     }
+    
 
     else {
       console.log("SEARCH IN EVENTS")
