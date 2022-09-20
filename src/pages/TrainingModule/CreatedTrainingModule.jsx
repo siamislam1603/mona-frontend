@@ -48,22 +48,6 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     }
   };
 
-  const fetchUserList = async () => {
-    let franchisee_alias = selectedFranchisee.split(",")[0].split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_");
-    const response = await axios.get(`${BASE_URL}/user-group/users/franchisee/${franchisee_alias}`);
-
-    if (response.status === 200 && response.data.status === "success") {
-      const { users } = response.data;
-      setUserList(users.map(user => ({
-        id: user.id,
-        name: user.fullname,
-        email: user.email,
-        cat: user.email,
-        key: user.email
-      })));
-    }
-  };
-
   console.log('THE filter', filter)
   const handleTrainingSharing = async () => {
     let token = localStorage.getItem('token');
@@ -91,7 +75,7 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     try {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      console.log("TRaini created selectd", selectedFranchisee)
+      console.log("Training created selectd", selectedFranchisee)
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
         headers: {
           "Authorization": "Bearer " + token
@@ -367,15 +351,15 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => {
-                              if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
-                            }}>Delete</Dropdown.Item>
                             <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
                             <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
                             }}>Share</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this training?"))
+                                handleTrainingDelete(training.id)
+                            }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </div>

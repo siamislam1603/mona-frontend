@@ -441,10 +441,17 @@ const Main = () => {
             </Protected>
           }
         />
-
-
         <Route
           path="/form/response"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <FormResponse />
+            </Protected>
+          }
+        />
+        <Route
+          path="/form/response/:key"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
@@ -632,6 +639,15 @@ const Main = () => {
         />
         <Route
           path="/announcements-announcement/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn} controller='announcements' action='listing'>
+              <SignIn />
+              <Announcements />
+            </Protected>
+          }
+        />
+        <Route
+          path="/announcements-announcement/:id/:key"
           element={
             <Protected isLoggedIn={isLoggedIn} controller='announcements' action='listing'>
               <SignIn />

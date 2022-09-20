@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 import { compact } from 'lodash';
-
+import { useNavigate } from 'react-router-dom';
 const animatedComponents = makeAnimated();
 
 const NewUser = () => {
@@ -23,7 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
-  console.log('>>>>>>>>>>>>>>>>', queryRole, childId, childfranchise);
+  const navigate = useNavigate();
 
   // REF DECLARATIONS
   let email = useRef(null);
@@ -307,7 +307,8 @@ const NewUser = () => {
           window.location.href=`/children/${data.id}`;
         } else {
           if(query.searchParams.get('childId')) { 
-            window.location.href=`/children/${query.searchParams.get('parentId')}`
+            // window.location.href=`/children/${query.searchParams.get('parentId')}`
+            navigate(`/children/${query.searchParams.get('parentId')}`, { state: { franchisee_id: formData.franchisee } })
           } else {
             window.location.href="/user-management";
           }
@@ -347,30 +348,6 @@ const NewUser = () => {
     }
 
   }
-
-  // const checkIfEmailIsValid = (event, email) => {
-  //   console.log('INSIDE EMAIL VALIDATION FUNCTION');
-  //   console.log('VALUE OF EMAIL:', email);
-  //   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-
-  //   if(Object.keys(formErrors).length > 0) {
-  //     handleSubmit(event);
-  //   }
-    
-  //   if(!regex.test(email)) {
-  //     console.log('Email is invalid!');
-  //     setFormErrors(prevState => ({
-  //       ...prevState,
-  //       email: "Email format is invalid"
-  //     }))
-  //   } else {
-  //     console.log('Email.invalid!');
-  //     setFormErrors(prevState => ({
-  //       ...prevState,
-  //       email: null
-  //     }));
-  //   }
-  // }
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
