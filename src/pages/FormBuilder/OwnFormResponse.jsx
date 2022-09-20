@@ -360,7 +360,7 @@ function OwnFormResponse(props) {
                                                   '.jpeg'
                                                 ) ? (
                                                 <>
-                                                  <img
+                                                  <img style={{height:"auto",width:"14%"}}
                                                     src={`${Object.values(
                                                       JSON.parse(item.fields)
                                                     )[inner_index]
