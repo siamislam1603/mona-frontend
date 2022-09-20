@@ -135,7 +135,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                                                             cell[1]
                                     }
                                 </small>
-
                             </span>
                         </div>
                     </>
@@ -167,7 +166,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     return (
         <div>
             <FullLoader loading={fullLoaderStatus} />
-            {userData?.length > 0 ? (
+            {userData ? (
                 <ToolkitProvider
                     keyField="name"
                     data={userData}
@@ -183,7 +182,11 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     )}
 
                 </ToolkitProvider>
-            ) : (<div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>)}
+            ) : null}
+            {!userData ?
+                <div className="text-center mb-5 mt-5">  <strong>No File Added By You</strong> </div>
+                : null}
+            {/* <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div> */}
         </div>
     )
 }

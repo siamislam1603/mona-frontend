@@ -70,6 +70,9 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   }
   useEffect(() => {
     GetData();
+  }, []);
+  useEffect(() => {
+    GetData();
   }, [selectedFranchisee,]);
 
   useEffect(() => {
@@ -159,7 +162,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />
-      {userData.length > 0 ? (<>
+      {userData ? (<>
         <ToolkitProvider
           keyField="name"
           data={userData}
@@ -173,11 +176,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
               />
             </>
           )}
-
         </ToolkitProvider>
-      </>) : (<div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div>)
+      </>) : null
       }
-
+      {!userData && fullLoaderStatus === false ?
+        <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
+        : null}
+      {/* <div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div> */}
     </div >
   )
 }
