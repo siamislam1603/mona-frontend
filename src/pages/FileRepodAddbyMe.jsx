@@ -31,7 +31,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryName}, ${dt.count}`,
+                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -56,7 +56,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryName}, ${dt.count}`,
+                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -100,7 +100,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                                 </span>
                             </Link>
                             <span className="user-name">
-                                {cell[0]}
+                                {cell[2]}
                                 <small>{cell[1]} Files</small>
                             </span>
                         </div>
@@ -135,7 +135,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                                                             cell[1]
                                     }
                                 </small>
-
                             </span>
                         </div>
                     </>
@@ -167,7 +166,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     return (
         <div>
             <FullLoader loading={fullLoaderStatus} />
-            {userData?.length > 0 ? (
+            {userData ? (
                 <ToolkitProvider
                     keyField="name"
                     data={userData}
@@ -183,7 +182,11 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     )}
 
                 </ToolkitProvider>
-            ) : (<div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>)}
+            ) : null}
+            {!userData ?
+                <div className="text-center mb-5 mt-5">  <strong>No File Added By You</strong> </div>
+                : null}
+            {/* <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div> */}
         </div>
     )
 }
