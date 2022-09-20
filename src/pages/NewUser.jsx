@@ -24,7 +24,6 @@ const NewUser = () => {
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
   const navigate = useNavigate();
-  console.log('>>>>>>>>>>>>>>>>', queryRole, childId, childfranchise);
 
   // REF DECLARATIONS
   let email = useRef(null);
@@ -349,30 +348,6 @@ const NewUser = () => {
     }
 
   }
-
-  // const checkIfEmailIsValid = (event, email) => {
-  //   console.log('INSIDE EMAIL VALIDATION FUNCTION');
-  //   console.log('VALUE OF EMAIL:', email);
-  //   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-
-  //   if(Object.keys(formErrors).length > 0) {
-  //     handleSubmit(event);
-  //   }
-    
-  //   if(!regex.test(email)) {
-  //     console.log('Email is invalid!');
-  //     setFormErrors(prevState => ({
-  //       ...prevState,
-  //       email: "Email format is invalid"
-  //     }))
-  //   } else {
-  //     console.log('Email.invalid!');
-  //     setFormErrors(prevState => ({
-  //       ...prevState,
-  //       email: null
-  //     }));
-  //   }
-  // }
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');

@@ -11,13 +11,13 @@ import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
+
 const Children = () => {
 
     const { id: paramsParentId } = useParams();
-    console.log('PARAMS PARENT ID:', paramsParentId);
     useEffect(()=>{
         init()
-        console.log("aa gye hum")                         
+        // console.log("aa gye hum")                         
     },[]);
 
     // Modal start
@@ -59,6 +59,7 @@ const Children = () => {
     const [childFranchise, setChildFranchise] = useState(null);
     const [enroledChildId, setEnroledChildId] = useState(null);
     const [reloadFlag, setReloadFlag] = useState(false);
+    const [topSuccessMessage, setTopSuccessMessage] = useState(null);
 
     const init = async() => {
         // Set Parents Franchisee
@@ -84,9 +85,7 @@ const Children = () => {
             },
           });
           if (response.status === 200) {
-            // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
-            console.log(parentData,"users")
             if(parentData !== null) {
                 setChildrenList(parentData?.children)
              } else {
@@ -135,21 +134,47 @@ const Children = () => {
         }
     };
 
+    const updateChildList = async () => {
+        console.log('Updating child list');
+        let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+        if (response.status === 200) {
+        const { parentData } = response.data;
+        if(parentData !== null) {
+            setChildrenList(parentData?.children)
+            } else {
+            setChildrenList([]);
+            }
+        }
+    }
+
     const handleEnrollmentPageRedirection = async (childId, parentId) => {
         window.location.href=`/child-enrollment/${childId}/${parentId}?page=1`    
     };
 
     const DeactivateChild = async (id) => {
-        let token = localStorage.getItem('token');
-        const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+        console.log('Deactivating child!', id);
+        const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`);
+        console.log('RESPONSE:', response);
 
-        if(response.status === 201 && response.data.status === "success") {
-            // POPUP HERE
-            // console.log('Child Deactivated');
+        if(response.status === 200 && response.data.status === "reactivated") {
+            console.log('CHILD HAS BEEN REACTIVATED!');
+            updateChildList();
+            setTopSuccessMessage('Child activated');
+            setTimeout(() => {
+                setTopSuccessMessage(null);
+            }, 3000);
+            
+        } else if(response.status === 200 && response.data.status === "deactivated") {
+            console.log('Child has been deactivated!');
+            updateChildList();
+            setTopSuccessMessage('Child deactivated');
+            setTimeout(() => {
+                setTopSuccessMessage(null);
+            }, 3000);
         }
     }
 
@@ -180,7 +205,6 @@ const Children = () => {
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
-            console.log('ROW DATA:', row);
             if (e.target.text === 'Delete') {
                 // CODE TO DELETE THE USER 
             }
@@ -197,8 +221,10 @@ const Children = () => {
                 handleCpShow(row.id)
                 // addCoparentToChild()
             }
-            if (e.target.text === 'Deactivate'){
-                DeactivateChild(row.id)
+            if (e.target.text === 'Deactivate' || e.target.text === 'Activate'){
+                if (window.confirm(`Are you sure you want to ${e.target.text} this child?`)) {
+                    DeactivateChild(row.id)
+                }
             }
         },
     };
@@ -242,10 +268,10 @@ const Children = () => {
         Location : child.home_address,
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
-        action: { enrollFlag: child.isChildEnrolled },
-        Parents: {parents:child.parents, childId:child.id}
+        action: { enrollFlag: child.isChildEnrolled, active: child.is_active },
+        Parents: {parents:child.parents, childId:child.id},
+        status: child.is_active
     }));
-    // console.log('Products:', productsTow);
 
     const   PColumns = [
         {
@@ -289,7 +315,6 @@ const Children = () => {
             dataField: 'Parents',
             text: 'Co-parent',
             formatter: (cell) => {
-                console.log(cell,"celll>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 return (
                     <>
                         {cell.parents.length === 0 ?
@@ -317,74 +342,45 @@ const Children = () => {
             },
         },
         {
-            dataField: 'Location',
-            text: 'Location',
+            dataField: 'status',
+            text: 'Status',
+            formatter: (cell) => {
+                let state = "";
+                state = parseInt(cell) === 1 ? "Active" : "Inactive";
+                return (
+                    <>
+                        <p>{state}</p>
+                    </>
+                );
+            }
 
         },
-        // {
-        //     dataField: 'EnrollFlag',
-        //     text: '',
-        //     formatter: (cell) => {
-        //         // console.log(cell, 'ENROLLED CELL');
-        //         return (
-        //             <>  {
-        //                     cell.enrollFlag === 0 ?
-        //                     (   
-        //                         localStorage.getItem('user_role') !== 'guardian' ?
-        //                         <div className="cta-col">
-        //                             <button 
-        //                                 className="initiate-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-        //                                 disabled={cell.initiationFlag === true}
-        //                                 onClick={() => sendInitiationMail(cell.childId)}>
-        //                                 {cell.initiationFlag === true ? "Enrolment Initiated" : "Initiate Enrolment"}
-        //                             </button>
-        //                         </div>
-        //                         : 
-        //                         <div className="cta-col">
-        //                             <button 
-        //                                 className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800"}}
-        //                                 // disabled={cell.initiationFlag === true}
-        //                                 onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-        //                                 View Enrolment
-        //                             </button>
-        //                         </div>
-        //                     )
-        //                     :
-        //                     <div className="cta-col">
-        //                         <button className="view-enrolment btn" style={{"fontSize":"0.8rem","fontWeight":"800", textAlign: 'center'}}
-        //                         onClick={() => handleEnrollmentPageRedirection(cell.childId, params.id)}>
-        //                             View Enrolment
-        //                         </button>
-        //                         {
-        //                             (localStorage.getItem('has_given_consent') === "false" || localStorage.getItem('has_given_consent') !== null) && (parseInt(localStorage.getItem('consent_child_id')) === parseInt(cell.childId)) && localStorage.getItem('user_role') !== 'guardian' &&
-        //                             <p style={{ fontSize: "12px", color: "red", textAlign: 'center', marginTop:   "3px" }}>Pending for consent!</p>
-        //                         }
-        //                     </div>
-        //                 }
-        //             </>
-        //         );
-        //     },
-        // },
+        {
+            dataField: 'Location',
+            text: 'Location',
+        },
         {
             dataField: 'action',
             text: '',
             formatter: (cell) => {
-                // console.log('CELL DATA CHILDREN:', cell);
+                let Button = parseInt(cell.active) === 1 ? "Deactivate" : "Activate";
                 return (
                     <>  {
-                            // localStorage.getItem('user_role') !== 'guardian' &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
                                         <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                        {/* {cell.enrollFlag === 0 && <Dropdown.Item href="#">Edit</Dropdown.Item>} */}
-                                        <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                        <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                        <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>Deactivate</Dropdown.Item>
+                                        {
+                                            cell.active === 1 &&
+                                            <>
+                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
+                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                            </>
+                                        }
+                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
@@ -414,10 +410,9 @@ const Children = () => {
         init();
     }, [reloadFlag]);
 
-
-    childrenList && console.log('Children List:', childrenList);
     return (
         <>
+        {topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>}
             <div id="main">
                 <section className="mainsection">
                     <Container>
