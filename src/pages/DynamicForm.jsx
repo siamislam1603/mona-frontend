@@ -23,6 +23,7 @@ const DynamicForm = () => {
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
+  const [fieldData, setFieldData] = useState({});
   const [formPermission, setFormPermission] = useState({});
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [targetUser, setTargetUser] = useState([]);
@@ -37,25 +38,53 @@ const DynamicForm = () => {
     console.log('field', field);
     console.log('value', value);
     console.log('type', type);
-    if (type === 'date') {
-      value = moment(value).format('DD-MM-YYYY');
-      setForm({
-        ...form,
-        [section]: { ...form[`${section}`], [field]: value },
-      });
+    if(location.state.id)
+    { 
+      console.log("field---->",field);
+      console.log("value---->",value);
+      if (type === 'date') {
+        value = moment(value).format('DD-MM-YYYY');
+        setFieldData({
+          ...fieldData,
+          ["fields"]: { ...fieldData[`fields`], [field]: value },
+        });
+      }
+      if (type === 'checkbox') {
+        value = value.slice(0, -1);
+        setFieldData({
+          ...fieldData,
+          ["fields"]: { ...fieldData[`fields`], [field]: value },
+        });
+      } else {
+        setFieldData({
+          ...fieldData,
+          ["fields"]: { ...fieldData[`fields`], [field]: value },
+        });
+      }
     }
-    if (type === 'checkbox') {
-      value = value.slice(0, -1);
-      setForm({
-        ...form,
-        [section]: { ...form[`${section}`], [field]: value },
-      });
-    } else {
-      setForm({
-        ...form,
-        [section]: { ...form[`${section}`], [field]: value },
-      });
+    else
+    {
+      if (type === 'date') {
+        value = moment(value).format('DD-MM-YYYY');
+        setForm({
+          ...form,
+          [section]: { ...form[`${section}`], [field]: value },
+        });
+      }
+      if (type === 'checkbox') {
+        value = value.slice(0, -1);
+        setForm({
+          ...form,
+          [section]: { ...form[`${section}`], [field]: value },
+        });
+      } else {
+        setForm({
+          ...form,
+          [section]: { ...form[`${section}`], [field]: value },
+        });
+      }
     }
+    
 
     if (!!errors[field]) {
       setErrors({
@@ -72,9 +101,31 @@ const DynamicForm = () => {
     // }
   };
   useEffect(() => {
+    if (location.state.id) {
+      getFieldsData(location.state.id);
+    }
     getFormFields();
     getUser();
   }, []);
+  const getFieldsData = (id) => {
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+
+    fetch(`${BASE_URL}/form/form_data/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        result.result.fields = JSON.parse(result.result.fields);
+        console.log('result---->', result.result.fields);
+        setFieldData(result.result);
+      })
+      .catch((error) => console.log('error', error));
+  };
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -201,85 +252,107 @@ const DynamicForm = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const newErrors = DynamicFormValidation(
-      form,
-      formData,
-      localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
-      behalfOfFlag,
-      signatureAccessFlag
-    );
-    console.log('Behalf of is required--->', behalfOfFlag);
-    console.log('new errors--->', newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
+    if(location.state.id)
+    {
       var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append('authorization', 'Bearer ' + token);
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: JSON.stringify({
-          form_id: formData[Object.keys(formData)[0]][0]?.form_id,
-          user_id: localStorage.getItem('user_id'),
-          behalf_of:
-            localStorage.getItem('user_role') === 'guardian'
-              ? behalfOfFlag
-                ? childId
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: JSON.stringify({
+            id: location.state.id,
+            data: fieldData,
+            status: "update"
+          }),
+          redirect: 'follow',
+        };
+  
+        fetch(`${BASE_URL}/form/form_data`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            navigate(`/form/response/${location.state.form_id}`, { state: { message: result.message } });
+          });
+    }
+    else{
+      const newErrors = DynamicFormValidation(
+        form,
+        formData,
+        localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
+        behalfOfFlag,
+        signatureAccessFlag
+      );
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+      } else {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: JSON.stringify({
+            form_id: formData[Object.keys(formData)[0]][0]?.form_id,
+            user_id: localStorage.getItem('user_id'),
+            behalf_of:
+              localStorage.getItem('user_role') === 'guardian'
+                ? behalfOfFlag
+                  ? childId
+                  : behalfOf
+                  ? behalfOf
+                  : localStorage.getItem('user_id')
                 : behalfOf
                 ? behalfOf
-                : localStorage.getItem('user_id')
-              : behalfOf
-              ? behalfOf
-              : localStorage.getItem('user_id'),
-          data: form,
-        }),
-        redirect: 'follow',
-      };
-
-      fetch(`${BASE_URL}/form/form_data`, requestOptions)
-        .then((response) => response.text())
-        .then((result) => {
-          result = JSON.parse(result);
-          if (training_id) {
-            const user_id = localStorage.getItem('user_id');
-            const token = localStorage.getItem('token');
-            var requestOptions = {
-              method: 'POST',
-              headers: myHeaders,
-              body: JSON.stringify({}),
-              redirect: 'follow',
-            };
-            fetch(
-              `${BASE_URL}/training/completeTraining/${training_id}/${user_id}?training_status=finished`,
-              requestOptions
-            )
-              .then((response) => response.json())
-              .then((res) => {
-                if (res) {
-                  if (
-                    result?.message === 'You can add only one time form data!!'
-                  ) {
-                    toast.error(result?.message);
-                  } else {
-                    navigate('/training');
+                : localStorage.getItem('user_id'),
+            data: form,
+          }),
+          redirect: 'follow',
+        };
+  
+        fetch(`${BASE_URL}/form/form_data`, requestOptions)
+          .then((response) => response.text())
+          .then((result) => {
+            result = JSON.parse(result);
+            if (training_id) {
+              const user_id = localStorage.getItem('user_id');
+              const token = localStorage.getItem('token');
+              var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: JSON.stringify({}),
+                redirect: 'follow',
+              };
+              fetch(
+                `${BASE_URL}/training/completeTraining/${training_id}/${user_id}?training_status=finished`,
+                requestOptions
+              )
+                .then((response) => response.json())
+                .then((res) => {
+                  if (res) {
+                    if (
+                      result?.message === 'You can add only one time form data!!'
+                    ) {
+                      toast.error(result?.message);
+                    } else {
+                      navigate('/training');
+                    }
                   }
-                }
-              });
-          } else {
-            if (result?.message === 'You can add only one time form data!!') {
-              toast.error(result?.message);
+                });
             } else {
-              navigate('/form', { state: { message: result.message } });
+              if (result?.message === 'You can add only one time form data!!') {
+                toast.error(result?.message);
+              } else {
+                navigate('/form', { state: { message: result.message } });
+              }
             }
-          }
-        })
-        .catch((error) => console.log('error', error));
+          })
+          .catch((error) => console.log('error', error));
+      }
     }
   };
   return (
     <>
-      {console.log('Hello------>', form)}
+      {console.log('fieldData------>', fieldData)}
       <div id="main">
         <ToastContainer />
         <section className="mainsection">
@@ -371,6 +444,40 @@ const DynamicForm = () => {
                                     );
                                   })}
                                 </Form.Select>
+                              ) : location.state.id ? (
+                                <Form.Select
+                                  name={'behalf_of'}
+                                  onChange={(e) => {
+                                    setBehalfOf(e.target.value);
+                                    if (e.target.value !== '') {
+                                      let errorData = { ...errors };
+                                      errorData['behalf_of'] = null;
+                                      setErrors(errorData);
+                                    }
+                                  }}
+                                  disabled
+                                >
+                                  <option value="">Select</option>
+                                  {targetUser?.map((item) => {
+                                    return (
+                                      <>
+                                        {item.id === fieldData.behalf_of ? (
+                                          <option value={item.id} selected>
+                                            {item.child
+                                              ? item.fullname
+                                              : item.email}
+                                          </option>
+                                        ) : (
+                                          <option value={item.id}>
+                                            {item.child
+                                              ? item.fullname
+                                              : item.email}
+                                          </option>
+                                        )}
+                                      </>
+                                    );
+                                  })}
+                                </Form.Select>
                               ) : (
                                 <Form.Select
                                   name={'behalf_of'}
@@ -434,13 +541,23 @@ const DynamicForm = () => {
                                   }}
                                 />
                               </>
+                            ) : location.state.id ? (
+                              <InputFields
+                                {...inner_item}
+                                signature_flag={signatureAccessFlag}
+                                field_data={fieldData}
+                                error={errors}
+                                onChange={(key, value, type) => {
+                                  setField("",key, value, type);
+                                }}
+                              />
                             ) : (
                               <InputFields
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
                                 error={errors}
                                 onChange={(key, value, type) => {
-                                  setField(key, value, type);
+                                  setField("",key, value, type);
                                 }}
                               />
                             );
@@ -449,6 +566,17 @@ const DynamicForm = () => {
                       ) : (
                         formData[item]?.map((inner_item) => {
                           return (
+                            location.state.id ? (
+                              <InputFields
+                                {...inner_item}
+                                signature_flag={signatureAccessFlag}
+                                field_data={fieldData}
+                                error={errors}
+                                onChange={(key, value, type) => {
+                                  setField("",key, value, type);
+                                }}
+                              />
+                            ):
                             <InputFields
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
