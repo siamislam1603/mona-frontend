@@ -31,9 +31,9 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
-                    creatorName: dt.ModifierName + "," + dt.updatedBy
+                    creatorName: dt.ModifierName + "," + dt.updatedBy,
+                    // selectedFranchisee: selectedFranchisee
                 }));
-
                 setUserData(tempData);
                 setfullLoaderStatus(false)
             }
@@ -82,13 +82,14 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             // setUserData();
         }
     }, [selectedFranchisee]);
-
+   
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
             text: 'Name',
             sort: true,
             formatter: (cell) => {
+                console.log("selectedFranchisee", selectedFranchisee)
                 cell = cell.split(',');
                 return (
                     <>
@@ -100,8 +101,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                             </Link>
                             <span className="user-name">
                                 {cell[2]}
-                                {console.log(cell[1], cell[1].length, "cell[1]")}
-                                {console.log(cell[1], typeof cell[1], "cell[1]")}
+
                                 <small>
                                     {cell[1] > 1 ? (<>
                                         {cell[1]} Files
@@ -151,22 +151,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
         {
             dataField: 'repository_files',
             text: '',
-            // formatter: (cell) => {
-            //     return (
-            //         <>
-            //             <div className="cta-col">
-            //                 <Dropdown>
-            //                     <Dropdown.Toggle variant="transparent" id="ctacol">
-            //                         <img src="../img/dot-ico.svg" alt="" />
-            //                     </Dropdown.Toggle>
-            //                     <Dropdown.Menu>
-            //                         <Dropdown.Item href="#">Delete</Dropdown.Item>
-            //                     </Dropdown.Menu>
-            //                 </Dropdown>
-            //             </div>
-            //         </>
-            //     );
-            // },
+
         },
     ]);
 

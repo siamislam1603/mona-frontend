@@ -13,6 +13,7 @@ const Input = (props) => {
         onChange={(e) => {
           props.onChange(e.target.name, e.target.value,controls.field_type);
         }}
+        value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
         isInvalid={!!controls.error[controls.field_name]}
       />
       <Form.Control.Feedback type="invalid">
