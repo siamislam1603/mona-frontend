@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { Button, Container, Form, Dropdown, Accordion, Row, Col } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
@@ -9,6 +9,7 @@ import MyAnnouncements from "./MyAnnouncements";
 import AllEvent from "./AllEvent";
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useParams } from "react-router-dom";
+
 
 
 
@@ -53,6 +54,9 @@ const Announcements = () => {
     setTabLinkPath(path);
 
   }
+  const [data, setData] = useState();
+  const prevCountRef = useRef();
+
 
   // NEW CODE
   let searchvalue  = ""
@@ -102,9 +106,14 @@ const Announcements = () => {
   }
   const handleLoadMyAnnouncement = (e) => {
     e.preventDefault()
+    removeitem(data)
     LoadMoreMyData()
   }
-  const LoadMoreMyData = async () => {
+  const removeitem = (id) =>{
+    let newData = myLoadData.filter(d => d.id !==id)
+    setMyLoadData(newData)
+  }
+  const LoadMoreMyData = async (data) => {
     //  setPage(0)
     console.log("THE MY DATA LOAD MORE", mypage)
     try {
@@ -116,8 +125,6 @@ const Announcements = () => {
       //   setMyPage(mypage+5)
       // }
       setMyPage(mypage + 5)
-
-
       console.log("THE SETMYPAGE", mypage)
       let api_url = '';
       let usedId = localStorage.getItem("user_id")
@@ -131,15 +138,20 @@ const Announcements = () => {
         },
       });
       let myData = response.data.result.searchedData
-      console.log("THE MY RESPONSE LOAD MORE", response)
-      setMyLoadData((prev) => ([
-        ...prev,
-        ...myData
-      ]))
+      console.log("THE MY RESPONSE LOAD MORE", myLoadData)
+      
+      setMyLoadData((prev) =>(
+        [
+          ...prev,
+          ...myData
+        ]
+       ))
+          
     } catch (error) {
       console.log("THE  My MORE DATA", error)
     }
   }
+
   const myDataCount = async () => {
     try {
       let api_url = ' '
@@ -177,61 +189,44 @@ const Announcements = () => {
     console.log("THE PAGE Outside LOADMORE DATA", page)
 
     try {
-      // console.log("THE ALL ANNOUNCEMENT DATA CALL")
-      if(e){
-          searchvalue = e.target.value 
-      }
-      let api_url = ' '
-      if(searchvalue){
-        // console.log("NO search value ", searchvalue)
-         api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=${theCount}`
-         const response = await axios.get(api_url, {
-          headers: {
-            authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
-        if(response.status === 200 && response.data.status === "success") {
-          console.log("THE Search in all announcement Data")
-          setAllAnnouncement(response.data.result.searchedData);
-          setTheCommon(theCount)
-
-          if(response.data.result.searchedData.length===0){
-            setLoadAllAnnouncement(false)
-          }
-        }
-
-        else{
-          console.log("NO DATA TO SEARCH")
-        }
-      }
-      else{
-         console.log("THE PAGE for lloadMoreoad ",page) 
-         setPage(5)
+      if(tabLinkPath === "/all-announcements"){
+        // if(page>5){
+        //    setPage(5);
+        // }
+        // else{
+        //   setPage(page+5)
+        // }
+         setPage(page+5)
       
-          setLoadMoreData(loadMoreData.slice(0,5))
-        console.log("THE SEARCH VLAUE NOW EMPTY")
-        console.log("THE lenght",theCommon,count,page)
-        api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "":searchvalue}&offset=0&limit=5`
+        console.log("THE LOAD MORE DATA ",loadMoreData)
+      
+        console.log("THE PAGE INSIDE",page) 
+        let api_url = '';
+        api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&&isEvent=0search=${searchvalue === " " ? "":searchvalue}&offset=${page}&limit=5`
+        console.log("THE API URL LOADMOREALL",api_url)
         const response = await axios.get(api_url, {
           headers: {
             authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
-        console.log("THE RESPONSE IN LOADMORE ALL", response.data)
+        console.log("THE RESPONSE IN LOADMORE ALL",response.data)
         let newre = response.data.result.searchedData
-        // setCount(allAnnouncement.length)
-        console.log("THE LOAD MROE DATA AFTER ALL-ANNOUCNEMENT PATH", response.data.result)
-
-        console.log("THE New Load More adat,", loadMoreData)
-        setLoadMoreData((prev) => ([
+        setTheCommon(allAnnouncement.length)
+        console.log("THE LOAD MROE DATA AFTER ALL-ANNOUCNEMENT PATH",response.data.result) 
+        
+        console.log("THE New Load More adat,",loadMoreData)
+        
+        setLoadMoreData((prev)=> ([
           ...prev,
           ...newre
-        ]));
+         ])); 
       }
     } catch (error) {
-      console.log(" THE LOADMORE ERROR", error)
+      console.log(" THE LOADMORE ERROR",error)
     }
   }
+
+ 
   //ALL Announcement API CALL
 
 
@@ -310,6 +305,7 @@ const Announcements = () => {
       console.log("PAGE AFTER FRNAHISE ", page)
       console.log("ON LOAD ALL ANNOUCEMENT CALL FUNCTON")
       let api_url = " "
+
       api_url = `${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=0&search=${searchvalue === " " ? "" : searchvalue}&offset=0&limit=5`
       console.log("THE API_URL ONLOAD ANNOUCNEMENT", api_url)
       const response = await axios.get(api_url, {
@@ -323,6 +319,7 @@ const Announcements = () => {
       //  console.log("THE DATA INSIDE SELECT FRANHSIE",response.data.result)
        setTheCommon(response.data.result.searchedData.length)
        setCount(response.data.result.count)
+       console.log("THe lenght check",response.data.result.searchedData.length)
        console.log( "PAGE DSADA",theCount,response.data)
       //  console.log("THE COUNT AFTER ",response.data.result.count)
       //  setLoadMoreData(loadMoreData.slice(0,5))
@@ -410,7 +407,7 @@ const Announcements = () => {
         setMyCount(response.data.result.count)
         console.log("THE MYPAGE INSIDE LOAD",mypage)
         setLoadMy(true)
-        setMyLoadData(response.data.result.searchedData)
+        // setMyLoadData(response.data.result.searchedData)
         // if(datalength>5){
         //   setPage(0)
         // }
@@ -442,6 +439,7 @@ const Announcements = () => {
 
     }
   }
+ 
   const myAnnnoucementData = async (e) => {
     setPage(0)
     try {
@@ -667,29 +665,20 @@ const Announcements = () => {
     setUserRole(user_role)
     EventCount()
     LoadMoreEvent()
-    
   },[])
+
   useEffect(()=>{
     setTheCommon(loadMoreData.length)
   },[loadMoreData])
+
   useEffect(() =>{
+    myDataCount()
     setMyDataLength(myLoadData.length)
   },[myLoadData])
+
   useEffect(() =>{
     setEventLength(loadMoreEvent.length)
   },[loadMoreEvent])
-
-  useEffect(() => {
-    setTheCommon(loadMoreData.length)
-    console.log("ALL CNN ", loadMoreData, loadMoreData.length)
-  }, [loadMoreData])
-  useEffect(() => {
-    console.log("my data length", myLoadData, myLoadData.length)
-    setMyDataLength(myLoadData.length)
-  }, [myLoadData])
-  useEffect(() => {
-    setEventLength(loadMoreEvent.length)
-  }, [loadMoreEvent])
 
 
   useEffect(() => {
@@ -720,10 +709,16 @@ const Announcements = () => {
     }
 
   }, []);
+  // useEffect(() =>{
+  //   if(data){
+  //     LoadMoreMyData()
+  //     console.log("data exit")
+  //   }
+  // },[data])
 
   // console.log("USER ROLE",userRole)
   // console.log("THE COUNT AND COMMON",theCount,theCommon)
-  // console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
+  console.log("MY COUNT AND MY data lenght",myCount,myDataLength,)
   // // console.log("THE LOAD MORE MY DATA",theMyAnnouncement)
   // console.log("PAGE page and Mypage",page,mypage)
   // console.log("THE New Load More adat,",loadMoreData)
@@ -740,7 +735,7 @@ const Announcements = () => {
 
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
-  console.log("The ALL ANNOUCNEMENT DTATA DKL M",allAnnouncement,loadMy)
+  console.log("The ALL ANNOUCNEMENT DTATA DKL M",data)
   return (
     <>
       {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>}
@@ -799,33 +794,15 @@ const Announcements = () => {
                   </div>
 
                   {/* searchValue={search} franchisee ={franchiseeData} loadData={loadMoreData} */}
-                  <div className="training-column">
-                    {tabLinkPath === "/all-announcements"
-                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData={loadMoreData} search={searchvalue} Params={Params.id} />}
-                    {tabLinkPath === "/my-announcements"
-                      && <MyAnnouncements myAnnouncementData={theMyAnnouncement} myLoadData={myLoadData} />}
-                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} Rarams={ActiveLink} />}
-
+            <div className="training-column">
+                    {tabLinkPath === "/all-announcements" 
+                      && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData ={loadMoreData} search = {searchvalue}  loadCheck ={loadAllAnnouncement} announId = {Params.id}/>}
+                    {tabLinkPath === "/my-announcements" 
+                      && <MyAnnouncements theMyAnnouncement={theMyAnnouncement} myLoadData={myLoadData} selectedFranchisee = {selectedFranchisee} theLoad = {loadMy} removeItem= {removeitem} mypage={mypage}/>}
+                   {tabLinkPath === "/all-events"  && <AllEvent allEvent={allEvent} loadEvent = {loadMoreEvent}  theloadevent = {loadEvent} />}   
+                    
                   </div>
-                  {/* {franchiseeData && franchiseeData.searchedData.length} */}
-                  {/* {theCommon && theCommon ===theCount ? (
-                    null
-                  ):(
-                    <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
-
-                  ) } */}
-                  {/* {
-                    tabLinkPath=== "/all-announcements" ? 
-                      {theCommon ===theCount ? (
-                        null
-                      ):(
-                        <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
-    
-                      ) }
-                    :(
-                      <h1>My Annoucnement</h1>
-                    )
-                  } */}
+                 
 
                   <div className="text-center">
 
