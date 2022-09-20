@@ -161,6 +161,7 @@ const Children = () => {
         console.log('RESPONSE:', response);
 
         if(response.status === 200 && response.data.status === "reactivated") {
+            console.log('CHILD HAS BEEN REACTIVATED!');
             updateChildList();
             setTopSuccessMessage('Child activated');
             setTimeout(() => {
@@ -168,6 +169,7 @@ const Children = () => {
             }, 3000);
             
         } else if(response.status === 200 && response.data.status === "deactivated") {
+            console.log('Child has been deactivated!');
             updateChildList();
             setTopSuccessMessage('Child deactivated');
             setTimeout(() => {
