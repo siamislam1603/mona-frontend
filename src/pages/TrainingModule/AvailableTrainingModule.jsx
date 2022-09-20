@@ -297,16 +297,9 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
           <Row>
-
+          <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
           {availableTrainingData
               ? availableTrainingData.map((item) => {
-                // console.log("the item",item.training.end_date)
-                // {
-                //   item.training.end_date ==null
-                // }
-                // return (
-                 
-                // );
                 if(item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
@@ -357,17 +350,10 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
               : null
             }
             {nodueData && dueDataTraining ? <hr/> : null}
-
-
+    
+              <h3 className="title-sm mb-3 mt-3"><strong>Training without due date</strong></h3>
              {availableTrainingData
               ? availableTrainingData.map((item) => {
-                // console.log("the item",item.training.end_date)
-                // {
-                //   item.training.end_date ==null
-                // }
-                // return (
-                 
-                // );
                 if(!item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
