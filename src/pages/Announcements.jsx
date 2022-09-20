@@ -68,6 +68,9 @@ const Announcements = () => {
       console.log("THE SEARCH ALL ANNOUNCMENT")
       AllannoucementData(e)
     }
+    else if(tabLinkPath=== "/my-announcements"){
+      myAnnnoucementData(e)
+    }
 
     else {
       console.log("SEARCH IN EVENTS")
@@ -828,7 +831,7 @@ const Announcements = () => {
                       && <AllAnnouncements allAnnouncement={allAnnouncement} loadMoreData={loadMoreData} search={searchvalue} loadCheck={loadAllAnnouncement} announId={Params.id} />}
                     {tabLinkPath === "/my-announcements"
                       && <MyAnnouncements theMyAnnouncement={theMyAnnouncement} myLoadData={myLoadData} selectedFranchisee={selectedFranchisee} theLoad={loadMy} removeItem={removeitem} mypage={mypage} />}
-                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} theloadevent={loadEvent} />}
+                    {tabLinkPath === "/all-events" && <AllEvent allEvent={allEvent} loadEvent={loadMoreEvent} theloadevent={loadEvent} setData={setData}/>}
                   </div>
 
                   <div className="text-center">
