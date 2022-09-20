@@ -14,10 +14,16 @@ import { Link } from 'react-router-dom';
 import { UserFormValidation } from '../helpers/validation';
 import * as ReactBootstrap from 'react-bootstrap';
 import { compact } from 'lodash';
-
+import { useNavigate } from 'react-router-dom';
 const animatedComponents = makeAnimated();
 
 const NewUser = () => {
+  const query = new URL(window.location.href);
+
+  let childfranchise = query.searchParams.get('franchise');
+  let childId = query.searchParams.get('childId');
+  let queryRole = query.searchParams.get('role');
+  const navigate = useNavigate();
 
   // REF DECLARATIONS
   let email = useRef(null);
@@ -83,7 +89,7 @@ const NewUser = () => {
   // CREATES NEW USER INSIDE THE DATABASE
   const createUser = async (data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/signup`, data, {
+    let response = await axios.post(`${BASE_URL}/auth/signup`, data, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -91,10 +97,35 @@ const NewUser = () => {
     console.log('RESPONSE:', response);
     if(response.status === 201 && response.data.status === "success") {
       let { data } = response.data;
-      setLoaderMessage("Adding the User details to Engagebay Contacts")
-      updateEngageBayContactList(data);
-      setLoaderMessage("Wrapping Up");
-
+      
+      // SELECTIVE CREATION OF ENGAGEBAY CONTACTS
+      if(query.searchParams.get('childId')) {
+        response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (response.status === 201) {
+          response = await axios.patch(`${BASE_URL}/auth/user/update/${data.id}`);
+          if(response.status === 201 && response.data.status === "success") {
+            const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${data.id}`, { childId, user_role: localStorage.getItem('user_role') }, {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+    
+            if(response.status === 201 && response.data.status === "success") {
+              setLoaderMessage("Adding the User details to Engagebay Contacts")
+              updateEngageBayContactList(data);
+              setLoaderMessage("Wrapping Up");       
+            }
+          }
+        }
+      } else {
+        setLoaderMessage("Adding the User details to Engagebay Contacts")
+        updateEngageBayContactList(data);
+        setLoaderMessage("Wrapping Up");
+      }
     } else if(response.status === 200 && response.data.status === "fail") {
       setLoader(false);
       setCreateUserModal(false);
@@ -269,12 +300,18 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          // console.log('IS AVAILABLE>>>>>>>>>>>>>>>>>', query.searchParams.get('sdfsdf'))
           window.location.href=`/children/${data.id}`;
         } else {
-          window.location.href="/user-management";
+          if(query.searchParams.get('childId')) { 
+            // window.location.href=`/children/${query.searchParams.get('parentId')}`
+            navigate(`/children/${query.searchParams.get('parentId')}`, { state: { franchisee_id: formData.franchisee } })
+          } else {
+            window.location.href="/user-management";
+          }
         }
       
       } else {
@@ -293,12 +330,16 @@ const NewUser = () => {
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
-        localStorage.setItem('success_msg', 'User created successfully!');
+        localStorage.setItem('success_msg', 'User created successfully');
 
         if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-          window.location.href=`/children/${data.id}`;
+            window.location.href=`/children/${data.id}`;
         } else {
-          window.location.href="/user-management";
+          if(query.searchParams.get('parentId')) {
+            window.location.href=`/children/${query.searchParams.get('parentId')}`
+          } else {
+            window.location.href="/user-management";
+          }
         }
 
       } else {
@@ -306,30 +347,6 @@ const NewUser = () => {
       }
     }
 
-  }
-
-  const checkIfEmailIsValid = (event, email) => {
-    console.log('INSIDE EMAIL VALIDATION FUNCTION');
-    console.log('VALUE OF EMAIL:', email);
-    let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-
-    if(Object.keys(formErrors).length > 0) {
-      handleSubmit(event);
-    }
-    
-    if(!regex.test(email)) {
-      console.log('Email is invalid!');
-      setFormErrors(prevState => ({
-        ...prevState,
-        email: "Email format is invalid"
-      }))
-    } else {
-      console.log('Email.invalid!');
-      setFormErrors(prevState => ({
-        ...prevState,
-        email: null
-      }));
-    }
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
@@ -561,9 +578,18 @@ const NewUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  formErrors && console.log('FORM ERRORS:', formErrors);
-  formData && console.log('ROLE:', userRoleData?.filter(d => d.value === formData?.role));
-  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
+  useEffect(() => {
+    if(queryRole && childfranchise) {
+      setFormData(prevState => ({
+        ...prevState,
+        franchisee: parseInt(childfranchise),
+        role: queryRole
+      }));
+    }
+  }, []);
+
+  formData && console.log('FORM DATA:', formData);
+  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       <div id="main">
@@ -604,7 +630,7 @@ const NewUser = () => {
                         <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
-                              type="email"
+                              type="text"
                               name="email"
                               ref={email}
                               value={formData?.email}
@@ -616,7 +642,7 @@ const NewUser = () => {
                                 }));
                               }}
                               onBlur={(e) => {
-                                checkIfEmailIsValid(e, e.target.value);
+                                // checkIfEmailIsValid(e, e.target.value);
                                 checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
@@ -630,7 +656,7 @@ const NewUser = () => {
                               ref={role}
                               closeMenuOnSelect={true}
                               options={userRoleData}
-                              value={userRoleData?.filter(d => d.value === formData?.role)}
+                              value={userRoleData?.filter(d => d.value ===  formData?.role)}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -735,7 +761,7 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Post Code</Form.Label>
                             <Form.Control
-                              type="tel"
+                              type="text"
                               name="postalCode"
                               ref={postalCode}
                               maxLength="4"
@@ -777,7 +803,7 @@ const NewUser = () => {
                                   }));
                                 }}
                               />
-                              { formErrors.crn !== null && <span className="error">{formErrors.postalCode}</span> }
+                              { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
                             </Form.Group>
                           }
                             
@@ -886,10 +912,12 @@ const NewUser = () => {
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Select Franchise</Form.Label>
                             {
-                              localStorage.getItem('user_role') === 'franchisor_admin' && 
+                              localStorage.getItem('user_role') === 'franchisor_admin' &&
                               <Select
-                                placeholder="Select"
+                                // placeholder="Select"
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(formData?.franchisee))[0]?.label || "Select"}
                                 closeMenuOnSelect={true}
+                                isDisabled={childfranchise}
                                 ref={franchisee}
                                 options={franchiseeData}
                                 onChange={(e) => {
@@ -914,7 +942,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Which Franchise?"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Select"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}

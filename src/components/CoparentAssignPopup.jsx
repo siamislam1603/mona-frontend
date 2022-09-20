@@ -7,6 +7,7 @@ import  {useNavigate} from 'react-router';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 const CoparentAssignPopup = (props) => {
+    console.log('PROPS PARAMS PARENT ID:', props.paramsParentId);
     const navigate = useNavigate();
     const { SearchBar } = Search;
 //   const [show, setShow] = useState(false);
@@ -114,7 +115,7 @@ const PopColumns = [
           <Modal size="lg" show={props.show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Select Co-Parent</Modal.Title>
-                    <Button variant="outline-secondary" onClick={()=>(navigate("/new-user"))} style={{ position: 'absolute', right: '80px' }}>
+                    <Button variant="outline-secondary" onClick={()=>(navigate(`/new-user?franchise=${props.franchise}&childId=${props.childId}&role=guardian&parentId=${props.paramsParentId}`))} style={{ position: 'absolute', right: '80px' }}>
                         Add New
                     </Button>
                 </Modal.Header>

@@ -457,10 +457,16 @@ export const FranchiseeFormValidation = (formObj) => {
   if (!abn) {
     errors.abn = 'Australian business number is required';
   }
+
+  if(abn.length > 0 && (/^[a-zA-Z ]+$/i.test(abn)))
+    errors.abn = "Field should only contain digits"
   
   if (!acn) {
     errors.acn = 'Australian company number is required';
   }
+
+  if(acn.length > 0 && (/^[a-zA-Z ]+$/i.test(acn)))
+    errors.acn = "Field should only contain digits"
   
   if (!city) {
     errors.city = 'Suburb is required';
@@ -499,16 +505,23 @@ export const acceptPointValidator = (value) => {
 
 export const UserFormValidation = (formObj) => {
   let errors = {};
-  // let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
 
+  if(email.length > 0 && !regex.test(email)) {
+    errors.email = "Email format is invalid";
+  }
+
   if (!role) errors.role = 'User role is required';
   
   if (!fullname) errors.fullname = 'Full name is required';
+
+  if(fullname.length > 0 && !(/^[a-zA-Z ]+$/i.test(fullname)))
+    errors.fullname = "Field shouldn't contain numbers & special characters"
 
   if(!state) errors.state = 'State is required';
   
@@ -517,6 +530,13 @@ export const UserFormValidation = (formObj) => {
   if (!address) errors.address = 'Address is required';
   
   if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if(postalCode.length > 0 && postalCode.length < 4)
+    errors.postalCode = 'Post code must be 4-digit long';
+
+  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+    errors.postalCode = 'Post code must only consist digits';
+
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
@@ -542,7 +562,39 @@ export const UserFormValidation = (formObj) => {
 
 export const editUserValidation = (form) => {
   let errors = {};
-  let { password, confirm_password } = form;
+  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
+  
+  if (!fullname) errors.fullname = 'Full name is required';
+  
+  if(fullname.length > 0 && !(/^[a-zA-Z ]+$/i.test(fullname)))
+    errors.fullname = "Field shouldn't contain numbers & special characters"
+  
+  if (!email) errors.email = 'Email address is required';
+  
+  if(!state) errors.state = 'State is required';
+  
+  if (!city) errors.city = 'Suburb is required';
+
+  if (!address) errors.address = 'Address is required';
+  
+  if (!postalCode) errors.postalCode = 'Post code is required';
+  
+  if(postalCode.length > 0 && postalCode.length < 4)
+    errors.postalCode = 'Post code must be 4-digit long';
+
+  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+    errors.postalCode = 'Post code must only consist digits';
+  
+  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
+  
+  if(email.length > 0 && !regex.test(email)) {
+    errors.email = "Email format is invalid";
+  }
+
+  if (!phone) errors.phone = 'Phone number is required';
+
+
 
   if (password && confirm_password && password !== confirm_password) {
     errors.password = "Passwords don't match";
@@ -673,11 +725,12 @@ export const enrollmentInitiationFormValidation = (
 
   if (!home_address) errors.home_address = 'Home address is required';
 
+  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected';
+  
   if (!child_crn) errors.child_crn = 'Child CRN is required';
 
   if (school_status === "Y" && !name_of_school) errors.name_of_school = "School name is required";
 
-  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected';
 
   return errors;
 };

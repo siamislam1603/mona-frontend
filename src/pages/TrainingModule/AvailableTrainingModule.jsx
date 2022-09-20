@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const AvailableTraining = ({ filter, selectedFranchisee }) => {
@@ -53,10 +54,10 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
           ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
         ];
         setfullLoaderStatus(false)
-        setAvailableTrainingData(searchedData)
-         console.log("Search data",searchedData)
-         setNoDueData(false)
-         setDueDataTraining(false)
+        setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0));
+        console.log("Search data",searchedData)
+        setNoDueData(false)
+        setDueDataTraining(false)
         searchedData?.length>0 &&  searchedData?.map((item) => {
         
           console.log("Indside Mao",dueDataTraining)
@@ -417,7 +418,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
             
             {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
             <div className="text-center mb-5 mt-5">  <strong>No training assigned to you.</strong> </div>
-
             : null }
             {/* {availableTrainingData
               ? availableTrainingData.map((item) => {
@@ -540,7 +540,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                         <div className="select-with-plus">
                           <Multiselect
                             disable={formSettings?.send_to_all_franchisee === true}
-                            placeholder={"Select User Names"}
+                            placeholder={"Select"}
                             // singleSelect={true}
                             displayValue="key"
                             selectedValues={franchiseeList?.filter(d => formSettings?.assigned_franchisee?.includes(d.id + ''))}
@@ -721,7 +721,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Label>Select User</Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                placeholder={"Select User Names"}
+                                placeholder={"Select"}
                                 displayValue="key"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + ""))}
@@ -1022,7 +1022,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                             <Form.Label>Select User</Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                placeholder={"Select User Names"}
+                                placeholder={"Select"}
                                 displayValue="key"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={fetchedFranchiseeUsers?.filter(d => formSettings?.assigned_users.includes(d.id + "")) || ""}

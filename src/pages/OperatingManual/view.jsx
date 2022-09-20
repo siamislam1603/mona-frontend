@@ -272,6 +272,7 @@ const OperatingManual = () => {
           role += item + ',';
         });
         data['shared_role'] = role;
+        console.log("THE OPNE ROLE",role)
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
@@ -474,7 +475,7 @@ const OperatingManual = () => {
     // getOperatingManual()
     console.log('Skn');
   }, [operatingManualdata]);
-  console.log('Rohan manual', operatingManualdata);
+  console.log('Rohan manual', operatingManualdata,formSettingData);
 
   return (
     <>

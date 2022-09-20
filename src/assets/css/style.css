@@ -309,7 +309,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .cta-col .dropdown-toggle:active,.cta-col .dropdown-toggle:hover,.cta-col .show>.btn-primary.dropdown-toggle{background-color:transparent}
 .user-management-sec .table-bordered{border:none}
 .user-management-sec .table>:not(caption)>*>*{border:none;padding:25px 15px;vertical-align:middle}
-.user-management-sec .table td{overflow-wrap:break-word;word-break:break-all}
+.user-management-sec .table td{overflow-wrap:break-word;/*word-break:break-all*/}
 .user-management-sec .table-bordered>:not(caption)>*{border-width:0}
 .user-management-sec .table>:not(:first-child){border-top:none}
 .user-management-sec .table th{font-weight:400;opacity:.7;padding:10px 15px}
@@ -711,7 +711,19 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .passopt .btn-checkbox,.passopt .btn-radio{margin-bottom:0}
 .content-icon-section{flex:0 0 55px;max-width:55px}
 .timelimit .css-b62m3t-container{flex:0 0 100px;max-width:100px}
-.form-label{margin:0!important;padding:0!important}
+.form-label{margin-bottom:0!important;padding:0!important}
+
+
+
+
+
+
+@media not all and (min-resolution:.001dpcm)
+{ @supports (-webkit-appearance:none) and (stroke-color:transparent) {
+.user-management-sec .table tr:before { display:none;}
+.user-management-sec .table td { border:1px solid #ededed; }
+}}
+
 @media only screen and (max-width:1400px){
 .forms-managment-section{flex-wrap:wrap}
 .forms-managment-section .forms-managment-left{width:100%}

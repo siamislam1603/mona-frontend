@@ -5,13 +5,12 @@ import axios from "axios";
 import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-
-const FileRepoShairWithme = ({ selectedFranchisee }) => {
+const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const { SearchBar } = Search;
+
   const GetData = async () => {
     try {
       let User = localStorage.getItem('user_role');
@@ -24,11 +23,10 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
       if (response) {
         setfullLoaderStatus(false)
       }
-
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryId}, ${dt.count}`,
+          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
           createdAt: dt.updatedAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -41,9 +39,45 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
     }
 
   }
+
+  const GetSaachhData = async () => {
+    try {
+      let User = localStorage.getItem('user_role');
+      let URL = User === "guardian" ? `${BASE_URL}/fileRepo?childId=[${selectedFranchisee}]&search=${SearchValue}` : `${BASE_URL}/fileRepo?search=${SearchValue}`
+      let response = await axios.get(URL, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      if (response) {
+        setfullLoaderStatus(false)
+      }
+      if (response.status === 200) {
+        const users = response.data.dataDetails;
+        let tempData = users.map((dt) => ({
+          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
+          createdAt: dt.updatedAt,
+          userID: dt.id,
+          creatorName: dt.ModifierName + "," + dt.updatedBy
+        }));
+        setUserData(tempData);
+      }
+
+    } catch (e) {
+      setfullLoaderStatus(false)
+    }
+  }
+  useEffect(() => {
+    GetData();
+  }, []);
   useEffect(() => {
     GetData();
   }, [selectedFranchisee]);
+
+  useEffect(() => {
+    GetSaachhData();
+  }, [SearchValue])
+
 
   const [columns, setColumns] = useState([
     {
@@ -61,15 +95,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
                 </span>
               </Link>
               <span className="user-name">
-                {cell[0] === "1" ? "Daily Use" :
-                  cell[0] === "2" ? "Business Management" :
-                    cell[0] === "3" ? "Employment" :
-                      cell[0] === "4" ? "Compliance" :
-                        cell[0] === "5" ? "Care Giving" :
-                          cell[0] === "6" ? "Curriculum & Planning" :
-                            cell[0] === "7" ? "Resources" :
-                              cell[0] === "8" ? "General" : "Null"
-                }
+                {cell[2]}
                 <small>{cell[1]} Files</small>
               </span>
             </div>
@@ -135,7 +161,7 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />
-      {userData.length > 0 ? (<>
+      {userData ? (<>
         <ToolkitProvider
           keyField="name"
           data={userData}
@@ -144,17 +170,18 @@ const FileRepoShairWithme = ({ selectedFranchisee }) => {
         >
           {(props) => (
             <>
-              <SearchBar {...props.searchProps} />
               <BootstrapTable
                 {...props.baseProps}
               />
             </>
           )}
-
         </ToolkitProvider>
-      </>) : (<div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div>)
+      </>) : null
       }
-
+      {!userData && fullLoaderStatus === false ?
+        <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
+        : null}
+      {/* <div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div> */}
     </div >
   )
 }

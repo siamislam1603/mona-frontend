@@ -49,7 +49,7 @@ const FranchisorDashboard = () => {
               <img src="../img/dot-ico.svg" alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item href="/form/response">View</Dropdown.Item>
+              <Dropdown.Item href="/form/response/form-visit">View</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div></>)
@@ -113,7 +113,7 @@ const FranchisorDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-   
+
     if (datae === Added) {
       return "Added today"
     }
@@ -138,8 +138,8 @@ const FranchisorDashboard = () => {
       let data = response.data.data.formData;
       let tempData = data.map((dt) => ({
         formname: `${dt.audited_on}`,
-        educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `
-       
+        educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
+        action: `${dt.audited_on}`
       }))
       setFormData(tempData);
     }
@@ -237,8 +237,7 @@ const FranchisorDashboard = () => {
                         <div className="record-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Record of Audits</strong></h2>
-
-                            <Link to="/form/response" className="viewall">View All</Link>
+                            <Link to="/form/response/form-visit" className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
@@ -330,15 +329,14 @@ const FranchisorDashboard = () => {
                             {
                               latest_announcement?.length > 0 ?
                                 (
-                                  latest_announcement?.map((data) => {
+                                  latest_announcement?.map((data, index) => {
                                     return (
                                       <div className="listing">
-                                        <a href="/announcements" className="item">
+                                        <a href={`/announcements-announcement/${index}/all-announcement`} className="item">
                                           <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                           <div className="name">{data?.title}
                                             <div>
                                               <span className="timesec">{getAddedTime(data?.createdAt)}</span>
-
                                             </div>
 
                                           </div>
@@ -350,20 +348,12 @@ const FranchisorDashboard = () => {
                                 :
                                 (
                                   <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
-
                                 )
                             }
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+
                           </div>
                         </div>
-                        {/*<div className="ads text-center pb-5">
-                          <img src="../img/icon-column.png" alt=""/>
-                        </div>*/}
+
                       </aside>
                     </Col>
                   </Row>

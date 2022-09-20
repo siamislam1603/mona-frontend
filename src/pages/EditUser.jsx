@@ -30,8 +30,19 @@ const training = [
   },
 ];
 
-const EditUser = () => {
+const EditUser = () => {  
   const { userId } = useParams();
+
+  // REFS
+  let address = useRef(null);
+  let city = useRef(null);
+  let crn = useRef(null);
+  let email = useRef(null);
+  let fullname = useRef(null);
+  let phone = useRef(null);
+  let postalCode = useRef(null);
+  let state = useRef(null);
+
   const [formErrors, setFormErrors] = useState([]);
   const [formData, setFormData] = useState({
     city: 'Sydney',
@@ -88,7 +99,6 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The reponse", response)
     if(response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
       const { userFiles } = response.data;
@@ -175,7 +185,7 @@ const EditUser = () => {
           updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
-          localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
+          localStorage.setItem('success_msg', 'User updated successfully Termination date set!');
           const userRole = localStorage.getItem('guardian');
           if(userRole === 'guardian')
             window.location.href = '/';
@@ -225,7 +235,7 @@ const EditUser = () => {
   
       if(createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
-        localStorage.setItem('success_msg', 'User updated successfully!');
+        localStorage.setItem('success_msg', 'User updated successfully');
 
         const userRole = localStorage.getItem('user_role');
         if(userRole === 'guardian')
@@ -246,7 +256,7 @@ const EditUser = () => {
       if(updateResponse.status === 201 && updateResponse.data.status === "success") {
         
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
-        localStorage.setItem('success_msg', 'User updated successfully!');
+        localStorage.setItem('success_msg', 'User updated successfully');
         
         const userRole = localStorage.getItem('user_role');
         if(userRole=== 'guardian')
@@ -291,6 +301,28 @@ const EditUser = () => {
     }
   }
 
+  const setAutoFocus = (obj) => {
+    let errArray = Object.keys(obj);
+    console.log('Array of errors:', errArray);
+
+    if(errArray.includes('fullname')) {
+      fullname?.current?.focus();
+    } else if(errArray?.includes('state')) {
+      state?.current?.focus();
+    } else if(errArray?.includes('city')) {
+      city?.current?.focus();
+    } else if(errArray?.includes('address')) {
+      address?.current?.focus();
+    } else if(errArray?.includes('postalCode')) {
+      postalCode?.current?.focus();
+    } else if(errArray?.includes('crn')) {
+      crn?.current?.focus();
+    } else if(errArray?.includes('email')) {
+      email?.current?.focus();
+    } else if(errArray?.includes('phone')) {
+      phone?.current?.focus();
+    } 
+  }
 
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -307,6 +339,7 @@ const EditUser = () => {
     
     if(Object.keys(error).length > 0) {
       setFormErrors(error);
+      setAutoFocus(error);
     } else {
       let data = new FormData();
       
@@ -368,8 +401,7 @@ const EditUser = () => {
     });
     if (response.status === 200) {
       const { userRoleList } = response.data;
-      // let newRoleList = userRoleList.filter(role => role.role_name === 'franchisor_admin');
-      
+    
       let newRoleList = userRoleList.map(d => ({
         id: d.id,
         value: d.role_name,
@@ -377,13 +409,6 @@ const EditUser = () => {
         sequence: d.role_sequence
       }));
 
-      // if(localStorage.getItem('user_role') === 'franchisee_admin') {
-      //   newRoleList = newRoleList.filter(role => role.label !== 'Franchisor Admin');
-      // }
-
-      // if(localStorage.getItem('user_role')) {
-      //   newRoleList = newRoleList.filter(role => role.role_name !== 'Franchisee Admin' && role.role_name !== 'Coordinator');
-      // }
       setUserRoleData(
         newRoleList
       );
@@ -396,7 +421,6 @@ const EditUser = () => {
     const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
     axios.all([getSuburbList]).then(
       axios.spread((...data) => {
-        console.log('SUBURB DATA:', data[0].data.data);
         let sdata = data[0].data.data;
         setCityData(sdata.map(d => ({
           id: d.id,
@@ -472,7 +496,6 @@ const EditUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchise data",response)
     if(response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
@@ -485,8 +508,6 @@ const EditUser = () => {
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
-    console.log('Franchise id', franchisee_id);
-    console.log('FETCHING COORDINATOR DATA');
     const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
     if(response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
@@ -515,9 +536,7 @@ const EditUser = () => {
   }
 
   const trimRoleList = () => {
-    console.log('TRIMMING ROLE!');
     let newRoleList = userRoleData;
-    console.log('NEW ROLE LIST:', newRoleList);
 
     if(currentRole === "educator") {
       newRoleList = newRoleList.filter(role => role.sequence < 5);
@@ -589,6 +608,9 @@ const EditUser = () => {
     }, 3000)
   }, [fileDeleteMessage]);
 
+  formData && console.log('EDIT USER DATA:', formData);
+  formErrors && console.log('Errors:', formErrors);
+
   return (
     <>
       {
@@ -638,12 +660,17 @@ const EditUser = () => {
                             <Form.Control
                               type="text"
                               name="fullname"
+                              ref={fullname}
                               value={formData?.fullname}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                handleChange(e)
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  fullname: null
+                                }))
+                              }}
                             />
-                            <span className="error">
-                              {!formData.fullname && formErrors.fullname}
-                            </span>
+                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -662,22 +689,24 @@ const EditUser = () => {
                                 }))
                               }
                             />
-                            <span className="error">
+                            {/* <span className="error">
                               {!formData.role && formErrors.role}
-                            </span>
+                            </span> */}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
                             <Form.Label>State</Form.Label>
                             <Select
                               placeholder="Select"
+                              ref={state}
                               closeMenuOnSelect={true}
                               options={stateData}
                               value={stateData?.filter(d => d.label === formData?.state)}
                               onChange={(e) => {
                                 setFormData(prevState => ({
                                   ...prevState,
-                                  state: e.value
+                                  state: e.value,
+                                  city: ""
                                 }));
 
                                 setFormErrors(prevState => ({
@@ -694,6 +723,7 @@ const EditUser = () => {
                             <Select
                               placeholder="Select"
                               closeMenuOnSelect={true}
+                              ref={city}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
                               onInputChange={(e) => {
@@ -711,9 +741,7 @@ const EditUser = () => {
                                 }));
                               }}
                             />
-                            <span className="error">
-                              {!formData.city && formErrors.city}
-                            </span>
+                            { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -721,22 +749,30 @@ const EditUser = () => {
                             <Form.Control
                               type="text"
                               name="address"
+                              ref={address}
                               value={formData.address}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                handleChange(e)
+                                setFormErrors(prevState => ({
+                                  ...prevState,
+                                  address: null
+                                }))
+                              }}
                             />
-                            <span className="error">
-                              {!formData.address && formErrors.address}
-                            </span>
+                            { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Post Code</Form.Label>
                             <Form.Control
-                              type="number"
+                              type="text"
                               name="postalCode"
+                              ref={postalCode}
+                              maxLength={4}
                               value={formData.postalCode}
                               onChange={handleChange}
                             />
+                            { formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span> }
                           </Form.Group>
                           
                           {
@@ -745,10 +781,12 @@ const EditUser = () => {
                               <Form.Label>CRN</Form.Label>
                               <Form.Control
                                 type="text"
+                                ref={crn}
                                 name="crn"
                                 value={formData.crn}
                                 onChange={handleChange}
                               />
+                              { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
                             </Form.Group>
                           }
                           
@@ -757,12 +795,11 @@ const EditUser = () => {
                             <Form.Control
                               type="email"
                               name="email"
+                              ref={email}
                               value={formData.email}
                               onChange={handleChange}
                             />
-                            <span className="error">
-                              {!formData.email && formErrors.email}
-                            </span> 
+                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> } 
                           </Form.Group>
                           
                           {
@@ -825,6 +862,7 @@ const EditUser = () => {
                               <Form.Control
                                 type="tel"
                                 name="phone"
+                                ref={phone}
                                 maxLength={20}
                                 value={formData.phone}
                                 onChange={(e) => {
@@ -842,10 +880,7 @@ const EditUser = () => {
                                 }}
                               />
                             </div>
-                            <span className="error">
-                              {!formData.telcode ||
-                                (!formData.phone && formErrors.phone)}
-                            </span>
+                            { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
                           </Form.Group>
 
                           {
@@ -890,7 +925,6 @@ const EditUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
                           </Form.Group>
                           
                           {

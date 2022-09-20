@@ -69,15 +69,17 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
   let loggedInRoleId = roleObj.filter(d => d.role_name === loggedInRole)
   loggedInRoleId = loggedInRoleId[0].id;
 
-  return parseInt(loggedInRoleId) < parseInt(detailRoleId) || parseInt(loggedInRoleId) === parseInt(detailRoleId);
+  return parseInt(loggedInRoleId) < parseInt(detailRoleId);
 }
 
 const UserManagement = () => {
+
   const Key = useParams()
 
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
+  console.log(userEducator, "userEducator", userData)
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
@@ -361,8 +363,9 @@ const UserManagement = () => {
         is_deleted: dt.is_deleted,
         userID: dt.id,
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active + "," + dt.role
+        action: `${dt.is_active},${dt.role}`
       }));
+      // console.log('TEMP DATA:', tempData);
       // if (localStorage.getItem('user_role') === 'guardian') {
       //   tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       // }
@@ -420,6 +423,8 @@ const UserManagement = () => {
       filteredData = data.filter(d => d.role !== 'franchisee_admin');
     }
 
+    console.log(`FILTERED DATA for ${localStorage.getItem('user_role')}:`, filteredData);
+
     setUserData(filteredData);
   };
 
@@ -435,9 +440,7 @@ const UserManagement = () => {
     let filter = Key.key
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
 
-
-    console.log(selectedFranchisee + "+++++++++++++++++++")
-    console.log(filter, "filter")
+    console.log(selectedFranchisee, filter, "filter")
     if (filter) {
       api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
@@ -457,28 +460,29 @@ const UserManagement = () => {
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')
           }, ${dt.is_active} `,
-        email: dt.email,
-        number: (dt.phone !== null ? dt.phone.slice(1) : null),
-        location: dt.city,
-        is_deleted: dt.is_deleted,
-        userID: dt.id,
-        role: dt.role,
-        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
-        action: dt.is_active
+
+        email: dt?.email,
+        number: (dt.phone !== null ? dt?.phone.slice(1) : null),
+        location: dt?.city,
+        is_deleted: dt?.is_deleted,
+        userID: dt?.id,
+        role: dt?.role,
+        roleDetail: dt?.role + "," + dt?.isChildEnrolled + "," + dt?.franchisee_id + "," + dt?.id,
+        action: `${dt.is_active},${dt.role}`
       }));
+
 
       if (localStorage.getItem('user_role') === 'guardian') {
         tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
       }
 
       if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-        tempData = tempData.filter(d => d.action === 1);
+        tempData = tempData.filter(d => d?.action === 1);
       }
       setEducator(tempData);
+      console.log(tempData, "tempData")
+
       setIsLoading(false)
-
-
-
 
       let temp = tempData;
       let csv_data = [];
@@ -577,7 +581,7 @@ const UserManagement = () => {
       console.log('DISPLAY ROLES:', displayRoles);
     }
   }, [displayRoles])
- 
+
 
   const csvLink = useRef();
 
@@ -625,9 +629,9 @@ const UserManagement = () => {
                                   name="search"
                                   onChange={(e) => {
 
-                                  //   setSearch(e.target.value, () => {
-                                  //     onFilter();
-                                  //  });
+                                    //   setSearch(e.target.value, () => {
+                                    //     onFilter();
+                                    //  });
                                     setSearch(e.target.value);
                                     // onFilter(e.target.value);
 
@@ -646,7 +650,7 @@ const UserManagement = () => {
                               <Dropdown.Menu>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
-                                  <label>Users</label>
+                                  <label style={{ marginBottom: '5px' }}>Role</label>
                                   <Form.Group>
                                     {
                                       displayRoles &&
@@ -781,7 +785,7 @@ const UserManagement = () => {
                                 <BootstrapTable
                                   {...props.baseProps}
                                   rowEvents={rowEvents}
-                                  selectRow={selectRow}
+                                  // selectRow={selectRow}
                                   pagination={paginationFactory()}
                                 />
                               </>

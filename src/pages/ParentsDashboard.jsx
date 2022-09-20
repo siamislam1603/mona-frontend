@@ -10,54 +10,13 @@ import moment from 'moment';
 
 
 const ParentsDashboard = () => {
-
-  const [userDetails, setUserDetails] = useState(null);
-  const [childEnrollMessageDialog, setChildEnrollMessageDialog] = useState(true);
   const [event, setEvent] = useState([]);
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
-  const [viewEnrollmentDialog, setViewEnrollmentDialog] = useState(false);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [nonEnrolledChildIds, setNonEnrolledChildIds] = useState(null);
-  const [enrollmentFormLinks, setEnrollmentFormLinks] = useState(null);
   const [logUserOutDialog, setLogUserOutDialog] = useState(false);
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
-  // const checkPendingConsent = async () => {
-  //   let response = await axios.get(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('user_id')}`, {
-  //     headers: {
-  //       "Authorization": `Bearer ${localStorage.getItem('token')}`
-  //     }
-  //   });
-
-  //   // console.log('RESPONSE CONSENT:', checkPendingConsent);
-
-  //   if (response.status === 200 && response.data.status === "success") {
-  //     let { parentConsentData } = response.data;
-  //     console.log('PDATA:', parentConsentData);
-  //     console.log('PARENT CONSENT DATA:', parentConsentData[0]);
-
-  //     if (parentConsentData && parentConsentData.length > 0) {
-  //       localStorage.setItem('enrolled_parent_id', parentConsentData[0]?.consent_recipient_id);
-  //       localStorage.setItem('enrolled_child_id', parentConsentData[0]?.child_id);
-  //       localStorage.setItem('asked_for_consent', parentConsentData[0]?.asked_for_consent);
-  //       localStorage.setItem('consent_comment', parentConsentData[0]?.comment);
-  //       localStorage.setItem('has_given_consent', parentConsentData[0]?.has_given_consent);
-
-  //       if (parentConsentData[0].has_given_consent === null || parentConsentData[0].has_given_consent === false) {
-  //         console.log('VIEWING ENROLLMENT DIALOG');
-  //         setViewEnrollmentDialog(true);
-  //       }
-  //     } else {
-
-  //     }
-  //   }
-  // }
-
-  // const handleViewEnrollment = async () => {
-  //   setViewEnrollmentDialog(false);
-  //   window.location.href = `/child-enrollment/${localStorage.getItem('enrolled_child_id')}/${localStorage.getItem('enrolled_parent_id')}`;
-  // }
 
 
 
@@ -72,28 +31,28 @@ const ParentsDashboard = () => {
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
 
-      console.log("The event",training)
+      console.log("The event", training)
       setEvent(training);
     }
   };
 
   const Userannouncements = async () => {
-   try {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/dashboard/parent/quick-access-announcements`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
 
-    if (response.status === 200 && response.data.status === "success") {
-      const training = response.data.recentAnnouncement;
-      setannouncements(training);
+      if (response.status === 200 && response.data.status === "success") {
+        const training = response.data.recentAnnouncement;
+        setannouncements(training);
+      }
+    } catch (error) {
+      setannouncements([])
+      console.log("error", error)
     }
-   } catch (error) {
-    setannouncements([])
-    console.log("error",error)
-   }
   };
 
   const assignededucators = async () => {
@@ -106,7 +65,7 @@ const ParentsDashboard = () => {
     console.log(response, "response??????????????")
     if (response.status === 200 && response.data.status === "pass") {
       const result = response.data.assignedEducatorData.users;
-     
+
       setEditTrainingData(result);
     }
   }
@@ -123,7 +82,7 @@ const ParentsDashboard = () => {
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
 
-    // console.log("THE Date1", Added, datae)
+
     if (datae === Added) {
       return "Added today"
     }
@@ -136,7 +95,7 @@ const ParentsDashboard = () => {
     // return Added
 
   }
-  
+
 
   const handleParentLogout = async () => {
     setLogUserOutDialog(false);
@@ -144,97 +103,17 @@ const ParentsDashboard = () => {
     await logoutUser();
   }
 
-  // const fetchUserChildrenDetails = async () => {
-  //   let childIds;
-  //   let parentId = localStorage.getItem('user_id');
-  //   let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
-  //     headers: {
-  //       'Authorization': 'Bearer ' + localStorage.getItem('token')
-  //     }
-  //   });
 
-  //   if (response.status === 200 && response.data.status === 'success') {
-  //     let { parentData } = response.data;
-  //     console.log('PARENT DATA:', parentData);
-
-  //     if (parentData !== null && parentData.children.length > 0) {
-  //       console.log('PARENT DATA ISN\'T NULL');
-  //       let { children } = parentData;
-  //       console.log('CHILDREN FETCHED FOR THIS PARENT:', children);
-  //       // FILTERING THE CHILDREN WHOSE ENROLLMENT FORM HASN'T BEEN FILLED
-  //       childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 0);
-  //       console.log('CHILDREN TO BE ENROLLED:', childIds);
-  //       // FETCHING AN ARRAY OF THEIR IDs.
-  //       childIds = childIds.map(d => d.id);
-  //       console.log('ARRAY OF CHILD IDs present:', childIds);
-
-  //       if(childIds.length > 0) {
-  //         setNonEnrolledChildIds(childIds);
-  //       } else {
-  //         childIds = children.filter(d => d.isEnrollmentInitiated === true && d.isChildEnrolled === 1);
-  //         childIds = childIds.map(d => d.id);
-
-  //         if(childIds.length === 0)
-  //           setLogUserOutDialog(true);
-  //       }
-  //     } else {
-  //       // LOGS THE PARENT OUT, IF NO CHILD IS ASSIGNED.
-  //       console.log('NO CHILD IS ASSIGNED TO YOU!!!!!!!!!!');
-  //       setLogUserOutDialog(true)
-  //     }
-  //   }
-  // }
-
-  // const moveToChildEnrollmentForm = (link) => {
-  //   window.location.href = link;
-  // }
-
-  // const createEnrollmentFormLinks = () => {
-  //   let linkArray = [];
-  //   let parentId = localStorage.getItem('user_id');
-  //   nonEnrolledChildIds?.forEach(childId => {
-  //     let link = `/child-enrollment/${childId}/${parentId}`;
-  //     console.log('LINK GENERATED:', link);
-  //     linkArray.push(link);
-  //   });
-
-  //   setEnrollmentFormLinks(linkArray);
-  //   console.log('SETUP LINKS! ===============');
-  // }
 
   useEffect(() => {
-    // fetchUserChildrenDetails();
 
-    // show toast message
-    // if (localStorage.getItem('success_msg')) {
-    //   setTopSuccessMessage(localStorage.getItem('success_msg'));
-    //   localStorage.removeItem('success_msg');
-    //   setTimeout(() => {
-    //     setTopSuccessMessage(null);
-    //   }, 3000);
-    // }
-
-    // Redirect to baseurl when not not specific Role
-      if (localStorage.getItem('user_role')!=='guardian') {
-        window.location.href = '/';
+    if (localStorage.getItem('user_role') !== 'guardian') {
+      window.location.href = '/';
     }
-
-
-
 
   }, []);
 
-  // useEffect(() => {
 
-  // }, [enrollmentFormLinks]);
-
-  // useEffect(() => {
-  //   createEnrollmentFormLinks();
-  // }, [nonEnrolledChildIds]);
-
-  // useEffect(() => {
-  //   checkPendingConsent();
-  // });
 
   useEffect(() => {
     events();
@@ -248,7 +127,6 @@ const ParentsDashboard = () => {
 
   return (
     <>
-
       {
         topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
@@ -271,8 +149,8 @@ const ParentsDashboard = () => {
                         <header className="title-head mb-4 justify-content-between">
                           <h4 className="title-sm mb-0"><strong>Educators</strong></h4>
                         </header>
-                      
-                        {editTrainingData&& editTrainingData?.length >0 ? (
+
+                        {editTrainingData && editTrainingData?.length > 0 ? (
                           editTrainingData?.map((item) => {
                             return <>
                               <div className="educator-sec mb-5">
@@ -287,18 +165,16 @@ const ParentsDashboard = () => {
                             </>
                           })
                         ) : (
-                        <div className="text-center mb-5 mt-5"><strong>No educators assigned</strong></div>
+                          <div className="text-center mb-5 mt-5"><strong>No educators assigned</strong></div>
                         )}
-                            <header className="title-head mb-4 justify-content-between">
-                              <h4 className="title-sm mb-0"><strong>Events</strong></h4>
-                              <Link to="/announcements" className="viewall">View All</Link>
-                            </header>
-
+                        <header className="title-head mb-4 justify-content-between">
+                          <h4 className="title-sm mb-0"><strong>Events</strong></h4>
+                          <Link to="/announcements-announcement/all-events" className="viewall">View All</Link>
+                        </header>
                         {event ? (<>
                           <div className="event-sec pb-5">
-                           
                             <div className="column-list event-list">
-                              {event.map((item) => {
+                              {event.map((item, index) => {
                                 return <>
                                   {!item.title ? "" : <div className="item">
                                     <div className="pic"><a href=""><img src="../img/event-ico.png" alt="" /></a></div>
@@ -309,7 +185,8 @@ const ParentsDashboard = () => {
                                           <img src="../img/dot-ico.svg" alt="" />
                                         </Dropdown.Toggle>
                                         <Dropdown.Menu>
-                                          <Dropdown.Item href="/announcements">View</Dropdown.Item>
+                                          {/* /announcements-announcement/:id/:key */}
+                                          <Dropdown.Item href={`/announcements-announcement/all-events/${index}`}>View</Dropdown.Item>
                                         </Dropdown.Menu>
                                       </Dropdown>
                                     </div>
@@ -319,7 +196,7 @@ const ParentsDashboard = () => {
                             </div>
                           </div>
                         </>) : (
-                        <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
+                          <div className="text-center mb-5 mt-5"><strong>No Events</strong></div>
 
                         )}
                       </div>
@@ -352,27 +229,27 @@ const ParentsDashboard = () => {
                           </header>
                           <div className="column-list announcements-list">
                             {
-                              announcements?.length>0? (
-                                announcements.map((item) => {
+                              announcements?.length > 0 ? (
+                                announcements.map((item, index) => {
                                   return <>
                                     <div className="listing">
-                                      <a href="/announcements" className="item">
+                                      <a href={`/announcements-announcement/${index}`} className="item">
                                         <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
                                         <div className="name">{item.title}
                                           <div>
                                             <span className="timesec">{getAddedTime(item?.createdAt)}</span>
                                           </div>
                                         </div>
-    
+
                                       </a>
                                     </div>
                                   </>
                                 })
-                              )  :
-                              (
-                                <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
+                              ) :
+                                (
+                                  <div className="text-center mb-5 mt-5"><strong>No Announcements</strong></div>
 
-                              )
+                                )
                             }
 
 
@@ -387,73 +264,7 @@ const ParentsDashboard = () => {
           </Container>
         </section>
       </div>
-      {/* {
-        enrollmentFormLinks &&
-        enrollmentFormLinks.map(link => {
-          return (
-            <Modal
-              show={childEnrollMessageDialog}>
-              <Modal.Header>
-                <Modal.Title>Welcome {userDetails?.fullname.split(" ")[0]}</Modal.Title>
-              </Modal.Header>
-
-              <Modal.Body>
-                <p>Thank you for choosing MONA. Please go to <strong>Forms</strong></p>
-                <p style={{ marginTop: "-5px" }}>section and select <strong>Child Enrolment Form</strong> to enrol your</p>
-                <p style={{ marginTop: "-5px" }}>child with MONA or click below to directly open the</p>
-                <p style={{ marginTop: "-5px" }}><strong>Child Enrolment Form.</strong></p>
-              </Modal.Body>
-
-              <Modal.Footer>
-                <button style={{
-                  padding: ".7rem 1.4rem",
-                  fontWeight: '500',
-                  fontSize: '.8rem',
-                  color: "#fff",
-                  backgroundColor: '#3E5D58',
-                  border: "none",
-                  borderRadius: "5px"
-                }} onClick={() => moveToChildEnrollmentForm(link)}>Child Enrolment Form</button>
-              </Modal.Footer>
-            </Modal>
-          );
-        })
-      }
-
-      <Modal
-        show={logUserOutDialog}>
-        <Modal.Header>
-          <Modal.Title>Message</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <p>Your child's enrolment form has not been processed as yet, please try again shortly or alternatively reach out to your <strong>coordinator</strong>.</p>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <button
-            className="modal-button"
-            onClick={() => handleParentLogout()}>Log Out</button>
-        </Modal.Footer>
-      </Modal>
-
-
-      <Modal
-        show={viewEnrollmentDialog}>
-        <Modal.Header>
-          <Modal.Title>Pending Consent Notification</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <p>You have a pending consent from your coordinator. Click on <strong>View Enrolment Form</strong> to go through it.</p>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <button
-            className="modal-button"
-            onClick={() => handleViewEnrollment()}>View Enrollment Form</button>
-        </Modal.Footer>
-      </Modal> */}
+      
     </>
   );
 };

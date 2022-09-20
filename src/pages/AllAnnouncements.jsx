@@ -32,7 +32,8 @@ const handleClose = () => setShow(false);
 const [searchData,setSearchData] = useState()
 const [realtedFile,setRelatedFile] = useState(false)
  
-
+const paramsid = props.announId
+const theKey =Number(paramsid)
   const AllAnnouncementData = async () =>{
     try {
       const token = localStorage.getItem('token');
@@ -177,12 +178,12 @@ console.log("Announcemen detal",announcementDetails)
     <div className="announcement-accordion">
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
-                    <Accordion defaultActiveKey="0">
+                    <Accordion defaultActiveKey={theKey}>
                       { announcementDetails &&
                         announcementDetails?.length !==0 ? (
                           announcementDetails.map((details,index) => (
                             <div key={index}>
-                           <Accordion.Item eventKey={index} >
+                           <Accordion.Item eventKey={index}  >
                              <Accordion.Header>
                                <div className="head-title">
                                  <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -261,9 +262,7 @@ console.log("Announcemen detal",announcementDetails)
                                      </div>
                                    </div>
    
-                                
-                                
-                                       
+                                                        
                {details?.announcement_files?.length>0 ? <>
                     { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
                                   (
@@ -311,7 +310,7 @@ console.log("Announcemen detal",announcementDetails)
                            
                            ))
                         ): (
-                          <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
+                          <div className="text-center mb-5 mt-5"> {isLoading && props.loadCheck? (<CircularProgress/>) :  <strong>No data found</strong> }</div>
                         )
                       }
                     </Accordion>
