@@ -16,7 +16,7 @@ const selectRow = {
 const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-
+    console.log(userData, "userData")
     const GetData = async () => {
         try {
             let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
@@ -26,12 +26,14 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             })
             if (response.status === 200) {
                 const users = response.data.dataDetails;
+
                 let tempData = users.map((dt) => ({
                     name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy
                 }));
+
                 setUserData(tempData);
                 setfullLoaderStatus(false)
             }
@@ -53,12 +55,13 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
-                    createdAt: dt.updatedAt,
-                    userID: dt.id,
-                    creatorName: dt.ModifierName + "," + dt.updatedBy
+                    name: `${dt?.categoryId}, ${dt?.count} , ${dt?.categoryName}`,
+                    createdAt: dt?.updatedAt,
+                    userID: dt?.id,
+                    creatorName: dt?.ModifierName + "," + dt?.updatedBy
                 }));
                 setUserData(tempData);
+                console.log(tempData, "tempData")
             }
         } catch (err) {
             setfullLoaderStatus(false)
