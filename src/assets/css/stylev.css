@@ -418,7 +418,9 @@ button:focus {
     font-weight: 400;
     font-size: 16px;
     line-height: 19px;
-    color: #333333;
+    color: var(--primary);
+    background: transparent;
+    border: 2px solid var(--primary);
 }
 
 .tab-section .nav-tabs {
@@ -1035,7 +1037,6 @@ width: 14px;
 .responses-header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     width: 100%;
 }
 
@@ -1094,9 +1095,25 @@ width: 14px;
 }
 
 .responses-header-right {
+    margin-left: auto;
     padding-right: 35px;
 }
+.edit-icon-form {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 20px;
+    border-radius: 100%;
+    border: 1px solid #ababab;
+}
 
+
+
+.edit-icon-form svg {
+    width: 14px;
+}
 .responses-collapse .accordion-item .accordion-button:after {
     filter: brightness(70) invert(0.5) !important;
 }
@@ -2573,7 +2590,8 @@ li.child_tag {
 }
 
 .tab-created .nav-link.active {
-    background: #151F6D;
+    /* background: #151F6D; */
+    background: var(--primary);
     border-radius: 5px;
     color: #fff !important;
     border-bottom: none !important;

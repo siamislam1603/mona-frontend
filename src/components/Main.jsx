@@ -60,6 +60,7 @@ import ChildrenEnrol from '../pages/ChildrenEnrol';
 import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
 import { logoutUser } from '../helpers/logout';
 import AllEvent from '../pages/AllEvent';
+import OwnFormResponse from '../pages/FormBuilder/OwnFormResponse';
 
 function returnDashboard(role) {
   if (role === 'franchisor_admin')
@@ -438,6 +439,15 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <SearchResult />
+            </Protected>
+          }
+        />
+        <Route
+          path="/form/response/:id"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <OwnFormResponse />
             </Protected>
           }
         />

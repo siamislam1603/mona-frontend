@@ -17,14 +17,14 @@ import TopHeader from '../../components/TopHeader';
 import SignaturePad from 'react-signature-canvas';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-function FormResponse(props) {
+function OwnFormResponse(props) {
   const Params = useParams();
 
-  const ParamsKey = Params.key
-
-  console.log(ParamsKey, 'Params')
   const location = useLocation();
+  const { id } = useParams();
   const sigPad = useRef({});
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
@@ -36,12 +36,12 @@ function FormResponse(props) {
   let hideFlag = false;
 
   useEffect(() => {
-    console.log(':location?.state--->', location?.state);
-    if (location?.state?.id) {
+    if (location?.state?.message) {
+        toast.success(location?.state?.message);
+        navigate(`/form/response/${id}`, { state: { message: null } });
+      }
       getResponse('');
-    } else {
-      getAllForm();
-    }
+    
   }, []);
   const clear = (e) => {
     e.preventDefault();
@@ -91,31 +91,6 @@ function FormResponse(props) {
           hideFlag = true;
         }
       });
-
-    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
-  };
-  const getAllForm = () => {
-    var myHeaders = new Headers();
-    myHeaders.append('authorization', 'Bearer ' + token);
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
-    };
-
-    fetch(`${BASE_URL}/form/list`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        result?.result?.map((item) => {
-          if (
-            item.form_name.toLowerCase() === IGNORE_REMOVE_FORM.toLowerCase()
-          ) {
-            getResponseTow(item.id);
-          }
-        });
-      })
-      .catch((error) => console.log('error', error));
   };
   const getResponse = (search) => {
     var myHeaders = new Headers();
@@ -126,7 +101,7 @@ function FormResponse(props) {
       headers: myHeaders,
     };
 
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
+    const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -159,31 +134,6 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  const getResponseTow = (search) => {
-    var myHeaders = new Headers();
-    myHeaders.append('authorization', 'Bearer ' + token);
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-      headers: myHeaders,
-    };  
-    const Url = ParamsKey === "form-visit" ? `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}` : `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem(
-      'user_id'
-    )}&user_role=franchisee_admin`
-    fetch(Url
-      ,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        setResponseData(result?.result);
-        setFormData(result?.form);
-        if (result) {
-          setfullLoaderStatus(false);
-        }
-      })
-      .catch((error) => console.log('error', error));
-  };
 
   return (
     <>
@@ -208,17 +158,15 @@ function FormResponse(props) {
                       >
                         <img src="../../img/back-arrow.svg" />
                       </Button>
-                      <h4 className="mynewForm">
-                        {location?.state?.form_name
-                          ? location?.state?.form_name
-                          : 'Compliance Visit Form'}
+                      <h4 className="mynewForm text-capitalize">
+                        {formData.form_name}
                       </h4>
                     </div>
                   </Col>
                 </Row>
                 <div className="responses-forms-header-section forms-header-section">
                   <div className="forms-managment-section">
-                    <div className="forms-managment-left">
+                    <div className="forms-managment-left">  
                       <p>{responseData.length} Responses</p>
                     </div>
                     <div className="forms-managment-right">
@@ -333,6 +281,9 @@ function FormResponse(props) {
                                     }
                                   )}
                                 </div>
+                                {(formData?.form_type==="editable" || formData?.form_type==="multi_submission") && <div className='edit-icon-form' onClick={()=>{navigate(`/form/dynamic/${formData.form_name}`,{state:{id:item[index].id,form_id:id}})}}>
+                                    <FontAwesomeIcon icon={faPen} />
+                                </div>}
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
@@ -508,4 +459,4 @@ function FormResponse(props) {
     </>
   );
 }
-export default FormResponse;
+export default OwnFormResponse;
