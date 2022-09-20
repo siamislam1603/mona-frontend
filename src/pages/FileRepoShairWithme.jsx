@@ -7,7 +7,6 @@ import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-
 const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
@@ -56,7 +55,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryName}, ${dt.count}`,
+          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
           createdAt: dt.updatedAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -68,9 +67,14 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       setfullLoaderStatus(false)
     }
   }
+
+
   useEffect(() => {
     GetData();
-  }, [selectedFranchisee,]);
+  }, []);
+  useEffect(() => {
+    GetData();
+  }, [selectedFranchisee]);
 
   useEffect(() => {
     GetSaachhData();
@@ -94,7 +98,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
               </Link>
               <span className="user-name">
                 {cell[2]}
-                <small>{cell[1]} Files</small>
+                <small>
+                  {cell[1] > 1 ? (<>
+                    {cell[1]} Files
+                  </>) : (<>
+                    {cell[1]} File
+                  </>)}
+                </small>
               </span>
             </div>
           </>
@@ -159,7 +169,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />
-      {userData.length > 0 ? (<>
+      {userData ? (<>
         <ToolkitProvider
           keyField="name"
           data={userData}
@@ -173,11 +183,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
               />
             </>
           )}
-
         </ToolkitProvider>
-      </>) : (<div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div>)
+      </>) : null
       }
-
+      {!userData && fullLoaderStatus === false ?
+        <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
+        : null}
+      {/* <div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div> */}
     </div >
   )
 }

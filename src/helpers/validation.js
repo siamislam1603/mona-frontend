@@ -389,6 +389,7 @@ export const EditFleRepo = (form, coverImage) => {
 
 export const PasswordValidation = (form) => {
   let errors = {};
+  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
   let { oldpassword, new_password, confirm_password } = form;
 
   if (!oldpassword) {
@@ -397,8 +398,11 @@ export const PasswordValidation = (form) => {
   if (!new_password) {
     errors.new_password = 'New Password is required';
   }
-  if (new_password && new_password.length < 5) {
-    errors.new_password = 'Minimum length 5';
+  if (new_password && !regex.test(new_password)) {
+    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+
+    // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+
   }
 
   if (!confirm_password) {
@@ -418,9 +422,17 @@ export const PasswordValidation = (form) => {
 };
 export const ResetPasswordValidation = (form) => {
   let errors = {};
+  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
+
   let { new_password, confirm_password } = form;
   if (!new_password) {
     errors.new_password = 'New password require';
+  }
+  if (new_password && !regex.test(new_password)) {
+    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+
+    // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+
   }
   if (!confirm_password) {
     errors.confirm_password = 'Confirm password require';

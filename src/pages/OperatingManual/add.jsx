@@ -458,6 +458,7 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 console.log("Oepratiing",errors)
+console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>
       <div id="main">

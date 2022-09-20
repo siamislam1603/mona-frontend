@@ -418,7 +418,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
             
             {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
             <div className="text-center mb-5 mt-5">  <strong>No training assigned to you.</strong> </div>
-
             : null }
             {/* {availableTrainingData
               ? availableTrainingData.map((item) => {

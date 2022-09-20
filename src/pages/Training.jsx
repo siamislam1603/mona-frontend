@@ -98,7 +98,6 @@ const Training = () => {
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
-
       setTimeout(() => {
         setTopSuccessMessage(null);
       }, 3000);
