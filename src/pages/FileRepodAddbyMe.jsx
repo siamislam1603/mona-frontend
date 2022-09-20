@@ -56,7 +56,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryName}, ${dt.count}`,
+                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
                     createdAt: dt.updatedAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy

@@ -7,7 +7,6 @@ import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-
 const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
@@ -56,7 +55,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryName}, ${dt.count}`,
+          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
           createdAt: dt.updatedAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
@@ -73,7 +72,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   }, []);
   useEffect(() => {
     GetData();
-  }, [selectedFranchisee,]);
+  }, [selectedFranchisee]);
 
   useEffect(() => {
     GetSaachhData();
