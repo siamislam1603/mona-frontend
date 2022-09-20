@@ -506,6 +506,7 @@ export const acceptPointValidator = (value) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
   formObj;
@@ -546,16 +547,11 @@ export const UserFormValidation = (formObj) => {
 
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
-  
-  if (password && confirm_password && password !== confirm_password) {
+
+  if (password.length > 0 && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
-
-
-
-
-
 
   return errors;
 };
@@ -563,6 +559,7 @@ export const UserFormValidation = (formObj) => {
 export const editUserValidation = (form) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
   let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -594,9 +591,10 @@ export const editUserValidation = (form) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
+  if(password && !regexPassword.test(password))
+    errors.password = "Password must be 8 characters long, with 1 uppercase, 1 lowercase & digits"
 
-
-  if (password && confirm_password && password !== confirm_password) {
+  if (password && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
