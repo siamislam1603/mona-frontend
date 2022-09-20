@@ -11,13 +11,13 @@ import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import EducatorAssignPopup from '../components/EducatorAssignPopup';
 import CoparentAssignPopup from '../components/CoparentAssignPopup';
 let DeleteId = [];
+
 const Children = () => {
 
     const { id: paramsParentId } = useParams();
-    console.log('PARAMS PARENT ID:', paramsParentId);
     useEffect(()=>{
         init()
-        console.log("aa gye hum")                         
+        // console.log("aa gye hum")                         
     },[]);
 
     // Modal start
@@ -59,6 +59,7 @@ const Children = () => {
     const [childFranchise, setChildFranchise] = useState(null);
     const [enroledChildId, setEnroledChildId] = useState(null);
     const [reloadFlag, setReloadFlag] = useState(false);
+    const [topSuccessMessage, setTopSuccessMessage] = useState(null);
 
     const init = async() => {
         // Set Parents Franchisee
@@ -84,9 +85,7 @@ const Children = () => {
             },
           });
           if (response.status === 200) {
-            // console.log('RESPONSE:', response.data);
             const { parentData } = response.data;
-            console.log(parentData,"users")
             if(parentData !== null) {
                 setChildrenList(parentData?.children)
              } else {
@@ -135,21 +134,46 @@ const Children = () => {
         }
     };
 
+    const updateChildList = async () => {
+        console.log('Updating child list');
+        let response = await axios.get(`${BASE_URL}/enrollment/children/${params.id}`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+        if (response.status === 200) {
+        const { parentData } = response.data;
+        if(parentData !== null) {
+            setChildrenList(parentData?.children)
+            } else {
+            setChildrenList([]);
+            }
+        }
+    }
+    
+    function toastMessage(msg, timer) {
+        setTopSuccessMessage('Child reactiavted');
+        setTimeout(() => {
+            setTopSuccessMessage(null);
+        }, timer * 1000);
+    }
+
     const handleEnrollmentPageRedirection = async (childId, parentId) => {
         window.location.href=`/child-enrollment/${childId}/${parentId}?page=1`    
     };
 
     const DeactivateChild = async (id) => {
-        let token = localStorage.getItem('token');
-        const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
+        console.log('Deactivating child!', id);
+        const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`);
+        console.log('RESPONSE:', response);
 
-        if(response.status === 201 && response.data.status === "success") {
-            // POPUP HERE
-            // console.log('Child Deactivated');
+        if(response.status === 200 && response.data.status === "reactivated") {
+            toastMessage('Child reactivated', 3);
+            updateChildList();
+            
+        } else if(response.status === 200 && response.data.status === "deactivated") {
+            toastMessage('Child deactivated', 3);
+            updateChildList();
         }
     }
 
@@ -180,7 +204,6 @@ const Children = () => {
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
-            console.log('ROW DATA:', row);
             if (e.target.text === 'Delete') {
                 // CODE TO DELETE THE USER 
             }
@@ -243,9 +266,9 @@ const Children = () => {
         Educator: {educators:child.users, childId:child.id},
         EnrollFlag: { enrollFlag: child.isChildEnrolled, childId: child.id, initiationFlag: child.isEnrollmentInitiated },
         action: { enrollFlag: child.isChildEnrolled },
-        Parents: {parents:child.parents, childId:child.id}
+        Parents: {parents:child.parents, childId:child.id},
+        status: child.is_active
     }));
-    // console.log('Products:', productsTow);
 
     const   PColumns = [
         {
@@ -289,7 +312,6 @@ const Children = () => {
             dataField: 'Parents',
             text: 'Co-parent',
             formatter: (cell) => {
-                console.log(cell,"celll>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
                 return (
                     <>
                         {cell.parents.length === 0 ?
@@ -317,9 +339,23 @@ const Children = () => {
             },
         },
         {
+            dataField: 'status',
+            text: 'Status',
+            formatter: (cell) => {
+                console.log('CELL>??????????????', cell);
+                let state = "";
+                state = parseInt(cell) === 1 ? "Active" : "Inactive";
+                return (
+                    <>
+                        <p>{state}</p>
+                    </>
+                );
+            }
+
+        },
+        {
             dataField: 'Location',
             text: 'Location',
-
         },
         // {
         //     dataField: 'EnrollFlag',
@@ -414,8 +450,6 @@ const Children = () => {
         init();
     }, [reloadFlag]);
 
-
-    childrenList && console.log('Children List:', childrenList);
     return (
         <>
             <div id="main">
