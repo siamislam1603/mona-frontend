@@ -33,6 +33,7 @@ const Checkbox = (props) => {
                       
                       props.onChange(e.target.name, value,"checkbox");
                     }}
+                    checked={props.field_data && props.field_data.fields[`${controls.field_name}`].includes(Object.keys(item2)[0])}
                   />
                   <span className="checkmark"></span>
                 </label>
