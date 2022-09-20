@@ -91,7 +91,7 @@ const FilerepoUploadFile = () => {
     //======================== GET User List==================
     const getUser = async () => {
         try {
-            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee ) : [getFranchisee]
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee) : [getFranchisee]
             let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -262,8 +262,9 @@ const FilerepoUploadFile = () => {
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
-                    setUpladFile("File Upload successfully");
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
+                    window.location.reload();
+                    setUpladFile("File Upload successfully");
                 }
             })
             .then((result) => {
@@ -282,9 +283,7 @@ const FilerepoUploadFile = () => {
         }, 3000);
     }, [UpladFile])
 
-
     function onSelectUser(optionsList, selectedItem) {
-
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
@@ -457,7 +456,7 @@ const FilerepoUploadFile = () => {
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
-                                                <Form.Label>Send to all Franchises</Form.Label>
+                                                <Form.Label>Give access to all Franchises</Form.Label>
                                                 <div className="new-form-radio d-block">
                                                     <div className="new-form-radio-box">
                                                         <label for="all">

@@ -5,6 +5,7 @@ import axios from "axios";
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
+import { ToastContainer, toast } from 'react-toastify';
 
 
 const AvailableTraining = ({ filter, selectedFranchisee }) => {
@@ -417,7 +418,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
             
             {availableTrainingData && dueDataTraining === false && nodueData === false && fullLoaderStatus === false ?
             <div className="text-center mb-5 mt-5">  <strong>No training assigned to you.</strong> </div>
-
             : null }
             {/* {availableTrainingData
               ? availableTrainingData.map((item) => {

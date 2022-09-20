@@ -262,7 +262,7 @@ const AllEvent = (props) => {
           ))
         )
           : (
-            <div className="text-center mb-5 mt-5"> {isLoading ? (<CircularProgress />) : <strong>No data found</strong>}</div>
+            <div className="text-center mb-5 mt-5"> {isLoading === true && props.theloadevent === true ? (<CircularProgress />) : <strong>No data found</strong>}</div>
           )
         }
 
