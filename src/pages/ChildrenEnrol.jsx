@@ -416,45 +416,51 @@ console.log("CSV",csvDownloadFlag)
                                       </footer>
                                     </Dropdown.Menu>
                                   </Dropdown>
-                                  <Dropdown>
-                                 
-                              <Dropdown.Toggle
-                                id="extrabtn"
-                                className="ctaact"
+
+                                  {localStorage.getItem("user_role") === "franchisee_admin" ? (
+                        <Dropdown>
+                             
+                        <Dropdown.Toggle
+                          id="extrabtn"
+                          className="ctaact"
+                        >
+                          <img src="../img/dot-ico.svg" alt="" />
+                        </Dropdown.Toggle>
+
+
+                        <Dropdown.Menu>
+                          <Dropdown.Item
+                          as="button"
+                            onClick={() => {
+                              setCsvDownloadFlag(true);
+                            }}
+                          >
+                            
+                            <CSVLink
+                                data={csvData}
+                                filename={"Children Enroled.csv"}  
+                                // filename="dskak.csv"
+                                headers={headers}
+                                target="_blank"
+                                // ref={csvLink}
                               >
-                                <img src="../img/dot-ico.svg" alt="" />
-                              </Dropdown.Toggle>
-                              <Dropdown.Menu>
-                                <Dropdown.Item
-                                as="button"
-                                  onClick={() => {
-                                    setCsvDownloadFlag(true);
-                                  }}
-                                >
-                                  
-                                  <CSVLink
-                                      data={csvData}
-                                      filename={"Children Enroled.csv"}  
-                                      // filename="dskak.csv"
-                                      headers={headers}
-                                      target="_blank"
-                                      // ref={csvLink}
-                                    >
 
-                                      {"Export CSV"}
-                                      
-                                      </CSVLink> 
-                                    
-
-
+                                {"Export CSV"}
                                 
-                                  
-                                </Dropdown.Item>
-                                {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                                  Delete All Row
-                                </Dropdown.Item> */}
-                              </Dropdown.Menu>
-                            </Dropdown>
+                                </CSVLink> 
+                              
+
+
+                          
+                            
+                          </Dropdown.Item>
+                          {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                            Delete All Row
+                          </Dropdown.Item> */}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                  ): (null)}   
+                            
                                 </div>
                               </div>
                             </header>
