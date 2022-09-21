@@ -92,7 +92,6 @@ const UserManagement = () => {
   const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
-  const [isToggled, setIsToggled] = useState(false);
 
 
   const rowEvents = {
@@ -645,11 +644,10 @@ const UserManagement = () => {
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 variant="btn-outline"
-                                onClickCapture={() => setIsToggled(true)}
                               >
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
-                              <Dropdown.Menu className={isToggled ? "" : "d-none"}>
+                              <Dropdown.Menu>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
@@ -708,7 +706,7 @@ const UserManagement = () => {
                                   <Button
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => { handleApplyFilter(filter); setIsToggled(false) }}
+                                    onClick={() => { handleApplyFilter(filter) }}
                                   >
                                     Apply
                                   </Button>

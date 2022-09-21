@@ -270,7 +270,7 @@ const EditTraining = () => {
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
         setCreateTrainingModal(false);
-        localStorage.setItem('success_msg', 'Training Updated Successfully!');
+        localStorage.setItem('success_msg', 'Training Updated Successfully');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training";
       }
