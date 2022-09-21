@@ -20,9 +20,6 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       })
-      if (response) {
-        setfullLoaderStatus(false)
-      }
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
@@ -32,14 +29,21 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
           creatorName: dt.ModifierName + "," + dt.updatedBy
         }));
         setUserData(tempData);
+        setfullLoaderStatus(false)
       }
-
+      setfullLoaderStatus(false)
     } catch (e) {
       setfullLoaderStatus(false)
     }
-
   }
 
+  useEffect(() => {
+    GetData();
+  }, [setUserData]);
+
+  useEffect(() => {
+    GetData();
+  }, [selectedFranchisee]);
   const GetSaachhData = async () => {
     try {
       let User = localStorage.getItem('user_role');
@@ -69,12 +73,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   }
 
 
-  useEffect(() => {
-    GetData();
-  }, []);
-  useEffect(() => {
-    GetData();
-  }, [selectedFranchisee]);
+
 
   useEffect(() => {
     GetSaachhData();
@@ -184,7 +183,9 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
             </>
           )}
         </ToolkitProvider>
-      </>) : null
+      </>) :
+        <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
+
       }
       {!userData && fullLoaderStatus === false ?
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
@@ -194,4 +195,4 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   )
 }
 
-export default FileRepoShairWithme
+export default FileRepoShairWithme  

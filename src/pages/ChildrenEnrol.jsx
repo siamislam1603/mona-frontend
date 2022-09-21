@@ -180,7 +180,6 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-
             {
               cell[1] != "undefined" &&
               <div className="user-list">
