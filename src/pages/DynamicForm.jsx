@@ -38,7 +38,7 @@ const DynamicForm = () => {
     console.log('field', field);
     console.log('value', value);
     console.log('type', type);
-    if(location.state.id)
+    if(location?.state?.id)
     { 
       console.log("field---->",field);
       console.log("value---->",value);
@@ -101,8 +101,8 @@ const DynamicForm = () => {
     // }
   };
   useEffect(() => {
-    if (location.state.id) {
-      getFieldsData(location.state.id);
+    if (location?.state?.id) {
+      getFieldsData(location?.state?.id);
     }
     getFormFields();
     getUser();
@@ -252,7 +252,7 @@ const DynamicForm = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    if(location.state.id)
+    if(location?.state?.id)
     {
       var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -261,7 +261,7 @@ const DynamicForm = () => {
           method: 'POST',
           headers: myHeaders,
           body: JSON.stringify({
-            id: location.state.id,
+            id: location?.state?.id,
             data: fieldData,
             status: "update"
           }),
@@ -444,7 +444,7 @@ const DynamicForm = () => {
                                     );
                                   })}
                                 </Form.Select>
-                              ) : location.state.id ? (
+                              ) : location?.state?.id ? (
                                 <Form.Select
                                   name={'behalf_of'}
                                   onChange={(e) => {
@@ -541,7 +541,7 @@ const DynamicForm = () => {
                                   }}
                                 />
                               </>
-                            ) : location.state.id ? (
+                            ) : location?.state?.id ? (
                               <InputFields
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
@@ -566,7 +566,7 @@ const DynamicForm = () => {
                       ) : (
                         formData[item]?.map((inner_item) => {
                           return (
-                            location.state.id ? (
+                            location?.state?.id ? (
                               <InputFields
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
