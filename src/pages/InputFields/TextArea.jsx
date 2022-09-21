@@ -12,6 +12,7 @@ const TextArea = (props) => {
           name={controls.field_name}
           className="child_input"
           placeholder={controls.placeholder}
+          value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
           onChange={(e) => {
             e.preventDefault();
             props.onChange(e.target.name, e.target.value,"textarea");

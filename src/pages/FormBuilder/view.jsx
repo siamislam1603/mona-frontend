@@ -686,13 +686,7 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-icon-section"
                                                   onClick={() => {
-                                                    navigate('/form/response', {
-                                                      state: {
-                                                        id: inner_item.id,
-                                                        form_name:
-                                                          inner_item.form_name,
-                                                      },
-                                                    });
+                                                    navigate(`/form/response/${inner_item.id}`);
                                                   }}
                                                 >
                                                   <img
@@ -725,13 +719,7 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-title-section"
                                                   onClick={() => {
-                                                    navigate('/form/response', {
-                                                      state: {
-                                                        id: inner_item.id,
-                                                        form_name:
-                                                          inner_item.form_name,
-                                                      },
-                                                    });
+                                                    navigate(`/form/response/${inner_item.id}`);
                                                   }}
                                                 >
                                                   <h6>

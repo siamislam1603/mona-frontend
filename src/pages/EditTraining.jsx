@@ -105,6 +105,7 @@ const EditTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [fileDeleteResponse, setFileDeleteResponse] = useState();
   const [trainingFormData, setTrainingFormData] = useState([]);
+  const [docFileError, setDocFileError] = useState(null);
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
@@ -643,12 +644,12 @@ const EditTraining = () => {
                               onSave={setVideoTutorialFiles}
                             />
                             <small className="fileinput">(mp4, flv & mkv)</small>
-                            <small className="fileinput">(max. 5 video files)</small>
+                            <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                             {
                               videoFileErrorMessage  &&
                               videoFileErrorMessage.map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video files should be less than 1GB in size."}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video files should be less than 1GB in size"}</p>
                                 )
                               })
                             }
@@ -682,10 +683,19 @@ const EditTraining = () => {
                           <Form.Group>
                             <Form.Label>Upload Files</Form.Label>
                             <DropAllFile
+                              setUploadError={setDocFileError}
                               onSave={setRelatedFiles}
                             />
-                            <small className="fileinput">(pdf, doc & xslx)</small>
-                            <small className="fileinput">(max. 5 documents)</small>
+                            <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                            <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
+                            {
+                              docFileError  &&
+                              docFileError.map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File should be less than 5MB in size"}</p>
+                                )
+                              })
+                            }
                             <div className="media-container">
                               {
                                 fetchedRelatedFiles &&
@@ -821,7 +831,7 @@ const EditTraining = () => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Send to all franchises</Form.Label>
+                        <Form.Label>Give access to all franchises</Form.Label>
                         <div className="new-form-radio d-block">
                           <div className="new-form-radio-box">
                             <label for="all">
@@ -900,7 +910,7 @@ const EditTraining = () => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Applicable to</Form.Label>
+                        <Form.Label>Accessible to</Form.Label>
                         <div className="new-form-radio">
                           <div className="new-form-radio-box">
                             <label htmlFor="yes1">
@@ -1175,7 +1185,7 @@ const EditTraining = () => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Applicable to</Form.Label>
+                        <Form.Label>Accessible to</Form.Label>
                         <div className="new-form-radio">
                           <div className="new-form-radio-box">
                             <label htmlFor="yes1">
