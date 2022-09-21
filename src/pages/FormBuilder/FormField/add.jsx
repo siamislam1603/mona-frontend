@@ -723,7 +723,7 @@ const AddFormField = (props) => {
                                         form[index]?.field_type === 'radio'
                                       }
                                     >
-                                      Multiple Choice
+                                      Single Choice
                                     </option>
                                     <option
                                       value="checkbox"
@@ -731,7 +731,7 @@ const AddFormField = (props) => {
                                         form[index]?.field_type === 'checkbox'
                                       }
                                     >
-                                      Checkboxes
+                                      Multiple Choice
                                     </option>
                                     <option
                                       value="date"
@@ -1129,7 +1129,7 @@ const AddFormField = (props) => {
                                             ] === 'radio'
                                           }
                                         >
-                                          Multiple Choice
+                                          Single Choice
                                         </option>
                                         <option
                                           value="checkbox"
@@ -1139,7 +1139,7 @@ const AddFormField = (props) => {
                                             ] === 'checkbox'
                                           }
                                         >
-                                          Checkboxes
+                                          Multiple Choice
                                         </option>
                                         <option
                                           value="date"
