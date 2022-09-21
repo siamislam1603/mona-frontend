@@ -409,7 +409,7 @@ function FormResponse(props) {
                                                   '.jpeg'
                                                 ) ? (
                                                 <>
-                                                  <img style={{height:"auto",width:"14%"}}
+                                                  <img style={{height:"40px",width:"51px"}}
                                                     src={`${Object.values(
                                                       JSON.parse(item.fields)
                                                     )[inner_index]

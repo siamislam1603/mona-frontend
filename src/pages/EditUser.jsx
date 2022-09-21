@@ -656,7 +656,7 @@ const EditUser = () => {
                       <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Full Name</Form.Label>
+                            <Form.Label>Full Name *</Form.Label>
                             <Form.Control
                               type="text"
                               name="fullname"
@@ -674,7 +674,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>User Role</Form.Label>
+                            <Form.Label>User Role *</Form.Label>
                             <Select
                               placeholder="Select"
                               closeMenuOnSelect={true}
@@ -695,7 +695,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3">
-                            <Form.Label>State</Form.Label>
+                            <Form.Label>State *</Form.Label>
                             <Select
                               placeholder="Select"
                               ref={state}
@@ -719,7 +719,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Suburb</Form.Label>
+                            <Form.Label>Suburb *</Form.Label>
                             <Select
                               placeholder="Select"
                               closeMenuOnSelect={true}
@@ -745,7 +745,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Address</Form.Label>
+                            <Form.Label>Address *</Form.Label>
                             <Form.Control
                               type="text"
                               name="address"
@@ -763,7 +763,7 @@ const EditUser = () => {
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Post Code</Form.Label>
+                            <Form.Label>Post Code *</Form.Label>
                             <Form.Control
                               type="text"
                               name="postalCode"
@@ -778,7 +778,7 @@ const EditUser = () => {
                           {
                             formData?.role === "guardian" &&
                             <Form.Group className="col-md-6 mb-3 relative">
-                              <Form.Label>CRN</Form.Label>
+                              <Form.Label>CRN *</Form.Label>
                               <Form.Control
                                 type="text"
                                 ref={crn}
@@ -791,7 +791,7 @@ const EditUser = () => {
                           }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Email Address</Form.Label>
+                            <Form.Label>Email Address *</Form.Label>
                             <Form.Control
                               type="email"
                               name="email"
@@ -845,7 +845,7 @@ const EditUser = () => {
                           }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Contact Number</Form.Label>
+                            <Form.Label>Contact Number *</Form.Label>
                             <div className="tel-col">
                               <Select
                                 closeMenuOnSelect={true}
@@ -886,7 +886,7 @@ const EditUser = () => {
                           {
                             formData && formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3 relative">
-                              <Form.Label>Nominated Assistant</Form.Label>
+                              <Form.Label>Nominated Assistant *</Form.Label>
                               <Form.Control
                                 type="text"
                                 name="nominated_assistant"
@@ -899,7 +899,7 @@ const EditUser = () => {
                           }
                           
                           <Form.Group className="col-md-6 mb-3 relative">
-                            <Form.Label>Select Franchise</Form.Label>
+                            <Form.Label>Select Franchise *</Form.Label>
                             <Select
                               placeholder={"Select"}
                               closeMenuOnSelect={true}
@@ -930,7 +930,7 @@ const EditUser = () => {
                           {
                             formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3 relative">
-                              <Form.Label>Select Primary Coordinator</Form.Label> 
+                              <Form.Label>Select Primary Coordinator *</Form.Label> 
                               <Select
                                 isDisabled={formData.role !== 'educator'}
                                 placeholder={formData.role === 'educator' ? "Select" : "disabled"}

@@ -297,16 +297,9 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
           <Row>
-
+          <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
           {availableTrainingData
               ? availableTrainingData.map((item) => {
-                // console.log("the item",item.training.end_date)
-                // {
-                //   item.training.end_date ==null
-                // }
-                // return (
-                 
-                // );
                 if(item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
@@ -357,17 +350,10 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
               : null
             }
             {nodueData && dueDataTraining ? <hr/> : null}
-
-
+    
+              <h3 className="title-sm mb-3 mt-3"><strong>Training without due date</strong></h3>
              {availableTrainingData
               ? availableTrainingData.map((item) => {
-                // console.log("the item",item.training.end_date)
-                // {
-                //   item.training.end_date ==null
-                // }
-                // return (
-                 
-                // );
                 if(!item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
@@ -490,7 +476,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Send to all franchises</Form.Label>
+                        <Form.Label>Give access to all franchises</Form.Label>
                         <div className="new-form-radio d-block">
                           <div className="new-form-radio-box">
                             <label for="all">
@@ -569,7 +555,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Applicable to</Form.Label>
+                        <Form.Label>Accessible to</Form.Label>
                         <div className="new-form-radio d-block">
                           <div className="new-form-radio-box">
                             <label for="roles">
@@ -783,88 +769,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                   <Row className="mt-4">
                     <Col lg={3} md={6}>
                       <Form.Group>
-                        <Form.Label>Send to all franchises</Form.Label>
-                        <div className="new-form-radio d-block">
-                          <div className="new-form-radio-box">
-                            <label for="all">
-                              <input
-                                type="radio"
-                                disabled={true}
-                                checked={formSettings.send_to_all_franchisee === true}
-                                name="send_to_all_franchisee"
-                                id="all"
-                                onChange={() => {
-                                  setFormSettings(prevState => ({
-                                    ...prevState,
-                                    send_to_all_franchisee: true,
-                                    assigned_franchisee: ['all']
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>Yes</p>
-                            </label>
-                          </div>
-                          <div className="new-form-radio-box m-0 mt-3">
-                            <label for="none">
-                              <input
-                                type="radio"
-                                disabled={true}
-                                name="send_to_all_franchisee"
-                                checked={formSettings?.send_to_all_franchisee === false}
-                                id="none"
-                                onChange={() => {
-                                  setFormSettings(prevState => ({
-                                    ...prevState,
-                                    send_to_all_franchisee: false,
-                                    assigned_franchisee: []
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>No</p>
-                            </label>
-                          </div>
-                        </div>
-                      </Form.Group>
-                    </Col>
-
-                    <Col lg={9} md={12}>
-                      <Form.Group>
-                        <Form.Label>Select Franchise(s)</Form.Label>
-                        <div className="select-with-plus">
-                          <Multiselect
-                            disable={true}
-                            placeholder={""}
-                            // singleSelect={true}
-                            displayValue="key"
-                            selectedValues={franchiseeList?.filter(d => parseInt(d.id) === selectedFranchisee)}
-                            className="multiselect-box default-arrow-select"
-                            onKeyPressFn={function noRefCheck() { }}
-                            onRemove={function noRefCheck(data) {
-                              setFormSettings((prevState) => ({
-                                ...prevState,
-                                assigned_franchisee: [...data.map(data => data.id + '')],
-                              }));
-                            }}
-                            onSearch={function noRefCheck() { }}
-                            onSelect={function noRefCheck(data) {
-                              setFormSettings((prevState) => ({
-                                ...prevState,
-                                assigned_franchisee: [...data.map((data) => data.id + '')],
-                              }));
-                            }}
-                            options={franchiseeList}
-                          />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-4">
-                    <Col lg={3} md={6}>
-                      <Form.Group>
-                        <Form.Label>Applicable to</Form.Label>
+                        <Form.Label>Accessible to</Form.Label>
                         <div className="new-form-radio d-block">
                           <div className="new-form-radio-box">
                             <label for="roles">
