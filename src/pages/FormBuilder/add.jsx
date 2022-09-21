@@ -194,7 +194,7 @@ function AddFormBuilder(props) {
                   <Row>
                     <Col md={6}>
                       <Form.Group>
-                        <Form.Label>Form Title</Form.Label>
+                        <Form.Label>Form Title *</Form.Label>
                         <Form.Control
                           type="text"
                           name="form_name"
@@ -211,7 +211,7 @@ function AddFormBuilder(props) {
                     </Col>
                     <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
-                        <Form.Label>Form Type</Form.Label>
+                        <Form.Label>Form Type *</Form.Label>
                         <Form.Select
                           name="form_type"
                           onChange={(e) => {
@@ -246,7 +246,7 @@ function AddFormBuilder(props) {
                     </Col>
                     <Col sm={12} className="mt-3 mb-3">
                       <Form.Group>
-                        <Form.Label>Form Description</Form.Label>
+                        <Form.Label>Form Description *</Form.Label>
                         <Form.Control
                           as="textarea"
                           name="form_description"
@@ -314,7 +314,7 @@ function AddFormBuilder(props) {
                     form?.form_template_select === true ? (
                       <Col md={6} className="mt-3 mt-md-0">
                         <Form.Group>
-                          <Form.Label>Select Previous Form</Form.Label>
+                          <Form.Label>Select Previous Form *</Form.Label>
                           <Form.Select
                             name="previous_form"
                             onChange={(e) => {
@@ -344,7 +344,7 @@ function AddFormBuilder(props) {
                     ) : null} </>}
                     <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
-                        <Form.Label>Select Category</Form.Label>
+                        <Form.Label>Select Category *</Form.Label>
                         <Form.Select
                           name="category_id"
                           isInvalid={!!errors.category_id}

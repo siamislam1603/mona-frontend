@@ -880,7 +880,12 @@ function ViewFormBuilder(props) {
                                 title="Created by me"
                               >
                                 <div className="forms-content-section">
-                                  {MeFormData?.map((item, index) => {
+                                  {
+
+                                  MeFormData.length>0?
+
+
+                                  MeFormData?.map((item, index) => {
                                     return (
                                       <>
                                         <Row>
@@ -1044,7 +1049,11 @@ function ViewFormBuilder(props) {
                                         </Row>
                                       </>
                                     );
-                                  })}
+                                  })
+                                  :'No Form Created By You'
+                                  
+                                  
+                                  }
                                 </div>
                               </Tab>
                             )}
@@ -1054,7 +1063,12 @@ function ViewFormBuilder(props) {
                               title="Created by others"
                             >
                               <div className="forms-content-section">
-                                {OthersFormData?.map((item, index) => {
+                                {
+                                
+                                OthersFormData.length>0?
+
+                                
+                                OthersFormData?.map((item, index) => {
                                   {
                                     item['title_flag'] = false;
                                   }
@@ -1334,7 +1348,10 @@ function ViewFormBuilder(props) {
                                       </Row>
                                     </>
                                   );
-                                })}
+                                })
+                              :'No Form Created By Others'
+                              
+                              }
                               </div>
                             </Tab>
                           </Tabs>
