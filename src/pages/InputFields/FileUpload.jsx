@@ -66,6 +66,7 @@ const FileUpload = (props) => {
         <Form.Control
           type="file"
           name={controls.field_name}
+          value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
           onChange={async (e) => {
             let file = e.target.files[0];
             await uploadFiles(file).then((url) => {

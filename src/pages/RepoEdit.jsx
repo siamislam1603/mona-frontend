@@ -427,10 +427,10 @@ const RepoEdit = () => {
                                                 </Row>
                                                 {getUser_Role === "guardian" ? (<></>) :
                                                     (<>
-                                                        <Row className="mt-4">
+                                                        {getUser_Role !== "franchisor_admin" ? (<></>) :(<Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>
-                                                                    <Form.Label>Send to all franchises</Form.Label>
+                                                                    <Form.Label>Give access to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
                                                                             <label for="all">
@@ -506,7 +506,7 @@ const RepoEdit = () => {
                                                                     </div>
                                                                 </Form.Group>
                                                             </Col>
-                                                        </Row>
+                                                        </Row>)}
                                                         <Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>

@@ -389,6 +389,7 @@ export const EditFleRepo = (form, coverImage) => {
 
 export const PasswordValidation = (form) => {
   let errors = {};
+  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
   let { oldpassword, new_password, confirm_password } = form;
 
   if (!oldpassword) {
@@ -397,8 +398,11 @@ export const PasswordValidation = (form) => {
   if (!new_password) {
     errors.new_password = 'New Password is required';
   }
-  if (new_password && new_password.length < 5) {
-    errors.new_password = 'Minimum length 5';
+  if (new_password && !regex.test(new_password)) {
+    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+
+    // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+
   }
 
   if (!confirm_password) {
@@ -418,9 +422,17 @@ export const PasswordValidation = (form) => {
 };
 export const ResetPasswordValidation = (form) => {
   let errors = {};
+  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
+
   let { new_password, confirm_password } = form;
   if (!new_password) {
     errors.new_password = 'New password require';
+  }
+  if (new_password && !regex.test(new_password)) {
+    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+
+    // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
+
   }
   if (!confirm_password) {
     errors.confirm_password = 'Confirm password require';
@@ -507,7 +519,7 @@ export const UserFormValidation = (formObj) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
@@ -537,7 +549,6 @@ export const UserFormValidation = (formObj) => {
   if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
     errors.postalCode = 'Post code must only consist digits';
 
-
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
@@ -546,16 +557,6 @@ export const UserFormValidation = (formObj) => {
 
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
-  
-  if (password && confirm_password && password !== confirm_password) {
-    errors.password = "Passwords don't match";
-    errors.confirm_password = "Passwords don't match";
-  }
-
-
-
-
-
 
   return errors;
 };
@@ -563,6 +564,7 @@ export const UserFormValidation = (formObj) => {
 export const editUserValidation = (form) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
   let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -594,9 +596,10 @@ export const editUserValidation = (form) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
+  if(password && !regexPassword.test(password))
+    errors.password = "Minimum 8 characters, at least 1 uppercase, 1 lowercase & 1 digit"
 
-
-  if (password && confirm_password && password !== confirm_password) {
+  if (password && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
@@ -712,7 +715,7 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 export const enrollmentInitiationFormValidation = (
   formOneChildData
 ) => {
-  let { fullname, family_name, dob, start_date, home_address, child_crn, school_status, name_of_school, educator } = formOneChildData;
+  let { fullname, family_name, dob, start_date, home_address, child_crn, school_status, name_of_school, educator, franchisee_id } = formOneChildData;
   let errors = {};
 
   if (!fullname) errors.fullname = 'Fullname is required';
@@ -725,7 +728,9 @@ export const enrollmentInitiationFormValidation = (
 
   if (!home_address) errors.home_address = 'Home address is required';
 
-  if (educator.length === 0) errors.educatorData = 'An Educator needs to be selected';
+  if (!franchisee_id) errors.franchiseData = 'Franchise is required';
+  
+  if (educator.length === 0) errors.educatorData = 'Educator is required';
   
   if (!child_crn) errors.child_crn = 'Child CRN is required';
 

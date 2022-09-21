@@ -104,8 +104,8 @@ input:-webkit-autofill{-webkit-animation-name:autofill;-webkit-animation-fill-mo
 .btn.noshadow{box-shadow:none}
 .form-group{position:relative}
 .btn-outline,.btn-outline-outline:active,.btn-outline-outline:focus,.btn-outline-outline:hover,.btn-outline:active,.btn-outline:focus,.btn-outline:hover,.btn-outline:not(:disabled):not(.disabled).active,.btn-outline:not(:disabled):not(.disabled):active,.show>.btn-outline.dropdown-toggle{color:var(--primary)!important;border-color:var(--primary);background-color:transparent;border-width:1px}
-.btn-primary{color:var(--white);background-color:var(--primary);border-color:var(--gray)}
-.btn-outline-primary:active,.btn-outline-primary:focus,.btn-outline-primary:hover,.btn-primary:active,.btn-primary:focus,.btn-primary:hover,.btn-primary:not(:disabled):not(.disabled).active,.btn-primary:not(:disabled):not(.disabled):active,.show>.btn-primary.dropdown-toggle{color:#909090;background-color:#f7f7f7;border-color:#909090}
+.btn-primary,.btn-primary:active,.btn-primary:focus{color:var(--white);background-color:var(--primary);border-color:var(--gray)}
+.btn-outline-primary:active,.btn-outline-primary:focus,.btn-outline-primary:hover,.btn-primary:hover,.btn-primary:not(:disabled):not(.disabled).active,.btn-primary:not(:disabled):not(.disabled):active,.show>.btn-primary.dropdown-toggle{color:#909090;background-color:#f7f7f7;border-color:#909090}
 .btn-secondary{color:var(--white);background-image:linear-gradient(to right bottom,#eb252f,#bc1728,#8e0c20,#620516,#3a0205);border-color:var(--orange)}
 .btn-outline-secondary:active,.btn-outline-secondary:focus,.btn-outline-secondary:hover,.btn-secondary:active,.btn-secondary:focus,.btn-secondary:hover,.btn-secondary:not(:disabled):not(.disabled).active,.btn-secondary:not(:disabled):not(.disabled):active,.show>.btn-secondary.dropdown-toggle{color:var(--white);background-color:var(--primary);border-color:var(--primary)}
 .btn-outline-danger{color:var(--purple);background-color:var(--white);border-color:var(--purple)}
@@ -185,8 +185,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .create-form-required label{margin-right:10px;margin-left:10px}
 .addFieldButton{display:flex;justify-content:flex-end;height:100%;align-content:center;align-items:flex-end}
 .addFieldButton button{height:fit-content}
-.accordion-button{background-color:#455c58!important;color:#fff!important}
-.accordion-button.collapsed{background-color:#fff!important;color:#333!important}
+.accordion-button{background-color:#455c58!important;color:#333!important}
+.accordion-button.collapsed{background-color:#333!important;color:#333!important}
 .accordion-button:focus{box-shadow:none}
 .accordion-button:not(.collapsed)::after{filter:brightness(100)}
 .createFormBox select{height:auto;width:100%!important;background:#f7f7f8!important;border:1px solid rgba(66,66,66,.1)!important;font-size:14px!important;padding:16px 15px!important;color:var(--black)!important;opacity:.7}
@@ -721,7 +721,8 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 @media not all and (min-resolution:.001dpcm)
 { @supports (-webkit-appearance:none) and (stroke-color:transparent) {
 .user-management-sec .table tr:before { display:none;}
-.user-management-sec .table td { border:1px solid #ededed; }
+.user-management-sec .table tr { border:1px solid #ededed; }
+.user-management-sec .table thead tr { border:none; }
 }}
 
 @media only screen and (max-width:1400px){

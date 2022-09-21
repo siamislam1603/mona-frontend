@@ -12,35 +12,36 @@ const InputFields = (props) => {
   let inputElement = null;
   const { ...controls } = props;
   const {signature_flag}=props
+  console.log("props.field_data---->",props);
   
   console.log("props-2132--->", props.signature_flag);
   switch (controls.field_type) {
     case "radio":
-      inputElement = <Radio {...controls} />;
+      inputElement = <Radio {...controls} field_data={props.field_data}/>;
       break;
     case "headings":
       inputElement = <Headings {...controls} />;
       break;
     case "checkbox":
-      inputElement = <Checkbox {...controls} />;
+      inputElement = <Checkbox {...controls} field_data={props.field_data}/>;
       break;
     case "instruction_text":
-      inputElement = <TextArea {...controls} />;
+      inputElement = <TextArea {...controls} field_data={props.field_data}/>;
       break;
     case "dropdown_selection":
-      inputElement = <Select {...controls} />;
+      inputElement = <Select {...controls} field_data={props.field_data}/>;
       break;
     case "signature":
       inputElement = <Signature {...controls} signature_flag={props.signature_flag} />;
       break;
     case "document_attachment":
-      inputElement = <FileUpload {...controls} />;
+      inputElement = <FileUpload {...controls} field_data={props.field_data}/>;
       break;
     case "image_upload":
-      inputElement = <ImageUpload {...controls} />;
+      inputElement = <ImageUpload {...controls} field_data={props.field_data}/>;
       break;
     default:
-      inputElement = <Input {...controls}  />;
+      inputElement = <Input {...controls} field_data={props.field_data} />;
   }
   return inputElement;
 };
