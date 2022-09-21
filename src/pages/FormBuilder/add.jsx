@@ -236,7 +236,7 @@ function AddFormBuilder(props) {
                             value="editable"
                             selected={form?.form_type === 'editable'}
                           >
-                            One time fill and Edit
+                            One time fill and edit
                           </option>
                         </Form.Select>
                         <Form.Control.Feedback type="invalid">

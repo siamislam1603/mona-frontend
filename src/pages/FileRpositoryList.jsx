@@ -344,7 +344,7 @@ const FileRpositoryList = () => {
                         <div className="user-list">
                             <span className="user-name">
                                 <img src="../img/sharing-ico.png" className="me-2" alt="" />
-                                Shared
+                                Access Given
                             </span>
                         </div>
                     </>

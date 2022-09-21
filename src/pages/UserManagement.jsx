@@ -439,7 +439,6 @@ const UserManagement = () => {
     let api_url = '';
     let filter = Key.key
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-
     console.log(selectedFranchisee, filter, "filter")
     if (filter) {
       api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
@@ -450,17 +449,18 @@ const UserManagement = () => {
         authorization: `Bearer ${localStorage.getItem('token')} `,
       },
     });
-
+    if (response) {
+      setfullLoaderStatus(false)
+    }
 
     if (response.status === 200) {
       const { users } = response.data;
       let tempData = users.map((dt) => ({
-        name: `${dt.profile_photo}, ${dt.fullname}, ${dt.role
+        name: `${dt?.profile_photo}, ${dt?.fullname}, ${dt?.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
           .join(' ')
-          }, ${dt.is_active} `,
-
+          }, ${dt?.is_active} `,
         email: dt?.email,
         number: (dt.phone !== null ? dt?.phone.slice(1) : null),
         location: dt?.city,
@@ -472,13 +472,13 @@ const UserManagement = () => {
       }));
 
 
-      if (localStorage.getItem('user_role') === 'guardian') {
-        tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      }
+      // if (localStorage.getItem('user_role') === 'guardian') {
+      //   tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
+      // }
 
-      if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-        tempData = tempData.filter(d => d?.action === 1);
-      }
+      // if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+      //   tempData = tempData.filter(d => d?.action === 1);
+      // }
       setEducator(tempData);
       console.log(tempData, "tempData")
 

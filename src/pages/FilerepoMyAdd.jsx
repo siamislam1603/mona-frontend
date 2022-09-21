@@ -241,7 +241,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     useEffect(() => {
         if (selectedFranchisees) {
             GetFile();
-            
+
         }
     }, [selectedFranchisees]);
 
@@ -410,11 +410,15 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             {cell > 0 ?
                                 <span className="user-name">
                                     <img src="../img/sharing-ico.png" className="me-2" alt="" />
-                                    Shared
+                        
+                                    Access Given
+                                    {/* Access Not Given */}
+                                    
                                 </span> :
                                 <span className="user-name">
                                     <img src="../img/NoShore.png" className="me-2" alt="" />
-                                    No Shared
+                                    {/* Not Shared */}
+                                    Access Not Given
                                 </span>
                             }
                         </div>
@@ -558,7 +562,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                            {getUser_Role !== "franchisor_admin" ? (<></>) : ( <Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
-                                        <Form.Label>Send to all franchises</Form.Label>
+                                        <Form.Label>Give access to all Franchises</Form.Label>
                                         <div className="new-form-radio d-block">
                                             <div className="new-form-radio-box">
                                                 <label for="all">
