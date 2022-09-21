@@ -518,7 +518,6 @@ export const acceptPointValidator = (value) => {
 export const UserFormValidation = (formObj) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
 
   let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator } =
   formObj;
