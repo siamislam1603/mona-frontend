@@ -22,6 +22,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let child_crn = useRef(null);
   let name_of_school = useRef(null);
   let educator = useRef(null);
+  let franchise = useRef(null);
 
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
@@ -34,19 +35,23 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     school_status: "N",
     name_of_school: "",
     has_special_needs: 0,
-    educator: []
+    educator: [],
+    franchisee_id: null
   });
   const [educatorData, setEducatorData] = useState(null);
+  const [franchiseData, setFranchiseData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
   const [errors, setErrors] = useState({});
 
 
-  const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
-    console.log('RESPONSE EDUCATOR DATA:', response);
+  const fetchEducatorList = async (franchise) => {
+    // console.log('FETCHING EDUCATOR LIST', franchise);
+    const response = await axios.get(`${BASE_URL}/user-group/users/${franchise}`);
+    // console.log('RESPONSE EDUCATOR DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
+      // console.log('USERS:', users);
       setEducatorData(users?.map(user => ({
         id: user.id,
         value: user.fullname,
@@ -76,7 +81,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       let { user } = response.data;
       let { franchisee_id } = user;
 
-      response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData, franchisee_id: franchisee_id  }, {
+      response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -123,6 +128,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       start_date?.current?.focus();
     } else if(errArray?.includes('home_address')) {
       home_address?.current?.focus();
+    } else if(errArray?.includes('franchiseData')) {
+      franchise?.current?.focus();
     } else if(errArray?.includes('educatorData')) {
       educator?.current?.focus();
     } else if(errArray?.includes('child_crn')) {
@@ -130,6 +137,24 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     } else if(errArray?.includes('name_of_school')) {
       name_of_school?.current?.focus();
     } 
+  }
+
+  const fetchFranchiseList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
+      setFranchiseData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_name,
+        label: franchisee.franchisee_name
+      })));  
+    }
   }
 
   const submitFormData = (event) => {
@@ -152,10 +177,14 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   useEffect(() => {
     console.log('FETCHING EDUCATOR LIST!');
-    fetchEducatorList();
-  }, [selectedFranchisee])
+    fetchEducatorList(formOneChildData?.franchisee_id);
+  }, [formOneChildData?.franchisee_id])
+
+  useEffect(() => {
+    fetchFranchiseList();
+  }, [])
   
-  // formOneChildData && console.log('CHILD DATA:', formOneChildData);
+  formOneChildData && console.log('CHILD DATA:', formOneChildData);
   errors && console.log('Errors:', errors);
   return (
     <>
@@ -317,6 +346,30 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
+                                <Form.Label>Select Franchise *</Form.Label>
+                                <Select
+                                  placeholder={"Select"}
+                                  closeMenuOnSelect={true}
+                                  ref={franchise}
+                                  options={franchiseData}
+                                  onChange={(e) => {
+                                    setFormOneChildData((prevState) => ({
+                                      ...prevState,
+                                      franchisee_id: e.id
+                                    }));
+
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      franchiseData: null
+                                    }))
+                                  }}
+                                />
+                                {errors.franchiseData !== null && <span className="error">{errors.franchiseData}</span>}
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Select An Educator *</Form.Label>
                                 <Select
                                   placeholder={formOneChildData?.language || "Select"}
@@ -342,6 +395,35 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>Does your child have special needs? *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.has_special_needs === 1}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 1
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsno"
+                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 0
+                                    }))} />
+                                </div>
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
                                 <Form.Label>Child CRN *</Form.Label>
                                 <Form.Control
                                   type="text"
@@ -351,25 +433,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
-                                  }} 
-                                  // onBlur={(e) => {
-                                  //   if(!formOneChildData.log.includes("child_child_crn")) {
-                                  //     setFormOneChildData(prevState => ({
-                                  //       ...prevState,
-                                  //       log: [...formOneChildData.log, "child_child_crn"]
-                                  //     }));
-                                  //   }
-                                  //   setChildFormErrors(prevState => ({
-                                  //     ...prevState,
-                                  //     child_child_crn: null,
-                                  //   })) 
-                                  // }} /> 
-                                  />
+                                  }} />
 
                                   { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
                               </Form.Group>
                             </Col>
-                            
+
                             <Col md={12}>
                               <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
@@ -420,35 +489,6 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
-
-                            <Col md={12}>
-                              <Form.Group className="mb-3 relative">
-                                <div className="btn-radio inline-col">
-                                  <Form.Label>Does your child have special needs? *</Form.Label>
-                                  <Form.Check
-                                    type="radio"
-                                    name="has_special_needs"
-                                    id="specialneedsyes"
-                                    label="Yes"
-                                    checked={formOneChildData?.has_special_needs === 1}
-                                    defaultChecked
-                                    onChange={(event) => setFormOneChildData(prevState => ({
-                                      ...prevState,
-                                      has_special_needs: 1
-                                    }))} />
-                                  <Form.Check
-                                    type="radio"
-                                    name="has_special_needs"
-                                    id="specialneedsno"
-                                    checked = {formOneChildData?.has_special_needs === 0}
-                                    label="No"
-                                    onChange={(event) => setFormOneChildData(prevState => ({
-                                      ...prevState,
-                                      has_special_needs: 0
-                                    }))} />
-                                </div>
-                              </Form.Group>
-                            </Col>
                           </Row>
                         </div>
                       </div>

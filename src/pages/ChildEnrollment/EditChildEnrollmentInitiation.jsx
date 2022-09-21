@@ -22,14 +22,32 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     educator: []
   });
   const [educatorData, setEducatorData] = useState(null);
+  const [franchiseData, setFranchiseData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const fetchFranchiseList = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
-  const fetchEducatorList = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users/${typeof selectedFranchisee === 'undefined' ? 'all' : selectedFranchisee}`);
-    console.log('RESPONSE EDUCATOR DATA:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      let { franchiseeList } = response.data;
+      setFranchiseData(franchiseeList.map(franchisee => ({
+        id: franchisee.id,
+        value: franchisee.franchisee_name,
+        label: franchisee.franchisee_name
+      })));  
+    }
+  }
+
+  const fetchEducatorList = async (franchise) => {
+    console.log('FETCHING EDUCATORS:', franchise);
+    const response = await axios.get(`${BASE_URL}/user-group/users/${franchise}`);
     if(response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
       setEducatorData(users.map(user => ({
@@ -71,14 +89,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         console.log('Updated Sucessfully!');
         window.location.href=`/children/${paramsParentId}`;
       }
-  
-      // if(response.status === 201 && response.data.status === "success") {
-      //   response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${child.id}`, { educatorIds: formOneChildData.educator }, {
-      //     headers: {
-      //       "Authorization": `Bearer ${token}`
-      //     }     
-      //   }); 
-      // }
     }
   }
 
@@ -93,7 +103,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     if(response.status === 200 && (await response).data.status === "success") {
       let { child } = response.data;
 
-      let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date, has_special_needs } = child;
+      let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date, has_special_needs, franchisee_id } = child;
       let educatorIds = users.map(d => d.id);
 
       console.log('USERS:', users);
@@ -110,6 +120,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         school_status,
         start_date,
         has_special_needs,
+        franchisee_id,
         educator: [...educatorIds]
       }))
     }
@@ -134,11 +145,12 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   useEffect(() => {
     console.log('FETCHING EDUCATOR LIST!');
-    fetchEducatorList();
-  }, [selectedFranchisee])
+    fetchEducatorList(formOneChildData?.franchisee_id);
+  }, [formOneChildData?.franchisee_id])
 
   useEffect(() => {
     fetchAndPopulateChildData();
+    fetchFranchiseList();
   }, []);
   
 
@@ -164,7 +176,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                       <div className="enrollment-form-column">
                         <div className="grayback">
                           <h2 className="title-xs mb-2">Basic details about the child</h2>
-                          {/* <p className="form_info mb-4">A parent or guardian who has lawful authority in relation to the child must complete this form. Licensed children’s services may use this form to collect the child’s enrolment information as required in the Children’s Service’s Regulations 2017 and education and care services national law act 2010. Based on these regulations, parents are not required to fill questions marked with an asterisk, however, it will be highly important for the service to have those details.</p> */}
                           <Row>
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
@@ -294,34 +305,86 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   {errors.home_address !== null && <span className="error">{errors.home_address}</span>}
                               </Form.Group>
                             </Col>
+                            
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Select Franchise *</Form.Label>
+                                <Select
+                                  placeholder={"Select"}
+                                  isDisabled={localStorage.getItem('user_role') !== 'franchisor_admin'}
+                                  closeMenuOnSelect={true}
+                                  value={franchiseData?.filter(d => parseInt(d.id) === parseInt(formOneChildData?.franchisee_id))}
+                                  options={franchiseData}
+                                  onChange={(e) => {
+                                    setFormOneChildData((prevState) => ({
+                                      ...prevState,
+                                      franchisee_id: e.id
+                                    }));
 
-                            {
-                              localStorage.getItem('user_role') !== 'guardian' &&
-                              <Col md={6}>
-                                <Form.Group className="mb-3 relative">
-                                  <Form.Label>Select An Educator *</Form.Label>
-                                  <Select
-                                    placeholder={"Select"}
-                                    closeMenuOnSelect={true}
-                                    isMulti
-                                    value={educatorData?.filter(d => formOneChildData?.educator.includes(d.id))}
-                                    options={educatorData}
-                                    onChange={(e) => {
-                                      setFormOneChildData((prevState) => ({
-                                        ...prevState,
-                                        educator: [...e.map(e => e.id)]
-                                      }));
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      franchiseData: null
+                                    }))
+                                  }}
+                                />
+                                {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
+                              </Form.Group>
+                            </Col>
 
-                                      setErrors(prevState => ({
-                                        ...prevState,
-                                        educatorData: null
-                                      }))
-                                    }}
-                                  />
-                                  {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
-                                </Form.Group>
-                              </Col>
-                            }
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Select An Educator *</Form.Label>
+                                <Select
+                                  placeholder={"Select"}
+                                  closeMenuOnSelect={true}
+                                  isMulti
+                                  isDisabled={localStorage.getItem('user_role') === 'guardian'}
+                                  value={educatorData?.filter(d => formOneChildData?.educator.includes(d.id))}
+                                  options={educatorData}
+                                  onChange={(e) => {
+                                    setFormOneChildData((prevState) => ({
+                                      ...prevState,
+                                      educator: [...e.map(e => e.id)]
+                                    }));
+
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      educatorData: null
+                                    }))
+                                  }}
+                                />
+                                {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <div className="btn-radio inline-col">
+                                  <Form.Label>Does your child have special needs? *</Form.Label>
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsyes"
+                                    label="Yes"
+                                    checked={formOneChildData?.has_special_needs === 1}
+                                    defaultChecked
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 1
+                                    }))} />
+                                  <Form.Check
+                                    type="radio"
+                                    name="has_special_needs"
+                                    id="specialneedsno"
+                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    label="No"
+                                    onChange={(event) => setFormOneChildData(prevState => ({
+                                      ...prevState,
+                                      has_special_needs: 0
+                                    }))} />
+                                </div>
+                              </Form.Group>
+                            </Col>
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
@@ -388,34 +451,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
-                            <Col md={12}>
-                              <Form.Group className="mb-3 relative">
-                                <div className="btn-radio inline-col">
-                                  <Form.Label>Does your child have special needs? *</Form.Label>
-                                  <Form.Check
-                                    type="radio"
-                                    name="has_special_needs"
-                                    id="specialneedsyes"
-                                    label="Yes"
-                                    checked={formOneChildData?.has_special_needs === 1}
-                                    defaultChecked
-                                    onChange={(event) => setFormOneChildData(prevState => ({
-                                      ...prevState,
-                                      has_special_needs: 1
-                                    }))} />
-                                  <Form.Check
-                                    type="radio"
-                                    name="has_special_needs"
-                                    id="specialneedsno"
-                                    checked = {formOneChildData?.has_special_needs === 0}
-                                    label="No"
-                                    onChange={(event) => setFormOneChildData(prevState => ({
-                                      ...prevState,
-                                      has_special_needs: 0
-                                    }))} />
-                                </div>
-                              </Form.Group>
-                            </Col>
                           </Row>
                         </div>
                       </div>
