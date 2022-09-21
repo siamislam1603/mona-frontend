@@ -1269,7 +1269,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .notificationpopup .notifimg{position:relative}
 .notificationpopup .notifimg .notilink{position:relative;display:flex;align-items:center;color:var(--black)}
 .notificationpopup .notifimg .notilink .notifpic{border-radius:100%;max-width:40px;min-width:40px;height:40px;overflow:hidden;margin-right:10px;position:relative}
-.notificationpopup .notiftxt .title-xxs{font-size:13px}
+.notificationpopup .notiftxt .title-xxs{font-size:13px;font-weight: normal}
 .notificationpopup .notifimg .notilink .notifpic img{width:40px;height:40px}
 .notificationpopup .notifitem{position:relative;padding:10px 15px;background-color:var(--white);border-bottom:1px solid rgba(0,0,0,.1)}
 .notificationpopup .notifitem .gdot{position:absolute;width:10px;height:10px;border-radius:100%;background-color:green;border:1px solid var(--ms-white);left:30px;bottom:0;z-index:2}

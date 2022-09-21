@@ -334,10 +334,8 @@ const UserManagement = () => {
   }
 
   const fetchUserDetails = async () => {
-
     let api_url = '';
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-
     api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
     let response = await axios.get(api_url, {
       headers: {

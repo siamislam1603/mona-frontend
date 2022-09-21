@@ -180,7 +180,6 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-
             {
               cell[1] != "undefined" &&
               <div className="user-list">
@@ -445,6 +444,7 @@ console.log("CSV",csvDownloadFlag)
                                 target="_blank"
                                 // ref={csvLink}
                               >
+<<<<<<< HEAD
 
                                 {"Export CSV"}
                                 
@@ -483,15 +483,25 @@ console.log("CSV",csvDownloadFlag)
                                       </CSVLink> 
                                     
 
+=======
+>>>>>>> master
 
+                                {"Export CSV"}
                                 
-                                  
-                                </Dropdown.Item>
-                                {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                                  Delete All Row
-                                </Dropdown.Item> */}
-                              </Dropdown.Menu>
-                            </Dropdown>
+                                </CSVLink> 
+                              
+
+
+                          
+                            
+                          </Dropdown.Item>
+                          {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                            Delete All Row
+                          </Dropdown.Item> */}
+                        </Dropdown.Menu>
+                      </Dropdown>
+                  ): (null)}   
+                            
                                 </div>
                               </div>
                             </header>

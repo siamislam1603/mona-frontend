@@ -927,7 +927,7 @@ function ViewFormBuilder(props) {
                         )}
                       </Tab>
 
-                      <Tab eventKey="form-templates" title="Form Templates">
+                      <Tab eventKey="form-templates" title="Form Templates and Responses">
                         <div className="tab-created">
                           <Tabs
                             defaultActiveKey={
