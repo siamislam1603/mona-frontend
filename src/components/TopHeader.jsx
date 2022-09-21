@@ -4,7 +4,7 @@ import { Dropdown, Form, Button, Popover, OverlayTrigger, Image } from 'react-bo
 import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
 import $ from "jquery";
-import moment from "moment";
+import moment from "moment-timezone";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { logoutUser } from '../helpers/logout';
 // import { FullLoader } from "./Loader";
@@ -24,6 +24,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [notifData, setNotifData] = useState(null);
   const [topHeaderNotification, setTopHeaderNotification] = useState([]);
   const [topHeaderNotificationCount, setTopHeaderNotificationCount] = useState(null);
+  const [topHeaderNotificationCountClass, setTopHeaderNotificationCountClass] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('none');
   const [searchResult, setSearchResult] = useState([]);
   const [searchAnnouncement, setSearchAnnouncement] = useState([]);
@@ -113,6 +114,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
       if (response.status === 200 && response.data.status === "success") {
         setTopHeaderNotification(response.data.notification.rows);
         setTopHeaderNotificationCount(response.data.notification.count);
+        setTopHeaderNotificationCountClass(response.data.notification.count);
       }
     } catch (error) {
       if (error.response.status === 404) {
@@ -269,7 +271,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className= {topHeaderNotificationCount?"notificationpopup":"notificationpopup no-notification"}>
+    <Popover id="popover-basic" className= {topHeaderNotificationCountClass?"notificationpopup":"notificationpopup no-notification"}>
       <Popover.Header as="h3">
         Your Unread Notifications{" "}
         <Link style={{ marginLeft: 10 }} to="/notifications">
@@ -299,7 +301,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                 </div>
               </div>
               <div className="notification-time">
-                {moment(details.createdAt).fromNow()}
+              {
+                moment(details.createdAt).tz('Australia/Sydney').fromNow()
+              }
               </div>
             </div>
 
@@ -315,7 +319,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
       <div className="totalmsg">
         You have {topHeaderNotificationCount ? topHeaderNotificationCount : 0} unread notifications
       </div>
-      <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark All to Read</div>
+      <div className="totalreadmsg" onClick={() => handleMarkRearAll()}>Mark All as Read</div>
       </>
       ):''
      
