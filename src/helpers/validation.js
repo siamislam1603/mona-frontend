@@ -560,7 +560,7 @@ export const UserFormValidation = (formObj) => {
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
 
-  if (password.length > 0 && password !== confirm_password) {
+  if (password?.length > 0 && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }

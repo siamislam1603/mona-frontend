@@ -716,7 +716,13 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 
 
 
+@media screen and (-webkit-appearance:none) { 
 
+    /* Safari only override */
+    ::i-block-chrome,.user-management-sec .table tr:before { display:none;}
+.user-management-sec .table tr { border:1px solid #ededed; }
+.user-management-sec .table thead tr { border:none; }
+}
 
 @media not all and (min-resolution:.001dpcm)
 { @supports (-webkit-appearance:none) and (stroke-color:transparent) {
