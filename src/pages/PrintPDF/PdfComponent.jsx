@@ -7,6 +7,8 @@ import DataComponent from './DataComponent';
 
 class PdfComponent extends React.Component {
   render() {
+    console.log("The props",this.props)
+
     return (
       <div>
         <DataComponent

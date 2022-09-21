@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Col, Form } from "react-bootstrap";
 import SignaturePad from "react-signature-canvas";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signature = (props) => {
   const { ...controls } = props;
@@ -14,11 +16,14 @@ const Signature = (props) => {
   const trim = (e) => {
     e.preventDefault();
     props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
+    toast.success("Signature added.");
   };
   return (
     props.signature_flag && <Col sm={6}>
+      <ToastContainer/>
       <Form.Group className="form-input-section">
         <Form.Label>{controls.field_label}</Form.Label>
+        <p style={{fontSize:"12px"}}>(Kindly use the write pad for free hand signature)</p>
         <SignaturePad
           canvasProps={{
             style: {
@@ -30,10 +35,11 @@ const Signature = (props) => {
             },
           }}
           ref={sigPad}
+          onEnd={trim}
         />
         <div>
           <button onClick={clear}>Clear</button>
-          <button onClick={trim}>Trim</button>
+          {/* <button onClick={trim}>Save</button> */}
         </div>
       </Form.Group>
       <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>
