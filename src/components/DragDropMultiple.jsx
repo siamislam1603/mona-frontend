@@ -5,13 +5,28 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
-  let fileSize = bytesToMegaBytes(file.size);
-  console.log('FILE SIZE:', fileSize);
-  if(fileSize > 1024) {
-    return {
-      code: "file-too-large",
-      message: `File is larger than ${1} GB`
-    };
+  let fileType = file.type.split("/")[0];
+
+  if(fileType === 'video') {
+    console.log('FILE IS A VIDEO!');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 1024) {
+      return {
+        code: "file-too-large",
+        message: `File shoudldn't be larger than ${1}GB`
+      };
+    }
+  } else if(fileType === 'application') {
+    console.log('FILE IS A DOCUMENT!');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 5) {
+      return {
+        code: "file-too-large",
+        message: `File should be less than ${5}MB`
+      };
+    }
   }
 
   return null
@@ -101,6 +116,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     let rejectionArray = fileRejections.map(d => ({
       error: d.errors.map(e => e)
     }));
+    console.log(rejectionArray);
     setUploadError(rejectionArray);
   }, [fileRejections]);
 

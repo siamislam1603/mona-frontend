@@ -559,7 +559,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     </Modal.Header>
                     <Modal.Body>
                         <div className="form-settings-content">
-                            <Row className="mt-4">
+                           {getUser_Role !== "franchisor_admin" ? (<></>) : ( <Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
                                         <Form.Label>Give access to all Franchises</Form.Label>
@@ -642,7 +642,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                                         </div>
                                     </Form.Group>
                                 </Col>
-                            </Row>
+                            </Row>)}
 
                             <Row className="mt-4">
                                 <Col lg={3} md={6}>

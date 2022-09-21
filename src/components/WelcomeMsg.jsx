@@ -10,7 +10,7 @@ const Welcomemsg = () => {
               <img src="../img/logo.svg" alt="website logo"></img>
             </div>
           </div>
-          <p className="custom_main_title">Welcome Back,</p>
+          <p className="custom_main_title">Welcome,</p>
           <p className="custom_main_content"> Mona Franchise Centralized Information System - Intranet for all important documents, forms, announcements and notifications.</p>
         </div>
       </div>
