@@ -1973,18 +1973,18 @@ const AddFormField = (props) => {
                                   placeholder="Section"
                                 />
                                 <Button
-                                  className="right-button btn btn-danger"
-                                  style={{ backgroundColor: 'red' }}
+                                  className="right-button btn btn-danger theme-light"
                                   onClick={() => {
                                     counter++;
                                     setCount(counter);
                                     setCreateSectionFlag(false);
                                   }}
                                 >
-                                  X
+                                  Cancel
                                 </Button>
                                 <Button
                                   className="right-button"
+                                  style={{backgroundColor:"#455C58",width:"80px"}}
                                   disabled={sectionTitle === '' ? true : false}
                                   onClick={() => {
                                     counter++;
@@ -1996,7 +1996,7 @@ const AddFormField = (props) => {
                                     setCreateSectionFlag(false);
                                   }}
                                 >
-                                  <img src="../../img/right-sign-img.svg" />
+                                  Done
                                 </Button>
                               </div>
                             </div>
