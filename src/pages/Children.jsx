@@ -280,11 +280,13 @@ const Children = () => {
     const   PColumns = [
         {
             dataField: 'name',
-            text: 'Name'
+            text: 'Name',
+            style:{'width' : '20em'},
         },
         {
             dataField: 'Educator',
             text: 'Educator',
+            style:{'width' : '30em'},
             formatter: (cell) => {
                 // console.log(cell,"celll")
                 return (
@@ -318,6 +320,7 @@ const Children = () => {
         {
             dataField: 'Parents',
             text: 'Co-parent',
+            style:{'width' : '30em'},
             formatter: (cell) => {
                 return (
                     <>
@@ -348,6 +351,7 @@ const Children = () => {
         {
             dataField: 'status',
             text: 'Status',
+            style:{'width' : '20em'},
             formatter: (cell) => {
                 let state = "";
                 state = parseInt(cell) === 1 ? "Active" : "Inactive";
@@ -362,10 +366,12 @@ const Children = () => {
         {
             dataField: 'Location',
             text: 'Location',
+            style:{'width' : '20em'},
         },
         {
             dataField: 'action',
             text: '',
+            style:{'width' : '15em'},
             formatter: (cell) => {
                 let Button = parseInt(cell.active) === 1 ? "Deactivate" : "Activate";
                 return (

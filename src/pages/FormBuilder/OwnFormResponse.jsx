@@ -37,11 +37,10 @@ function OwnFormResponse(props) {
 
   useEffect(() => {
     if (location?.state?.message) {
-        toast.success(location?.state?.message);
-        navigate(`/form/response/${id}`, { state: { message: null } });
-      }
-      getResponse('');
-    
+      toast.success(location?.state?.message);
+      navigate(`/form/response/${id}`, { state: { message: null } });
+    }
+    getResponse('');
   }, []);
   const clear = (e) => {
     e.preventDefault();
@@ -83,7 +82,6 @@ function OwnFormResponse(props) {
     fetch(`${BASE_URL}/form/form_data`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-
         getResponse('');
         setSignatureModel(false);
         if (result) {
@@ -101,39 +99,38 @@ function OwnFormResponse(props) {
       headers: myHeaders,
     };
 
-    const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
+    const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem(
+      'user_id'
+    )}&user_role=${localStorage.getItem('user_role')}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-
         if (result) {
           setfullLoaderStatus(false);
         }
         result?.result.map((item, index) => {
-          item["signature_button"] = true;
-          console.log("item--->", item);
+          item['signature_button'] = true;
+          console.log('item--->', item);
 
           result?.result[index]?.map((inner_item, inner_index) => {
             // if(inner_item.fields)
 
-            console.log("inner_item--->first", inner_item);
+            console.log('inner_item--->first', inner_item);
             Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              console.log("inner_item--->", field_item);
-              if (field_item === "signature") {
-                item["signature_button"] = false;
+              console.log('inner_item--->', field_item);
+              if (field_item === 'signature') {
+                item['signature_button'] = false;
               }
-            })
-          })
+            });
+          });
           if (result?.result?.length - 1 === index) {
             setResponseData(result?.result);
             setFormData(result?.form);
           }
         });
-
       })
       .catch((error) => console.log('error', error));
   };
-
 
   return (
     <>
@@ -166,7 +163,7 @@ function OwnFormResponse(props) {
                 </Row>
                 <div className="responses-forms-header-section forms-header-section">
                   <div className="forms-managment-section">
-                    <div className="forms-managment-left">  
+                    <div className="forms-managment-left">
                       <p>{responseData.length} Responses</p>
                     </div>
                     <div className="forms-managment-right">
@@ -214,13 +211,13 @@ function OwnFormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                              (inner_index > 0 &&
-                                                responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user
-                                                    ?.fullname
-                                                ))
+                                            (inner_index > 0 &&
+                                              responseData[index][
+                                                inner_index - 1
+                                              ]?.filled_user?.fullname?.includes(
+                                                inner_item?.filled_user
+                                                  ?.fullname
+                                              ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -230,60 +227,81 @@ function OwnFormResponse(props) {
                                             'iner_itemwdasdasddassd---->',
                                             inner_item
                                           )}
-                                          <h5>
-                                            {inner_index > 0
-                                              ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.fullname?.includes(
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              ) &&
-                                              inner_item?.filled_user
-                                                ?.fullname
-                                              : inner_item?.filled_user
-                                                ?.fullname}
-                                          </h5>
+                                          <div className='d-flex'>
+                                            <h5>
+                                              {inner_index > 0
+                                                ? !responseData[index][
+                                                    inner_index - 1
+                                                  ].filled_user?.fullname?.includes(
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  ) &&
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                : inner_item?.filled_user
+                                                    ?.fullname}
+                                            </h5>
+                                            {(formData?.form_type ===
+                                              'editable' ||
+                                              formData?.form_type ===
+                                                'multi_submission') && (
+                                              <div
+                                                className="edit-icon-form"
+                                                onClick={() => {
+                                                  navigate(
+                                                    `/form/dynamic/${formData.form_name}`,
+                                                    {
+                                                      state: {
+                                                        id: item[index].id,
+                                                        form_id: id,
+                                                      },
+                                                    }
+                                                  );
+                                                }}
+                                              >
+                                                <FontAwesomeIcon icon={faPen} />
+                                              </div>
+                                            )}
+                                          </div>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ')
-                                                  .includes(
-                                                    inner_item?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ')
-                                                  ) &&
-                                                inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','
+                                                    inner_index - 1
+                                                  ]?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ')
+                                                    .includes(
+                                                      inner_item?.filled_user?.role
+                                                        .split('_')
+                                                        .join(' ')
+                                                    ) &&
+                                                  inner_item?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ') + ','
                                                 : inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','}
+                                                    .split('_')
+                                                    .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  inner_index - 1
+                                                ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  inner_item?.filled_user
+                                                    ?.franchisee
+                                                    ?.franchisee_name
+                                                ) &&
                                                 inner_item?.filled_user
-                                                  ?.franchisee
-                                                  ?.franchisee_name
-                                              ) &&
-                                              inner_item?.filled_user
-                                                ?.franchisee?.franchisee_name
+                                                  ?.franchisee?.franchisee_name
                                               : inner_item?.filled_user
-                                                ?.franchisee?.franchisee_name}
+                                                  ?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
                                     }
                                   )}
                                 </div>
-                                {(formData?.form_type==="editable" || formData?.form_type==="multi_submission") && <div className='edit-icon-form' onClick={()=>{navigate(`/form/dynamic/${formData.form_name}`,{state:{id:item[index].id,form_id:id}})}}>
-                                    <FontAwesomeIcon icon={faPen} />
-                                </div>}
+
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
@@ -344,29 +362,119 @@ function OwnFormResponse(props) {
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.png'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpg'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpeg'
-                                                ) ? (
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.png'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpg'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpeg'
+                                              ) ? (
                                                 <>
-                                                  <img style={{height:"40px",width:"51px"}}
-                                                    src={`${Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                      }`}
+                                                  <img
+                                                    style={{
+                                                      height: '40px',
+                                                      width: '51px',
+                                                    }}
+                                                    src={`${
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }`}
                                                   ></img>
                                                 </>
+                                              ) : Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.doc'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.docx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.html'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.htm'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.odt'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.xls'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.xlsx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  'ods'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.ppt'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.pptx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.pdf'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.txt'
+                                                ) ? (
+                                                <a
+                                                  role="button"
+                                                  href={
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                  download
+                                                >
+                                                  <p>
+                                                    {
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index].split('/')[
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index].split(
+                                                          '/'
+                                                        ).length - 1
+                                                      ]
+                                                    }
+                                                  </p>
+                                                </a>
                                               ) : (
                                                 <p>
                                                   {
@@ -384,16 +492,17 @@ function OwnFormResponse(props) {
                                   </div>
                                 );
                               })}
-                              {location?.state?.signature_access && item.signature_button && (
-                                <Button
-                                  onClick={() => {
-                                    setSignatureModel(true);
-                                    setIndex(index);
-                                  }}
-                                >
-                                  Add Signature
-                                </Button>
-                              )}
+                              {location?.state?.signature_access &&
+                                item.signature_button && (
+                                  <Button
+                                    onClick={() => {
+                                      setSignatureModel(true);
+                                      setIndex(index);
+                                    }}
+                                  >
+                                    Add Signature
+                                  </Button>
+                                )}
                             </Accordion.Body>
                           </Accordion.Item>
                         );

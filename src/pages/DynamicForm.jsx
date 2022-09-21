@@ -591,12 +591,20 @@ const DynamicForm = () => {
                     })}
 
                     <Col md={12}>
-                      <div className="custom_submit">
+                      <div className="d-flex justify-content custom_submit">
                         <Button
                           className="custom_submit_button w-auto ml-auto mr-auto d-block"
                           onClick={onSubmit}
                         >
                           Submit
+                        </Button>
+                        <Button
+                          className="theme-light"
+                          onClick={() => {
+                            navigate('/form');
+                          }}
+                        >
+                          Cancel
                         </Button>
                       </div>
                     </Col>

@@ -184,12 +184,10 @@ const FilerepoUploadFile = () => {
         const file = formSettingData.setting_files[0];
 
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-
         var formdata = new FormData();
-
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', 'abc');
+        // formdata.append('title', 'abc');
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
@@ -453,7 +451,7 @@ const FilerepoUploadFile = () => {
                             {getUser_Role === "guardian" ? (<></>) : (
 
                                 <>
-                                    <Row className="mt-4">
+                                    {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
                                                 <Form.Label>Give access to all Franchises</Form.Label>
@@ -538,7 +536,7 @@ const FilerepoUploadFile = () => {
                                                 </div>
                                             </Form.Group>
                                         </Col>
-                                    </Row>
+                                    </Row>)}
                                     <Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
@@ -748,17 +746,17 @@ const FilerepoUploadFile = () => {
                                                                                 .toString()
                                                                                 .includes('franchisee_admin') && ['franchisor_admin'].includes(getUser_Role)
                                                                         ) {
-                                                                            data['shared_role'] += 'franchisee_admin';
+                                                                            data['shared_role'] += 'franchisee_admin,';
                                                                         }
 
-                                                                        if (
-                                                                            !data['shared_role']
-                                                                                .toString()
-                                                                                .includes('all')
-                                                                        ) {
-                                                                            data['shared_role'] += ',';
+                                                                        // if (
+                                                                        //     !data['shared_role']
+                                                                        //         .toString()
+                                                                        //         .includes('all')
+                                                                        // ) {
+                                                                        //     data['shared_role'] += ',';
 
-                                                                        }
+                                                                        // }
                                                                         setFormSettingData(data);
                                                                     } else {
                                                                         data['shared_role'] = '';
