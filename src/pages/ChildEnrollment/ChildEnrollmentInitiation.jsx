@@ -9,9 +9,12 @@ import Select from 'react-select';
 import { useParams } from 'react-router-dom';
 import { BASE_URL } from "../../components/App";
 import { enrollmentInitiationFormValidation } from '../../helpers/validation';
+import { useNavigate } from 'react-router-dom';
 
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let { parentId } = useParams();
+  const navigate = useNavigate();
+
 
   // REFS
   let fullname = useRef(null);
@@ -107,7 +110,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   
             if(response.status === 201 && response.data.status === "success") {
               setLoader(false);
-              window.location.href = `/children/${parentId}`;
+              // window.location.href = `/children/${parentId}`;
+              navigate(`/children/${parentId}`, { state: { franchisee_id: formOneChildData.franchisee_id } })
             }
           }
         }
