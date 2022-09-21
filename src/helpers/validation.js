@@ -521,7 +521,7 @@ export const UserFormValidation = (formObj) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
-  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator } =
+  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator, trainingDocuments } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
@@ -560,6 +560,9 @@ export const UserFormValidation = (formObj) => {
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
 
+  if(trainingDocuments.length > 5)
+    errors.doc = "Only 5 documents must be selected"
+
   return errors;
 };
 
@@ -579,6 +582,8 @@ export const editUserValidation = (form) => {
   if(!state) errors.state = 'State is required';
   
   if (!city) errors.city = 'Suburb is required';
+
+  if(state && !city) errors.city = "Suburb is required";
 
   if (!address) errors.address = 'Address is required';
   

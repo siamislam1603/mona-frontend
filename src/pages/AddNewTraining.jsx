@@ -667,7 +667,7 @@ const AddNewTraining = () => {
                             setUploadError={setDocErrorMessage}
                             onSave={setRelatedFiles}
                           />
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">((pdf, doc, ppt, xslx and other documents))</small>
                           <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                           {
                             docErrorMessage  &&

@@ -241,7 +241,7 @@ function OwnFormResponse(props) {
                                                 : inner_item?.filled_user
                                                     ?.fullname}
                                             </h5>
-                                            {(formData?.form_type ===
+                                            {inner_index===0 && (formData?.form_type ===
                                               'editable' ||
                                               formData?.form_type ===
                                                 'multi_submission') && (

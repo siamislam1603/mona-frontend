@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { includes } from 'lodash';
 let selectedUserId = '';
 let upperRoleUser = '';
 const AddOperatingManual = () => {
@@ -179,7 +180,13 @@ const AddOperatingManual = () => {
 
     if(field == "description"){
       const text = value;
-      setWordCount(text.length);
+      if(value.includes("&nbsp")){
+
+        setWordCount(text.length-12);
+      }
+      else{
+        setWordCount(text.length-7);
+      }
       console.log("WORD count",text.split(" ").length)
       if(value === ""){
         setWordCount(0)
@@ -371,6 +378,7 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
+
     }
     if (name === 'reference_video') {
       if (file.size > 1024 * 1024 * 1024) {
@@ -388,6 +396,7 @@ const AddOperatingManual = () => {
       }
     }
 
+  
     if (flag === false) {
       if (name === 'cover_image') {
         setImageLoaderFlag(true);
@@ -570,7 +579,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Sub-Module Name
+                            Sub-Module Name *
                           </Form.Label>
                           <Form.Control
                             type="text"
@@ -594,7 +603,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Order in List
+                            Order in List *
                           </Form.Label>
                           <Form.Control
                             type="number"
@@ -621,7 +630,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={12}>
                         <Form.Group>
                           <Form.Label id="description" className="formlabel">
-                            Description
+                            Description *
                           </Form.Label>
                           {location?.state?.id &&
                           location?.state?.category_name &&
@@ -791,6 +800,8 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                                 operatingManualData.related_files
                               }
                             />
+                          <small className="fileinput">((pdf, doc, ppt & xslx))</small>
+                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                             <p className="form-errors">
                               {errors.related_files}
                             </p>

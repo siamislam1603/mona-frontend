@@ -285,8 +285,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
     console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log('Available Training Data:', availableTrainingData);
+  availableTrainingData && console.log('Available Training:', availableTrainingData);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -297,7 +296,10 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
           <Row>
-          <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
+          {
+            dueDataTraining &&
+            <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
+          }
           {availableTrainingData
               ? availableTrainingData.map((item) => {
                 if(item.training.end_date){
@@ -350,9 +352,12 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
               : null
             }
             {nodueData && dueDataTraining ? <hr/> : null}
-    
+            
+             {
+              nodueData &&
               <h3 className="title-sm mb-3 mt-3"><strong>Training without due date</strong></h3>
-             {availableTrainingData
+             }
+              {availableTrainingData
               ? availableTrainingData.map((item) => {
                 if(!item.training.end_date){
                   return (

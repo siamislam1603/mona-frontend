@@ -75,6 +75,7 @@ const EditUser = () => {
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
@@ -1091,7 +1092,19 @@ const EditUser = () => {
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple
                               module="user-management"
-                              onSave={setTrainingDocuments} />
+                              onSave={setTrainingDocuments}
+                              setUploadError={setUploadError} />
+                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
+                            <small className="fileinput">(max. 5 files, 5MB each)</small>
+                            {
+                              uploadError  &&
+                              uploadError.map(errorObj => {
+                                return (
+                                  // errorObj?.error[0].message
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File is greater than 5MB"}</p>
+                                )
+                              })
+                            }
                             {
                               fetchedTrainingDocuments &&
                               fetchedTrainingDocuments.map(doc => {
@@ -1107,7 +1120,6 @@ const EditUser = () => {
                                 )
                               })
                             }
-                            <small className="fileinput">(Upload 5 files max.)</small>
                           </Form.Group>
 
                           <Col md={12}>

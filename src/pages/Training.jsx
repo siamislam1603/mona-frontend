@@ -80,8 +80,8 @@ const Training = () => {
       setTrainingCategory([
         {
           id: 0,
-          value: 'all category',
-          label: 'All Category'
+          value: 'all categories',
+          label: 'All Categories'
         },
         ...categoryList.map((data) => ({
           id: data.id,
