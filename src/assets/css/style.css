@@ -562,10 +562,10 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .Footer_text{border-right:2px solid #aa0061;font-weight:500;font-size:14px}
 .Footer_textTow{color:#151f6d;font-weight:600;font-size:20px}
 .datecol{display:flex;align-items:center}
-.datecol span{padding-left:10px}
+.datecol span{padding-left:5px}
 .datecol span:first-child{padding-left:0}
-.datecol .red-date{padding-right:20px;position:relative}
-.datecol .red-date:before{position:absolute;content:'';top:50%;transform:translateY(-50%);right:0;width:10px;height:4px;border-radius:2px;background-color:var(--purple)}
+.datecol .red-date{padding-right:15px;position:relative}
+.datecol .red-date:before{position:absolute;content:'';top:50%;transform:translateY(-50%);right:0;width:8px;height:3px;border-radius:2px;background-color:var(--purple)}
 .datecol .time{position:relative}
 .selectdropdown-col{min-width:150px;max-width:150px;font-size:var(--fontsm)}
 .selectdropdown .form-label{margin-bottom:0}
@@ -731,7 +731,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .forms-managment-right{margin-left:0;width:100%;margin-top:20px}
 .forms-content-section .row>div{width:50%;flex:0 0 50%}
 .selectdropdown .dropdown .btn-primary,.selectdropdown .dropdown .btn-primary:active{padding-right:30px!important}
-.training-column .item .fixcol .icopic{flex:0 0 35px}
+.training-column .item .fixcol .icopic{flex:0 0 30px}
 .training-column .item .fixcol .date,.training-column .item .fixcol .red-date,.training-column .item .fixcol .time{font-size:var(--fontxxs)}
 .training-column .item .fixcol .iconame{font-size:var(--fontsm);line-height:1.4}
 .training-cat li a{font-size:var(--fontlg)}
