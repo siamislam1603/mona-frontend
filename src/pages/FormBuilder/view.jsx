@@ -53,17 +53,18 @@ function ViewFormBuilder(props) {
   const location = useLocation();
   let no_record = false;
   let form_history_no_record = false;
+  let count=0;
 
   useEffect(() => {
-    console.log("frnachisee_id----->",localStorage.getItem("franchisee_id"));
-    console.log("user_id----->",localStorage.getItem("user_id"));
-    
+    console.log('frnachisee_id----->', localStorage.getItem('franchisee_id'));
+    console.log('user_id----->', localStorage.getItem('user_id'));
+
     getAllForm();
     if (location?.state?.message) {
       toast.success(location?.state?.message);
       navigate('/form', { state: { message: null } });
     }
-    getFormData(localStorage.getItem('franchisee_id'));
+    // getFormData(localStorage.getItem('franchisee_id'));
   }, []);
 
   const dateCheck = (start_date, start_time, end_date, end_time, form_name) => {
@@ -79,12 +80,14 @@ function ViewFormBuilder(props) {
       //   timeZone: 'Australia/Perth',
       // });
       startDate = new Date(startDate);
-      console.log("todayDate--->",todayDate.getTime());
-      console.log("startDate--->",startDate.getTime());
+      console.log('todayDate--->', todayDate.getTime());
+      console.log('startDate--->', startDate.getTime());
       if (todayDate.getTime() < startDate.getTime()) {
         toast.error(
           "You can't open this form because this form start date is " +
-            moment(start_date).format('DD/MM/YYYY') + " "+ start_time +
+            moment(start_date).format('DD/MM/YYYY') +
+            ' ' +
+            start_time +
             '.'
         );
       } else {
@@ -98,7 +101,9 @@ function ViewFormBuilder(props) {
           if (todayDate.getTime() > endDate.getTime()) {
             toast.error(
               'Your form was expired on ' +
-                moment(end_date).format('DD/MM/YYYY') + " " + end_time +
+                moment(end_date).format('DD/MM/YYYY') +
+                ' ' +
+                end_time +
                 '.'
             );
           } else navigate(`/form/dynamic/${form_name}`);
@@ -146,7 +151,7 @@ function ViewFormBuilder(props) {
       .then((response) => response.json())
       .then((result) => {
         toast.success(result?.message);
-        getFormData('', localStorage.getItem('franchisee_id'));
+        // getFormData('', localStorage.getItem('franchisee_id'));
       })
       .catch((error) => console.log('error', error));
   };
@@ -175,14 +180,20 @@ function ViewFormBuilder(props) {
         setFormData(result?.result);
         let me = [];
         let others = [];
+        console.log('result.result--->', result?.result);
         result?.result.map((item, index) => {
           me.push(item);
           others.push(item);
           me.forms = [];
           others.forms = [];
-
-          item?.forms?.map((inner_item,inner_index) => {
-            console.log("inner_item.form_data---->after,",inner_item.form_data);
+          item.forms = item?.forms.sort(
+            (a, b) => new moment(b.createdAt) - new moment(a.createdAt)
+          );
+          item?.forms?.map((inner_item, inner_index) => {
+            console.log(
+              'inner_item.form_data---->after,',
+              inner_item.form_data
+            );
             if (
               inner_item.created_by ===
               parseInt(localStorage.getItem('user_id'))
@@ -249,7 +260,7 @@ function ViewFormBuilder(props) {
 
   return (
     <>
-    {console.log("child_id----->",localStorage.getItem("child_id"))}
+      {console.log('child_id----->', localStorage.getItem('child_id'))}
       {console.log('others form data----->', OthersFormData)}
       <div id="main">
         <section className="mainsection">
@@ -262,12 +273,16 @@ function ViewFormBuilder(props) {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
-                    console.log("id---->",id);
+                    console.log('id---->', id);
                     id =
                       localStorage.getItem('user_role') === 'guardian'
-                        ? localStorage.setItem('child_id',id)
+                        ? localStorage.setItem('child_id', id)
                         : id;
-                    getFormData('', id);
+                        if(count===0)
+                        {
+                          getFormData('', id);
+                          count++;
+                        }
                     setSelectedFranchisee(id);
                     localStorage.setItem('f_id', id);
                   }}
@@ -346,10 +361,30 @@ function ViewFormBuilder(props) {
                                 <>
                                   <Row>
                                     {(item['title_flag'] = false)}
+                                    
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
-                                        {console.log("inner_item?.form_filled_user---->,",inner_item?.form_filled_user,"-----",inner_item.form_name,"-----",localStorage.getItem('user_role'),"--------",localStorage.getItem("child_id"),"-----",!(inner_item?.form_filled_user || []).includes(localStorage.getItem("child_id")),"------",inner_item.form_permissions[0]
-                                        ?.fill_access_users)}
+                                        {
+                                          console.log(
+                                            'inner_item?.form_filled_user---->,',
+                                            inner_item?.form_filled_user,
+                                            '-----',
+                                            inner_item.form_name,
+                                            '-----',
+                                            localStorage.getItem('user_role'),
+                                            '--------',
+                                            localStorage.getItem('child_id'),
+                                            '-----',
+                                            !(
+                                              inner_item?.form_filled_user || []
+                                            ).includes(
+                                              localStorage.getItem('child_id')
+                                            ),
+                                            '------',
+                                            inner_item.form_permissions[0]
+                                              ?.fill_access_users
+                                          );
+                                        }
                                         return inner_item.end_date &&
                                           !(
                                             inner_item?.form_filled_user || []
@@ -357,8 +392,13 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem(
                                               'user_role'
                                             ) === 'guardian'
-                                              ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
-                                            : localStorage.getItem('user_id')
+                                              ? localStorage.getItem(
+                                                  'child_id'
+                                                ) ||
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                              : localStorage.getItem('user_id')
                                           ) &&
                                           ((
                                             inner_item.form_permissions[0]
@@ -379,8 +419,15 @@ function ViewFormBuilder(props) {
                                               localStorage.getItem(
                                                 'user_role'
                                               ) === 'guardian'
-                                                ? (localStorage.getItem("child_id") || localStorage.getItem("user_id")) :
-                                              localStorage.getItem('user_id')
+                                                ? localStorage.getItem(
+                                                    'child_id'
+                                                  ) ||
+                                                    localStorage.getItem(
+                                                      'user_id'
+                                                    )
+                                                : localStorage.getItem(
+                                                    'user_id'
+                                                  )
                                             )) ? (
                                           // ||
                                           // (
@@ -482,8 +529,8 @@ function ViewFormBuilder(props) {
                                             localStorage.getItem(
                                               'user_role'
                                             ) === 'guardian'
-                                              ? localStorage.getItem("child_id")
-                                            : localStorage.getItem('user_id')
+                                              ? localStorage.getItem('child_id')
+                                              : localStorage.getItem('user_id')
                                           ) &&
                                           ((
                                             inner_item?.form_permissions[0]
@@ -504,8 +551,12 @@ function ViewFormBuilder(props) {
                                               localStorage.getItem(
                                                 'user_role'
                                               ) === 'guardian'
-                                                ? localStorage.getItem("child_id")
-                                              : localStorage.getItem('user_id')
+                                                ? localStorage.getItem(
+                                                    'child_id'
+                                                  )
+                                                : localStorage.getItem(
+                                                    'user_id'
+                                                  )
                                             )) ? (
                                           // ||
                                           // (
@@ -544,9 +595,7 @@ function ViewFormBuilder(props) {
                                               }}
                                             >
                                               <div className="forms-content create-other">
-                                                <div
-                                                  className="content-icon-section"
-                                                >
+                                                <div className="content-icon-section">
                                                   <img
                                                     src={
                                                       item.category ===
@@ -574,9 +623,7 @@ function ViewFormBuilder(props) {
                                                     }
                                                   />
                                                 </div>
-                                                <div
-                                                  className="content-title-section"
-                                                >
+                                                <div className="content-title-section">
                                                   <h6>
                                                     {inner_item.form_name}
                                                   </h6>
@@ -627,11 +674,13 @@ function ViewFormBuilder(props) {
                                         return (
                                           inner_item?.form_filled_user || []
                                         ).includes(
-                                          localStorage.getItem(
-                                            'user_role'
-                                          ) === 'guardian'
-                                            ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
-                                          : localStorage.getItem('user_id')
+                                          localStorage.getItem('user_role') ===
+                                            'guardian'
+                                            ? localStorage.getItem(
+                                                'child_id'
+                                              ) ||
+                                                localStorage.getItem('user_id')
+                                            : localStorage.getItem('user_id')
                                         ) &&
                                           ((
                                             inner_item?.form_permissions[0]
@@ -652,8 +701,15 @@ function ViewFormBuilder(props) {
                                               localStorage.getItem(
                                                 'user_role'
                                               ) === 'guardian'
-                                                ? (localStorage.getItem("child_id") || localStorage.getItem("user_id"))
-                                              : localStorage.getItem('user_id')
+                                                ? localStorage.getItem(
+                                                    'child_id'
+                                                  ) ||
+                                                    localStorage.getItem(
+                                                      'user_id'
+                                                    )
+                                                : localStorage.getItem(
+                                                    'user_id'
+                                                  )
                                             )) ? (
                                           // ||
                                           // (
@@ -686,7 +742,9 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-icon-section"
                                                   onClick={() => {
-                                                    navigate(`/form/response/${inner_item.id}`);
+                                                    navigate(
+                                                      `/form/response/${inner_item.id}`
+                                                    );
                                                   }}
                                                 >
                                                   <img
@@ -719,7 +777,9 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-title-section"
                                                   onClick={() => {
-                                                    navigate(`/form/response/${inner_item.id}`);
+                                                    navigate(
+                                                      `/form/response/${inner_item.id}`
+                                                    );
                                                   }}
                                                 >
                                                   <h6>
@@ -868,7 +928,12 @@ function ViewFormBuilder(props) {
                                 title="Created by me"
                               >
                                 <div className="forms-content-section">
-                                  {MeFormData?.map((item, index) => {
+                                  {
+
+                                  MeFormData.length>0?
+
+
+                                  MeFormData?.map((item, index) => {
                                     return (
                                       <>
                                         <Row>
@@ -1032,7 +1097,11 @@ function ViewFormBuilder(props) {
                                         </Row>
                                       </>
                                     );
-                                  })}
+                                  })
+                                  :'No Form Created By You'
+                                  
+                                  
+                                  }
                                 </div>
                               </Tab>
                             )}
@@ -1042,7 +1111,12 @@ function ViewFormBuilder(props) {
                               title="Created by others"
                             >
                               <div className="forms-content-section">
-                                {OthersFormData?.map((item, index) => {
+                                {
+                                
+                                OthersFormData.length>0?
+
+                                
+                                OthersFormData?.map((item, index) => {
                                   {
                                     item['title_flag'] = false;
                                   }
@@ -1322,7 +1396,10 @@ function ViewFormBuilder(props) {
                                       </Row>
                                     </>
                                   );
-                                })}
+                                })
+                              :'No Form Created By Others'
+                              
+                              }
                               </div>
                             </Tab>
                           </Tabs>

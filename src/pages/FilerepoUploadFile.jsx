@@ -184,12 +184,10 @@ const FilerepoUploadFile = () => {
         const file = formSettingData.setting_files[0];
 
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
-
         var formdata = new FormData();
-
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', 'abc');
+        // formdata.append('title', 'abc');
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
