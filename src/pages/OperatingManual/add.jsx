@@ -366,7 +366,7 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      if (!file.type.includes('mp4')) {
+      if (!file.type.includes('mp4') ) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File must be MP4.';
         setErrors(errorData);
@@ -683,7 +683,13 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               <img src="../../img/removeIcon.svg" />
                             </Button>
                           </div>
+
                           <p className="form-errors">{errors.cover_image}</p>
+                          <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(File limit 2 MB)</small>
+
+
+                        
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -743,6 +749,8 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          <small className="fileinput">(File limit 1 GB)</small>
+
                         </Form.Group>
                       </Col>
                     </Row>

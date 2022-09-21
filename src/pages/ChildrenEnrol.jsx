@@ -1,4 +1,4 @@
-import React, { useEffect, useState, } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Button, Dropdown, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -9,6 +9,8 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useRef } from 'react';
 import { FullLoader } from "../components/Loader";
+import { CSVDownload } from 'react-csv';
+
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 // const { ExportCSVButton } = CSVExport;
@@ -16,13 +18,17 @@ import moment from 'moment';
 const ChildrenEnrol = () => {
   const Key = useParams()
 
-  const [userEducator, setEducator] = useState([]);
+
+  const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
+
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
+  const [csvData, setCsvData] = useState([]);
+
   const { SearchBar } = Search;
 
   const handelApply = () => {
@@ -52,7 +58,7 @@ const ChildrenEnrol = () => {
       
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
-
+          
           let tempData = data.map((dt, index) =>
 
           ({
@@ -69,6 +75,51 @@ const ChildrenEnrol = () => {
 
           )
           setChildEnroll(tempData)
+
+
+          let temp = tempData;
+          let csv_data = [];
+          console.log("Temo new",tempData)
+          temp.map((item, index) => {
+    
+            delete item.is_deleted;
+            // delete item.user_id;
+            
+            csv_data.push(item);
+            let data = { ...csv_data[index] };
+
+            let d = data.parentName.split(",")
+            let educator  = data.educatorassisgned.split(",");
+            console.log()
+            let educatorArray =[];
+
+            let parent = [];
+            d.map((item,index) => {
+              if(item !="undefined" && item !="null"&& item.trim().split('.').pop() != "blob"){
+                 parent[index] = item;
+              }
+            })
+
+            educator.map((item,index) =>{
+              
+              if(item.trim() !="undefined" && item.trim() !="null" && item.trim().split('.').pop() !== "blob" &&item != ""){
+                educatorArray[index] = item;
+             }
+            })
+            // console.log("educatorArray[1]",educatorArray[1])
+            let DOB =  moment(data.name.split(",")[1]).format('DD/MM/YYYY')
+            console.log("EDut",educatorArray[1])
+            data["name"] = data.name.split(",")[0];
+            data["DOB"] =DOB;
+            data["specailneed"]= data.specailneed == 0 ?"No":"Yes"; 
+            data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
+            data["parentName"] = parent
+            data["educatorassisgned"]=educatorArray
+            // delete data.action
+            
+            csv_data[index] = data;
+          });
+          setCsvData(csv_data);
         }
       }
     }
@@ -78,6 +129,7 @@ const ChildrenEnrol = () => {
      
     }
   }
+
   useEffect(() => {
     if(selectedFranchisee){
       ChildernEnrolled()
@@ -183,7 +235,8 @@ const ChildrenEnrol = () => {
               <span className="user-pic">
                 <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
               </span><span className="user-name">{
-                cell[2][0].toUpperCase() + cell[0].slice(1)
+             
+                cell[2][0].toUpperCase()+cell[2].slice(1)
               }
               </span>
             </div>
@@ -242,6 +295,8 @@ const ChildrenEnrol = () => {
       }, 3000);
     }
   }, []);
+  const csvLink = useRef();
+console.log("CSV DATA",csvData)
   return (
     <>
       <div id="main">
@@ -338,6 +393,39 @@ const ChildrenEnrol = () => {
                                       </footer>
                                     </Dropdown.Menu>
                                   </Dropdown>
+                                  <Dropdown>
+                              <Dropdown.Toggle
+                                id="extrabtn"
+                                className="ctaact"
+                              >
+                                <img src="../img/dot-ico.svg" alt="" />
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <Dropdown.Item
+                                  onClick={() => {
+                                    setCsvDownloadFlag(true);
+                                  }}
+                                >
+                                  Export CSV
+                                  {csvDownloadFlag && (
+                                    <CSVDownload
+                                      data={csvData}
+                                      filename="user_management.csv"
+                                      ref={csvLink}
+                                    >
+                                      {setCsvDownloadFlag(false)}
+                                      {setTimeout(() => {
+                                        setCsvDownloadFlag(false)
+
+                                      }, 1000)}
+                                    </CSVDownload>
+                                  )} 
+                                </Dropdown.Item>
+                                {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                                  Delete All Row
+                                </Dropdown.Item> */}
+                              </Dropdown.Menu>
+                            </Dropdown>
                                 </div>
                               </div>
                             </header>

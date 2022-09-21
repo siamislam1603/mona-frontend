@@ -1459,7 +1459,9 @@ li.branch {
     object-fit: cover;
     width: 100%;
 }
-
+.logo-column-pdf{
+    margin-bottom: 2rem;
+}
 .module_title {
     display: flex;
     align-items: center;

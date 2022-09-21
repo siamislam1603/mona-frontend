@@ -9,7 +9,17 @@ class DataComponent extends React.Component {
       <div
         className="print"
         dangerouslySetInnerHTML={{
-          __html: `<div className="module_detail">
+          __html: `
+          
+          <div class="logo-column-pdf">
+    
+          <Navbar.Brand>
+            <img src="/img/logo-ico.png" alt="" />
+          </Navbar.Brand>
+          <div>
+  
+      
+          <div className="module_detail">
                 <div className="image_banner">
                   ${this.props.cover_image && `<img src=${
                     this.props.cover_image
