@@ -257,7 +257,7 @@ const TrainingDetail = () => {
                                           <img src="../img/book-ico.png" alt="" /></a>
                                         </div>
                                         <div className="name">
-                                          <a href={data.file}>
+                                          <a href={data.file} target="_blank" rel="noreferrer">
                                             {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
                                           </a>
                                         </div>
@@ -279,7 +279,7 @@ const TrainingDetail = () => {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
-                              <h3 className="title-sm">Training Participants:</h3>
+                              <h3 className="title-sm">Training Participants</h3>
                               <div className="column-list files-list three-col">
                                 {
                                   users.map(user => {

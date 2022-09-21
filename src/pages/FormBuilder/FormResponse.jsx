@@ -33,6 +33,10 @@ function FormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
+  const [dateFilter, setDateFilter] = useState({
+    from_date: "",
+    to_date: ""
+  });
   let hideFlag = false;
 
   useEffect(() => {
@@ -126,7 +130,7 @@ function FormResponse(props) {
       headers: myHeaders,
     };
 
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -185,6 +189,7 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
+  dateFilter && console.log('Filter Date:', dateFilter);
   return (
     <>
       <div id="main">
@@ -220,6 +225,47 @@ function FormResponse(props) {
                   <div className="forms-managment-section">
                     <div className="forms-managment-left">
                       <p>{responseData.length} Responses</p>
+                    </div>
+                    <div className="forms-management-middle">
+                        <Form.Group>
+                          <Form.Label>From Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="from_date"
+                            value={dateFilter?.from_date}
+                            min={new Date().toISOString().slice(0, 10)}
+                            onChange={(e) => {
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                from_date: e.target.value
+                              }))
+                            }}
+                          />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
+                        </Form.Group>
+
+                        <Form.Group>
+                          <Form.Label>To Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="to_date"
+                            value={dateFilter?.to_date}
+                            min={new Date().toISOString().slice(0, 10)}
+                            onChange={(e) => {
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                to_date: e.target.value
+                              }))
+                            }}
+                          />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          onClick={() => { getResponse('') }}>
+                          Apply
+                        </Button>
                     </div>
                     <div className="forms-managment-right">
                       <div className="forms-search">
