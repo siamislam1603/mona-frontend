@@ -1,5 +1,6 @@
 import {
   faEllipsisVertical,
+  faEye,
   faPen,
   faPlus,
   faRemove,
@@ -927,7 +928,7 @@ function ViewFormBuilder(props) {
                         )}
                       </Tab>
 
-                      <Tab eventKey="form-templates" title="Form Templates">
+                      <Tab eventKey="form-templates" title="Form Templates and Responses">
                         <div className="tab-created">
                           <Tabs
                             defaultActiveKey={
@@ -1114,7 +1115,20 @@ function ViewFormBuilder(props) {
                                                                 />{' '}
                                                                 Remove
                                                               </Dropdown.Item>
+                                                              
                                                             )}
+                                                            <Dropdown.Item
+                                                              onClick={() => {
+                                                                navigate(
+                                                                  `/form/preview/${inner_item.form_name}`,{state:{id:inner_item.id,form_name:inner_item.form_name}}
+                                                                );
+                                                              }}
+                                                            >
+                                                              <FontAwesomeIcon
+                                                                icon={faEye}
+                                                              />{' '}
+                                                              Preview
+                                                            </Dropdown.Item>
                                                           </Dropdown.Menu>
                                                         </Dropdown>
                                                       </div>
@@ -1377,6 +1391,18 @@ function ViewFormBuilder(props) {
                                                                   </Dropdown.Item>
                                                                 )}
                                                               </Dropdown.Menu>
+                                                              <Dropdown.Item
+                                                              onClick={() => {
+                                                                navigate(
+                                                                  `/form/preview/${inner_item.form_name}`,{state:{id:inner_item.id,form_name:inner_item.form_name}}
+                                                                );
+                                                              }}
+                                                            >
+                                                              <FontAwesomeIcon
+                                                                icon={faEye}
+                                                              />{' '}
+                                                              Preview
+                                                            </Dropdown.Item>
                                                             </Dropdown>
                                                           )}
                                                         </div>

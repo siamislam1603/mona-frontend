@@ -553,8 +553,12 @@ const Announcements = () => {
         if (response.status === 200 && response.data.status === "success") {
           setAllEvent(response.data.result.searchedData)
           setEventLength(eventCount)
-          setLoadEvent(true)
+         
         }
+        if (response.data.result.searchedData.length === 0) {
+          setLoadEvent(false)
+        }
+      }
         else{
           console.log("NO DATA")
           setpageEvent(5)
@@ -574,10 +578,12 @@ const Announcements = () => {
             setEventLength(response.data.result.searchedData.length)
             setLoadEvent(true)
 
+
         }
 
+
       
-       }
+       
       }
       } catch (error) {
       console.log("THE ERROR", error)

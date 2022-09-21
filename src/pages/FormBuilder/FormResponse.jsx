@@ -462,7 +462,86 @@ function FormResponse(props) {
                                                       }`}
                                                   ></img>
                                                 </>
-                                              ) : (
+                                              ) : Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.doc'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.docx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.html'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.htm'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.odt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xls'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xlsx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                'ods'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.ppt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pptx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pdf'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.txt'
+                                              ) ? (
+                                              <a
+                                                role="button"
+                                                href={
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]
+                                                }
+                                                download
+                                              >
+                                                <p>
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index].split("/")[Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index].split("/").length-1]
+                                                  }
+                                                </p>
+                                              </a>
+                                            ) : (
                                                 <p>
                                                   {
                                                     Object.values(

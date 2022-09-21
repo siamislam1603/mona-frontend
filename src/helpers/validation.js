@@ -153,7 +153,7 @@ export const createFormValidation = (form) => {
 
   return newErrors;
 };
-export const createOperatingManualValidation = (form) => {
+export const createOperatingManualValidation = (form,wordCount) => {
   let newErrors = {};
   let { title, description, order } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
@@ -163,7 +163,9 @@ export const createOperatingManualValidation = (form) => {
   if (!order || order === '') newErrors.order = 'Position is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-
+  if(wordCount>500){
+    newErrors.description = 'Description lenght limit is 500';
+  }
   return newErrors;
 };
 //Validation for edit annoutment

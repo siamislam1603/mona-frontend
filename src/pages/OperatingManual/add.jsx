@@ -15,6 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { includes } from 'lodash';
 let selectedUserId = '';
 let upperRoleUser = '';
 const AddOperatingManual = () => {
@@ -44,6 +45,7 @@ const AddOperatingManual = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [pageTitle,setPageTitle] = useState("Create New")
+  const [wordCount,setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
 
@@ -173,6 +175,24 @@ const AddOperatingManual = () => {
   };
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
+    console.log(field,value)
+    console.log("THE VALUE",value)
+
+    if(field == "description"){
+      const text = value;
+      if(value.includes("&nbsp")){
+
+        setWordCount(text.length-12);
+      }
+      else{
+        setWordCount(text.length-7);
+      }
+      console.log("WORD count",text.split(" ").length)
+      if(value === ""){
+        setWordCount(0)
+      }
+    }
+    
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -232,7 +252,7 @@ const AddOperatingManual = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const newErrors = createOperatingManualValidation(operatingManualData);
+    const newErrors = createOperatingManualValidation(operatingManualData,wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       console.log("newErrors--->",Object.keys(newErrors)[0]);
@@ -358,6 +378,7 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
+
     }
     if (name === 'reference_video') {
       if (file.size > 1024 * 1024 * 1024) {
@@ -366,20 +387,23 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      if (!file.type.includes('mp4')) {
+      console.log("file type",file.type)
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') ) {
         let errorData = { ...errors };
-        errorData['reference_video'] = 'File must be MP4.';
+        errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
         flag = true;
       }
     }
 
+  
     if (flag === false) {
       if (name === 'cover_image') {
         setImageLoaderFlag(true);
       }
       if (name === 'reference_video') {
         setVideoLoaderFlag(true);
+    
       }
 
       const body = new FormData();
@@ -555,7 +579,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Sub-Module Name
+                            Sub-Module Name *
                           </Form.Label>
                           <Form.Control
                             type="text"
@@ -579,7 +603,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={6}>
                         <Form.Group>
                           <Form.Label className="formlabel">
-                            Order in List
+                            Order in List *
                           </Form.Label>
                           <Form.Control
                             type="number"
@@ -606,7 +630,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                       <Col sm={12}>
                         <Form.Group>
                           <Form.Label id="description" className="formlabel">
-                            Description
+                            Description *
                           </Form.Label>
                           {location?.state?.id &&
                           location?.state?.category_name &&
@@ -630,6 +654,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               }}
                             />
                           )}
+                          <p>Word Count : {wordCount} </p>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -683,7 +708,13 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               <img src="../../img/removeIcon.svg" />
                             </Button>
                           </div>
+
                           <p className="form-errors">{errors.cover_image}</p>
+                          <small className="fileinput">(png, jpg & jpeg)</small>
+                          <small className="fileinput">(File limit 2 MB)</small>
+
+
+                        
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -743,6 +774,11 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          <small className="fileinput">((mp4, flv & mkv))</small>
+                          <small className="fileinput">(File limit 1 GB)</small>
+
+
+
                         </Form.Group>
                       </Col>
                     </Row>
@@ -764,6 +800,8 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                                 operatingManualData.related_files
                               }
                             />
+                          <small className="fileinput">((pdf, doc, ppt & xslx))</small>
+                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                             <p className="form-errors">
                               {errors.related_files}
                             </p>
