@@ -4,7 +4,7 @@ import { Dropdown, Form, Button, Popover, OverlayTrigger, Image } from 'react-bo
 import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
 import $ from "jquery";
-import moment from "moment-timezone";
+import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { logoutUser } from '../helpers/logout';
 // import { FullLoader } from "./Loader";
@@ -302,7 +302,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
               </div>
               <div className="notification-time">
               {
-                moment(details.createdAt).tz('Australia/Sydney').fromNow()
+                moment(details.createdAt).fromNow()
               }
               </div>
             </div>
