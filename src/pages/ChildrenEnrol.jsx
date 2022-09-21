@@ -9,7 +9,7 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useRef } from 'react';
 import { FullLoader } from "../components/Loader";
-import { CSVDownload } from 'react-csv';
+import { CSVDownload,CSVLink } from 'react-csv';
 
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
@@ -58,10 +58,12 @@ const ChildrenEnrol = () => {
 
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
-          
+
           let tempData = data.map((dt, index) =>
           ({
+            
             name: `${dt.child_name} ,${dt.dob}`,
+            dob: `${moment(dt.dob).format('DD/MM/YYYY')}`,
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
             parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
             educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
@@ -80,10 +82,13 @@ const ChildrenEnrol = () => {
           temp.map((item, index) => {
     
             delete item.is_deleted;
+            
             // delete item.user_id;
             
             csv_data.push(item);
             let data = { ...csv_data[index] };
+
+            console.log("THE DATA",data)
 
             let d = data.parentName.split(",")
             let educator  = data.educatorassisgned.split(",");
@@ -104,16 +109,16 @@ const ChildrenEnrol = () => {
              }
             })
             // console.log("educatorArray[1]",educatorArray[1])
-            let DOB =  moment(data.name.split(",")[1]).format('DD/MM/YYYY')
+            let DOB =  moment(data.dob).format('DD/MM/YYYY')
             console.log("EDut",educatorArray[1])
-            data["name"] = data.name.split(",")[0];
-            data["DOB"] =DOB;
+         
             data["specailneed"]= data.specailneed == 0 ?"No":"Yes"; 
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
             data["educatorassisgned"]=educatorArray
-            // delete data.action
-            
+            data["name"] = data.name.split(",")[0];
+
+             
             csv_data[index] = data;
           });
           setCsvData(csv_data);
@@ -278,7 +283,19 @@ const ChildrenEnrol = () => {
     },
   ];
 
-
+const CSV = () =>{
+  return (
+    <CSVLink
+    data={csvData}
+    filename={"my-file.csv"}
+    className="btn btn-primary"
+    target="_blank"
+  >
+    Download me
+  </CSVLink>
+  )
+}
+console.log("CSV",csvDownloadFlag)
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
@@ -326,6 +343,7 @@ console.log("CSV DATA",csvData)
                                   <div className="data-search me-3">
                                     <SearchBar {...props.searchProps} />
                                   </div>
+                                  
                                   <Dropdown className="filtercol me-3">
                                     <Dropdown.Toggle
                                       id="extrabtn"
@@ -388,6 +406,7 @@ console.log("CSV DATA",csvData)
                                     </Dropdown.Menu>
                                   </Dropdown>
                                   <Dropdown>
+                                 
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 className="ctaact"
@@ -396,24 +415,31 @@ console.log("CSV DATA",csvData)
                               </Dropdown.Toggle>
                               <Dropdown.Menu>
                                 <Dropdown.Item
+                                as="button"
                                   onClick={() => {
                                     setCsvDownloadFlag(true);
                                   }}
                                 >
-                                  Export CSV
-                                  {csvDownloadFlag && (
-                                    <CSVDownload
+                                  
+                                  <CSVLink
                                       data={csvData}
-                                      filename="user_management.csv"
-                                      ref={csvLink}
+                                      filename={"Children Enroled.csv"}  
+                                      // filename="dskak.csv"
+                                      target="_blank"
+                                      // ref={csvLink}
                                     >
-                                      {setCsvDownloadFlag(false)}
-                                      {setTimeout(() => {
+                                      {/* {setCsvDownloadFlag(false)} */}
+                                      {/* {setTimeout(() => {
                                         setCsvDownloadFlag(false)
+                                      }, 1000)} */}
+                                      {"Export CSV"}
+                                      
+                                      </CSVLink> 
+                                    
 
-                                      }, 1000)}
-                                    </CSVDownload>
-                                  )} 
+
+                                
+                                  
                                 </Dropdown.Item>
                                 {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                                   Delete All Row
