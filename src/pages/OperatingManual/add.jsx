@@ -44,6 +44,7 @@ const AddOperatingManual = () => {
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const [pageTitle,setPageTitle] = useState("Create New")
+  const [wordCount,setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
 
@@ -173,6 +174,17 @@ const AddOperatingManual = () => {
   };
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
+    console.log(field,value)
+
+    if(field == "description"){
+      const text = value;
+      setWordCount(text.split(" ").length);
+      console.log("WORD count",text.split(" ").length)
+      if(value === ""){
+        setWordCount(0)
+      }
+    }
+    
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -232,7 +244,7 @@ const AddOperatingManual = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const newErrors = createOperatingManualValidation(operatingManualData);
+    const newErrors = createOperatingManualValidation(operatingManualData,wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       console.log("newErrors--->",Object.keys(newErrors)[0]);
@@ -366,9 +378,10 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      if (!file.type.includes('mp4') ) {
+      console.log("file type",file.type)
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') ) {
         let errorData = { ...errors };
-        errorData['reference_video'] = 'File must be MP4.';
+        errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
         flag = true;
       }
@@ -380,6 +393,7 @@ const AddOperatingManual = () => {
       }
       if (name === 'reference_video') {
         setVideoLoaderFlag(true);
+    
       }
 
       const body = new FormData();
@@ -630,6 +644,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               }}
                             />
                           )}
+                          <p>Word Count : {wordCount} </p>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -685,7 +700,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                           </div>
 
                           <p className="form-errors">{errors.cover_image}</p>
-                          <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(png, jpg & jpeg)</small>
                           <small className="fileinput">(File limit 2 MB)</small>
 
 
@@ -749,7 +764,10 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          <small className="fileinput">((mp4, flv & mkv))</small>
                           <small className="fileinput">(File limit 1 GB)</small>
+
+
 
                         </Form.Group>
                       </Col>

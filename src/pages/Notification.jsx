@@ -148,7 +148,7 @@ const handleLinkClick = notificationId => {
                 <TopHeader 
                   notificationType='Child Enrollment'/>
 
-                  {/* <FullLoader loading={fullLoaderStatus} /> */}
+                  <FullLoader loading={fullLoaderStatus} />
 
               <div className="entry-container">
                   <header className="title-head">
