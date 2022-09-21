@@ -18,13 +18,13 @@ import moment from 'moment';
 const ChildrenEnrol = () => {
   const Key = useParams()
 
-
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
 
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
+  console.log("chidlEnroll", chidlEnroll)
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
@@ -55,15 +55,13 @@ const ChildrenEnrol = () => {
         if (response) {
           setfullLoaderStatus(false)
         }
-      
+
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
           
           let tempData = data.map((dt, index) =>
-
           ({
             name: `${dt.child_name} ,${dt.dob}`,
-
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
             parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
             educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
@@ -72,7 +70,6 @@ const ChildrenEnrol = () => {
             enrolldate: `${dt?.enrollment_initiated}`,
             franchise: `${dt?.franchisee?.franchisee_name}`
           })
-
           )
           setChildEnroll(tempData)
 
@@ -126,12 +123,12 @@ const ChildrenEnrol = () => {
     catch (error) {
       setfullLoaderStatus(false)
       setChildEnroll([])
-     
+
     }
   }
 
   useEffect(() => {
-    if(selectedFranchisee){
+    if (selectedFranchisee) {
       ChildernEnrolled()
     }
   }, [selectedFranchisee, AppyFilter, Filters])
@@ -141,7 +138,7 @@ const ChildrenEnrol = () => {
       text: 'Name',
       formatter: (cell) => {
         cell = cell.split(',');
-     
+
         return (<>
           <div className="user-list">
             <span className="user-name">
@@ -162,46 +159,45 @@ const ChildrenEnrol = () => {
       dataField: 'parentName',
       text: 'Parent Name',
       formatter: (cell) => {
-
         cell = cell.split(',');
-
         return (<>
-          {
-            cell[0] != "undefined" &&
-            <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
-              </span>
-              <span className="user-name">
-                {/* {cell[0] === "undefined" ? null : cell[0]} */}
-                {cell[0] === "undefined" ? null : cell[0][0].toUpperCase() + cell[0].slice(1)}
+          <div className="parentName" style={{ maxHeight: '100px', overflowY: "scroll" }}>
+            {
+              cell[0] != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
+                </span>
+                <span className="user-name">
+                  {/* {cell[0] === "undefined" ? null : cell[0]} */}
+                  {cell[0] === "undefined" ? null : cell[0][0].toUpperCase() + cell[0].slice(1)}
 
-              </span>
-            </div>
-          }
+                </span>
+              </div>
+            }
 
-          {
-            cell[1] != "undefined" &&
-            <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[4] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[4]} />
-              </span>
-              <span className="user-name">
-                {cell[1] === "undefined" ? null : cell[1][0].toUpperCase() + cell[1].slice(1)} </span>
-            </div>
-          }
-          {
-            cell[2] != "undefined" &&
-            <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
-              </span>
-              <span className="user-name">
-                {cell[2] === "undefined" ? null : cell[2][0].toUpperCase() + cell[2].slice(1)
-                } </span>
-            </div>
-          }
-          {/* <small>Audited on : {moment(cell[3]).format('DD/MM/YYYY')}  </small> */}
+            {
+              cell[1] != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[4] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[4]} />
+                </span>
+                <span className="user-name">
+                  {cell[1] === "undefined" ? null : cell[1][0].toUpperCase() + cell[1].slice(1)} </span>
+              </div>
+            }
+            {
+              cell[2] != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
+                </span>
+                <span className="user-name">
+                  {cell[2] === "undefined" ? null : cell[2][0].toUpperCase() + cell[2].slice(1)
+                  } </span>
+              </div>
+            }
+          </div>
         </>
 
         )
@@ -219,11 +215,9 @@ const ChildrenEnrol = () => {
             <div className="user-list">
               <span className="user-pic">
                 {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
-
                 <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
-
-              </span><span className="user-name">{
-                cell[0][0].toUpperCase() + cell[0].slice(1)}
+              </span><span className="user-name">
+                {cell[0][0].toUpperCase() + cell[0].slice(1)}
                 {/* <span>{cell[1]}</span> */}
               </span>
             </div>
@@ -249,7 +243,7 @@ const ChildrenEnrol = () => {
       dataField: 'specailneed',
       text: 'Special Need',
       formatter: (cell) => {
-        
+
         return (<><div className="user-list"><span className="user-name">{cell === "1" ? "Yes" : <>
           {
             cell === "0" ? " No" :
@@ -371,7 +365,7 @@ console.log("CSV DATA",csvData)
                                               setFilters("0")
                                             }}
                                           />
-                                        
+
                                         </Form.Group>
                                       </div>
 
@@ -438,7 +432,7 @@ console.log("CSV DATA",csvData)
                                   pagination={paginationFactory()}
                                 />
                               ) : (
-                                !fullLoaderStatus && 
+                                !fullLoaderStatus &&
                                 <div className="text-center mb-5 mt-5"><strong>
                                   No child enrol yet
                                 </strong></div>

@@ -211,7 +211,7 @@ const FileRpositoryList = () => {
         fetchFranchiseeList();
     }, [selectedFranchisee])
 
-    
+
     useEffect(() => {
         getUser();
         getChildren()
@@ -344,7 +344,7 @@ const FileRpositoryList = () => {
                         <div className="user-list">
                             <span className="user-name">
                                 <img src="../img/sharing-ico.png" className="me-2" alt="" />
-                                Shared
+                                Access Given
                             </span>
                         </div>
                     </>
@@ -414,7 +414,14 @@ const FileRpositoryList = () => {
                                                                                         Params?.id === "7" ? "Resources" :
                                                                                             Params?.id === "8" ? "General" : "Null"
                                                                 }
-                                                                <small>{Count} files</small>
+                                                                <small>
+                                                                    {Count > 1 ? (<>
+                                                                        {Count} Files
+                                                                    </>) : (<>
+                                                                        {Count} File
+                                                                    </>)}
+                                                                </small>
+                                                                {/* <small>{Count} files</small> */}
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">

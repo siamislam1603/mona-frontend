@@ -4,43 +4,45 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import moment from 'moment';
-import InfiniteScroll from "react-infinite-scroll-component";
-
+import moment from "moment-timezone";
 import { FullLoader } from "../components/Loader";
 
+const PER_PAGE_LIMIT = 10;
 
 const Noticefication = (props) => {
 
 const userName = localStorage.getItem("user_name");
-const [notificationDetails,setNotificationDetail] = useState([])
+const [notificationDetail,setNotificationDetail] = useState([])
 const [notificationStatus,setNotificationStatus] = useState(null)
+const [totalLoadedNotifications,setTotalLoadedNotifications] = useState(0)
+const [totalNotificationCount,setTotalNotificationCount] = useState(0)
 const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-const [page,setPage]= useState(10)
 
 // const [show, setShow] = useState(false);
 // const handleClose = () => setShow(false);
  
-  const theNotification = async () =>{
+  const getNotifications = async () =>{
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      let id = localStorage.getItem('user_id');
-      const response = await axios.get(`${BASE_URL}/notification/${id}?offset=&limit=10`, {
+      let user_id = localStorage.getItem('user_id');
+      const response = await axios.get(`${BASE_URL}/notification/${user_id}?offset=${totalLoadedNotifications}&limit=${PER_PAGE_LIMIT}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-
-      // const response = await axios.get(`${BASE_URL}/notification/${id}`, {
-      //   headers: {
-      //     "Authorization": "Bearer " + token
-      //   }
-      // });
-      // console.log("The All Announcement",response.data.result);
-      console.log("response responseresponseresponseresponseresponse", response.data);
       
       if(response.status === 200 && response.data.status === "success") {
+      
+        if(response.data && response.data.notification?.count == 0)
+          setNotificationStatus('No Notification Available')
+
+          console.log("notificationDetail.length", response.data.notification.rows.length)
+        const totalNewNotification = response.data.notification.rows;
+        if(totalNewNotification && totalNewNotification?.length){
+          setTotalLoadedNotifications(totalLoadedNotifications + totalNewNotification.length)
+        }
+          setTotalNotificationCount(response.data.notification.count);
 
         // console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnn", response.data.notification.count)
         setfullLoaderStatus(false)
@@ -63,19 +65,47 @@ const [page,setPage]= useState(10)
 }
 
 useEffect(() => {
-  theNotification()
+  getNotifications()
 }, [])
-useEffect(() => {
-  theNotification()
-}, [page])
 
-console.log("Noticiation",notificationDetails)
+
+const handelLoadMore = (e) => {
+  e.preventDefault()
+  LoadMoreALl()
+}
+const LoadMoreALl = async (e) => {
+  const token = localStorage.getItem('token');
+  let user_id = localStorage.getItem('user_id');
+  const response = await axios.get(`${BASE_URL}/notification/${user_id}?offset=${totalLoadedNotifications}&limit=${PER_PAGE_LIMIT}`, {
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  });
+  
+  if(response.status === 200 && response.data.status === "success") {
+  
+      console.log("notificationDetail.length", response.data.notification.rows.length)
+
+    const totalNewNotification = response.data.notification.rows;
+    if(totalNewNotification && totalNewNotification?.length){
+      
+      setTotalLoadedNotifications(totalLoadedNotifications + totalNewNotification.length)
+    }
+
+    setNotificationDetail((prev) => (
+      [
+        ...prev,
+        ...totalNewNotification
+      ]
+    ))
+
+  }
+}
+
 
 const handleLinkClick = notificationId => {
-  console.log("event eventeventeventevent",  notificationId)
 
   if(notificationId){
-
     const token = localStorage.getItem('token');
     const response = axios.put(
       `${BASE_URL}/notification/${notificationId}`,{}, {
@@ -85,21 +115,13 @@ const handleLinkClick = notificationId => {
     }
     );
 
-    console.log('notification read status updated', response);
-
-
-
     if (response.status === 200) {  
       console.log('notification read status updated', response.msg);
-
 
     }else{
 
       console.log('TYPE OF COVER IMAGE:', response.msg);
-
     }
-
-
   }
 
   // let path = event.target.getAttribute('path');
@@ -117,7 +139,7 @@ const handleLinkClick = notificationId => {
   return (
     <div className="announcement-accordion">
 
-<Container>
+        <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
               <LeftNavbar />
@@ -135,52 +157,8 @@ const handleLinkClick = notificationId => {
                   
                   <div className="notofication-listing-sec notificationpopup mb-5">
 
-{/* 
-                  <InfiniteScroll
-                  style={{
-                    overflow: "hidden"
-                  }}
-                        dataLength={notificationDetails.length} //This is important field to render the next data
-                        next={() => setPage(page+6)}
-                        hasMore={true}
-                       
-                      >
-                        {
-                        
-                            notificationDetails.map((details,index) => (
-                              
-                      <div className={details.is_read == 'true' ?'notifitem':'notifitem unread'}>
-                        <div className="notifimg">
-                          <a className="notilink" href="javascript:void(0)">
-                              <div className="notifpic">
-                                
-                              <img src="/img/notification-ico1.png" alt="" className="logo-circle rounded-circle"/>
-                              </div>
-                            <div className="notiftxt">
-                            <div className="title-xxs" onClick={()=> handleLinkClick(details.id)}
-                            dangerouslySetInnerHTML={{
-                                      __html: `${details.title}`,
-                                    }}/>
-                            </div>
-                        </a>
-                      </div>
-                      <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
-                    </div>
-                ))
-              }
-                                             
-                      </InfiniteScroll>
-                      {fullLoaderStatus && 
-                              <div className="text-center">
-                              <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
-                            </div>
-                      } */}
-           
- 
-
-                  { notificationDetails &&
-                        notificationDetails.length !==0 ? (
-                          notificationDetails.map((details,index) => (
+                  { notificationDetail && notificationDetail.length !==0 ? (
+                    notificationDetail.map((details,index) => (
                             
                     <div className={details.is_read == 'true' ?'notifitem':'notifitem unread'}>
                       <div className="notifimg">
@@ -197,13 +175,28 @@ const handleLinkClick = notificationId => {
                           </div>
                       </a>
                     </div>
-                    <div className="notification-time">{moment(details.createdAt).fromNow()}</div>
+                    <div className="notification-time">
+                      { moment(details.createdAt).tz('Australia/Sydney').fromNow()}
+                      </div>
                   </div>
                 ))
                 ): (
                   <div className="text-center mb-5 mt-5"><strong>{notificationStatus}</strong></div>
                 )
               }
+             
+              {
+                totalLoadedNotifications < totalNotificationCount? (
+                  <>
+                  <br></br>
+                  <div class="text-center">
+                  <button type="button" onClick={handelLoadMore} className="btn btn-primary">Load More</button>
+                  </div>
+                  </>
+                  ) :''
+              }
+
+
             </div>
 
             </div>

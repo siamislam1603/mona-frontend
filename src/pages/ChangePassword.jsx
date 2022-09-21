@@ -226,6 +226,8 @@ const attempt = localStorage.getItem("attempts")
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
                 <div className="change-pass-sec">
                  {}
+                 <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>You've logged in for the first time.</p>
+                 <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
                   <Row>
                   {/* <Col md={12} className="mb-3">
                         <Form.Group>
