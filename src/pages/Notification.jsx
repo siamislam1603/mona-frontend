@@ -4,7 +4,7 @@ import { BASE_URL } from "../components/App";
 import axios from "axios";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
-import moment from "moment-timezone";
+import moment from "moment";
 import { FullLoader } from "../components/Loader";
 
 const PER_PAGE_LIMIT = 10;
@@ -176,7 +176,7 @@ const handleLinkClick = notificationId => {
                       </a>
                     </div>
                     <div className="notification-time">
-                      { moment(details.createdAt).tz('Australia/Sydney').fromNow()}
+                      { moment(details.createdAt).fromNow()}
                       </div>
                   </div>
                 ))
