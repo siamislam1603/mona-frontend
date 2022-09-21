@@ -203,7 +203,7 @@ const FranchisorDashboard = () => {
                           </header>
                           <div className="column-list access-list three-col">
                             <div className="item">
-                              <a href="https://login.xero.com/identity/user/login" className="flex">
+                              <a href="https://login.xero.com/identity/user/login" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>

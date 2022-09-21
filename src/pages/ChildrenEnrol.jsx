@@ -307,7 +307,18 @@ console.log("CSV",csvDownloadFlag)
     }
   }, []);
   const csvLink = useRef();
-console.log("CSV DATA",csvData)
+  const headers = [
+    { label: "NAME", key: "name" },
+    { label: "DOB", key: "dob" },
+    { label: "PARENT NAME", key: "parentName" },
+    { label: "EDUCATOR ASSIGNED", key: "educatorassisgned" },
+    { label: "SPECIAL NEEDS", key: "specailneed" },
+    { label: "FRANCHISE", key: "franchise" },
+    { label: "ENROLMENT INITIATION DATE", key: "enrolldate" }
+
+
+  ];
+  
   return (
     <>
       <div id="main">
@@ -425,13 +436,11 @@ console.log("CSV DATA",csvData)
                                       data={csvData}
                                       filename={"Children Enroled.csv"}  
                                       // filename="dskak.csv"
+                                      headers={headers}
                                       target="_blank"
                                       // ref={csvLink}
                                     >
-                                      {/* {setCsvDownloadFlag(false)} */}
-                                      {/* {setTimeout(() => {
-                                        setCsvDownloadFlag(false)
-                                      }, 1000)} */}
+
                                       {"Export CSV"}
                                       
                                       </CSVLink> 
