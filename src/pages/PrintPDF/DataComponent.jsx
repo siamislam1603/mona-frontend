@@ -1,9 +1,10 @@
 import React from 'react';
+import Logo from "../../../src/assets/img/logo.png";
 
 class DataComponent extends React.Component {
   render() {
     {
-      console.log('this.props---->', this.props.description,this.props);
+      console.log('this.props---->', this.props.description,this.props, this.props.imageShow);
     }
     return (
       <div
@@ -14,7 +15,11 @@ class DataComponent extends React.Component {
           <div class="logo-column-pdf">
     
           <Navbar.Brand>
-            <img src="/img/logo-ico.png" alt="" />
+            
+            ${this.props.imageShow && `
+             <img src=${Logo} alt="" />
+            `}
+            
           </Navbar.Brand>
           <div>
   
@@ -42,7 +47,9 @@ class DataComponent extends React.Component {
                 </div>
               </div><div className="description_wrp">${this.props.description}</div>`,
         }}
-      ></div>
+      >
+       
+      </div>
     );
   }
 }
