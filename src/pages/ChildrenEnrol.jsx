@@ -415,9 +415,8 @@ console.log("CSV",csvDownloadFlag)
                                       </footer>
                                     </Dropdown.Menu>
                                   </Dropdown>
-                                  <Dropdown>
-                                 
-                       {localStorage.getItem("user_role") === "franchisor_admin" ? (
+
+                                  {localStorage.getItem("user_role") === "franchisor_admin" ? (
                         <Dropdown>
                              
                         <Dropdown.Toggle
@@ -444,47 +443,6 @@ console.log("CSV",csvDownloadFlag)
                                 target="_blank"
                                 // ref={csvLink}
                               >
-<<<<<<< HEAD
-
-                                {"Export CSV"}
-                                
-                                </CSVLink> 
-                              
-
-
-                          
-                            
-                          </Dropdown.Item>
-                          {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                            Delete All Row
-                          </Dropdown.Item> */}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                  ): (null)} 
-                              <Dropdown.Menu>
-                                <Dropdown.Item
-                                as="button"
-                                  onClick={() => {
-                                    setCsvDownloadFlag(true);
-                                  }}
-                                >
-                                  
-                                  <CSVLink
-                                      data={csvData}
-                                      filename={"Children Enroled.csv"}  
-                                      // filename="dskak.csv"
-                                      headers={headers}
-                                      target="_blank"
-                                      // ref={csvLink}
-                                    >
-
-                                      {"Export CSV"}
-                                      
-                                      </CSVLink> 
-                                    
-
-=======
->>>>>>> master
 
                                 {"Export CSV"}
                                 
