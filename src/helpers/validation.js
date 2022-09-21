@@ -520,7 +520,7 @@ export const UserFormValidation = (formObj) => {
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
   let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
 
-  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, password, confirm_password, open_coordinator, coordinator } =
+  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator } =
   formObj;
   
   if (!email) errors.email = 'Email address is required';
@@ -550,7 +550,6 @@ export const UserFormValidation = (formObj) => {
   if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
     errors.postalCode = 'Post code must only consist digits';
 
-
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   
   if (!phone) errors.phone = 'Phone number is required';
@@ -559,11 +558,6 @@ export const UserFormValidation = (formObj) => {
 
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
-
-  if (password?.length > 0 && password !== confirm_password) {
-    errors.password = "Passwords don't match";
-    errors.confirm_password = "Passwords don't match";
-  }
 
   return errors;
 };
