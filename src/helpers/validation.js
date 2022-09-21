@@ -560,7 +560,7 @@ export const UserFormValidation = (formObj) => {
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
 
-  if (password.length > 0 && password !== confirm_password) {
+  if (password?.length > 0 && password !== confirm_password) {
     errors.password = "Passwords don't match";
     errors.confirm_password = "Passwords don't match";
   }
@@ -604,7 +604,7 @@ export const editUserValidation = (form) => {
   if (!phone) errors.phone = 'Phone number is required';
 
   if(password && !regexPassword.test(password))
-    errors.password = "Password must be 8 characters long, with 1 uppercase, 1 lowercase & digits"
+    errors.password = "Minimum 8 characters, at least 1 uppercase, 1 lowercase & 1 digit"
 
   if (password && password !== confirm_password) {
     errors.password = "Passwords don't match";
