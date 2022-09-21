@@ -24,7 +24,6 @@
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
-    "moment-timezone": "^0.5.37",
     "multiselect-react-dropdown": "^2.0.22",
     "pdf-viewer-reactjs": "^2.2.3",
     "react": "^18.2.0",
