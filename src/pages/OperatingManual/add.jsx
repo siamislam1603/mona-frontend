@@ -175,10 +175,11 @@ const AddOperatingManual = () => {
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
     console.log(field,value)
+    console.log("THE VALUE",value)
 
     if(field == "description"){
       const text = value;
-      setWordCount(text.split(" ").length);
+      setWordCount(text.length);
       console.log("WORD count",text.split(" ").length)
       if(value === ""){
         setWordCount(0)
