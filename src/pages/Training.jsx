@@ -19,19 +19,6 @@ import { filter } from "lodash";
 
 const animatedComponents = makeAnimated();
 
-const filterCategory = [
-  {
-    id: 0,
-    value: "alphabatical",
-    label: "Alphabetical"
-  },
-  {
-    id: 1,
-    value: "due_date",
-    label: "Due Date"
-  }
-];
-
 const Training = () => {
   let location = useLocation();
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
@@ -223,27 +210,6 @@ const Training = () => {
                         <li><a onClick={handleLinkClick} path="/created-training" className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Created Training</a></li>
                       }
                     </ul>
-                    
-                    {
-                      tabName === "assigned_training" &&
-                      <div className="selectdropdown ms-auto d-flex align-items-center">
-                        <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
-                          <Form.Label className="d-block me-2">Filter by</Form.Label>
-                          <Select
-                            closeMenuOnSelect={true}
-                            placeholder={"Select"}
-                            components={animatedComponents}
-                            value={filterCategory.filter(d => d.value === filterData.filter)}
-                            options={filterCategory}
-                            className="selectdropdown-col"
-                            onChange={(e) => setFilterData(prevState => ({
-                              ...prevState,
-                              filter: e.value
-                            }))}
-                          />
-                        </Form.Group>
-                      </div>
-                    }
 
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
@@ -251,6 +217,12 @@ const Training = () => {
                         <Select
                           closeMenuOnSelect={true}
                           placeholder={"Select"}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                            menu: (provided) => ({ ...provided, zIndex: 9999 })
+                          }}
                           components={animatedComponents}
                           value={trainingCategory.filter(d => parseInt(d.id) === parseInt(filterData.category_id))}
                           options={trainingCategory}

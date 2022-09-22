@@ -22,3 +22,7 @@ p.center{font-size:1rem}
   font-weight: bold;
   margin-top: .5rem;
 }
+
+.top-bar {
+  display: flex;
+}

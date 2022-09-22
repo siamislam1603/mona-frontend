@@ -16,32 +16,38 @@ const selectRow = {
 const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    console.log(userData, "userData")
+
     const GetData = async () => {
         try {
-            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            })
-            if (response.status === 200) {
-                const users = response.data.dataDetails;
-
-                let tempData = users.map((dt) => ({
-                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
-                    createdAt: dt.updatedAt,
-                    userID: dt.id,
-                    creatorName: dt.ModifierName + "," + dt.updatedBy,
-                    // selectedFranchisee: selectedFranchisee
-                }));
-                setUserData(tempData);
-                setfullLoaderStatus(false)
+            if (selectedFranchisee) {
+                let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
+                    headers: {
+                        authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                })
+                if (response.status === 200 && response.data.status === "success") {
+                    const users = response.data.dataDetails;
+                    let tempData = users.map((dt) => ({
+                        name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                        updatedAt: dt.updatedAt,
+                        createdAt: dt.createdAt,
+                        userID: dt.id,
+                        creatorName: dt.ModifierName + "," + dt.updatedBy,
+                      
+                    }));
+                    setUserData(tempData);
+                    setfullLoaderStatus(false)  
+                } else if (response.status === 404){
+                    setUserData([])
+                    setfullLoaderStatus(false)
+                }
             }
         } catch (err) {
+            setUserData([])
             setfullLoaderStatus(false)
         }
-
     }
+
     const GetSaachhData = async () => {
         try {
             let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}&search=${SearchValue}`, {
@@ -55,15 +61,21 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt?.categoryId}, ${dt?.count} , ${dt?.categoryName}`,
-                    createdAt: dt?.updatedAt,
-                    userID: dt?.id,
-                    creatorName: dt?.ModifierName + "," + dt?.updatedBy
+                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                    updatedAt: dt.updatedAt,
+                    createdAt: dt.createdAt,
+                    userID: dt.id,
+                    creatorName: dt.ModifierName + "," + dt.updatedBy,
                 }));
                 setUserData(tempData);
                 console.log(tempData, "tempData")
             }
+            else if (response.status === 404){
+                setUserData([])
+                setfullLoaderStatus(false)
+            }
         } catch (err) {
+            setUserData([])
             setfullLoaderStatus(false)
         }
 
@@ -73,23 +85,26 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     }, []);
 
     useEffect(() => {
+        GetData();
+    }, []);
+    useEffect(() => {
         GetSaachhData();
     }, [SearchValue])
 
     useEffect(() => {
+        console.log(selectedFranchisee,"selectedFranchisee")
         if (selectedFranchisee) {
             GetData();
-            // setUserData();
         }
     }, [selectedFranchisee]);
-   
+
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
             text: 'Name',
             sort: true,
             formatter: (cell) => {
-                console.log("selectedFranchisee", selectedFranchisee)
                 cell = cell.split(',');
                 return (
                     <>
@@ -122,8 +137,13 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             sort: true,
         },
         {
+            dataField: 'updatedAt',
+            text: 'Updated on',
+            sort: true,
+        },
+        {
             dataField: 'creatorName',
-            text: 'Created by',
+            text: 'Updated by',
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');

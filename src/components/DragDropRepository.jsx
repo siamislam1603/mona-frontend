@@ -41,6 +41,7 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
     if (index != 0)
       return <>
         <li key={file.path} className="mt-3">
+          <img src={file.path} alt="sjdy" />
           {file.path} - {file.size} bytes{" "}
         </li>
         <Link to="#" onClick={removeFile(file)}>
@@ -55,7 +56,9 @@ export default function DragDropRepository({ onChange, setPopupVisible, imageToC
       <div {...getRootProps({ className: "dropzone d-block" })}>
         <input {...getInputProps()} type="file" name="setting_file" />
         <div className="text-center uploadfile">
-          <span>Please Select a file to share : <br /><span className="btn btn-primary" >Choose File</span> <br /> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
+          <span>Please Select a file to share : <br /><span className="btn btn-primary" >Choose File</span> <br />
+            <small>Accepted file types : doc, pdf, mp3, png, jpg , video</small>
+            <small className="fileinput">(less than 1GB)</small></span>
         </div>
       </div>
       <div className="showfiles">

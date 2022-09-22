@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
@@ -24,7 +23,8 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
           name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
-          createdAt: dt.updatedAt,
+          updatedAt: dt.updatedAt,
+          createdAt: dt.createdAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
         }));
@@ -44,6 +44,8 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   useEffect(() => {
     GetData();
   }, [selectedFranchisee]);
+
+
   const GetSaachhData = async () => {
     try {
       let User = localStorage.getItem('user_role');
@@ -60,7 +62,8 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
           name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
-          createdAt: dt.updatedAt,
+          updatedAt: dt.updatedAt,
+          createdAt: dt.createdAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
         }));
@@ -116,8 +119,14 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       sort: true,
     },
     {
+      dataField: 'updatedAt',
+      text: 'Updated on',
+      sort: true,
+    },
+
+    {
       dataField: 'creatorName',
-      text: 'Created by',
+      text: 'Updated by',
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
