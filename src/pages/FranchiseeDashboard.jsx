@@ -409,7 +409,7 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href={`/form/response/form-visit/${countUser?.complianceVisitFormId}`} className="item">
+                              <a href={`/form/response/form-visit/${countUser?.complianceVisitFormId}/Index`} className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser?.auditForms}</span>
