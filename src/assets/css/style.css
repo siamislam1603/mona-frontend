@@ -1540,7 +1540,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .forms-filter button{margin-right:15px}
 .form-settings-content .new-form-radio-box{width:auto}
 .form-settings-content .new-form-radio-box-1{width:auto}
-.btn{min-width:initial}
+.btn{min-width:75px; line-height: 35px;}
 .add-q button{padding:0 10px}
 .forms-content-section .row>div{width:100%;flex:0 0 100%}
 .forms-header-section .tab-section .nav-tabs li{width:100%;text-align:center}

@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function FormResponse(props) {
   const Params = useParams();
+
   const ParamsKey = Params.key
 
   console.log(ParamsKey, 'Params')
@@ -128,8 +129,8 @@ function FormResponse(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-    
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
+
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -169,9 +170,10 @@ function FormResponse(props) {
       method: 'GET',
       redirect: 'follow',
       headers: myHeaders,
-    };
-    const Url = ParamsKey === "form-visit" ? `${BASE_URL}/form/response?search=&form_id=${Params.id}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
-      : `${BASE_URL}/form/response?search=&form_id=${Params.id}&user_id=${localStorage.getItem('user_id')}&user_role=franchisee_admin`
+    };  
+    const Url = ParamsKey === "form-visit" ? `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}` : `${BASE_URL}/form/response?search=&form_id=55&user_id=${localStorage.getItem(
+      'user_id'
+    )}&user_role=franchisee_admin`
     fetch(Url
       ,
       requestOptions
@@ -219,13 +221,14 @@ function FormResponse(props) {
                     </div>
                   </Col>
                 </Row>
-                <div className="responses-forms-header-section forms-header-section">
-                  <div className="forms-managment-section">
+                <div className="responses-forms-header-section forms-header-section mb-5">
+                  <div className="d-md-flex align-items-end mt-4">
+                    <div className="forms-managmentsection">
                     <div className="forms-managment-left">
-                      <p>{responseData.length} Responses</p>
+                      <p className="mb-2">{responseData.length} Responses</p>
                     </div>
-                    <div className="forms-management-middle">
-                        <Form.Group>
+                    <div className="d-sm-flex align-items-center">
+                        <Form.Group className="me-3">
                           <Form.Label>From Date</Form.Label>
                           <Form.Control
                             type="date"
@@ -241,8 +244,7 @@ function FormResponse(props) {
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
-
-                        <Form.Group>
+                        <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
                           <Form.Control
                             type="date"
@@ -260,27 +262,27 @@ function FormResponse(props) {
                         </Form.Group>
                         <Button
                           variant="primary"
-                          type="submit"
+                          type="submit" className="mt-4"
                           onClick={() => { getResponse('') }}>
                           Apply
                         </Button>
                     </div>
-                    <div className="forms-managment-right">
-                      <div className="forms-search">
-                        <Form.Group>
-                          <div className="forms-icon">
-                            <img src="../img/search-icon-light.svg" alt="" />
-                          </div>
-                          <Form.Control
-                            type="text"
-                            placeholder="Search..."
-                            name="search"
-                            onChange={(e) => {
-                              getResponse(e.target.value);
-                            }}
-                          />
-                        </Form.Group>
-                      </div>
+                    
+                  </div>
+                    <div className="forms-search me-0 ms-auto mt-3">
+                      <Form.Group>
+                        <div className="forms-icon">
+                          <img src="../img/search-icon-light.svg" alt="" />
+                        </div>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search..."
+                          name="search"
+                          onChange={(e) => {
+                            getResponse(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
                     </div>
                   </div>
                 </div>
@@ -453,7 +455,7 @@ function FormResponse(props) {
                                                   '.jpeg'
                                                 ) ? (
                                                 <>
-                                                  <img style={{ height: "40px", width: "51px" }}
+                                                  <img style={{height:"40px",width:"51px"}}
                                                     src={`${Object.values(
                                                       JSON.parse(item.fields)
                                                     )[inner_index]
@@ -465,81 +467,81 @@ function FormResponse(props) {
                                               )[inner_index]?.includes(
                                                 '.doc'
                                               ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.docx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.html'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.htm'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.odt'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.xls'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.xlsx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'ods'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.ppt'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.pptx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.pdf'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.txt'
-                                                ) ? (
-                                                <a
-                                                  role="button"
-                                                  href={
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.docx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.html'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.htm'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.odt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xls'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xlsx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                'ods'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.ppt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pptx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pdf'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.txt'
+                                              ) ? (
+                                              <a
+                                                role="button"
+                                                href={
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]
+                                                }
+                                                download
+                                              >
+                                                <p>
+                                                  {
                                                     Object.values(
                                                       JSON.parse(item.fields)
-                                                    )[inner_index]
+                                                    )[inner_index].split("/")[Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index].split("/").length-1]
                                                   }
-                                                  download
-                                                >
-                                                  <p>
-                                                    {
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index].split("/")[Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index].split("/").length - 1]
-                                                    }
-                                                  </p>
-                                                </a>
-                                              ) : (
+                                                </p>
+                                              </a>
+                                            ) : (
                                                 <p>
                                                   {
                                                     Object.values(
