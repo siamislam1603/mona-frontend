@@ -9,7 +9,7 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useRef } from 'react';
 import { FullLoader } from "../components/Loader";
-import { CSVDownload,CSVLink } from 'react-csv';
+import { CSVDownload, CSVLink } from 'react-csv';
 
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
@@ -61,7 +61,7 @@ const ChildrenEnrol = () => {
 
           let tempData = data.map((dt, index) =>
           ({
-            
+
             name: `${dt.child_name} ,${dt.dob}`,
             dob: `${moment(dt.dob).format('DD/MM/YYYY')}`,
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
@@ -78,47 +78,47 @@ const ChildrenEnrol = () => {
 
           let temp = tempData;
           let csv_data = [];
-          console.log("Temo new",tempData)
+          console.log("Temo new", tempData)
           temp.map((item, index) => {
-    
+
             delete item.is_deleted;
-            
+
             // delete item.user_id;
-            
+
             csv_data.push(item);
             let data = { ...csv_data[index] };
 
-            console.log("THE DATA",data)
+            console.log("THE DATA", data)
 
             let d = data.parentName.split(",")
-            let educator  = data.educatorassisgned.split(",");
+            let educator = data.educatorassisgned.split(",");
             console.log()
-            let educatorArray =[];
+            let educatorArray = [];
 
             let parent = [];
-            d.map((item,index) => {
-              if(item !="undefined" && item !="null"&& item.trim().split('.').pop() != "blob"){
-                 parent[index] = item;
+            d.map((item, index) => {
+              if (item != "undefined" && item != "null" && item.trim().split('.').pop() != "blob") {
+                parent[index] = item;
               }
             })
 
-            educator.map((item,index) =>{
-              
-              if(item.trim() !="undefined" && item.trim() !="null" && item.trim().split('.').pop() !== "blob" &&item != ""){
+            educator.map((item, index) => {
+
+              if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() !== "blob" && item != "") {
                 educatorArray[index] = item;
-             }
+              }
             })
             // console.log("educatorArray[1]",educatorArray[1])
-            let DOB =  moment(data.dob).format('DD/MM/YYYY')
-            console.log("EDut",educatorArray[1])
-         
-            data["specailneed"]= data.specailneed == 0 ?"No":"Yes"; 
+            let DOB = moment(data.dob).format('DD/MM/YYYY')
+            console.log("EDut", educatorArray[1])
+
+            data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
-            data["educatorassisgned"]=educatorArray
+            data["educatorassisgned"] = educatorArray
             data["name"] = data.name.split(",")[0];
 
-             
+
             csv_data[index] = data;
           });
           setCsvData(csv_data);
@@ -214,31 +214,33 @@ const ChildrenEnrol = () => {
       formatter: (cell) => {
         cell = cell.split(',');
         return (<>
-          {
-            cell[0] != "undefined" &&
-            <div className="user-list">
-              <span className="user-pic">
-                {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
-                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
-              </span><span className="user-name">
-                {cell[0][0].toUpperCase() + cell[0].slice(1)}
-                {/* <span>{cell[1]}</span> */}
-              </span>
-            </div>
-          }
+          <div className="parentName" style={{ maxHeight: '100px', overflowY: "scroll" }}>
+            {
+              cell[0] != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
+                  <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
+                </span><span className="user-name">
+                  {cell[0][0].toUpperCase() + cell[0].slice(1)}
+                  {/* <span>{cell[1]}</span> */}
+                </span>
+              </div>
+            }
 
-          {
-            cell[2] != "undefined" &&
-            <div className="user-list">
-              <span className="user-pic">
-                <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
-              </span><span className="user-name">{
-             
-                cell[2][0].toUpperCase()+cell[2].slice(1)
-              }
-              </span>
-            </div>
-          }
+            {
+              cell[2] != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
+                </span><span className="user-name">{
+
+                  cell[2][0].toUpperCase() + cell[2].slice(1)
+                }
+                </span>
+              </div>
+            }
+          </div>
         </>
         )
       },
@@ -282,19 +284,19 @@ const ChildrenEnrol = () => {
     },
   ];
 
-const CSV = () =>{
-  return (
-    <CSVLink
-    data={csvData}
-    filename={"my-file.csv"}
-    className="btn btn-primary"
-    target="_blank"
-  >
-    Download me
-  </CSVLink>
-  )
-}
-console.log("CSV",csvDownloadFlag)
+  const CSV = () => {
+    return (
+      <CSVLink
+        data={csvData}
+        filename={"my-file.csv"}
+        className="btn btn-primary"
+        target="_blank"
+      >
+        Download me
+      </CSVLink>
+    )
+  }
+  console.log("CSV", csvDownloadFlag)
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
@@ -317,7 +319,7 @@ console.log("CSV",csvDownloadFlag)
 
 
   ];
-  
+
   return (
     <>
       <div id="main">
@@ -353,7 +355,7 @@ console.log("CSV",csvDownloadFlag)
                                   <div className="data-search me-3">
                                     <SearchBar {...props.searchProps} />
                                   </div>
-                                  
+
                                   <Dropdown className="filtercol me-3">
                                     <Dropdown.Toggle
                                       id="extrabtn"
@@ -417,49 +419,49 @@ console.log("CSV",csvDownloadFlag)
                                   </Dropdown>
 
                                   {localStorage.getItem("user_role") === "franchisor_admin" ? (
-                        <Dropdown>
-                             
-                        <Dropdown.Toggle
-                          id="extrabtn"
-                          className="ctaact"
-                        >
-                          <img src="../img/dot-ico.svg" alt="" />
-                        </Dropdown.Toggle>
+                                    <Dropdown>
+
+                                      <Dropdown.Toggle
+                                        id="extrabtn"
+                                        className="ctaact"
+                                      >
+                                        <img src="../img/dot-ico.svg" alt="" />
+                                      </Dropdown.Toggle>
 
 
-                        <Dropdown.Menu>
-                          <Dropdown.Item
-                          as="button"
-                            onClick={() => {
-                              setCsvDownloadFlag(true);
-                            }}
-                          >
-                            
-                            <CSVLink
-                                data={csvData}
-                                filename={"Children Enroled.csv"}  
-                                // filename="dskak.csv"
-                                headers={headers}
-                                target="_blank"
-                                // ref={csvLink}
-                              >
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item
+                                          as="button"
+                                          onClick={() => {
+                                            setCsvDownloadFlag(true);
+                                          }}
+                                        >
 
-                                {"Export CSV"}
-                                
-                                </CSVLink> 
-                              
+                                          <CSVLink
+                                            data={csvData}
+                                            filename={"Children Enroled.csv"}
+                                            // filename="dskak.csv"
+                                            headers={headers}
+                                            target="_blank"
+                                          // ref={csvLink}
+                                          >
+
+                                            {"Export CSV"}
+
+                                          </CSVLink>
 
 
-                          
-                            
-                          </Dropdown.Item>
-                          {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+
+
+
+                                        </Dropdown.Item>
+                                        {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                             Delete All Row
                           </Dropdown.Item> */}
-                        </Dropdown.Menu>
-                      </Dropdown>
-                  ): (null)}   
-                            
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  ) : (null)}
+
                                 </div>
                               </div>
                             </header>
