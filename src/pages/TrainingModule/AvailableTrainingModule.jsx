@@ -39,7 +39,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [dueDataTraining,setDueDataTraining]= useState([])
   const [nodueData,setNoDueData]= useState([])
   const [page,setPage] = useState(6)
-  const [filterData, setFilterData] = useState("due_date")
+  const [filterData, setFilterData] = useState("alphabatical")
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
