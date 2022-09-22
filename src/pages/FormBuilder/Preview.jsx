@@ -126,6 +126,14 @@ const Preview = (props) => {
                     })}
                   </Row>
                 </Form>
+                <Button  onClick={()=>{
+                  navigate('/form', {
+                    state: {
+                      message: 'Form added successfully.',
+                      form_template: true,
+                    },
+                  });
+                }}>Save</Button>
               </div>
             </div>
           </Container>

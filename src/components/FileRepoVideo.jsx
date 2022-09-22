@@ -16,8 +16,8 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
                                 <source src={data} type="video/mp4" />
                                 <source src={data} type="video/ogg" />
                             </video> */}
-                            <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                            {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+                            {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+                            <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                         </div>
                         <div className="vid-title">
                             {title}<span className="time">{duration}</span>

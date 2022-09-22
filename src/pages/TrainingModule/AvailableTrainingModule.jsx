@@ -2,14 +2,29 @@ import React, { useState, useEffect } from "react";
 import { Col, Row, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 import moment from 'moment';
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
 import { ToastContainer, toast } from 'react-toastify';
 
+const animatedComponents = makeAnimated();
 
-const AvailableTraining = ({ filter, selectedFranchisee }) => {
-  console.log('FILTER:', filter);
+const filterCategory = [
+  {
+    id: 0,
+    value: "alphabatical",
+    label: "Alphabetical"
+  },
+  {
+    id: 1,
+    value: "due_date",
+    label: "Due Date"
+  }
+];
+
+const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [saveTrainingId, setSaveTrainingId] = useState(null);
@@ -24,6 +39,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   const [dueDataTraining,setDueDataTraining]= useState([])
   const [nodueData,setNoDueData]= useState([])
   const [page,setPage] = useState(6)
+  const [filterData, setFilterData] = useState("due_date")
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -31,47 +47,40 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   const [errorMessageToast, setErrorMessageToast] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
+  const [trainingWithDueDate, setTrainingWithDueDate] = useState([]);
+  const [trainingWithoutDueDate, setTrainingWithoutDueDate] = useState([]);
+
   const fetchAvailableTrainings = async () => {
     try {
-      console.log('INSIDE AVAILABLE TRAINING MODULE',"duetraining",dueDataTraining,"No due",nodueData,page)
-      console.log()
       let user_id = localStorage.getItem('user_id');
-      console.log('USER ID:', user_id)
-      console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
       const token = localStorage.getItem('token');
-  
-      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
+
+      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}&filter=${filterData}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      console.log("Log respon",response)
       if (response.status === 200 && response.data.status === "success") {
-        console.log('RESPONSE:', response.data);
         const { searchedData } = response.data;
-  
-        let uniqueObjArray = [
-          ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
-        ];
         setfullLoaderStatus(false)
-        setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0));
-        console.log("Search data",searchedData)
+        // setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0))
+        let withDueDate = searchedData.filter(d => d.training.end_date !== null);
+        let withoutDueDate = searchedData.filter(d => d.training.end_date === null);
+        setTrainingWithDueDate(withDueDate);
+        setTrainingWithoutDueDate(withoutDueDate);
+
         setNoDueData(false)
         setDueDataTraining(false)
         searchedData?.length>0 &&  searchedData?.map((item) => {
-        
-          console.log("Indside Mao",dueDataTraining)
          if(item.training.end_date) {
           return  setDueDataTraining(true)
           //  setNoDueData(false)
          }
          
          else if(!item.training.end_date  ){
-          console.log("NO end data")
           return setNoDueData(true)
          }
          else if(item.training.end_date && !item.training.end_date){
-            console.log("Item training end date",nodueData,item.training.end_date)
          }
         }) 
         
@@ -90,8 +99,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       }
    
     } catch (error) {
-      
-        console.log("The error",error)
         setNoDueData(false)
         setDueDataTraining(false)
         setAvailableTrainingData([])
@@ -102,7 +109,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   };
 
   const handleTrainingDelete = async (trainingId) => {
-    console.log('DELETING THE TRAINING!');
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -121,7 +127,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 
   // FETCH TRAINING DATA
   const fetchTrainingData = async (trainingId) => {
-    console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
@@ -130,10 +135,8 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       }
     });
 
-    console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      console.log('TRAINING:', training);
 
       if(training?.shares.length > 0) {
         copyDataToStates(training);
@@ -147,7 +150,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   };
 
   const copyDataToStates = (training) => {
-    console.log('COPYING DATA TO STATES:');
     localStorage.getItem('user_role') === 'franchisor_admin' 
     ? setFormSettings(prevState => ({
         ...prevState,
@@ -192,7 +194,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    console.log('F_ID_ID:', f_id);
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
@@ -219,7 +220,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       }
     });
 
-    console.log('SHARE RESPONSE:', response);
     if (response.status === 201 && response.data.status === "success") {
       let { msg: successMessage } = response.data;
       setSuccessMessageToast('Training re-shared successfully.');
@@ -228,29 +228,6 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       setErrorMessageToast(failureMessage);
     }
   }
-
-  // const filterData = (req, res, next) => {
-  //   setFilteredData(availableTrainingData);
-
-  //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
-  //   setFilteredData(newData);
-  // };
-//   const handleScroll = () => {
-//     console.log("HANDLE SCROLL")
-//     let userScrollHeight = window.innerHeight + window.scrollY;
-//         let windowBottomHeight = document.documentElement.offsetHeight;
-//       if (userScrollHeight >= windowBottomHeight) {
-//         fetchAvailableTrainings();
-//         setPage(prevCount => prevCount + 5)
-//       }
-// };
-// window.onscroll = function () {
-//   let userScrollHeight = window.innerHeight + window.scrollY;
-//         let windowBottomHeight = document.documentElement.offsetHeight;
-//         if (userScrollHeight >= windowBottomHeight) {
-//                   setPage(page + 5)
-//         }
-//     }
 
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
@@ -274,7 +251,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 
   useEffect(() => {
     fetchAvailableTrainings();
-  }, [filter.search,page,filter.category_id]);
+  }, [filter.search, page, filter.category_id, filterData]);
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -282,11 +259,12 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
 
   useEffect(() => {
     fetchTrainingData(saveTrainingId);
-    console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log('Available Training Data:', availableTrainingData);
+  useEffect(() => {
+    setTabName('assigned_training');
+  }, []);
+
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -297,9 +275,29 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
         {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
         {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
           <Row>
-          <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
-          {availableTrainingData
-              ? availableTrainingData.map((item) => {
+          {
+            trainingWithDueDate?.length > 0 &&
+            <div className="top-bar">
+              <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
+
+              <div className="selectdropdown ms-auto d-flex align-items-center">
+                <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                  <Form.Label className="d-block me-2">Filter by</Form.Label>
+                  <Select
+                    closeMenuOnSelect={true}
+                    placeholder={"Select"}
+                    components={animatedComponents}
+                    value={filterCategory.filter(d => d.value === filterData)}
+                    options={filterCategory}
+                    className="selectdropdown-col"
+                    onChange={(e) => setFilterData(e.value)}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+          }
+          {trainingWithDueDate
+              ? trainingWithDueDate.map((item) => {
                 if(item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
@@ -350,10 +348,13 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
               : null
             }
             {nodueData && dueDataTraining ? <hr/> : null}
-    
+            
+             {
+              trainingWithoutDueDate?.length > 0 &&
               <h3 className="title-sm mb-3 mt-3"><strong>Training without due date</strong></h3>
-             {availableTrainingData
-              ? availableTrainingData.map((item) => {
+             }
+              {trainingWithoutDueDate
+              ? trainingWithoutDueDate.map((item) => {
                 if(!item.training.end_date){
                   return (
                     <Col lg={4} md={6}>
@@ -899,7 +900,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                     }} />
                                 </Form.Group>
                                 :
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3" style={{ display: "none" }}>
                                 <Form.Check
                                   type="checkbox"
                                   label="All Roles"

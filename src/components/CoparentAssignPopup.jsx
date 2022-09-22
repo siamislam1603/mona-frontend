@@ -14,7 +14,8 @@ const CoparentAssignPopup = (props) => {
 
   const [selectedParents, setSelectedParents] = useState([])
   const handleClose = () => props.handleClose();
-    const assignParents = async() => {
+    
+  const assignParents = async() => {
         console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
         let clearMapping =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: []}, {

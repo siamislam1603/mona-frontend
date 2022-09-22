@@ -307,7 +307,7 @@ const AddNewTraining = () => {
     event.preventDefault();
     // window.scrollTo(0, 0);
     console.log(coverImage, "coverImage")
-    let errorObj = TrainingFormValidation(trainingData);
+    let errorObj = TrainingFormValidation(trainingData, relatedFiles);
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -393,6 +393,15 @@ const AddNewTraining = () => {
       }));
     }
   }, [selectedFranchisee]);
+
+  useEffect(() => {
+    if(relatedFiles?.length < 5) {
+      setErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [relatedFiles]);
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
@@ -667,7 +676,7 @@ const AddNewTraining = () => {
                             setUploadError={setDocErrorMessage}
                             onSave={setRelatedFiles}
                           />
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
                           <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                           {
                             docErrorMessage  &&
@@ -678,6 +687,7 @@ const AddNewTraining = () => {
                               )
                             })
                           }
+                          { errors.doc !== null && <span className="error">{errors.doc}</span> }
                         </Form.Group>
                       </Col>
                       <Col md={12}>

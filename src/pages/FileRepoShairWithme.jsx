@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import axios from "axios";
@@ -20,25 +19,32 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       })
-      if (response) {
-        setfullLoaderStatus(false)
-      }
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
           name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
-          createdAt: dt.updatedAt,
+          updatedAt: dt.updatedAt,
+          createdAt: dt.createdAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
         }));
         setUserData(tempData);
+        setfullLoaderStatus(false)
       }
-
+      setfullLoaderStatus(false)
     } catch (e) {
       setfullLoaderStatus(false)
     }
-
   }
+
+  useEffect(() => {
+    GetData();
+  }, [setUserData]);
+
+  useEffect(() => {
+    GetData();
+  }, [selectedFranchisee]);
+
 
   const GetSaachhData = async () => {
     try {
@@ -56,7 +62,8 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
           name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
-          createdAt: dt.updatedAt,
+          updatedAt: dt.updatedAt,
+          createdAt: dt.createdAt,
           userID: dt.id,
           creatorName: dt.ModifierName + "," + dt.updatedBy
         }));
@@ -69,12 +76,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   }
 
 
-  useEffect(() => {
-    GetData();
-  }, []);
-  useEffect(() => {
-    GetData();
-  }, [selectedFranchisee]);
+
 
   useEffect(() => {
     GetSaachhData();
@@ -117,8 +119,14 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       sort: true,
     },
     {
+      dataField: 'updatedAt',
+      text: 'Updated on',
+      sort: true,
+    },
+
+    {
       dataField: 'creatorName',
-      text: 'Created by',
+      text: 'Updated by',
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
@@ -184,7 +192,9 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
             </>
           )}
         </ToolkitProvider>
-      </>) : null
+      </>) :
+        <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
+
       }
       {!userData && fullLoaderStatus === false ?
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
@@ -194,4 +204,4 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   )
 }
 
-export default FileRepoShairWithme
+export default FileRepoShairWithme  

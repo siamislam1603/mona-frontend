@@ -10,7 +10,7 @@ import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { TrainingFormValidation } from '../helpers/validation';
+import { EditTrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -270,7 +270,7 @@ const EditTraining = () => {
       if (imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
         setLoader(false)
         setCreateTrainingModal(false);
-        localStorage.setItem('success_msg', 'Training Updated Successfully!');
+        localStorage.setItem('success_msg', 'Training Updated Successfully');
         localStorage.setItem('active_tab', '/created-training');
         window.location.href = "/training";
       }
@@ -352,7 +352,7 @@ const EditTraining = () => {
     event.preventDefault();
     window.scrollTo(0, 0);
 
-    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
+    let errorObj = EditTrainingFormValidation(trainingData, relatedFiles, fetchedRelatedFiles);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -439,6 +439,15 @@ const EditTraining = () => {
   useEffect(() => {
     fetchTrainingFormData();
   }, [fileDeleteResponse]);
+
+  useEffect(() => {
+    if((relatedFiles?.length + fetchedRelatedFiles?.length) < 5) {
+      setErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [relatedFiles]);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -686,7 +695,7 @@ const EditTraining = () => {
                               setUploadError={setDocFileError}
                               onSave={setRelatedFiles}
                             />
-                            <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
                             <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                             {
                               docFileError  &&
@@ -717,6 +726,7 @@ const EditTraining = () => {
                                   )
                                 })
                               }
+                              { errors.doc !== null && <span className="error">{errors.doc}</span> }
                             </div>
                           </Form.Group>
                         </Col>
