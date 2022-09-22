@@ -1465,10 +1465,10 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .topheader .rpanel .user-sec .dropdown .btn-primary{min-width:auto!important}
 .selectdropdown .dropdown .btn-primary,.selectdropdown .dropdown .btn-primary:active{min-width:275px}
 .title-head{display:block}
-.custom_content,.custom_signin_page{padding:40px;margin:0}
+.custom_content,.custom_signin_page{padding:20px;margin:0}
 .custom_content:before{background-size:contain}
 .sec-column{padding:20px}
-.extra-btn{justify-content:space-between}
+.extra-btn{justify-content:flex-start}
 .user-management-sec .my-2.col-lg-4.col-md-6{flex:0 0 auto;width:50%}
 .logo-column{position:absolute;top:11px;left:40px;width:85px}
 .logo-column .navbar-brand{padding:0;margin:0}
@@ -1489,12 +1489,25 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 #basic-navbar-nav .navbar-toggler:before{content:"";position:absolute;width:1px;pointer-events:none;height:100%;background:var(--white);transform:rotate(45deg);left:0;top:0}
 #basic-navbar-nav .navbar-toggler:after{content:"";position:absolute;width:1px;height:100%;background:var(--white);transform:rotate(-45deg);pointer-events:none;left:0;top:0}
 .search-bar{right:210px}
+.title-head .viewall {margin-top:1rem}
+.mainsection { padding-bottom:30px; }
+.d-flex.justify-content-center.my-5 { margin: 1rem 0!important; }
 }
 @media only screen and (max-width:991px){
 .entry-container .row>.col-md-5,.entry-container .row>.col-md-7{width:100%}
 .rightcolumn{border-left:none;padding-left:0;height:auto}
 .col-md-6 .training-column .nowrap{width:100%}
 .react-bootstrap-table{overflow:auto}
+.login-bg .col-md-6 { width: 100%; }
+.custom_logo_image { max-width: 75px; margin: auto; }
+.custom_main_title { font-size: 26px; padding: 15px 0 15px 0; margin-bottom: 0; }
+.custom_main_content { font-size: 16px; line-height: 24px; }
+.custom_content, .custom_signin_page { padding: 20px; }
+.custom_title { padding-bottom: 25px; }
+.login_form .col .form-check { padding-right: 0; }
+.custom_submit .kids-art { left: -30px; }
+.login-bg .container { min-height: auto; }
+.custom_content, .custom_signin_page { max-width: 75%; margin: 40px auto; }
 }
 @media only screen and (max-width:767px){
 .new-form-radio-box{width:100%}
@@ -1524,32 +1537,30 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .extra-btn .data-search{flex:0 0 100%;max-width:100%;margin-bottom:10px}
 .user-management-sec .my-2.col-lg-4.col-md-6{width:100%}
 .title-head{margin-bottom:1rem}
-.title-head .viewall {margin-top:1rem}
 .title-head .title-lg{margin-bottom:1rem}
 .entry-container{padding:20px 0 0 0}
 .user-management-sec .table>:not(caption)>*>*{white-space:nowrap}
 .pagination{margin:1rem 0}
-.user-list{display:block}
+.user-list, .user-list .FileResp {display:block}
 .user-list .user-pic{width:44px;display:block}
 .three-col .item,.two-col .item{flex:0 0 48%}
-.custom_logo_image { max-width: 75px; margin: auto; }
-.custom_main_title { font-size: 26px; padding: 15px 0 15px 0; margin-bottom: 0; }
-.custom_main_content { font-size: 16px; line-height: 24px; }
-.custom_content, .custom_signin_page { padding: 20px; }
-.custom_title { padding-bottom: 25px; }
-.login_form .col .form-check { padding-right: 0; }
-.custom_submit .kids-art { left: -30px; }
+.responses-forms-header-section .d-md-flex { display: flex; flex-flow: column-reverse; }
+.responses-forms-header-section .d-md-flex .forms-managmentsection { width: 100%; }
+.responses-forms-header-section .d-md-flex .forms-search.me-0.ms-auto.mt-3 { margin: 0 0 20px 0!important; width: 100%;  }
+.container-cropper, .popup { width: 100%; }
+.container-buttons { margin-top: 20px; }
+.custom_content, .custom_signin_page { max-width: 100%; margin: 20px auto; }
 }
 @media only screen and (max-width:575px){
 .forms-filter button{margin-right:15px}
 .form-settings-content .new-form-radio-box{width:auto}
 .form-settings-content .new-form-radio-box-1{width:auto}
-.btn{min-width:75px; line-height: 35px;}
+.btn{min-width:75px; line-height: 30px;}
 .add-q button{padding:0 10px}
 .forms-content-section .row>div{width:100%;flex:0 0 100%}
 .forms-header-section .tab-section .nav-tabs li{width:100%;text-align:center}
 .forms-header-section .tab-section .nav-tabs li button{margin:0 auto}
-.btn,.extra-btn .btn-btn-outline,.extra-btn .ctaact{padding:5px 7px}
+.btn,.extra-btn .btn-btn-outline,.extra-btn .ctaact{padding:5px 15px; font-size: 12px;}
 .data-search.me-3,.extra-btn .btn.btn-primary.me-3,.filtercol.me-3.dropdown{margin-right:3px!important}
 .new-user-sec{display:block}
 .new-user-sec .user-pic-sec .file-upload-form{margin:auto}
