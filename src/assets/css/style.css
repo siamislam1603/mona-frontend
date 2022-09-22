@@ -1253,7 +1253,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .notificationpopup .notifimg{position:relative}
 .notificationpopup .notifimg .notilink{position:relative;display:flex;align-items:center;color:var(--black)}
 .notificationpopup .notifimg .notilink .notifpic{border-radius:100%;max-width:40px;min-width:40px;height:40px;overflow:hidden;margin-right:10px;position:relative}
-.notificationpopup .notiftxt .title-xxs{font-size:13px;font-weight: bold;}
+.notificationpopup .notiftxt .title-xxs{font-size:13px;font-weight: normal;}
+.notificationpopup .notifitem.unread .notiftxt .title-xxs{font-weight: bold;}
 .notificationpopup .notifimg .notilink .notifpic img{width:40px;height:40px}
 .notificationpopup .notifitem{position:relative;padding:10px 15px;background-color:var(--white);border-bottom:1px solid rgba(0,0,0,.1)}
 .notificationpopup .notifitem .gdot{position:absolute;width:10px;height:10px;border-radius:100%;background-color:green;border:1px solid var(--ms-white);left:30px;bottom:0;z-index:2}
@@ -1523,6 +1524,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .extra-btn .data-search{flex:0 0 100%;max-width:100%;margin-bottom:10px}
 .user-management-sec .my-2.col-lg-4.col-md-6{width:100%}
 .title-head{margin-bottom:1rem}
+.title-head .viewall {margin-top:1rem}
 .title-head .title-lg{margin-bottom:1rem}
 .entry-container{padding:20px 0 0 0}
 .user-management-sec .table>:not(caption)>*>*{white-space:nowrap}
