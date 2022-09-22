@@ -37,7 +37,12 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                 setUserData(tempData);
                 setfullLoaderStatus(false)
             }
+            else if (response.status === 404){
+                setUserData([])
+                setfullLoaderStatus(false)
+            }
         } catch (err) {
+            setUserData([])
             setfullLoaderStatus(false)
         }
 
@@ -63,7 +68,12 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                 setUserData(tempData);
                 console.log(tempData, "tempData")
             }
+            else if (response.status === 404){
+                setUserData([])
+                setfullLoaderStatus(false)
+            }
         } catch (err) {
+            setUserData([])
             setfullLoaderStatus(false)
         }
 
@@ -77,6 +87,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     }, [SearchValue])
 
     useEffect(() => {
+        console.log(selectedFranchisee,"selectedFranchisee")
         if (selectedFranchisee) {
             GetData();
             // setUserData();
