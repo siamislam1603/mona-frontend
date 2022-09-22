@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 import FileRepoVideo from '../components/FileRepoVideo';
@@ -12,6 +12,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
             setCurrentURI(reader.result);
         };
     }
+
     const { acceptedFiles, getRootProps, getInputProps } =
         useDropzone
             ({
@@ -38,60 +39,63 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                 },
                 useFsAccessApi: false,
             })
+    // const removeFile = file => () => {
+    //     const newFiles = { myFiles }
+    //     newFiles.splice(newFiles.indexOf(file), 1)
+    //     setMyFiles(newFiles)
+    // }
     const removeFile = file => () => {
-        const newFiles = { myFiles }
+        const newFiles = [myFiles]
         newFiles.splice(newFiles.indexOf(file), 1)
         setMyFiles(newFiles)
     }
-
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
-          
-        return <>
-            {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
-                <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
-            </>)
-                : file.type === "application/pdf" || file.type === "text/html" || file.type === "text/htm" || file.type === "text/doc" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
-                    <>
-                        <span className="user-pic-tow">
-                            {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
-                            <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                            {/* </a> */}
-                        </span>
-                        <span className="user-name">
-                            {file.name}
-                            {getBase64(file)}.Doc
-                        </span>
-                    </>
-                )
-                    : file.type === "video/mp4" ?
-                        (<>
-                            <div style={{ display: "flex", justifyContent: " center" }}>
-                                <FileRepoVideo
-                                    data={URL.createObjectURL(file)}
-                                />
-                            </div>
-                        </>) :
-                        (
-                            file.type === "audio/mpeg" ? (
-                                <>
-                                    <span className="user-pic-tow">
-                                        {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
-                                        <img src="../img/audio-ico.png" className="me-2" alt="" />
-                                        {/* </a> */}
-                                    </span>
-                                    <span className="user-name">
-                                        {file.name}
-                                        {getBase64(file)}.Doc
-                                    </span>
-                                </>
-                            ) : (<></>)
-                        )
-            }
-            <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
-                <img src="../img/removeIcon.svg" alt="" />
-            </Link>
-        </>
+            return <>
+                {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
+                    <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
+                </>)
+                    : file.type === "application/pdf" || file.type === "text/html" || file.type === "text/htm" || file.type === "text/doc" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
+                        <>
+                            <span className="user-pic-tow">
+                                {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                {/* </a> */}
+                            </span>
+                            <span className="user-name">
+                                {file.name}
+                                {getBase64(file)}.Doc
+                            </span>
+                        </>
+                    )
+                        : file.type === "video/mp4" ?
+                            (<>
+                                <div style={{ display: "flex", justifyContent: " center" }}>
+                                    <FileRepoVideo
+                                        data={URL.createObjectURL(file)}
+                                    />
+                                </div>
+                            </>) :
+                            (
+                                file.type === "audio/mpeg" ? (
+                                    <>
+                                        <span className="user-pic-tow">
+                                            {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
+                                            <img src="../img/audio-ico.png" className="me-2" alt="" />
+                                            {/* </a> */}
+                                        </span>
+                                        <span className="user-name">
+                                            {file.name}
+                                            {getBase64(file)}.Doc
+                                        </span>
+                                    </>
+                                ) : (<></>)
+                            )
+                }
+                <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>
+                    <img src="../img/removeIcon.svg" alt="" />
+                </Link>
+            </>
     })
     return (
 
@@ -99,13 +103,18 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
             <div {...getRootProps({ className: "dropzone d-block" })}>
                 <input {...getInputProps()} type="file" name="setting_file" />
                 <div className="text-center uploadfile" >
-                    <span>Please Select a file to share : <br /><span className="btn btn-primary" >Choose File</span> <br /> <small>Accepted file types : doc, pdf, mp3, png, jpg</small></span>
+                    <span>Please Select a file to share : <br />
+                        <span className="btn btn-primary" >
+                            Choose File</span> <br />
+                        <small>Accepted file types : doc, pdf, mp3, png, jpg,video</small>
+                        <small className="fileinput">(less than 1GB)</small>
+                    </span>
                 </div>
             </div>
             <div className="showfiles mt-3">
                 <ul>{Filess}</ul>
             </div>
-           
+
         </div>
     );
 }

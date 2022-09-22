@@ -18,8 +18,9 @@ const getFranchisee = localStorage.getItem(`franchisee_id`)
 const { SearchBar } = Search;
 let selectedUserId = '';
 
-const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
+const FilerepoMyAdd = ({ filter }) => {
     let Params = useParams();
+
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
@@ -45,9 +46,16 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
+    const [selected_Franchisee, setselected_Franchisee] = useState();
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
     }
+    useEffect(() => {
+        const selected_Franchisee = localStorage.getItem("selected_Franchisee");
+        setselected_Franchisee(selected_Franchisee)
+        console.log(selected_Franchisee, "selected_Franchisee")
+    }, [])
+
 
     const SearchApi = async () => {
         try {
@@ -56,7 +64,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-                    console.log("responce", files)
+                  
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -77,6 +85,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     }
 
     const GetData = async () => {
+
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${saveFileId}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -85,7 +94,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
         if (response) {
             setfullLoaderStatus(false)
         }
-
         if (response.status === 200 && response.data.status === "success") {
             const { file } = response.data;
             copyFetchedData(file);
@@ -132,9 +140,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         setLoaderFlag(true);
-
         formSettings.franchisee = formSettings.franchisee[0] == "all" ? ["all"] : formSettings.franchisee
-
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -163,11 +169,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     const GetFile = async () => {
         try {
             let franchiseeId = selectedFranchisees === "All" || selectedFranchisees === "null" || selectedFranchisees === "undefined" ? "all" : selectedFranchisees;
+            let selectedFranchisee = selected_Franchisee === "All" ? franchiseeId : selected_Franchisee;
+
             if (franchiseeId) {
-                let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-                if (response) {
-                    setfullLoaderStatus(false)
-                }
+                let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${selectedFranchisee}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 console.log("DELETE RESPONSE", response)
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
@@ -182,6 +187,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                         filesId: dt.filesId,
                     }));
                     setUserData(tempData);
+                    setfullLoaderStatus(false)
                 }
             }
         } catch (err) {
@@ -241,7 +247,6 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
     useEffect(() => {
         if (selectedFranchisees) {
             GetFile();
-
         }
     }, [selectedFranchisees]);
 
@@ -410,10 +415,10 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                             {cell > 0 ?
                                 <span className="user-name">
                                     <img src="../img/sharing-ico.png" className="me-2" alt="" />
-                        
+
                                     Access Given
                                     {/* Access Not Given */}
-                                    
+
                                 </span> :
                                 <span className="user-name">
                                     <img src="../img/NoShore.png" className="me-2" alt="" />
@@ -559,7 +564,7 @@ const FilerepoMyAdd = ({ filter, selectedFranchisee }) => {
                     </Modal.Header>
                     <Modal.Body>
                         <div className="form-settings-content">
-                           {getUser_Role !== "franchisor_admin" ? (<></>) : ( <Row className="mt-4">
+                            {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
                                         <Form.Label>Give access to all Franchises</Form.Label>

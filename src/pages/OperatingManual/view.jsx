@@ -245,6 +245,7 @@ const OperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
+        console.log("THE OPERATING DATA",response)
         setSingleOperatingManual(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] =
@@ -909,7 +910,7 @@ const OperatingManual = () => {
                               }
                               return inner_index === innerIndex ? (
                                 <>
-                                  <PdfComponent {...inner_item} />
+                                  <PdfComponent {...inner_item}  />
                                   <Row>
                                     {inner_item.reference_video && (
                                       <Col xl={7} lg={6}>

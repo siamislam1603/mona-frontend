@@ -10,7 +10,7 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import {AddNewAnnouncementValidation} from "../helpers/validation" 
 import Select from 'react-select';
-import MyEditor from './CKEditor';
+import MyEditor from './CkeditorAnnouncement';
 import * as ReactBootstrap from 'react-bootstrap';
 import DropVideo from '../components/DragDropVideo';
 
@@ -375,7 +375,7 @@ console.log("ds",ds,cureent)
                 </div>
                   <Row >
                         <Form.Group className="col-md-6 mb-3">
-                          <Form.Label>Announcement Title</Form.Label>
+                          <Form.Label>Announcement Title *</Form.Label>
                           <Form.Control 
                           type="text" 
                           ref={title} 
@@ -518,7 +518,7 @@ console.log("ds",ds,cureent)
                       <Col md={12} className="mb-3" ref={meta_description}
                       >
                         <Form.Group>
-                        <Form.Label >Announcement Description</Form.Label>
+                        <Form.Label >Announcement Description *</Form.Label>
                         <MyEditor
                               errors={error}
                               

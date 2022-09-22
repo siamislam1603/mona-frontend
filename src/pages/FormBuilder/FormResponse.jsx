@@ -33,6 +33,10 @@ function FormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
+  const [dateFilter, setDateFilter] = useState({
+    from_date: "",
+    to_date: ""
+  });
   let hideFlag = false;
 
   useEffect(() => {
@@ -126,7 +130,7 @@ function FormResponse(props) {
       headers: myHeaders,
     };
 
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -185,6 +189,7 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
+  dateFilter && console.log('Filter Date:', dateFilter);
   return (
     <>
       <div id="main">
@@ -216,27 +221,68 @@ function FormResponse(props) {
                     </div>
                   </Col>
                 </Row>
-                <div className="responses-forms-header-section forms-header-section">
-                  <div className="forms-managment-section">
+                <div className="responses-forms-header-section forms-header-section mb-5">
+                  <div className="d-md-flex align-items-end mt-4">
+                    <div className="forms-managmentsection">
                     <div className="forms-managment-left">
-                      <p>{responseData.length} Responses</p>
+                      <p className="mb-2">{responseData.length} Responses</p>
                     </div>
-                    <div className="forms-managment-right">
-                      <div className="forms-search">
-                        <Form.Group>
-                          <div className="forms-icon">
-                            <img src="../img/search-icon-light.svg" alt="" />
-                          </div>
+                    <div className="d-sm-flex align-items-center">
+                        <Form.Group className="me-3">
+                          <Form.Label>From Date</Form.Label>
                           <Form.Control
-                            type="text"
-                            placeholder="Search..."
-                            name="search"
+                            type="date"
+                            name="from_date"
+                            value={dateFilter?.from_date}
+                            min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              getResponse(e.target.value);
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                from_date: e.target.value
+                              }))
                             }}
                           />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
-                      </div>
+                        <Form.Group className="me-3">
+                          <Form.Label>To Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="to_date"
+                            value={dateFilter?.to_date}
+                            min={new Date().toISOString().slice(0, 10)}
+                            onChange={(e) => {
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                to_date: e.target.value
+                              }))
+                            }}
+                          />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit" className="mt-4"
+                          onClick={() => { getResponse('') }}>
+                          Apply
+                        </Button>
+                    </div>
+                    
+                  </div>
+                    <div className="forms-search me-0 ms-auto mt-3">
+                      <Form.Group>
+                        <div className="forms-icon">
+                          <img src="../img/search-icon-light.svg" alt="" />
+                        </div>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search..."
+                          name="search"
+                          onChange={(e) => {
+                            getResponse(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
                     </div>
                   </div>
                 </div>
@@ -416,7 +462,86 @@ function FormResponse(props) {
                                                       }`}
                                                   ></img>
                                                 </>
-                                              ) : (
+                                              ) : Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.doc'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.docx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.html'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.htm'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.odt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xls'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.xlsx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                'ods'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.ppt'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pptx'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.pdf'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.txt'
+                                              ) ? (
+                                              <a
+                                                role="button"
+                                                href={
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]
+                                                }
+                                                download
+                                              >
+                                                <p>
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index].split("/")[Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index].split("/").length-1]
+                                                  }
+                                                </p>
+                                              </a>
+                                            ) : (
                                                 <p>
                                                   {
                                                     Object.values(
