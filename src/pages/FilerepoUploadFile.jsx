@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import DragDropFileEdit from '../components/DragDropFileEdit';
+import DragDropRepository from '../components/DragDropRepository';
 
 
 let selectedUserId = '';
@@ -187,7 +188,7 @@ const FilerepoUploadFile = () => {
         var formdata = new FormData();
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
-        // formdata.append('title', 'abc');
+        formdata.append('title', 'abc');
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
@@ -256,7 +257,6 @@ const FilerepoUploadFile = () => {
         fetch(`${BASE_URL}/fileRepo/`, requestOptions)
             .then((response) => {
                 response.json()
-
                 if (response.statusText === "Created") {
                     setLoaderFlag(false);
                     setShow(false);
@@ -274,7 +274,6 @@ const FilerepoUploadFile = () => {
             })
             .catch((error) => console.error('error', error));
     };
-
     useEffect(() => {
         setTimeout(() => {
             setUpladFile(null)
