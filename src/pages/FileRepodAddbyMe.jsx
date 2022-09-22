@@ -37,11 +37,10 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     }));
                     setUserData(tempData);
                     setfullLoaderStatus(false)  
+                } else if (response.status === 404){
+                    setUserData([])
+                    setfullLoaderStatus(false)
                 }
-            }
-            else if (response.status === 404){
-                setUserData([])
-                setfullLoaderStatus(false)
             }
         } catch (err) {
             setUserData([])
