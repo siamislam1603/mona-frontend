@@ -36,7 +36,7 @@ const FileRepository = () => {
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
-      body: JSON.stringify({ category_name }),
+      body: JSON.stringify({category_name }),
       redirect: 'follow',
     };
     fetch(`${BASE_URL}/fileCategory/`, requestOptions).then((response) => {
@@ -178,7 +178,7 @@ const FileRepository = () => {
                                 </Button>
                               </Modal.Footer>
                             </Modal>
-                          
+
                           </div>
                           <div className="training-column">
                             {tabLinkPath === "/available-Files"
