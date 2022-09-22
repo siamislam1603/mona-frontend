@@ -164,7 +164,7 @@ export const createOperatingManualValidation = (form,wordCount) => {
   if (!description || description === '')
     newErrors.description = 'Description is Required';
   if(wordCount>500){
-    newErrors.description = 'Description lenght limit is 500';
+    newErrors.description = 'Description count is more than 500';
   }
   return newErrors;
 };
