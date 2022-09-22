@@ -257,7 +257,7 @@ const Training = () => {
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id: e.id === 0 ? null : e.id
+                            category_id: e.id
                           }))}
                         />
                       </Form.Group>

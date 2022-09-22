@@ -33,45 +33,35 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   const fetchAvailableTrainings = async () => {
     try {
-      console.log('INSIDE AVAILABLE TRAINING MODULE',"duetraining",dueDataTraining,"No due",nodueData,page)
-      console.log()
       let user_id = localStorage.getItem('user_id');
-      console.log('USER ID:', user_id)
-      console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
       const token = localStorage.getItem('token');
-  
+
       const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}&filter=${filter.filter}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
-      console.log("Log respon",response)
+      console.log('RESPONSE FOR:', response.data);
       if (response.status === 200 && response.data.status === "success") {
-        console.log('RESPONSE:', response.data);
         const { searchedData } = response.data;
   
-        let uniqueObjArray = [
-          ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
-        ];
+        // let uniqueObjArray = [
+        //   ...new Map(searchedData.map((item) => [item.training.id, item])).values(),
+        // ];
         setfullLoaderStatus(false)
-        setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0));
-        console.log("Search data",searchedData)
+        setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0))
         setNoDueData(false)
         setDueDataTraining(false)
         searchedData?.length>0 &&  searchedData?.map((item) => {
-        
-          console.log("Indside Mao",dueDataTraining)
          if(item.training.end_date) {
           return  setDueDataTraining(true)
           //  setNoDueData(false)
          }
          
          else if(!item.training.end_date  ){
-          console.log("NO end data")
           return setNoDueData(true)
          }
          else if(item.training.end_date && !item.training.end_date){
-            console.log("Item training end date",nodueData,item.training.end_date)
          }
         }) 
         
@@ -90,8 +80,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
    
     } catch (error) {
-      
-        console.log("The error",error)
         setNoDueData(false)
         setDueDataTraining(false)
         setAvailableTrainingData([])
@@ -102,7 +90,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   };
 
   const handleTrainingDelete = async (trainingId) => {
-    console.log('DELETING THE TRAINING!');
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -121,7 +108,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   // FETCH TRAINING DATA
   const fetchTrainingData = async (trainingId) => {
-    console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
@@ -130,10 +116,8 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
     });
 
-    console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      console.log('TRAINING:', training);
 
       if(training?.shares.length > 0) {
         copyDataToStates(training);
@@ -147,7 +131,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   };
 
   const copyDataToStates = (training) => {
-    console.log('COPYING DATA TO STATES:');
     localStorage.getItem('user_role') === 'franchisor_admin' 
     ? setFormSettings(prevState => ({
         ...prevState,
@@ -192,7 +175,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    console.log('F_ID_ID:', f_id);
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
@@ -229,29 +211,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
     }
   }
 
-  // const filterData = (req, res, next) => {
-  //   setFilteredData(availableTrainingData);
-
-  //   let newData = availableTrainingData.filter(d => d.title.includes(searchTerm));
-  //   setFilteredData(newData);
-  // };
-//   const handleScroll = () => {
-//     console.log("HANDLE SCROLL")
-//     let userScrollHeight = window.innerHeight + window.scrollY;
-//         let windowBottomHeight = document.documentElement.offsetHeight;
-//       if (userScrollHeight >= windowBottomHeight) {
-//         fetchAvailableTrainings();
-//         setPage(prevCount => prevCount + 5)
-//       }
-// };
-// window.onscroll = function () {
-//   let userScrollHeight = window.innerHeight + window.scrollY;
-//         let windowBottomHeight = document.documentElement.offsetHeight;
-//         if (userScrollHeight >= windowBottomHeight) {
-//                   setPage(page + 5)
-//         }
-//     }
-
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
@@ -273,8 +232,9 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [errorMessageToast]);
 
   useEffect(() => {
+    console.log('FETCHING TRAINING FOR CATEGORY ID:', filter.category_id);
     fetchAvailableTrainings();
-  }, [filter.search,page,filter.category_id]);
+  }, [filter.search, page, filter.category_id, filter.filter]);
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -282,12 +242,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   useEffect(() => {
     fetchTrainingData(saveTrainingId);
-    console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
-
-  useEffect(() => {
-    fetchAvailableTrainings();
-  }, [filter.filter]);
 
   useEffect(() => {
     setTabName('assigned_training');
