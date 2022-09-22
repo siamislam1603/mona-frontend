@@ -897,7 +897,7 @@ function ViewFormBuilder(props) {
                         )}
                       </Tab>
 
-                      <Tab eventKey="form-templates" title="Form Templates">
+                      <Tab eventKey="form-templates" title="Form Templates and Responses">
                         <div className="tab-created">
                           <Tabs
                             defaultActiveKey={
@@ -946,6 +946,7 @@ function ViewFormBuilder(props) {
                                         <Row>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
+                                              console.log("total responcesssssssssssssssssss",inner_item)
                                               return (
                                                 inner_item.created_by ===
                                                   parseInt(
@@ -984,7 +985,7 @@ function ViewFormBuilder(props) {
                                                         />
                                                       </div>
                                                       <div className="content-title-section">
-                                                        <h6>
+                                                        <h6 >
                                                           {inner_item.form_name}
                                                         </h6>
                                                         <h4>
@@ -997,6 +998,21 @@ function ViewFormBuilder(props) {
                                                               'DD/MM/YYYY'
                                                             )}
                                                         </h4>
+                                                        {inner_item.form_data?.length && inner_item.form_data?.length>0 ?
+                                                        <span onClick={() => {
+                                                            setViewResponseFlag(
+                                                              true
+                                                            );
+                                                            setInnerIndex(
+                                                              inner_index
+                                                            );
+                                                            setIndex(index);
+                                                          }}>Total Responses : {inner_item.form_data?.length}
+                                                             {inner_item?.seen_count > 0 &&
+                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</span>
+                                                            :''
+                                                            }
+
                                                       </div>
                                                       <div className="content-toogle">
                                                         <div
@@ -1020,8 +1036,9 @@ function ViewFormBuilder(props) {
                                                                 ]?.form_data
                                                               );
                                                             }}
-                                                          />
-                                                          <span
+                                                          />{
+                                                            inner_item?.seen_count>0 && 
+                                                            <span
                                                             onClick={() => {
                                                               seenFormResponse(
                                                                 item?.forms[
@@ -1034,6 +1051,8 @@ function ViewFormBuilder(props) {
                                                               inner_item?.seen_count
                                                             }
                                                           </span>
+                                                          }
+                                                          
                                                         </div>
                                                         <Dropdown>
                                                           <Dropdown.Toggle id="dropdown-basic1">
@@ -1244,6 +1263,24 @@ function ViewFormBuilder(props) {
                                                                 'DD/MM/YYYY'
                                                               )}
                                                           </h4>
+
+
+                                                          {inner_item.form_data?.length && inner_item.form_data?.length>0 ?
+                                                          <span onClick={() => {
+                                                            setViewResponseFlag(
+                                                              true
+                                                            );
+                                                            setInnerIndex(
+                                                              inner_index
+                                                            );
+                                                            setIndex(index);
+                                                          }}>Total Responses : {inner_item.form_data?.length}
+                                                             {inner_item?.seen_count > 0 &&
+                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</span>
+                                                            :''
+                                                            }
+
+
                                                         </div>
                                                         <div className="content-toogle">
                                                           <div
@@ -1278,6 +1315,8 @@ function ViewFormBuilder(props) {
                                                               'item?.forms---->',
                                                               item?.forms
                                                             )}
+
+                                                            {inner_item?.seen_count>0 && 
                                                             <span
                                                               onClick={() => {
                                                                 seenFormResponse(
@@ -1291,6 +1330,8 @@ function ViewFormBuilder(props) {
                                                                 inner_item?.seen_count
                                                               }
                                                             </span>
+                                                          }
+
                                                           </div>
                                                           {localStorage.getItem(
                                                             'user_role'
