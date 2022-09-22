@@ -767,7 +767,7 @@ img.custom_logo_image{width:10%}
 .custom_term_text:hover{color:var(--black)}
 .custom_bottom a{color:var(--secondary);text-decoration:none}
 .custom_bottom a:hover{color:var(--black)}
-.custom_hide{position:absolute;right:10px;top:45px;color:#949596;cursor:pointer}
+.custom_hide{position:absolute;right:10px;top:38px;color:#949596;cursor:pointer}
 .form-group{position:relative}
 img.custom_facebook{padding-left:22px}
 .login-bg{min-height:100vh}
