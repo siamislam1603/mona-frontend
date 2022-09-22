@@ -31,17 +31,30 @@ const FileRepository = () => {
 
     myHeaders.append(
       'Authorization',
-      'Bearer ' + localStorage.getItem('token')
+      'Bearer ' + localStorage.getItem('token'),
     );
-    var requestOptions = {
+    // var requestOptions = {
+    //   method: 'post',
+    //   headers: myHeaders,
+    //   body: JSON.stringify({ category_name: category_name }),
+
+    // };
+    // fetch(`${BASE_URL}/fileCategory/`, requestOptions).then((response) => {
+    //   console.log("response", response)
+    //   response.json()
+    // }).catch((error) => {
+    //   console.log(error, "ERRRO")
+    // })
+    fetch(`${BASE_URL}/fileCategory/`, {
       method: 'POST',
       headers: myHeaders,
-      body: JSON.stringify({category_name }),
-      redirect: 'follow',
-    };
-    fetch(`${BASE_URL}/fileCategory/`, requestOptions).then((response) => {
-      response.json()
-    })
+      body: JSON.stringify({
+        category_name: category_name,
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      });
   }
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -53,6 +66,7 @@ const FileRepository = () => {
   const HandelSearch = (event) => {
     setSearchValue(event.target.value);
   }
+
   return (
     <>
       <div id="main">
@@ -109,7 +123,7 @@ const FileRepository = () => {
                                 }
                               </>)}
                               <li>
-                                {
+                                {/* {
                                   loginuser === "franchisor_admin" &&
                                   <div className="new_module">
                                     <div className="add_fields">
@@ -122,8 +136,8 @@ const FileRepository = () => {
                                       </Button>
                                     </div>
                                   </div>
-                                }
-                              </li>
+                                } */}
+                              </li> 
                             </ul>
 
                             <Modal
