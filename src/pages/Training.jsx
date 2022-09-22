@@ -15,22 +15,18 @@ import { useEffect } from "react";
 import { BASE_URL } from "../components/App";
 import axios from 'axios';
 import { FullLoader } from "../components/Loader";
+import { filter } from "lodash";
 
 const animatedComponents = makeAnimated();
 
 const filterCategory = [
   {
     id: 0,
-    value: "",
-    label: "No Filter"
-  },
-  {
-    id: 1,
     value: "alphabatical",
     label: "Alphabetical"
   },
   {
-    id: 2,
+    id: 1,
     value: "due_date",
     label: "Due Date"
   }
@@ -45,7 +41,7 @@ const Training = () => {
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: "",
-    filter: ""
+    filter: "due_date"
   });
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [tabName, setTabName] = useState('assigned_training');
@@ -237,6 +233,7 @@ const Training = () => {
                             closeMenuOnSelect={true}
                             placeholder={"Select"}
                             components={animatedComponents}
+                            value={filterCategory.filter(d => d.value === filterData.filter)}
                             options={filterCategory}
                             className="selectdropdown-col"
                             onChange={(e) => setFilterData(prevState => ({
