@@ -654,7 +654,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               }}
                             />
                           )}
-                          <p>Word Count : {wordCount} </p>
+                          <div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>
