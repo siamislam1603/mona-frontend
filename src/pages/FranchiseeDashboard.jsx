@@ -7,14 +7,9 @@ import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment'
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true,
-};
-// name: `${dt.fullname}, ${dt.profile_photo}`,
+
 const columns = [
   {
     dataField: 'name',
@@ -132,7 +127,6 @@ const columns1 = [
     text: "",
     formatter: (cell) => {
       cell = cell?.split(",");
-
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -211,8 +205,8 @@ const FranchiseeDashboard = () => {
           action: `${dt.id},${dt.parents[0].id}`
         }
       ))
-
       setEnrollments(tempData);
+
     }
   }
 
