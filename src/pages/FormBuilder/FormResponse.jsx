@@ -221,13 +221,14 @@ function FormResponse(props) {
                     </div>
                   </Col>
                 </Row>
-                <div className="responses-forms-header-section forms-header-section">
-                  <div className="forms-managment-section">
+                <div className="responses-forms-header-section forms-header-section mb-5">
+                  <div className="d-md-flex align-items-end mt-4">
+                    <div className="forms-managmentsection">
                     <div className="forms-managment-left">
-                      <p>{responseData.length} Responses</p>
+                      <p className="mb-2">{responseData.length} Responses</p>
                     </div>
-                    <div className="forms-management-middle">
-                        <Form.Group>
+                    <div className="d-sm-flex align-items-center">
+                        <Form.Group className="me-3">
                           <Form.Label>From Date</Form.Label>
                           <Form.Control
                             type="date"
@@ -243,8 +244,7 @@ function FormResponse(props) {
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
-
-                        <Form.Group>
+                        <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
                           <Form.Control
                             type="date"
@@ -262,27 +262,27 @@ function FormResponse(props) {
                         </Form.Group>
                         <Button
                           variant="primary"
-                          type="submit"
+                          type="submit" className="mt-4"
                           onClick={() => { getResponse('') }}>
                           Apply
                         </Button>
                     </div>
-                    <div className="forms-managment-right">
-                      <div className="forms-search">
-                        <Form.Group>
-                          <div className="forms-icon">
-                            <img src="../img/search-icon-light.svg" alt="" />
-                          </div>
-                          <Form.Control
-                            type="text"
-                            placeholder="Search..."
-                            name="search"
-                            onChange={(e) => {
-                              getResponse(e.target.value);
-                            }}
-                          />
-                        </Form.Group>
-                      </div>
+                    
+                  </div>
+                    <div className="forms-search me-0 ms-auto mt-3">
+                      <Form.Group>
+                        <div className="forms-icon">
+                          <img src="../img/search-icon-light.svg" alt="" />
+                        </div>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search..."
+                          name="search"
+                          onChange={(e) => {
+                            getResponse(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
                     </div>
                   </div>
                 </div>

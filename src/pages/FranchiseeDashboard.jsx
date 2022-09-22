@@ -325,7 +325,7 @@ const FranchiseeDashboard = () => {
                           </header>
                           <div className="column-list access-list three-col">
                             <div className="item">
-                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993"  target="_blank"className="flex">
+                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
@@ -337,13 +337,13 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="item">
-                              <a href="https://app.engagebay.com/login"  target="_blank"className="flex">
+                              <a href="https://app.engagebay.com/login" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="https://login.xero.com/identity/user/login"  target="_blank"className="flex">
+                              <a href="https://login.xero.com/identity/user/login" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/xero-ico.png" alt="" /></div>
                                 <div className="name">Xero</div>
                               </a>
@@ -415,7 +415,7 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href="/form/response" className="item">
+                              <a href={`/form/response/form-visit/${countUser?.complianceVisitFormId}`} className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser?.auditForms}</span>

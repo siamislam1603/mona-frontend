@@ -767,7 +767,7 @@ img.custom_logo_image{width:10%}
 .custom_term_text:hover{color:var(--black)}
 .custom_bottom a{color:var(--secondary);text-decoration:none}
 .custom_bottom a:hover{color:var(--black)}
-.custom_hide{position:absolute;right:10px;top:45px;color:#949596;cursor:pointer}
+.custom_hide{position:absolute;right:10px;top:38px;color:#949596;cursor:pointer}
 .form-group{position:relative}
 img.custom_facebook{padding-left:22px}
 .login-bg{min-height:100vh}
@@ -1535,12 +1535,19 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .user-list{display:block}
 .user-list .user-pic{width:44px;display:block}
 .three-col .item,.two-col .item{flex:0 0 48%}
+.custom_logo_image { max-width: 75px; margin: auto; }
+.custom_main_title { font-size: 26px; padding: 15px 0 15px 0; margin-bottom: 0; }
+.custom_main_content { font-size: 16px; line-height: 24px; }
+.custom_content, .custom_signin_page { padding: 20px; }
+.custom_title { padding-bottom: 25px; }
+.login_form .col .form-check { padding-right: 0; }
+.custom_submit .kids-art { left: -30px; }
 }
 @media only screen and (max-width:575px){
 .forms-filter button{margin-right:15px}
 .form-settings-content .new-form-radio-box{width:auto}
 .form-settings-content .new-form-radio-box-1{width:auto}
-.btn{min-width:initial}
+.btn{min-width:75px; line-height: 35px;}
 .add-q button{padding:0 10px}
 .forms-content-section .row>div{width:100%;flex:0 0 100%}
 .forms-header-section .tab-section .nav-tabs li{width:100%;text-align:center}
