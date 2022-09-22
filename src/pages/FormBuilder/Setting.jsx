@@ -344,20 +344,29 @@ function Setting(props) {
         result?.data?.map((item) => {
           item['status'] = false;
         });
+
+        let formattedUserData = result?.data.map(d => ({
+          id: d.id,
+          fullname: d.fullname,
+          email: d.email,
+          namemail: `(${d.fullname}) ${d.email}`
+        }));
+
         if (localStorage.getItem('f_id')) {
           if (
             localStorage.getItem('f_id') === 'all' ||
             localStorage.getItem('f_id') === 'All'
           ) {
-            setUser(result?.data);
+            
+            setUser(formattedUserData);
 
             childList(result?.data);
           } else {
-            setUser(result?.users);
+            setUser(formattedUserData);
             childList(result?.data);
           }
         } else {
-          setUser(result?.data);
+          setUser(formattedUserData);
           childList(result?.data);
         }
       })
@@ -458,6 +467,8 @@ function Setting(props) {
         props.onModelChange();
       });
   };
+
+  user && console.log('USERs>>>>>>>>>>>>>>>>>:', user);
   return (
     <>
       <Form>
@@ -1097,7 +1108,7 @@ function Setting(props) {
                             </Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                displayValue="email"
+                                displayValue="namemail"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={selectedTargetUser}
                                 onRemove={onTargetRemoveUser}
@@ -1137,7 +1148,7 @@ function Setting(props) {
                             </Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                displayValue="email"
+                                displayValue="namemail"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={selectedFillAccessUser}
                                 onRemove={onFillAccessRemoveUser}
@@ -1157,7 +1168,7 @@ function Setting(props) {
                             </Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                displayValue="email"
+                                displayValue="namemail"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={selectedResponseVisibilityUser}
                                 onRemove={onResponseVisibilityRemoveUser}
