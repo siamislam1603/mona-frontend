@@ -599,6 +599,7 @@ const NewUser = () => {
   }, [trainingDocuments]);
 
   formData && console.log('FORM DATA:', formData);
+  formErrors && console.log('FORM ERRORS:', formErrors);
   trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>

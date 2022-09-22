@@ -8,7 +8,7 @@ import { FullLoader } from "../../components/Loader";
 import { ToastContainer, toast } from 'react-toastify';
 
 
-const AvailableTraining = ({ filter, selectedFranchisee }) => {
+const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   console.log('FILTER:', filter);
   const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
@@ -40,7 +40,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
       console.log('URL:', `${BASE_URL}/training/assigeedTraining/${user_id}`);
       const token = localStorage.getItem('token');
   
-      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}`, {
+      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}&filter=${filter.filter}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -285,7 +285,16 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
     console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  availableTrainingData && console.log('Available Training:', availableTrainingData);
+  useEffect(() => {
+    fetchAvailableTrainings();
+  }, [filter.filter]);
+
+  useEffect(() => {
+    setTabName('assigned_training');
+  }, []);
+
+  // availableTrainingData && console.log('Available Training:', availableTrainingData);
+  filter && console.log('FILTER:', filter);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -904,7 +913,7 @@ const AvailableTraining = ({ filter, selectedFranchisee }) => {
                                     }} />
                                 </Form.Group>
                                 :
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3" style={{ display: "none" }}>
                                 <Form.Check
                                   type="checkbox"
                                   label="All Roles"

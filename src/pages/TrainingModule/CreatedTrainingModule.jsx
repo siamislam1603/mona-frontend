@@ -6,7 +6,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from "../../components/Loader";
 import { Link } from "react-router-dom";
 
-const CreatedTraining = ({ filter, selectedFranchisee }) => {
+const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   console.log('filter',filter)
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [otherTrainingData, setOtherTrainingData] = useState([]);
@@ -246,19 +246,9 @@ const CreatedTraining = ({ filter, selectedFranchisee }) => {
     console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
-  // useEffect(() => {
-  //   if(formSettings.assigned_franchisee[0] !== 'all') {
-  //     console.log('fetching franchisee', formSettings?.assigned_franchisee[0], 'uesrs!');
-  //     fetchFranchiseeUsers(formSettings?.assigned_franchisee[0]);
-  //   }
-  // }, [formSettings?.assigned_franchisee]);
-
-  // formSettings && console.log('FORM SETTINGS:', formSettings);
-  // fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
-  otherTrainingData && console.log('OTHER TRAINING DATA:', otherTrainingData);
-  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  // formSettings && console.log('FORM SETTINGS:', formSettings);
-  console.log("Franchise", selectedFranchisee)
+  useEffect(() => {
+    setTabName('created_training');
+  }, []);
   return (
     <>
       <div id="main">
