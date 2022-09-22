@@ -4,7 +4,7 @@ import { BASE_URL } from "../components/App";
 import TopHeader from '../components/TopHeader';
 import LeftNavbar from '../components/LeftNavbar';
 import Multiselect from 'multiselect-react-dropdown';
-import MyEditor from './CKEditor';
+import MyEditor from './CkeditorAnnouncement';
 
 import { useParams } from 'react-router-dom';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -47,6 +47,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
    const [updateAnnouncement, setUpdateAnnouncement] = useState(false);
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+  const [wordCount, setWordCount] = useState(0)
   
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
@@ -71,6 +72,21 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   const setAnnouncementFiled = (field, value) => {
     setAnnouncementCopyData({ ...announcementCopyData, [field]: value });
+     
+    if (field == "meta_description") {
+      const text = value;
+      if(value.includes("&nbsp")){
+        
+        setWordCount(text.length-12);
+      }
+      else{
+        setWordCount(text.length-7);
+      }
+      console.log("WORD count",text.split(" ").length)
+      if(value === ""){
+        setWordCount(0)
+      }
+    }
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -138,7 +154,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise);
+    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise,wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setAutoFocus(newErrors)
@@ -360,8 +376,17 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
+
+useEffect(() =>{
+  let count = announcementData?.meta_description?.length-7;
+  console.log("The count",count)
+  setWordCount(count)
+},[announcementData?.meta_description])
+
   console.log("My annoucnement",announcementCopyData)
   console.log("ALL FRANHISE",allFranchise)
+
+  console.log("THE ANNOUCNEMENt",announcementData?.meta_description,wordCount)
   
   return (
     <>
@@ -572,6 +597,9 @@ const selectFranhise = () =>{
                               }}
                             />
                            {errors.meta_description && <p className="form-errors">{errors.meta_description}</p>}
+                           <div className="text-left">Maximum character 700</div>
+
+<div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>

@@ -3,9 +3,19 @@ import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
 
+
 let random = () => { }
 
-export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Image" }) {
+const fileSize = (file) =>{
+  console.log("THe file",file)
+  if(file.type > 10 * 1048576){
+    return {
+      message: "Image shoudldn't be larger than 10 MB"
+    }
+  }
+  return null
+}
+export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Image" , setUploadError=() => {} }) {
 
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -18,13 +28,14 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
     setData(acceptedFiles)
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps,fileRejections } = useDropzone({
     onDrop,
     maxFiles: 1,
     multiple: false,
     accept: {
       'image/png': ['.png', '.jpg', '.jpeg'],
     },
+    validator:fileSize
   });
 
   const handleFileDelete = (file) => {
@@ -48,6 +59,16 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
       setCurrentURI(reader.result);
     };
   }
+  const fileRejectionItems = fileRejections.map(({ file, errors }) => (
+    <li key={file.path}>
+      {file.path} - {file.size} bytes
+      <ul>
+        {errors.map(e => (
+          <li key={e.code}>{e.message}</li>
+        ))}
+      </ul>
+    </li>
+  ));
 
   useEffect(() => {
     onSave(data);
@@ -65,6 +86,13 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
   useEffect(() => {
     setTheImage(image)
   }, [image])
+  useEffect(() => {
+    let rejectionArray = fileRejections.map(d => ({
+      error: d.errors.map(e => e)
+    }));
+    console.log(rejectionArray);
+    setUploadError(rejectionArray);
+  }, [fileRejections]);
   return (
     <div className="file-upload-form">
       <div {...getRootProps({ className: 'dropzone' })}>
@@ -80,6 +108,8 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
               <li className="mt-3" key={index}>
                 <img src={getBase64(file) || currentURI || image} style={{ maxWidth: "150px", height: "auto" }} alt="cover_file" />
                 <span className="ms-2">
+                <ul>{fileRejectionItems}</ul>
+
                   <Link to="#" onClick={() => handleFileDelete(file)}>
                     <img src="../img/removeIcon.svg" alt="" />
                   </Link>

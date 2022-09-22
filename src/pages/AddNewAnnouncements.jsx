@@ -46,6 +46,7 @@ const [announcementData, setAnnouncementData] = useState({
   start_date:theDate(),
   start_time:moment().add(10,"minutes").format("HH:mm")
 });
+
 const [titleError,setTitleError] = useState();
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [coverImage, setCoverImage] = useState(null);
@@ -57,6 +58,7 @@ const [titleError,setTitleError] = useState();
   const [franchiseeData, setFranchiseeData] = useState();
   const [titleChecking,setTitleChecking] = useState(false)
   const [topMessage,setTopMessage] = useState(null);
+  const [wordCount, setWordCount] = useState(0)
 
    // REF REFERENCES
   let title = useRef(null)
@@ -225,6 +227,22 @@ const createAnnouncement = async (data) => {
 
     const announcementDescription = (field, value) => {
       setAnnouncementData({ ...announcementData, [field]: value });
+      console.log(field,value)
+
+      if(field === "meta_description"){
+        const text = value;
+      if(value.includes("&nbsp")){
+
+        setWordCount(text.length-12);
+      }
+      else{
+        setWordCount(text.length-7);
+      }
+      console.log("WORD count",text.split(" ").length)
+      if(value === ""){
+        setWordCount(0)
+      }
+      }
       if (!!error[field]) {
         setError({
           ...error,
@@ -286,7 +304,7 @@ const createAnnouncement = async (data) => {
     }
     const handleDataSubmit = event => {
       event.preventDefault();
-      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking);
+      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking,wordCount);
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
         // window.scroll(0,0)
@@ -528,6 +546,9 @@ console.log("ds",ds,cureent)
                               }}
                             />
                            {error.meta_description && <p className="form-errors">{error.meta_description}</p>}
+                           <div className="text-left">Maximum character 700</div>
+
+<div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -619,8 +640,12 @@ console.log("ds",ds,cureent)
                           <Form.Label>Upload Cover Image </Form.Label>
                           <DropOneFile onSave={setCoverImage} 
                           setErrors={setError}
+                          setUploadError={setVideoFileErrorMessage}
+
                           />
                             { error.coverImage && <span className="error mt-2">{error.coverImage}</span> }
+                            <small className="fileinput">(png, jpg & jpeg)</small>
+                          {/* <small className="fileinput">(File limit 10 MB)</small> */}
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -642,6 +667,8 @@ console.log("ds",ds,cureent)
                               )
                             })
                           }
+                            <small className="fileinput">((mp4, flv & mkv))</small>
+                          <small className="fileinput">(File limit 1 GB)</small>
                           {/* <DropVideo onSave={setVideoTutorialFiles} /> */}
                         </Form.Group>
                       </Col>
@@ -649,6 +676,8 @@ console.log("ds",ds,cureent)
                         <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Files </Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
+                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                         </Form.Group>
                       </Col>
                       <Col md={12}>

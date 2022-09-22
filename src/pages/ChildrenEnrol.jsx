@@ -4,7 +4,8 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search, CSVExport }  from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import { useRef } from 'react';
@@ -28,6 +29,7 @@ const ChildrenEnrol = () => {
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
+  const [search,setSearch] = useState()
 
   const { SearchBar } = Search;
 
@@ -44,8 +46,10 @@ const ChildrenEnrol = () => {
     try {
       let token = localStorage.getItem('token');
       let USER_ROLE = localStorage.getItem('user_role');
-      let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}` : `${BASE_URL}/children-listing/all-childrens-enrolled`
+      let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/${search}` : `${BASE_URL}/children-listing/all-childrens-enrolled/${search}`
       let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}` : URL;
+      
+
       if (URL) {
         const response = await axios.get(FilterUrl, {
           headers: {
@@ -136,7 +140,7 @@ const ChildrenEnrol = () => {
     if (selectedFranchisee) {
       ChildernEnrolled()
     }
-  }, [selectedFranchisee, AppyFilter, Filters])
+  }, [selectedFranchisee, AppyFilter, Filters,search])
   const columns = [
     {
       dataField: 'name',
@@ -319,6 +323,18 @@ const ChildrenEnrol = () => {
 
 
   ];
+  const MyExportCSV = (props) => {
+    const handleClick = () => {
+      props.onExport();
+      
+    };
+  
+    return (
+      <div>
+        <button className="btn btn-success" onClick={ handleClick }>Click me to export CSV</button>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -339,6 +355,13 @@ const ChildrenEnrol = () => {
                   data={chidlEnroll}
                   columns={columns}
                   search
+                  
+                  
+                  
+                  exportCSV={ {
+                    fileName: 'Children Enroled.csv',
+                  
+                  } }
                 >
                   {(props) => (
                     <>
@@ -352,10 +375,37 @@ const ChildrenEnrol = () => {
                               <h1 className="title-lg">Children Enroled</h1>
                               <div className="othpanel">
                                 <div className="extra-btn">
+                                  
                                   <div className="data-search me-3">
-                                    <SearchBar {...props.searchProps} />
-                                  </div>
+                              <Form.Group
+                                className="d-flex"
+                                style={{ position: 'relative' }}
+                              >
+                                <div className="user-search">
+                                  <img
+                                    src="./img/search-icon-light.svg"
+                                    alt=""
+                                  />
+                                </div>
+                                <Form.Control
+                                  className="searchBox"
+                                  type="text"
+                                  placeholder="Search"
+                                  name="search"
+                                  onChange={(e) => {
 
+                                    //   setSearch(e.target.value, () => {
+                                    //     onFilter();
+                                    //  });
+                                    setSearch(e.target.value);
+                                    // onFilter(e.target.value);
+
+
+                                  }}
+                                />
+                              </Form.Group>
+                            </div>
+                                
                                   <Dropdown className="filtercol me-3">
                                     <Dropdown.Toggle
                                       id="extrabtn"
@@ -449,12 +499,9 @@ const ChildrenEnrol = () => {
                                             {"Export CSV"}
 
                                           </CSVLink>
-
-
-
-
-
                                         </Dropdown.Item>
+
+
                                         {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                             Delete All Row
                           </Dropdown.Item> */}
@@ -469,10 +516,12 @@ const ChildrenEnrol = () => {
                           {
                             chidlEnroll?.length > 0 ?
                               (
-                                <BootstrapTable
+                                <div>
+                                  <BootstrapTable
                                   {...props.baseProps}
                                   pagination={paginationFactory()}
                                 />
+                                  </div>
                               ) : (
                                 !fullLoaderStatus &&
                                 <div className="text-center mb-5 mt-5"><strong>
