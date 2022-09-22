@@ -39,15 +39,18 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                 },
                 useFsAccessApi: false,
             })
+    // const removeFile = file => () => {
+    //     const newFiles = { myFiles }
+    //     newFiles.splice(newFiles.indexOf(file), 1)
+    //     setMyFiles(newFiles)
+    // }
     const removeFile = file => () => {
-        const newFiles = { myFiles }
+        const newFiles = [myFiles]
         newFiles.splice(newFiles.indexOf(file), 1)
         setMyFiles(newFiles)
     }
-
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
-
             return <>
                 {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
                     <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
@@ -103,7 +106,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                     <span>Please Select a file to share : <br />
                         <span className="btn btn-primary" >
                             Choose File</span> <br />
-                        <small>Accepted file types : doc, pdf, mp3, png, jpg , video</small>
+                        <small>Accepted file types : doc, pdf, mp3, png, jpg,video</small>
                         <small className="fileinput">(less than 1GB)</small>
                     </span>
                 </div>
