@@ -5,7 +5,7 @@ import axios from "axios";
 import moment from 'moment';
 import { FullLoader } from "../../components/Loader";
 
-const CompleteTraining = ({ filter }) => {
+const CompleteTraining = ({ filter, setTabName }) => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -13,7 +13,7 @@ const CompleteTraining = ({ filter }) => {
     console.log('INSIDE COMPLETE TRAINING MODULE');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -34,8 +34,12 @@ const CompleteTraining = ({ filter }) => {
     fetchCompletedTrainingData()
   },[filter.category_id])
 
-  completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
-console.log("filter ",filter.category_id)
+
+  useState(() => {
+    setTabName('completed_training');
+  }, [])
+
+  console.log("filter ",filter)
   return (
     <>
       <div id="main">

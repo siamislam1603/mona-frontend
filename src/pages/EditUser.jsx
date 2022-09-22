@@ -336,7 +336,7 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let error = editUserValidation(formData);
+    let error = editUserValidation(formData, trainingDocuments, fetchedTrainingDocuments);
     
     if(Object.keys(error).length > 0) {
       setFormErrors(error);
@@ -608,6 +608,15 @@ const EditUser = () => {
       setFileDeleteMessage(null);
     }, 3000)
   }, [fileDeleteMessage]);
+
+  useEffect(() => {
+    if(trainingDocuments?.length + fetchedTrainingDocuments.length < 5) {
+      setFormErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [trainingDocuments, fetchedTrainingDocuments]);
 
   formData && console.log('EDIT USER DATA:', formData);
   formErrors && console.log('Errors:', formErrors);
@@ -1120,6 +1129,7 @@ const EditUser = () => {
                                 )
                               })
                             }
+                            { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                           </Form.Group>
 
                           <Col md={12}>

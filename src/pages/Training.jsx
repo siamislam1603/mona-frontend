@@ -17,21 +17,23 @@ import axios from 'axios';
 import { FullLoader } from "../components/Loader";
 
 const animatedComponents = makeAnimated();
-const styles = {
-  option: (styles, state) => ({
-    ...styles,
-    backgroundColor: state.isSelected ? "#E27235" : "",
-  }),
-};
-const training = [
+
+const filterCategory = [
   {
-    value: "sydney",
-    label: "Sydney",
+    id: 0,
+    value: "",
+    label: "No Filter"
   },
   {
-    value: "melbourne",
-    label: "Melbourne",
+    id: 1,
+    value: "alphabatical",
+    label: "Alphabetical"
   },
+  {
+    id: 2,
+    value: "due_date",
+    label: "Due Date"
+  }
 ];
 
 const Training = () => {
@@ -42,19 +44,11 @@ const Training = () => {
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: null,
-    search: ""
+    search: "",
+    filter: ""
   });
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-
-
-  // STYLE ACTIVE LINKS
-  const navLinkStyles = ({ isActive }) => {
-    return isActive ? {
-      color: "#AA0061",
-      fontWeight: "700",
-      opacity: 1
-    } : {}
-  };
+  const [tabName, setTabName] = useState('assigned_training');
 
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -127,6 +121,15 @@ const Training = () => {
     }
   }, []);
 
+  useEffect(() => {
+    setFilterData(prevState => ({
+      ...prevState,
+      category_id: 0
+    }));
+  }, [tabName]);
+
+
+  tabName && console.log('TAB NAME:', tabName);
   return (
     <>
       <div id="main">
@@ -224,6 +227,27 @@ const Training = () => {
                         <li><a onClick={handleLinkClick} path="/created-training" className={`${tabLinkPath === "/created-training" ? "active" : ""}`}>Created Training</a></li>
                       }
                     </ul>
+                    
+                    {
+                      tabName === "assigned_training" &&
+                      <div className="selectdropdown ms-auto d-flex align-items-center">
+                        <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                          <Form.Label className="d-block me-2">Filter by</Form.Label>
+                          <Select
+                            closeMenuOnSelect={true}
+                            placeholder={"Select"}
+                            components={animatedComponents}
+                            options={filterCategory}
+                            className="selectdropdown-col"
+                            onChange={(e) => setFilterData(prevState => ({
+                              ...prevState,
+                              filter: e.value
+                            }))}
+                          />
+                        </Form.Group>
+                      </div>
+                    }
+
                     <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
@@ -231,6 +255,7 @@ const Training = () => {
                           closeMenuOnSelect={true}
                           placeholder={"Select"}
                           components={animatedComponents}
+                          value={trainingCategory.filter(d => parseInt(d.id) === parseInt(filterData.category_id))}
                           options={trainingCategory}
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
@@ -247,14 +272,17 @@ const Training = () => {
                   <div className="training-column">
                     {tabLinkPath === "/available-training"
                       && <AvailableTrainingModule
+                        setTabName={setTabName}
                         filter={filterData}
                         selectedFranchisee={selectedFranchisee} />}
                     {tabLinkPath === "/complete-training"
                       && <CompleteTrainingModule
+                        setTabName={setTabName}
                         filter={filterData} />}
                     {tabLinkPath === "/created-training"
                       && <CreatedTrainingModule
                         filter={filterData}
+                        setTabName={setTabName}
                         selectedFranchisee={selectedFranchisee} />}
                   </div>
                 </div>

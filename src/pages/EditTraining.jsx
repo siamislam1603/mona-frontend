@@ -10,7 +10,7 @@ import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { TrainingFormValidation } from '../helpers/validation';
+import { EditTrainingFormValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -352,7 +352,7 @@ const EditTraining = () => {
     event.preventDefault();
     window.scrollTo(0, 0);
 
-    let errorObj = TrainingFormValidation(trainingData, coverImage, videoTutorialFiles, relatedFiles);
+    let errorObj = EditTrainingFormValidation(trainingData, relatedFiles, fetchedRelatedFiles);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -439,6 +439,15 @@ const EditTraining = () => {
   useEffect(() => {
     fetchTrainingFormData();
   }, [fileDeleteResponse]);
+
+  useEffect(() => {
+    if((relatedFiles?.length + fetchedRelatedFiles?.length) < 5) {
+      setErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [relatedFiles]);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -717,6 +726,7 @@ const EditTraining = () => {
                                   )
                                 })
                               }
+                              { errors.doc !== null && <span className="error">{errors.doc}</span> }
                             </div>
                           </Form.Group>
                         </Col>
