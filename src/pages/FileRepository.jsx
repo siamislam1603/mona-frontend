@@ -33,18 +33,6 @@ const FileRepository = () => {
       'Authorization',
       'Bearer ' + localStorage.getItem('token'),
     );
-    // var requestOptions = {
-    //   method: 'post',
-    //   headers: myHeaders,
-    //   body: JSON.stringify({ category_name: category_name }),
-
-    // };
-    // fetch(`${BASE_URL}/fileCategory/`, requestOptions).then((response) => {
-    //   console.log("response", response)
-    //   response.json()
-    // }).catch((error) => {
-    //   console.log(error, "ERRRO")
-    // })
     fetch(`${BASE_URL}/fileCategory/`, {
       method: 'POST',
       headers: myHeaders,
@@ -60,9 +48,7 @@ const FileRepository = () => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
-  const [SearchValue, setSearchValue] = useState();
-
-
+  const [SearchValue, setSearchValue] = useState("");
   const HandelSearch = (event) => {
     setSearchValue(event.target.value);
   }
@@ -122,8 +108,8 @@ const FileRepository = () => {
                                   <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
                                 }
                               </>)}
-                              <li>
-                                {/* {
+                              {/* <li>
+                                {
                                   loginuser === "franchisor_admin" &&
                                   <div className="new_module">
                                     <div className="add_fields">
@@ -136,8 +122,8 @@ const FileRepository = () => {
                                       </Button>
                                     </div>
                                   </div>
-                                } */}
-                              </li> 
+                                }
+                              </li> */}
                             </ul>
 
                             <Modal
