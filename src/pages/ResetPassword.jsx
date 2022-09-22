@@ -34,7 +34,6 @@ function appendUserString(role) {
 
 const ResetPassword = () => {
   const query = new URL(window.location.href);
-  console.log('QUERY:', query);
   // let resetType = query.searchParams.get('resetType');
 
 
@@ -90,7 +89,7 @@ const setField = (field, value) => {
     }
   };
   const resetPassword = async () =>{
-    const password =passwords.confirm_password
+    const password = passwords.confirm_password
     let response = await axios.get(`${BASE_URL}/auth/passwordReset/?token=${theToken}&password=${password}`)
     if(response.status===200 && response.data.status === "success"){
       setTopMessage("Password Reset Successfully ")
