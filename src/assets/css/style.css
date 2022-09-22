@@ -167,7 +167,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .child_heading p{margin:0;font-size:34px;font-weight:700;color:var(--primary)}
 .child_heading span{display:flex;align-items:center;font-size:18px;font-weight:500}
 .child_heading span label{display:block;white-space:nowrap}
-.child_input{height:auto;width:100%!important;background:#f7f7f8!important;border:1px solid rgba(66,66,66,.1)!important;font-size:14px!important;padding:16px 15px!important;color:var(--black)!important;opacity:.7}
+.child_input{height:auto;width:100%!important;background:var(--offwhite);border:1px solid var(--gray);font-size:1rem;padding:.375rem .75rem;color:var(--black);opacity:1}
 .child_info_field.dob .child_input{text-align:center}
 .child_information{position:relative}
 .child_information h2{text-align:left;margin-bottom:15px;font-size:22px;font-weight:600}
@@ -784,22 +784,6 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .custom_bottom p{font-weight:400;font-size:16px;line-height:19px;color:var(--black);margin-bottom:0;margin-top:30px;text-align:center}
 .term-use a{text-decoration:underline;color:var(--secondary)}
 .term-use a:hover{color:var(--secondary)}
-.child_register{position:relative;width:100%;padding:100px 0}
-.child_heading{margin-bottom:60px}
-.child_heading p{margin:0;font-size:34px;font-weight:700;color:var(--primary)}
-.child_heading span{display:flex;align-items:center;font-size:18px;font-weight:500}
-.child_heading span label{display:block;white-space:nowrap}
-.child_input{height:auto;width:100%!important;background:#f7f7f8!important;border:1px solid rgba(66,66,66,.1)!important;font-size:14px!important;padding:16px 15px!important;color:var(--black)!important;opacity:.7}
-.child_info_field.dob .child_input{text-align:center}
-.child_information{position:relative}
-.child_information h2{text-align:left;margin-bottom:15px;font-size:22px;font-weight:600}
-.child_information_box{position:relative;border:0;padding:50px;background:var(--gray);border-radius:20px}
-.child_info_field{display:block;align-items:center;margin-bottom:30px}
-.child_info_field span{font-size:18px;font-weight:500;color:var(--black)}
-.child_info_field.sex .btn-radio label{margin-right:10px}
-.child_info_field.sex .btn-radio .form-check{margin:0}
-.child_information_box .custom_submit_button{margin:0 auto}
-.child_register p{width:100%;margin-top:.25rem;font-size:.875em;color:#dc3545}
 .createForm{margin:50px 0}
 .createFormBox{position:relative;border:0;padding:15px}
 .createFormLabel{font-size:18px;font-weight:500;color:var(--black)}
@@ -1368,7 +1352,18 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 }}
 
 
-
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #cccccc!important;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #cccccc!important;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #cccccc!important;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #cccccc!important;
+}
 
 @media only screen and (max-width:1400px){
 .forms-managment-section{flex-wrap:wrap}
