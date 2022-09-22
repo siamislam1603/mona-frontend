@@ -227,19 +227,42 @@ function OwnFormResponse(props) {
                                             'iner_itemwdasdasddassd---->',
                                             inner_item
                                           )}
-                                          <h5>
-                                            {inner_index > 0
-                                              ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.fullname?.includes(
+                                          <div className='d-flex'>
+                                            <h5>
+                                              {inner_index > 0
+                                                ? !responseData[index][
+                                                    inner_index - 1
+                                                  ].filled_user?.fullname?.includes(
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  ) &&
                                                   inner_item?.filled_user
                                                     ?.fullname
-                                                ) &&
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              : inner_item?.filled_user
-                                                  ?.fullname}
-                                          </h5>
+                                                : inner_item?.filled_user
+                                                    ?.fullname}
+                                            </h5>
+                                            {inner_index===0 && (formData?.form_type ===
+                                              'editable' ||
+                                              formData?.form_type ===
+                                                'multi_submission') && (
+                                              <div
+                                                className="edit-icon-form"
+                                                onClick={() => {
+                                                  navigate(
+                                                    `/form/dynamic/${formData.form_name}`,
+                                                    {
+                                                      state: {
+                                                        id: item[index].id,
+                                                        form_id: id,
+                                                      },
+                                                    }
+                                                  );
+                                                }}
+                                              >
+                                                <FontAwesomeIcon icon={faPen} />
+                                              </div>
+                                            )}
+                                          </div>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
@@ -278,26 +301,7 @@ function OwnFormResponse(props) {
                                     }
                                   )}
                                 </div>
-                                {(formData?.form_type === 'editable' ||
-                                  formData?.form_type ===
-                                    'multi_submission') && (
-                                  <div
-                                    className="edit-icon-form"
-                                    onClick={() => {
-                                      navigate(
-                                        `/form/dynamic/${formData.form_name}`,
-                                        {
-                                          state: {
-                                            id: item[index].id,
-                                            form_id: id,
-                                          },
-                                        }
-                                      );
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faPen} />
-                                  </div>
-                                )}
+
                                 <div className="responses-header-right">
                                   <p>
                                     Completed on: <br />
@@ -386,86 +390,92 @@ function OwnFormResponse(props) {
                                                     }`}
                                                   ></img>
                                                 </>
-                                                ) : Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.doc'
-                                                    ) ||
+                                              ) : Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.doc'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.docx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.html'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.htm'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.odt'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.xls'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.xlsx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  'ods'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.ppt'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.pptx'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.pdf'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.txt'
+                                                ) ? (
+                                                <a
+                                                  role="button"
+                                                  href={
                                                     Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.docx'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.html'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.htm'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.odt'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.xls'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.xlsx'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    'ods'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.ppt'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.pptx'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.pdf'
-                                                    ) ||
-                                                    Object.values(
-                                                    JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                    '.txt'
-                                                    ) ? (
-                                                    <a
-                                                    role="button"
-                                                    href={
-                                                        Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                  download
+                                                >
+                                                  <p>
+                                                    {
+                                                      Object.values(
                                                         JSON.parse(item.fields)
-                                                        )[inner_index]
-                                                    }
-                                                    download
-                                                    >
-                                                    <p>
-                                                        {
+                                                      )[inner_index].split('/')[
                                                         Object.values(
-                                                            JSON.parse(item.fields)
-                                                        )[inner_index].split("/")[Object.values(
-                                                            JSON.parse(item.fields)
-                                                        )[inner_index].split("/").length-1]
-                                                        }
-                                                    </p>
-                                                    </a>
-                                                ) : (
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index].split(
+                                                          '/'
+                                                        ).length - 1
+                                                      ]
+                                                    }
+                                                  </p>
+                                                </a>
+                                              ) : (
                                                 <p>
                                                   {
                                                     Object.values(

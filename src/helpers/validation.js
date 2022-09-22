@@ -289,7 +289,7 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-export const TrainingFormValidation = (form) => {
+export const TrainingFormValidation = (form, relatedFiles) => {
   let errors = {};
   let {
     title,
@@ -331,6 +331,57 @@ export const TrainingFormValidation = (form) => {
   // if (Object.keys(croppedImage).length === 0) {
   //   errors.croppedImage = 'Cover image required!';
   // }
+
+  if(relatedFiles?.length > 5)
+    errors.doc = "Only 5 documents can be uploaded"
+  return errors;
+};
+
+export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFiles) => {
+  let errors = {};
+  let {
+    title,
+    category_id,
+    description,
+    meta_description,
+    time_required_to_complete,
+
+  } = form;
+
+  if (!title) {
+    errors.title = 'Training title is required';
+  }
+
+  if (title <= 2) {
+    errors.title_length = 'Training title should be more than 2 characters';
+  }
+
+  if (!category_id) {
+    errors.category_id = 'Training category  is required';
+  }
+
+  if (!description) {
+    errors.description = 'Training description is required';
+  }
+
+  if (!meta_description) {
+    errors.meta_description = 'Meta description is required';
+  }
+
+  if (!time_required_to_complete) {
+    errors.time_required_to_complete = 'Training time is required';
+  }
+
+  // if (!croppedImage) {
+  //   errors.croppedImage = 'Image time is required!';
+  // }
+  // croppedImage
+  // if (Object.keys(croppedImage).length === 0) {
+  //   errors.croppedImage = 'Cover image required!';
+  // }
+
+  if((relatedFiles?.length + fetchedRelatedFiles?.length) > 5)
+    errors.doc = "Only 5 documents can be uploaded"
   return errors;
 };
 
@@ -517,7 +568,7 @@ export const acceptPointValidator = (value) => {
   return errors;
 }
 
-export const UserFormValidation = (formObj) => {
+export const UserFormValidation = (formObj, trainingDocuments) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
 
@@ -560,13 +611,16 @@ export const UserFormValidation = (formObj) => {
   if(open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required'
 
+  if(trainingDocuments?.length > 5)
+    errors.doc = "Only 5 documents can be uploaded"
+
   return errors;
 };
 
-export const editUserValidation = (form) => {
+export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocuments) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}');
+  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}');
   let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -579,6 +633,8 @@ export const editUserValidation = (form) => {
   if(!state) errors.state = 'State is required';
   
   if (!city) errors.city = 'Suburb is required';
+
+  if(state && !city) errors.city = "Suburb is required";
 
   if (!address) errors.address = 'Address is required';
   
@@ -598,13 +654,21 @@ export const editUserValidation = (form) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if(password && !regexPassword.test(password))
-    errors.password = "Minimum 8 characters, at least 1 uppercase, 1 lowercase & 1 digit"
-
-  if (password && password !== confirm_password) {
-    errors.password = "Passwords don't match";
-    errors.confirm_password = "Passwords don't match";
+  if (password?.length > 0 && !regexPassword.test(password)) {
+    errors.password = 'Minimum 8 characters, at least one letter, one number and one special character'
   }
+
+  if (password && !confirm_password) {
+    errors.confirm_password = 'Confirm password is required';
+  }
+  if (password && confirm_password && password !== confirm_password) {
+    errors.password = 'New password and Confirm password need to be same';
+    errors.confirm_password =
+      'New password and Confirm password need to be same';
+  }
+
+  if(trainingDocuments?.length + fetchedTrainingDocuments?.length > 5)
+    errors.doc = "Only 5 documents can be uploaded"
 
   return errors;
 }

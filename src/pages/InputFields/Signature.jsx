@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Col, Form } from "react-bootstrap";
+import { Button, Col, Form } from "react-bootstrap";
 import SignaturePad from "react-signature-canvas";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,17 +29,16 @@ const Signature = (props) => {
             style: {
               background: "white",
               border: "1px solid #e5e5e5",
-              width: "300px",
+              width: "310px",
               minHeight: "65%",
               display: "grid"
             },
           }}
           ref={sigPad}
-          onEnd={trim}
         />
         <div>
-          <button onClick={clear}>Clear</button>
-          {/* <button onClick={trim}>Save</button> */}
+          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
+          <Button style={{minWidth:"70px !important"}} onClick={trim}>Save</Button>
         </div>
       </Form.Group>
       <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>

@@ -59,10 +59,6 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     onDrop,
     maxFiles: fileLimit,
     multiple: fileLimit === 1 ? false : true,
-    // accept:'.doc, .pdf, , .png, .jpg',
-    // accept: {
-    //   'image/*, audio/*, video/*': ['.png', '.jpg', '.jpeg','.pdf','.doc','.txt','.wpd'],
-    // },
     accept: typeObj,
     validator: fileSizeValidator
   });

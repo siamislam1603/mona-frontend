@@ -34,6 +34,7 @@ function appendUserString(role) {
 
 const ResetPassword = () => {
   const query = new URL(window.location.href);
+  console.log('QUERY:', query);
   // let resetType = query.searchParams.get('resetType');
 
 

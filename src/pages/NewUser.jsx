@@ -235,7 +235,7 @@ const NewUser = () => {
         franchisee: null
       }));
     }
-    const errorObj = UserFormValidation(formData);
+    const errorObj = UserFormValidation(formData, trainingDocuments);
     if(Object.keys(errorObj).length > 0) {
       setFormErrors(errorObj);
       setAutoFocus(errorObj);
@@ -589,8 +589,18 @@ const NewUser = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if(trainingDocuments?.length < 5) {
+      setFormErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [trainingDocuments]);
+
   formData && console.log('FORM DATA:', formData);
-  // trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
+  formErrors && console.log('FORM ERRORS:', formErrors);
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       <div id="main">
@@ -789,7 +799,7 @@ const NewUser = () => {
                           {
                             formData?.role === 'guardian' &&
                             <Form.Group className="col-md-6 mb-3">
-                              <Form.Label>CRN</Form.Label>
+                              <Form.Label>CRN *</Form.Label>
                               <Form.Control
                                 type="text"
                                 name="crn"
@@ -1034,8 +1044,9 @@ const NewUser = () => {
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            <small className="fileinput">((pdf, doc, ppt & xslx))</small>
+                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
                             <small className="fileinput">(max. 5 files, 5MB each)</small>
+                            { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                             {
                               uploadError  &&
                               uploadError.map(errorObj => {
