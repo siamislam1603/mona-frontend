@@ -146,6 +146,13 @@
     margin-right: 10px;
 }
 
+.form-management-middle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
 .forms-managment-left h6 {
     font-weight: 700;
     font-size: 25px;

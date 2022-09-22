@@ -5,21 +5,19 @@ import axios from "axios";
 import moment from 'moment';
 import { FullLoader } from "../../components/Loader";
 
-const CompleteTraining = ({ filter }) => {
+const CompleteTraining = ({ filter, setTabName }) => {
   const [completedTrainingData, setCompletedTrainingData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchCompletedTrainingData = async () => {
-    console.log('INSIDE COMPLETE TRAINING MODULE');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}&search=${filter.search}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
 
-    console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { response: trainingList } = response.data;
       setfullLoaderStatus(false)
@@ -32,10 +30,13 @@ const CompleteTraining = ({ filter }) => {
   }, []);
   useEffect(() =>{
     fetchCompletedTrainingData()
-  },[filter.category_id])
+  },[filter.category_id, filter.search])
 
-  completedTrainingData && console.log('COMPLETED TRAINING:', completedTrainingData);
-console.log("filter ",filter.category_id)
+
+  useState(() => {
+    setTabName('completed_training');
+  }, [])
+
   return (
     <>
       <div id="main">
@@ -55,7 +56,7 @@ console.log("filter ",filter.category_id)
                     <div className="iconame">
                       <a href={`/training-detail/${item.training.id}`}>{item.training.title}</a>
                       <div className="datecol">
-                        <span className="red-date">Completion date:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
+                        <span className="red-date">Completed on:{' '}{moment(item.createdAt).format('DD/MM/YYYY')}</span>
                         <span className="time">{ item.training.completion_time }</span>
                       </div>
                     </div>

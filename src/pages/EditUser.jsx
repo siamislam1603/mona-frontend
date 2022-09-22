@@ -75,6 +75,7 @@ const EditUser = () => {
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
@@ -335,7 +336,7 @@ const EditUser = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    let error = editUserValidation(formData);
+    let error = editUserValidation(formData, trainingDocuments, fetchedTrainingDocuments);
     
     if(Object.keys(error).length > 0) {
       setFormErrors(error);
@@ -607,6 +608,15 @@ const EditUser = () => {
       setFileDeleteMessage(null);
     }, 3000)
   }, [fileDeleteMessage]);
+
+  useEffect(() => {
+    if(trainingDocuments?.length + fetchedTrainingDocuments.length < 5) {
+      setFormErrors(prevState => ({
+        ...prevState,
+        doc: null
+      }));
+    }
+  }, [trainingDocuments, fetchedTrainingDocuments]);
 
   formData && console.log('EDIT USER DATA:', formData);
   formErrors && console.log('Errors:', formErrors);
@@ -1091,7 +1101,19 @@ const EditUser = () => {
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple
                               module="user-management"
-                              onSave={setTrainingDocuments} />
+                              onSave={setTrainingDocuments}
+                              setUploadError={setUploadError} />
+                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
+                            <small className="fileinput">(max. 5 files, 5MB each)</small>
+                            {
+                              uploadError  &&
+                              uploadError.map(errorObj => {
+                                return (
+                                  // errorObj?.error[0].message
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File is greater than 5MB"}</p>
+                                )
+                              })
+                            }
                             {
                               fetchedTrainingDocuments &&
                               fetchedTrainingDocuments.map(doc => {
@@ -1107,7 +1129,7 @@ const EditUser = () => {
                                 )
                               })
                             }
-                            <small className="fileinput">(Upload 5 files max.)</small>
+                            { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                           </Form.Group>
 
                           <Col md={12}>

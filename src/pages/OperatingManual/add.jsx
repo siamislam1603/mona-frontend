@@ -654,11 +654,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                               }}
                             />
                           )}
-                          <div style={{textAlign:"right"}}>
-                           Word Count : {wordCount}
-
-                          </div>
-                          
+                          <div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>
