@@ -1,6 +1,5 @@
 import {
   faEllipsisVertical,
-  faEye,
   faPen,
   faPlus,
   faRemove,
@@ -387,9 +386,6 @@ function ViewFormBuilder(props) {
                                           );
                                         }
                                         return inner_item.end_date &&
-                                        ((inner_item.form_permissions[0]
-                                        ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
-                                          ?.target_user || []).includes("parent") ?  
                                           !(
                                             inner_item?.form_filled_user || []
                                           ).includes(
@@ -397,20 +393,13 @@ function ViewFormBuilder(props) {
                                               'user_role'
                                             ) === 'guardian'
                                               ? localStorage.getItem(
-                                                  'user_id'
-                                                )
-                                              : localStorage.getItem('user_id')
-                                          ) : !(
-                                            inner_item?.form_filled_user || []
-                                          ).includes(
-                                            localStorage.getItem(
-                                              'user_role'
-                                            ) === 'guardian'
-                                              ? localStorage.getItem(
                                                   'child_id'
-                                                )
+                                                ) ||
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
                                               : localStorage.getItem('user_id')
-                                          )) &&
+                                          ) &&
                                           ((
                                             inner_item.form_permissions[0]
                                               ?.fill_access_users || []
@@ -534,30 +523,15 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         return inner_item?.end_date === null &&
-                                        ((inner_item.form_permissions[0]
-                                          ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
-                                            ?.target_user || []).includes("parent") ?  
-                                            !(
-                                              inner_item?.form_filled_user || []
-                                            ).includes(
-                                              localStorage.getItem(
-                                                'user_role'
-                                              ) === 'guardian'
-                                                ? localStorage.getItem(
-                                                    'user_id'
-                                                  )
-                                                : localStorage.getItem('user_id')
-                                            ) : !(
-                                              inner_item?.form_filled_user || []
-                                            ).includes(
-                                              localStorage.getItem(
-                                                'user_role'
-                                              ) === 'guardian'
-                                                ? localStorage.getItem(
-                                                    'child_id'
-                                                  )
-                                                : localStorage.getItem('user_id')
-                                            )) &&
+                                          !(
+                                            inner_item?.form_filled_user || []
+                                          ).includes(
+                                            localStorage.getItem(
+                                              'user_role'
+                                            ) === 'guardian'
+                                              ? localStorage.getItem('child_id')
+                                              : localStorage.getItem('user_id')
+                                          ) &&
                                           ((
                                             inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
@@ -698,21 +672,16 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         return (
-                                          (inner_item.form_permissions[0]
-                                            ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
-                                              ?.target_user || []).includes("parent") ?  
-                                              (inner_item?.form_filled_user || []
-                                        ).includes(
-                                           localStorage.getItem('user_id')
-                                        ) : (inner_item?.form_filled_user || []
+                                          inner_item?.form_filled_user || []
                                         ).includes(
                                           localStorage.getItem('user_role') ===
                                             'guardian'
                                             ? localStorage.getItem(
                                                 'child_id'
-                                              )
+                                              ) ||
+                                                localStorage.getItem('user_id')
                                             : localStorage.getItem('user_id')
-                                        )) &&
+                                        ) &&
                                           ((
                                             inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
@@ -1134,20 +1103,7 @@ function ViewFormBuilder(props) {
                                                                 />{' '}
                                                                 Remove
                                                               </Dropdown.Item>
-                                                              
                                                             )}
-                                                            <Dropdown.Item
-                                                              onClick={() => {
-                                                                navigate(
-                                                                  `/form/preview/${inner_item.form_name}`,{state:{id:inner_item.id,form_name:inner_item.form_name}}
-                                                                );
-                                                              }}
-                                                            >
-                                                              <FontAwesomeIcon
-                                                                icon={faEye}
-                                                              />{' '}
-                                                              Preview
-                                                            </Dropdown.Item>
                                                           </Dropdown.Menu>
                                                         </Dropdown>
                                                       </div>
@@ -1359,8 +1315,7 @@ function ViewFormBuilder(props) {
                                                               'item?.forms---->',
                                                               item?.forms
                                                             )}
-
-                                                            {inner_item?.seen_count>0 && 
+                                                            
                                                             <span
                                                               onClick={() => {
                                                                 seenFormResponse(
@@ -1374,7 +1329,7 @@ function ViewFormBuilder(props) {
                                                                 inner_item?.seen_count
                                                               }
                                                             </span>
-                                                          }
+
 
                                                           </div>
                                                           {localStorage.getItem(
@@ -1432,18 +1387,6 @@ function ViewFormBuilder(props) {
                                                                   </Dropdown.Item>
                                                                 )}
                                                               </Dropdown.Menu>
-                                                              <Dropdown.Item
-                                                              onClick={() => {
-                                                                navigate(
-                                                                  `/form/preview/${inner_item.form_name}`,{state:{id:inner_item.id,form_name:inner_item.form_name}}
-                                                                );
-                                                              }}
-                                                            >
-                                                              <FontAwesomeIcon
-                                                                icon={faEye}
-                                                              />{' '}
-                                                              Preview
-                                                            </Dropdown.Item>
                                                             </Dropdown>
                                                           )}
                                                         </div>
