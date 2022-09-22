@@ -10,7 +10,6 @@ const CompleteTraining = ({ filter, setTabName }) => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const fetchCompletedTrainingData = async () => {
-    console.log('INSIDE COMPLETE TRAINING MODULE');
     const user_id = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/${user_id}?category_id=${filter.category_id}&search=${filter.search}`, {
@@ -19,7 +18,6 @@ const CompleteTraining = ({ filter, setTabName }) => {
       }
     });
 
-    console.log('RESPONSE DATA:', response);
     if(response.status === 200 && response.data.status === "success") {
       const { response: trainingList } = response.data;
       setfullLoaderStatus(false)
@@ -39,7 +37,6 @@ const CompleteTraining = ({ filter, setTabName }) => {
     setTabName('completed_training');
   }, [])
 
-  console.log("filter ",filter)
   return (
     <>
       <div id="main">
