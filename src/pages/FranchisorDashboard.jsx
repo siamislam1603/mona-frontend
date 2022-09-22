@@ -22,7 +22,6 @@ const FranchisorDashboard = () => {
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
 
-  let token = localStorage.getItem('token');
   const columns1 = [
     {
       dataField: 'formname',
@@ -31,6 +30,7 @@ const FranchisorDashboard = () => {
         return (<><div className="user-list"><span className="user-pic"><img src="../img/audit-form.png" /></span><span className="user-name">Compliance Visit<small>Audited on:  {moment(cell).format('DD/MM/YYYY')}</small></span></div></>)
       },
     },
+
     {
       dataField: 'educatorname',
       text: 'Educator Name',
@@ -39,6 +39,7 @@ const FranchisorDashboard = () => {
         return (<><div className="user-list"><span className="user-pic"><img src={cell[0] === "null" ? "../img/upload.jpg" : cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
       },
     },
+
     {
       dataField: "action",
       text: "",
@@ -49,7 +50,7 @@ const FranchisorDashboard = () => {
               <img src="../img/dot-ico.svg" alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item href="/form/response/form-visit">View</Dropdown.Item>
+              <Dropdown.Item href={`/form/response/form-visit/${cell}`}>View</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div></>)
@@ -139,12 +140,13 @@ const FranchisorDashboard = () => {
       let tempData = data.map((dt) => ({
         formname: `${dt.audited_on}`,
         educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-        action: `${dt.audited_on}`
+        action: `${dt.form_id}`,
+        // form_id: `${dt.audited_on}`
       }))
       setFormData(tempData);
     }
   }
-
+  // localStorage.setItem("Form_id", JSON.stringify(formData.))
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
@@ -210,7 +212,7 @@ const FranchisorDashboard = () => {
                             </div>
                             <div className="item nolink">
                               <div className="flex">
-                                <div className="pic"><img src="../img/bitool-ico.png"  target="_blank" alt="" /></div>
+                                <div className="pic"><img src="../img/bitool-ico.png" target="_blank" alt="" /></div>
                                 <div className="name">BI Tool</div>
                               </div>
                             </div>
@@ -221,13 +223,13 @@ const FranchisorDashboard = () => {
                               </a>
                             </div>
                             <div className="item">
-                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login"  target="_blank" className="flex">
+                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="https://app.engagebay.com/login  "  target="_blank" className="flex">
+                              <a href="https://app.engagebay.com/login  " target="_blank" className="flex">
                                 <div className="pic"><img src="../img/engagebay-ico.png" alt="" /></div>
                                 <div className="name">Engagebay</div>
                               </a>

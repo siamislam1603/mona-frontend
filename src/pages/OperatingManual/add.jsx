@@ -20,7 +20,7 @@ let upperRoleUser = '';
 const AddOperatingManual = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("Dsa",location?.state?.edit)
+  console.log("Dsa", location?.state?.edit)
 
   const [operatingManualData, setOperatingManualData] = useState({
     related_files: [],
@@ -43,8 +43,8 @@ const AddOperatingManual = () => {
   const [categoryError, setCategoryError] = useState({});
   const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('franchisee_id'));
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
-  const [pageTitle,setPageTitle] = useState("Create New")
-  const [wordCount,setWordCount] = useState(0)
+  const [pageTitle, setPageTitle] = useState("Create New")
+  const [wordCount, setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
 
@@ -52,8 +52,7 @@ const AddOperatingManual = () => {
     getUserRoleData();
   }, []);
   useEffect(() => {
-    if(selectedFranchisee)
-    {
+    if (selectedFranchisee) {
       getUser();
     }
   }, [selectedFranchisee]);
@@ -105,10 +104,8 @@ const AddOperatingManual = () => {
     };
 
     await fetch(
-      `${BASE_URL}/operating_manual/one?id=${
-        location?.state?.id
-      }&category_name=${
-        location?.state?.category_name
+      `${BASE_URL}/operating_manual/one?id=${location?.state?.id
+      }&category_name=${location?.state?.category_name
       }&franchisee_id=${localStorage.getItem('f_id')}`,
       requestOptions
     )
@@ -174,17 +171,17 @@ const AddOperatingManual = () => {
   };
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
-    console.log(field,value)
+    console.log(field, value)
 
-    if(field == "description"){
+    if (field == "description") {
       const text = value;
       setWordCount(text.split(" ").length);
-      console.log("WORD count",text.split(" ").length)
-      if(value === ""){
+      console.log("WORD count", text.split(" ").length)
+      if (value === "") {
         setWordCount(0)
       }
     }
-    
+
     if (!!errors[field]) {
       setErrors({
         ...errors,
@@ -202,11 +199,10 @@ const AddOperatingManual = () => {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if(localStorage.getItem("user_role")!=="franchisor_admin")
-        {
-          formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("franchisee_admin,","") : null;
+        if (localStorage.getItem("user_role") !== "franchisor_admin") {
+          formSettingData.shared_role = formSettingData.shared_role ? formSettingData.shared_role.replace("franchisee_admin,", "") : null;
         }
-        formSettingData.shared_role =  formSettingData.shared_role ? formSettingData.shared_role.replace("all,","") : null;
+        formSettingData.shared_role = formSettingData.shared_role ? formSettingData.shared_role.replace("all,", "") : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
@@ -244,10 +240,10 @@ const AddOperatingManual = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const newErrors = createOperatingManualValidation(operatingManualData,wordCount);
+    const newErrors = createOperatingManualValidation(operatingManualData, wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      console.log("newErrors--->",Object.keys(newErrors)[0]);
+      console.log("newErrors--->", Object.keys(newErrors)[0]);
       document.getElementById(Object.keys(newErrors)[0]).focus();
     } else {
       upperRoleUser = getUpperRoleUser();
@@ -271,7 +267,7 @@ const AddOperatingManual = () => {
           if (res?.success === false) {
             let errorData = { ...errors };
             errorData['title'] = res?.message;
-            console.log("Error DATA",errorData)
+            console.log("Error DATA", errorData)
             setErrors(errorData);
             document.getElementById(Object.keys(errorData)[0]).focus();
 
@@ -350,7 +346,7 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
-    console.log("file---->",file);
+    console.log("file---->", file);
     if (name === 'cover_image') {
       if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
@@ -378,8 +374,8 @@ const AddOperatingManual = () => {
         setErrors(errorData);
         flag = true;
       }
-      console.log("file type",file.type)
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') ) {
+      console.log("file type", file.type)
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska')) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
@@ -393,11 +389,11 @@ const AddOperatingManual = () => {
       }
       if (name === 'reference_video') {
         setVideoLoaderFlag(true);
-    
+
       }
 
       const body = new FormData();
-      body.append('image',file);
+      body.append('image', file);
       body.append('description', 'operating manual');
       body.append('title', name);
       body.append('uploadedBy', 'vaibhavi');
@@ -405,7 +401,7 @@ const AddOperatingManual = () => {
       var myHeaders = new Headers();
       myHeaders.append('shared_role', 'admin');
       myHeaders.append('authorization', 'Bearer ' + token);
-      
+
       fetch(`${BASE_URL}/uploads/uiFiles`, {
         method: 'post',
         body: body,
@@ -471,12 +467,12 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-console.log("Oepratiing",errors)
-console.log("PERMISSION SELECT",selectedUser,formSettingData)
+  console.log("Oepratiing", errors)
+  console.log("PERMISSION SELECT", selectedUser, formSettingData)
   return (
     <>
       <div id="main">
-      <ToastContainer/>
+        <ToastContainer />
         <section className="mainsection ">
           <Container>
             <div className="admin-wrapper">
@@ -500,7 +496,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                   <Row>
                     <Col sm={12}>
                       <div className="mynewForm-heading">
-                        <h4 className="mynewForm">{location?.state?.edit=== true  ? "Edit Operating Manual":"Create new" }</h4>
+                        <h4 className="mynewForm">{location?.state?.edit === true ? "Edit Operating Manual" : "Create new"}</h4>
                         <Button
                           onClick={(e) => {
                             e.preventDefault();
@@ -552,17 +548,18 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                         </Form.Group>
                       </div>
                     </Col>
-                   {
-                    loginuser === "franchisor_admin" &&  <Col sm={6} className="add_fields">
-                    <Button
-                      onClick={() => {
-                        setCategoryModalFlag(true);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faPlus} /> Add New Module
-                    </Button>
-                  </Col>
-                   }
+                    {
+                      loginuser === "franchisor_admin" &&
+                      <Col sm={6} className="add_fields">
+                        <Button
+                          onClick={() => {
+                            setCategoryModalFlag(true);
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faPlus} /> Add New Module
+                        </Button>
+                      </Col>
+                    }
                   </Row>
                   <div className="my-new-formsection">
                     <Row>
@@ -623,8 +620,8 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                             Description
                           </Form.Label>
                           {location?.state?.id &&
-                          location?.state?.category_name &&
-                          operatingManualData?.description ? (
+                            location?.state?.category_name &&
+                            operatingManualData?.description ? (
                             <MyEditor
                               name="description"
                               id="description"
@@ -704,7 +701,7 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                           <small className="fileinput">(File limit 2 MB)</small>
 
 
-                        
+
                         </Form.Group>
                       </Col>
                       <Col sm={6}>
@@ -847,40 +844,40 @@ console.log("PERMISSION SELECT",selectedUser,formSettingData)
                   <div className="modal-two-check user-roles-box">
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
-                      <label className="container">
-                        Franchisee Admin
-                        <input
-                          type="checkbox"
-                          name="shared_role"
-                          id="franchisee_admin"
-                          onClick={(e) => {
-                            let data = { ...formSettingData };
-                            if (
-                              !data['shared_role']
-                                .toString()
-                                .includes(e.target.id)
-                            ) {
-                              data['shared_role'] += e.target.id + ',';
-                            } else {
-                              data['shared_role'] = data['shared_role'].replace(
-                                e.target.id + ',',
-                                ''
-                              );
-                              if (data['shared_role'].includes('all')) {
-                                data['shared_role'] = data[
-                                  'shared_role'
-                                ].replace('all,', '');
+                        <label className="container">
+                          Franchisee Admin
+                          <input
+                            type="checkbox"
+                            name="shared_role"
+                            id="franchisee_admin"
+                            onClick={(e) => {
+                              let data = { ...formSettingData };
+                              if (
+                                !data['shared_role']
+                                  .toString()
+                                  .includes(e.target.id)
+                              ) {
+                                data['shared_role'] += e.target.id + ',';
+                              } else {
+                                data['shared_role'] = data['shared_role'].replace(
+                                  e.target.id + ',',
+                                  ''
+                                );
+                                if (data['shared_role'].includes('all')) {
+                                  data['shared_role'] = data[
+                                    'shared_role'
+                                  ].replace('all,', '');
+                                }
                               }
-                            }
-                            setFormSettingData(data);
-                          }}
-                          checked={formSettingData?.shared_role
-                            ?.toString()
-                            .includes('franchisee_admin')}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                    )}
+                              setFormSettingData(data);
+                            }}
+                            checked={formSettingData?.shared_role
+                              ?.toString()
+                              .includes('franchisee_admin')}
+                          />
+                          <span className="checkmark"></span>
+                        </label>
+                      )}
                     <label className="container">
                       Coordinator
                       <input
