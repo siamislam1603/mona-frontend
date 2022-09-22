@@ -4,6 +4,7 @@ import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import axios from "axios";
 import { BASE_URL } from "../components/App";
+// import { getVideoDurationInSeconds } from 'get-video-duration';
 import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
@@ -17,6 +18,12 @@ const getRoleName = (role) => {
 
   return obj[role];
 }
+
+// function fetchVideoDuration(videoURL) {
+//   getVideoDurationInSeconds(videoURL).then((duration) => {
+//     console.log(duration)
+//   });
+// }
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
@@ -163,6 +170,7 @@ const TrainingDetail = () => {
   
   trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
   console.log('IS BUTTON VISIBLE:', hideTrainingFinishButton);
+  // console.log('VIDEO URL:', fetchVideoDuration('https://www.youtube.com/watch?v=wi5h46V6NQM'));
   return (
     <>
       <div id="main">

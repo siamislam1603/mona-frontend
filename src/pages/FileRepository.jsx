@@ -31,28 +31,28 @@ const FileRepository = () => {
 
     myHeaders.append(
       'Authorization',
-      'Bearer ' + localStorage.getItem('token')
+      'Bearer ' + localStorage.getItem('token'),
     );
-    var requestOptions = {
+    fetch(`${BASE_URL}/fileCategory/`, {
       method: 'POST',
       headers: myHeaders,
-      body: JSON.stringify({category_name }),
-      redirect: 'follow',
-    };
-    fetch(`${BASE_URL}/fileCategory/`, requestOptions).then((response) => {
-      response.json()
-    })
+      body: JSON.stringify({
+        category_name: category_name,
+      })
+    }).then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+      });
   }
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
   }
-  const [SearchValue, setSearchValue] = useState();
-
-
+  const [SearchValue, setSearchValue] = useState("");
   const HandelSearch = (event) => {
     setSearchValue(event.target.value);
   }
+
   return (
     <>
       <div id="main">
@@ -108,7 +108,7 @@ const FileRepository = () => {
                                   <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
                                 }
                               </>)}
-                              <li>
+                              {/* <li>
                                 {
                                   loginuser === "franchisor_admin" &&
                                   <div className="new_module">
@@ -123,7 +123,7 @@ const FileRepository = () => {
                                     </div>
                                   </div>
                                 }
-                              </li>
+                              </li> */}
                             </ul>
 
                             <Modal
