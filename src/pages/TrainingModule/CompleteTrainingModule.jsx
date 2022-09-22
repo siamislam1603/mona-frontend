@@ -30,7 +30,7 @@ const CompleteTraining = ({ filter, setTabName }) => {
   }, []);
   useEffect(() =>{
     fetchCompletedTrainingData()
-  },[filter.category_id])
+  },[filter.category_id, filter.search])
 
 
   useState(() => {
