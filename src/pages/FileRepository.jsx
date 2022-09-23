@@ -108,7 +108,7 @@ const FileRepository = () => {
                                   <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
                                 }
                               </>)}
-                              {/* <li>
+                              <li>
                                 {
                                   loginuser === "franchisor_admin" &&
                                   <div className="new_module">
@@ -123,7 +123,7 @@ const FileRepository = () => {
                                     </div>
                                   </div>
                                 }
-                              </li> */}
+                              </li>
                             </ul>
 
                             <Modal

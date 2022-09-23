@@ -39,7 +39,6 @@ const FranchisorDashboard = () => {
         return (<><div className="user-list"><span className="user-pic"><img src={cell[0] === "null" ? "../img/upload.jpg" : cell[0]} alt='' /></span><span className="user-name">{cell[1]} <small>{cell[2]}</small></span></div></>)
       },
     },
-
     {
       dataField: "action",
       text: "",
