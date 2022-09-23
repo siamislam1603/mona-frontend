@@ -1386,7 +1386,7 @@ function ViewFormBuilder(props) {
                                                                     Remove
                                                                   </Dropdown.Item>
                                                                 )}
-                                                              </Dropdown.Menu>
+
                                                               <Dropdown.Item
                                                               onClick={() => {
                                                                 navigate(
@@ -1399,6 +1399,10 @@ function ViewFormBuilder(props) {
                                                               />{' '}
                                                               Preview
                                                             </Dropdown.Item>
+
+
+                                                              </Dropdown.Menu>
+
                                                             </Dropdown>
                                                           )}
                                                         </div>

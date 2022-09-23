@@ -10,6 +10,7 @@ const Input = (props) => {
       <Form.Control
         type={controls.field_type}
         name={controls.field_name}
+        maxLength={255}
         onChange={(e) => {
           props.onChange(e.target.name, e.target.value,controls.field_type);
         }}

@@ -649,9 +649,9 @@ const NewUser = () => {
                         }
                         
                       </div>
-                      <form className="user-form" onSubmit={handleSubmit}>
+                      <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
-                        <Form.Group className="col-md-6 mb-3">
+                        <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address *</Form.Label>
                             <Form.Control
                               type="text"
@@ -673,7 +673,7 @@ const NewUser = () => {
                             { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>User Role *</Form.Label>
                             <Select
                               placeholder="Select"
@@ -696,7 +696,7 @@ const NewUser = () => {
                             { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Full Name *</Form.Label>
                             <Form.Control
                               type="text"
@@ -714,7 +714,7 @@ const NewUser = () => {
                             { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>State *</Form.Label>
                             <Select
                               placeholder="Select"
@@ -737,7 +737,7 @@ const NewUser = () => {
                             { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Suburb *</Form.Label>
                             <Select
                               placeholder="Select"
@@ -764,7 +764,7 @@ const NewUser = () => {
                           </Form.Group>
                           
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Address *</Form.Label>
                             <Form.Control
                               type="text"
@@ -782,7 +782,7 @@ const NewUser = () => {
                             { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                           </Form.Group>
 
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Post Code *</Form.Label>
                             <Form.Control
                               type="text"
@@ -811,7 +811,7 @@ const NewUser = () => {
                           
                           {
                             formData?.role === 'guardian' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>CRN *</Form.Label>
                               <Form.Control
                                 type="text"
@@ -833,7 +833,7 @@ const NewUser = () => {
                             
                           {
                             formData && formData?.role !== 'guardian' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Training Categories</Form.Label>
                               <Select
                                 closeMenuOnSelect={false}
@@ -853,7 +853,7 @@ const NewUser = () => {
                           
                           {
                             formData?.role !== 'guardian' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Professional Development Categories</Form.Label>
                               <Select
                                 closeMenuOnSelect={false}
@@ -920,7 +920,7 @@ const NewUser = () => {
                           
                           {
                             formData && formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Nominated Assistant</Form.Label>
                               <Form.Control
                                 type="text"
@@ -933,7 +933,7 @@ const NewUser = () => {
                             </Form.Group>
                           }
                             
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchise *</Form.Label>
                             {
                               localStorage.getItem('user_role') === 'franchisor_admin' &&
@@ -977,7 +977,7 @@ const NewUser = () => {
 
                           {
                             formData?.role === 'educator' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Select Primary Coordinator *</Form.Label>
                               <Select
                                 isDisabled={formData.role !== 'educator'}
@@ -1004,7 +1004,7 @@ const NewUser = () => {
 
                           {
                             formData && formData?.role !== 'guardian' &&
-                            <Form.Group className="col-md-6 mb-3">
+                            <Form.Group className="col-md-6 mb-3 relative">
                               <Form.Label>Business Assets</Form.Label>
                               <Select
                                 closeMenuOnSelect={false}
@@ -1051,7 +1051,7 @@ const NewUser = () => {
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group> */}
                           
-                          <Form.Group className="col-md-6 mb-3">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple 
                               module="user-management"

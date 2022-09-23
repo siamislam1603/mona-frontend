@@ -10,6 +10,8 @@ const TextArea = (props) => {
           as="textarea"
           rows={controls.row ? controls.row : 3}
           name={controls.field_name}
+          maxLength={1200}
+
           className="child_input"
           placeholder={controls.placeholder}
           value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
