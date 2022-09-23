@@ -126,19 +126,47 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   };
 
-  const handleLinkClick = notificationId => {
-  
+  // const handleLinkClick = notificationId => {
 
-    if (notificationId) {
-      const response = axios.put(
+  //   if (notificationId) {
+  //     const response = axios.put(
+  //       `${BASE_URL}/notification/${notificationId}`, {}, {
+  //       headers: {
+  //         "Authorization": "Bearer " + token
+  //       }
+  //     }
+  //     );
+
+  //     if (response.status === 200) {
+  //       console.log('notification read status updated', response.msg);
+  //     } else {
+  //       console.log('TYPE OF COVER IMAGE:', response.msg);
+
+  //     }
+
+
+  //   }
+
+  //   // let path = event.target.getAttribute('path');
+  //   // setTabLinkPath(path);
+  // }
+
+
+  const handleLinkClick = async (notificationId,link) => {
+  
+    if (notificationId, link) {
+      const response = await axios.put(
         `${BASE_URL}/notification/${notificationId}`, {}, {
         headers: {
           "Authorization": "Bearer " + token
         }
       }
       );
-
+      // console.log("response response",response)
       if (response.status === 200) {
+
+        window.location.href = link;
+
         console.log('notification read status updated', response.msg);
       } else {
         console.log('TYPE OF COVER IMAGE:', response.msg);
@@ -151,6 +179,20 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     // let path = event.target.getAttribute('path');
     // setTabLinkPath(path);
   }
+
+  function fetchData(str) {
+      let link = str.split(/["]/)[1];
+      let text = str.replace(/<\/?a[^>]*>/g, "");
+
+      // let text = str.split(/[><]/)[2];
+      console.log("link link link",link)
+      console.log("text text text",text)
+      return { link, text };
+  }
+
+
+
+
 
   const handleMarkRearAll = async notificationId => {
 
@@ -292,10 +334,22 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
                   </div>
                   <div className="notiftxt">
-                    <div className="title-xxs" onClick={() => handleLinkClick(details.id)}
+                    {/* <div className="title-xxs" onClickCapture={() => handleLinkClick(details.id)}
                       dangerouslySetInnerHTML={{
                         __html: `${details.title}`,
-                      }} />
+                      }} /> */}
+
+                      <div className='title-xxs'>
+                        
+                        <p onClick={() => handleLinkClick(details.id,fetchData(details.title).link)} style={{cursor:"pointer" }} >
+                          {/* {fetchData(details.title).text} */}
+
+                          <div dangerouslySetInnerHTML={{
+                            __html: `${fetchData(details.title).text}`,
+                          }} />
+
+                        </p>
+                      </div>
 
                   </div>
                 </div>

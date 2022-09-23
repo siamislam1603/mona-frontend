@@ -44,13 +44,15 @@ const FranchisorDashboard = () => {
       dataField: "action",
       text: "",
       formatter: (cell) => {
+        cell = cell.split(",");
+        localStorage.setItem("Form_Id", cell[0])
         return (<><div className="cta-col">
           <Dropdown>
             <Dropdown.Toggle variant="transparent" id="ctacol">
               <img src="../img/dot-ico.svg" alt="" />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item href={`/form/response/form-visit/${cell}`}>View</Dropdown.Item>
+              <Dropdown.Item href={`/form/response/form-visit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
         </div></>)
@@ -137,10 +139,10 @@ const FranchisorDashboard = () => {
     })
     if (response.status == 200) {
       let data = response.data.data.formData;
-      let tempData = data.map((dt) => ({
+      let tempData = data.map((dt, index) => ({
         formname: `${dt.audited_on}`,
         educatorname: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-        action: `${dt.form_id}`,
+        action: `${dt.form_id},${index}`,
         // form_id: `${dt.audited_on}`
       }))
       setFormData(tempData);
@@ -239,7 +241,7 @@ const FranchisorDashboard = () => {
                         <div className="record-sec pb-5">
                           <header className="title-head mb-4 justify-content-between">
                             <h2 className="title-sm mb-0"><strong>Record of Audits</strong></h2>
-                            <Link to="/form/response/form-visit" className="viewall">View All</Link>
+                            <Link to={`/form/response/form-visit/${localStorage.getItem("Form_Id")}/index`} className="viewall">View All</Link>
                           </header>
                           <div className="audit-form">
                             <p>Total Number of Audit Forms <br />in Last 30 Days</p>
