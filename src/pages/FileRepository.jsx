@@ -22,13 +22,13 @@ const FileRepository = () => {
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
 
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
-  const [category_name, setCategory] = useState()
-  console.log("Category", category_name)
+  const [category_name, setCategory] = useState({
+    category_name: ""
+  })
 
   const Submiton = async (e) => {
     e.preventDefault();
     var myHeaders = new Headers();
-
     myHeaders.append(
       'Authorization',
       'Bearer ' + localStorage.getItem('token'),
@@ -44,6 +44,8 @@ const FileRepository = () => {
         console.log(responseJson);
       });
   }
+
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -152,7 +154,7 @@ const FileRepository = () => {
                                         <Form.Control
                                           type="text"
                                           name="category_name"
-                                          value={category_name}
+                                          value={category_name.category_name}
                                           onChange={(e) => {
                                             setCategory(e.target.value);
                                           }}
