@@ -143,16 +143,18 @@ function Setting(props) {
                 selectedFormVisibleUserId += item.id + ',';
               }
             }
+
             if (oldResult?.permission?.fill_access_users) {
               if (
                 oldResult?.permission?.fill_access_users.includes(
                   item.id.toString()
                 )
               ) {
-                selectedFillAccessUser.push({ id: item.id, email: item.email });
+                selectedFillAccessUser.push({ id: item.id, email: item.email, namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}` });
                 selectedFillAccessUserId += item.id + ',';
               }
             }
+
             if (oldResult?.permission?.signatories_role) {
               if (
                 oldResult?.permission?.signatories_role.includes(
@@ -166,6 +168,7 @@ function Setting(props) {
                 selectedSignatoriesUserId += item.id + ',';
               }
             }
+
             if (oldResult?.permission?.response_visibility) {
               if (
                 oldResult?.permission?.response_visibility.includes(
@@ -175,15 +178,17 @@ function Setting(props) {
                 selectedResponseVisibilityUser.push({
                   id: item.id,
                   email: item.email,
+                  namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}`
                 });
                 selectedResponseVisibilityUserId += item.id + ',';
               }
             }
+
             if (oldResult?.permission?.target_user) {
               if (
                 oldResult?.permission?.target_user.includes(item.id.toString())
               ) {
-                selectedTargetUser.push({ id: item.id, email: item.email });
+                selectedTargetUser.push({ id: item.id, email: item.email, namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}` });
                 selectedTargetUserId += item.id + ',';
               }
             }
@@ -345,7 +350,7 @@ function Setting(props) {
           item['status'] = false;
         });
 
-        let formattedUserData = result?.data.map(d => ({
+        let formattedUserData = result?.data?.map(d => ({
           id: d.id,
           fullname: d.fullname,
           email: d.email,

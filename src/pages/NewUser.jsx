@@ -71,6 +71,7 @@ const NewUser = () => {
   const [businessAssetData, setBuinessAssetData] = useState([]);
   const [trainingDocuments, setTrainingDocuments] = useState();
   const [suburbSearchString, setSuburbSearchString] = useState("");
+  const [fileError, setFileError] = useState([]);
 
   // IMAGE CROPPING STATES
   const [image, setImage] = useState(null);
@@ -603,9 +604,16 @@ const NewUser = () => {
     }
   }, [trainingDocuments]);
 
-  formData && console.log('FORM DATA:', formData);
-  formErrors && console.log('FORM ERRORS:', formErrors);
-  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
+  // useEffect(() => {
+  //   setFileError(uploadError?.map(errObj => (
+  //     errObj?.error[0]?.message
+  //   )));
+
+  //   let uniqueList = [...new Set(fileError)];
+  //   console.log('UNIQUE ERRORS:', uniqueList);
+  // }, [uploadError])
+
+  // fileError && console.log('FILE ERROR:', fileError);
   return (
     <>
       <div id="main">

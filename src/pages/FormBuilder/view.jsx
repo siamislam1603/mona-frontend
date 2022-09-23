@@ -40,7 +40,6 @@ function ViewFormBuilder(props) {
   );
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [formId, setFormId] = useState(null);
-  console.log(MeFormData, 'MeFormData');
   const [OthersFormData, setOthersFormData] = useState([]);
   const [key, setKey] = useState(
     localStorage.getItem('user_role') === 'coordinator' ||
@@ -57,8 +56,6 @@ function ViewFormBuilder(props) {
   let count=0;
 
   useEffect(() => {
-    console.log('frnachisee_id----->', localStorage.getItem('franchisee_id'));
-    console.log('user_id----->', localStorage.getItem('user_id'));
 
     getAllForm();
     if (location?.state?.message) {
@@ -81,8 +78,6 @@ function ViewFormBuilder(props) {
       //   timeZone: 'Australia/Perth',
       // });
       startDate = new Date(startDate);
-      console.log('todayDate--->', todayDate.getTime());
-      console.log('startDate--->', startDate.getTime());
       if (todayDate.getTime() < startDate.getTime()) {
         toast.error(
           "You can't open this form because this form start date is " +
@@ -136,7 +131,7 @@ function ViewFormBuilder(props) {
       .catch((error) => console.log('error', error));
   };
 
-  const deleteForm = (id) => {
+  const deleteForm = (id, formCategory) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -152,7 +147,22 @@ function ViewFormBuilder(props) {
       .then((response) => response.json())
       .then((result) => {
         toast.success(result?.message);
-        // getFormData('', localStorage.getItem('franchisee_id'));
+
+        // let separatedCategoryData = formData.filter(d => d.category === formCategory);
+        // separatedCategoryData = separatedCategoryData[0].forms;
+        // let filteredFormArray = separatedCategoryData.filter(d => d.id !== id);
+        
+        // let filteredData = formData.map(d => {
+        //   if(d.category === formCategory) {
+        //     return {
+        //       ...d,
+        //       forms: filteredFormArray
+        //     }
+        //   }
+        //   return d
+        // });
+        // setFormData(filteredData);
+        getFormData('', localStorage.getItem('franchisee_id'));
       })
       .catch((error) => console.log('error', error));
   };
@@ -181,7 +191,6 @@ function ViewFormBuilder(props) {
         setFormData(result?.result);
         let me = [];
         let others = [];
-        console.log('result.result--->', result?.result);
         result?.result.map((item, index) => {
           me.push(item);
           others.push(item);
@@ -191,18 +200,12 @@ function ViewFormBuilder(props) {
             (a, b) => new moment(b.createdAt) - new moment(a.createdAt)
           );
           item?.forms?.map((inner_item, inner_index) => {
-            console.log(
-              'inner_item.form_data---->after,',
-              inner_item.form_data
-            );
             if (
               inner_item.created_by ===
               parseInt(localStorage.getItem('user_id'))
             ) {
-              console.log('if', inner_item);
               me.forms.push(inner_item);
             } else {
-              console.log('else', inner_item);
               others.forms.push(inner_item);
             }
           });
@@ -213,16 +216,15 @@ function ViewFormBuilder(props) {
             delete others[index];
           }
         });
+        console.log('ME FORM DATA FORMAT:', me);
+        console.log('OTHER FORM DATA:', others);
         setMeFormData(me);
-        console.log('me---->', me);
-        console.log('me---->2', others);
         setOthersFormData(others);
         if (result) {
           setfullLoaderStatus(false);
         }
       })
       .catch((error) => {
-        console.log('error', error);
         setfullLoaderStatus(false);
       });
   };
@@ -261,8 +263,6 @@ function ViewFormBuilder(props) {
 
   return (
     <>
-      {console.log('child_id----->', localStorage.getItem('child_id'))}
-      {console.log('others form data----->', OthersFormData)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -274,7 +274,6 @@ function ViewFormBuilder(props) {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={(id) => {
-                    console.log('id---->', id);
                     id =
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.setItem('child_id', id)
@@ -365,30 +364,9 @@ function ViewFormBuilder(props) {
                                     
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
-                                        {
-                                          console.log(
-                                            'inner_item?.form_filled_user---->,',
-                                            inner_item?.form_filled_user,
-                                            '-----',
-                                            inner_item.form_name,
-                                            '-----',
-                                            localStorage.getItem('user_role'),
-                                            '--------',
-                                            localStorage.getItem('child_id'),
-                                            '-----',
-                                            !(
-                                              inner_item?.form_filled_user || []
-                                            ).includes(
-                                              localStorage.getItem('child_id')
-                                            ),
-                                            '------',
-                                            inner_item.form_permissions[0]
-                                              ?.fill_access_users
-                                          );
-                                        }
                                         return inner_item.end_date &&
-                                        ((inner_item.form_permissions[0]
-                                        ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
+                                        ((inner_item?.form_permissions[0]
+                                        ?.fill_access_users || []).includes("parent") && (inner_item?.form_permissions[0]
                                           ?.target_user || []).includes("parent") ?  
                                           !(
                                             inner_item?.form_filled_user || []
@@ -412,7 +390,7 @@ function ViewFormBuilder(props) {
                                               : localStorage.getItem('user_id')
                                           )) &&
                                           ((
-                                            inner_item.form_permissions[0]
+                                            inner_item?.form_permissions[0]
                                               ?.fill_access_users || []
                                           ).includes(
                                             localStorage.getItem(
@@ -424,7 +402,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item.form_permissions[0]
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem(
@@ -534,8 +512,8 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         return inner_item?.end_date === null &&
-                                        ((inner_item.form_permissions[0]
-                                          ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
+                                        ((inner_item?.form_permissions[0]
+                                          ?.fill_access_users || []).includes("parent") && (inner_item?.form_permissions[0]
                                             ?.target_user || []).includes("parent") ?  
                                             !(
                                               inner_item?.form_filled_user || []
@@ -571,7 +549,7 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              inner_item.form_permissions[0]
+                                              inner_item?.form_permissions[0]
                                                 ?.fill_access_users || []
                                             ).includes(
                                               localStorage.getItem(
@@ -698,8 +676,8 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         return (
-                                          (inner_item.form_permissions[0]
-                                            ?.fill_access_users || []).includes("parent") && (inner_item.form_permissions[0]
+                                          (inner_item?.form_permissions[0]
+                                            ?.fill_access_users || []).includes("parent") && (inner_item?.form_permissions[0]
                                               ?.target_user || []).includes("parent") ?  
                                               (inner_item?.form_filled_user || []
                                         ).includes(
@@ -961,10 +939,8 @@ function ViewFormBuilder(props) {
                                 <div className="forms-content-section">
                                   {
 
-                                  MeFormData.length>0?
-
-
-                                  MeFormData?.map((item, index) => {
+                                  MeFormData[0]?.forms.length > 0
+                                  ?MeFormData?.map((item, index) => {
                                     return (
                                       <>
                                         <Row>
@@ -977,7 +953,6 @@ function ViewFormBuilder(props) {
                                         <Row>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
-                                              console.log("total responcesssssssssssssssssss",inner_item)
                                               return (
                                                 inner_item.created_by ===
                                                   parseInt(
@@ -1122,7 +1097,8 @@ function ViewFormBuilder(props) {
                                                                     )
                                                                   ) {
                                                                     deleteForm(
-                                                                      inner_item.id
+                                                                      inner_item.id,
+                                                                      item.category
                                                                     );
                                                                   }
                                                                 }}
@@ -1161,7 +1137,7 @@ function ViewFormBuilder(props) {
                                       </>
                                     );
                                   })
-                                  :'No Form Created By You'
+                                  :<><p>No Form Created By You</p></>
                                   
                                   
                                   }
@@ -1176,10 +1152,8 @@ function ViewFormBuilder(props) {
                               <div className="forms-content-section">
                                 {
                                 
-                                OthersFormData.length>0?
-
-                                
-                                OthersFormData?.map((item, index) => {
+                                OthersFormData[0]?.forms.length > 0
+                                ?OthersFormData?.map((item, index) => {
                                   {
                                     item['title_flag'] = false;
                                   }
@@ -1188,12 +1162,6 @@ function ViewFormBuilder(props) {
                                       <Row>
                                         {item?.forms?.map(
                                           (inner_item, inner_index) => {
-                                            {
-                                              console.log(
-                                                'inner_item------232132133>>>>',
-                                                inner_item
-                                              );
-                                            }
                                             return (
                                               inner_item.created_by !==
                                                 parseInt(
@@ -1255,10 +1223,6 @@ function ViewFormBuilder(props) {
                                                     </>
                                                   )}
                                                   <Col lg={4}>
-                                                    {console.log(
-                                                      'inner_item--->',
-                                                      inner_item
-                                                    )}
                                                     <div className="forms-content">
                                                       <div className="create-other">
                                                         <div className="content-icon-section">
@@ -1342,12 +1306,6 @@ function ViewFormBuilder(props) {
                                                             <img
                                                               src="../img/form-user-round.svg"
                                                               onClick={() => {
-                                                                console.log(
-                                                                  'item?.forms--->343243',
-                                                                  item?.forms[
-                                                                    inner_index
-                                                                  ]
-                                                                );
                                                                 seenFormResponse(
                                                                   item?.forms[
                                                                     inner_index
@@ -1355,10 +1313,6 @@ function ViewFormBuilder(props) {
                                                                 );
                                                               }}
                                                             />
-                                                            {console.log(
-                                                              'item?.forms---->',
-                                                              item?.forms
-                                                            )}
 
                                                             {inner_item?.seen_count>0 && 
                                                             <span
@@ -1418,7 +1372,8 @@ function ViewFormBuilder(props) {
                                                                         )
                                                                       ) {
                                                                         deleteForm(
-                                                                          inner_item.id
+                                                                          inner_item.id,
+                                                                          item.category
                                                                         );
                                                                       }
                                                                     }}
@@ -1494,8 +1449,7 @@ function ViewFormBuilder(props) {
                                     </>
                                   );
                                 })
-                              :'No Form Created By Others'
-                              
+                              :<><p>'No Form Created By Others'</p></>
                               }
                               </div>
                             </Tab>
@@ -1528,7 +1482,6 @@ function ViewFormBuilder(props) {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {console.log('index', Index)}
           <div className="user_list_wrp">
             <div className="table_head">
               <div className="user_box">
@@ -1538,23 +1491,10 @@ function ViewFormBuilder(props) {
               </div>
             </div>
             <div className="table_body">
-              {console.log(
-                'OthersFormData[Index]?.forms[innerIndex]?.form_data---->',
-                OthersFormData[Index]?.forms[innerIndex].form_data,
-                '----',
-                Index,
-                '----',
-                innerIndex,
-                '---',
-                key
-              )}
               {key === 'created-by-me'
                 ? MeFormData[Index]?.forms &&
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
-                      {
-                        console.log('item----><><><><>', item);
-                      }
                       return (
                         // http://13.237.14.155:4000/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin
                         <div className="user_box">
@@ -1636,7 +1576,6 @@ function ViewFormBuilder(props) {
                     (item, index) => {
                       return (
                         <div className="user_box">
-                          {console.log('item----><><><><>2', item)}
                           <div className="user_name">
                             <div className="user_profile">
                               <img
@@ -1693,12 +1632,12 @@ function ViewFormBuilder(props) {
                                 onClick={() => {
                                   if (
                                     OthersFormData[Index]?.forms[innerIndex]
-                                      .form_permissions[0]?.signatories_role ||
+                                      ?.form_permissions[0]?.signatories_role ||
                                     [].includes(
                                       localStorage.getItem('user_id')
                                     ) ||
                                     OthersFormData[Index]?.forms[innerIndex]
-                                      .form_permissions[0]?.signatories_role ||
+                                      ?.form_permissions[0]?.signatories_role ||
                                     [].includes(
                                       localStorage.getItem('user_role') ===
                                         'guardian'
