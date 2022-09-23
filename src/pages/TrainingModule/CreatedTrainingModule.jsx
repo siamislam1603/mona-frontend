@@ -244,12 +244,23 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
         <div className="training-column">
           <Row style={{ marginBottom: '40px' }}>
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
-            <header className="title-head mb-4 justify-content-between">
-              {myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
-                <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
-              }
-              {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
-            </header>
+            {
+              localStorage.getItem('user_role') === "franchisor_admin"
+              ?<header className="title-head mb-4 justify-content-between">
+                {
+                  myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
+                  <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+                }
+                {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+              </header>
+              :<header className="title-head mt-4 mb-0" style={{ display: "flex", justifyContent: "right" }}>
+                {
+                  myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
+                  <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+                }
+                {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+              </header>
+            }
             {myTrainingData?.map((training) => {
               return (
                 <Col lg={4} md={6} key={training.id}>
