@@ -701,7 +701,7 @@ const EditTraining = () => {
                               docFileError  &&
                               docFileError.map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File should be less than 5MB in size"}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
                                 )
                               })
                             }

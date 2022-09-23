@@ -240,6 +240,11 @@ const NewUser = () => {
       setFormErrors(errorObj);
       setAutoFocus(errorObj);
     } else {
+      let fullname = formData?.fullname.trim();
+      setFormData(prevState => ({
+        ...prevState,
+        fullname
+      }));
       console.log('Erorrs removed!');
       let data=new FormData();
       trainingDocuments?.map(item => {
@@ -1052,7 +1057,7 @@ const NewUser = () => {
                               uploadError.map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File is greater than 5MB"}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
                                 )
                               })
                             }

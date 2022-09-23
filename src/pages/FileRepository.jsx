@@ -10,7 +10,9 @@ import FilerepoUploadFile from './FilerepoUploadFile';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { axios } from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 import { BASE_URL } from '../components/App';
 const loginuser = localStorage.getItem('user_role')
 
@@ -22,29 +24,34 @@ const FileRepository = () => {
   const [categoryModalFlag, setCategoryModalFlag] = useState(false);
 
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
-  const [category_name, setCategory] = useState({
-    category_name: ""
-  })
+  const [category_name, setCategory] = useState()
+  // console.log("Category", category_name)
 
-  const Submiton = async (e) => {
-    e.preventDefault();
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('token'),
-    );
-    fetch(`${BASE_URL}/fileCategory/`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify({
-        category_name: category_name,
-      })
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson);
-      });
+  const addAndSaveCategory = async () => {
+    let response = await axios.post(`${BASE_URL}/fileCategory/`, { category_name: category_name }, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+    console.log('RESPONSE:', response);
+
+    if(response.status === 201 && response.data.status === "success") {
+      let { message } = response.data;
+      
+      toast.success(message);
+    } else if(response.status === 200 && response.data.status === "fail") {
+      // toast.error(message);
+    } else {
+      // toast.error('Category creation failed');
+    }
+
   }
 
+
+  const Submiton = (e) => {
+    e.preventDefault();
+    addAndSaveCategory();
+  }
 
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -175,7 +182,7 @@ const FileRepository = () => {
                                 >
                                   Cancel
                                 </Button>
-                                <Button className="done" onClick={Submiton}>
+                                <Button className="done" onClick={(e) => Submiton(e)}>
                                   Save
                                 </Button>
                               </Modal.Footer>

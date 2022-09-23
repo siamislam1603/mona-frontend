@@ -662,7 +662,7 @@ const AddNewTraining = () => {
                             videoFileErrorMessage.map(errorObj => {
                               return (
                                 // errorObj?.error[0].message
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video file should be less than 1GB in size"}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
                               )
                             })
                           }
