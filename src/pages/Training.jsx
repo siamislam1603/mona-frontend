@@ -28,7 +28,7 @@ const Training = () => {
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: "",
-    filter: "due_date"
+    filter: "alphabatical"
   });
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [tabName, setTabName] = useState('assigned_training');
@@ -111,8 +111,6 @@ const Training = () => {
     }));
   }, [tabName]);
 
-
-  tabName && console.log('TAB NAME:', tabName);
   return (
     <>
       <div id="main">
@@ -234,6 +232,81 @@ const Training = () => {
                         />
                       </Form.Group>
                     </div>
+                    
+                    {
+                      tabName === "assigned_training" &&
+                      <Dropdown className="filtercol me-" style={{ marginLeft: "10px" }}>
+                        <Dropdown.Toggle
+                          id="extrabtn"
+                          variant="btn-outline"
+                          
+                        >
+                          <i className="filter-ico"></i> Add Filters
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <header>Filter by</header>
+                          <div className="custom-radio btn-radio mb-2">
+                            {/* <label style={{ marginBottom: '5px' }}>Role</label> */}
+                            <Form.Group>
+                              <Form.Check
+                                inline
+                                label="Alphabatical"
+                                value={filterData.filter}
+                                name="filter"
+                                type="radio"
+                                id={`alphabatical`}
+                                checked={filterData.filter === `alphabatical`}
+                                onChange={(event) => {
+                                  setFilterData(prevState => ({
+                                    ...prevState,
+                                    filter: "alphabatical"
+                                  }))
+                                }}
+                              />
+
+                            <Form.Check
+                                inline
+                                label="Due Date"
+                                value={filterData.filter}
+                                name="name"
+                                type="radio"
+                                id={`due_date`}
+                                checked={filterData.filter === `due_date`}
+                                onChange={() => {
+                                  setFilterData(prevState => ({
+                                    ...prevState,
+                                    filter: "due_date"
+                                  }))
+                                }}
+                              />
+                            </Form.Group>
+                          </div>
+                          <footer>
+                            {/* <Button
+                              variant="transparent"
+                              type="submit"
+                              onClick={() => { setFilterData(prevState => ({
+                                ...prevState,
+                                filter: "alphabatical"
+                              })); }}
+                            >
+                              Reset
+                            </Button> */}
+                            <Button
+                              variant="primary"
+                              type="submit"
+                              onClick={() => { 
+                                setFilterData(prevState => ({
+                                  ...prevState,
+                                  filter: "alphabatical"
+                                })); 
+                              }}>
+                              Reset
+                            </Button>
+                          </footer>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    }
                   </div>
                   {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>

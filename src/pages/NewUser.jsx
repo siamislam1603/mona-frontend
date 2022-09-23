@@ -1044,7 +1044,7 @@ const NewUser = () => {
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
+                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
                             <small className="fileinput">(max. 5 files, 5MB each)</small>
                             { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                             {

@@ -155,7 +155,8 @@ export const createFormValidation = (form) => {
 };
 export const createOperatingManualValidation = (form,wordCount) => {
   let newErrors = {};
-  let { title, description, order } = form;
+  console.log("THE FORM",form)
+  let { title, description, order,related_files } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
@@ -163,14 +164,17 @@ export const createOperatingManualValidation = (form,wordCount) => {
   if (!order || order === '') newErrors.order = 'Position is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if(wordCount>500){
-    newErrors.description = 'Description count is more than 500';
+  if(wordCount>700){
+    newErrors.description = 'Description count is more than 700';
+  }
+  if(related_files.length>5){
+    newErrors.related_files="Max limit is 5 files"
   }
   return newErrors;
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking) => {
+export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount) => {
   console.log('The form validation', titleError,titleChecking);
   let newErrors = {};
   console.log('The form validat', form);
@@ -180,7 +184,9 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.title = 'Announcement Title is Required ';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
   let reg = /^\s|\s$/
-  
+  if(wordCount>700){
+    newErrors.meta_description = 'Description count is more than 700';
+  }
  if(title){
   if(title.match(reg)){
     // console.log("contains spaces");
@@ -213,7 +219,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 
   return newErrors;
 };
-export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise) => {
+export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount) => {
   let newErrors = {};
   console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
@@ -237,6 +243,10 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise)
       // console.log("contains spaces");
       newErrors.meta_description = 'Contain unwanted space';
       } 
+   if(wordCount>700){
+    newErrors.meta_description = 'Description count is more than 700';
+  
+   }   
   if ((start_date === ' ' && !start_date) || start_date === ' ')
     newErrors.start_date = 'Start Date Required';
   if ((start_time === ' ' && !start_time) || start_time === ' ')
@@ -603,6 +613,8 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
+  if(role === "guardian" && crn.length > 0 && !(/^[0-9]+$/i.test(crn)))
+    errors.crn = "Field should only contain digits";
   
   if (!phone) errors.phone = 'Phone number is required';
   
@@ -647,6 +659,8 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
     errors.postalCode = 'Post code must only consist digits';
   
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
+  if(role === "guardian" && crn.length > 0 && !(/^[0-9]+$/i.test(crn)))
+    errors.crn = "Field should only contain digits";
   
   if(email.length > 0 && !regex.test(email)) {
     errors.email = "Email format is invalid";

@@ -1143,14 +1143,16 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .announcement-accordion .accordion-button.collapsed{margin:0}
 .announcement-accordion .head{font-size:var(--fontxl);color:var(--purple);font-weight:700}
 .related-images{display:flex;flex-flow:wrap}
-.related-images .item{border-radius:10px;overflow:hidden;min-height:130px;margin:1rem 0;flex:0 0 25%;min-width:25%;padding-right:1rem}
+.related-images .item{border-radius:10px;overflow:hidden;min-height:130px;margin:1rem 0;flex:0 0 33%;min-width:33%;padding-right:1rem}
 .related-images .item a{display:block}
 .related-images .item img{width:100%}
 .related-files{display:flex;flex-flow:wrap}
-.related-files .item{display:flex;align-items:center;margin:1rem 0;flex:0 0 25%;min-width:25%}
+.related-files .item{display:flex;align-items:center;margin:15px 15px 0 0;padding:10px;flex:0 0 33%;min-width:33%}
+.related-files .item:last-child{margin-right: 0; }
 .related-files .item a{display:flex;align-items:center}
 .related-files img{margin-right:10px}
 .related-files .name{font-weight:600;color:var(--primary)}
+.related-files .name p { word-break: break-all; }
 .related-files .name small{display:block;color:var(--primary);opacity:.7;font-weight:400}
 .vid-col{display:block;border-radius:10px;overflow:hidden;position:relative}
 .vid-col:before{position:absolute;content:'';left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.5);z-index:1}
@@ -1492,6 +1494,8 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .title-head .viewall {margin-top:1rem}
 .mainsection { padding-bottom:30px; }
 .d-flex.justify-content-center.my-5 { margin: 1rem 0!important; }
+.custom_submit .kids-art { left: -30px; }
+.form-label { margin-bottom:.7rem!important; }
 }
 @media only screen and (max-width:991px){
 .entry-container .row>.col-md-5,.entry-container .row>.col-md-7{width:100%}
@@ -1508,6 +1512,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .custom_submit .kids-art { left: -30px; }
 .login-bg .container { min-height: auto; }
 .custom_content, .custom_signin_page { max-width: 75%; margin: 40px auto; }
+.app-sidebar .navbar-nav { overflow: scroll; height: 100%; }
 }
 @media only screen and (max-width:767px){
 .new-form-radio-box{width:100%}
@@ -1517,13 +1522,15 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .mynewForm{font-size:25px}
 .responses-header-row{flex-wrap:wrap;padding-right:15px}
 .responses-header-left{width:100%}
-.responses-header-right{width:100;padding:15px 0 0 0}
+.responses-header-right{width:100%;padding:15px 0 0 0}
+.response-header-left-line { border-right: none; }
 .responses-header-right p{text-align:left;font-size:15px}
 .responses-header-image{width:46px;height:46px;border:2px solid var(--white)}
 .responses-header-detail h5{font-size:16px}
 .responses-header-detail h6{font-size:14px}
 .responses-collapse .accordion-body{padding:20px}
 .content-wrap-title{font-size:16px}
+.d-flex.justify-content.custom_submit { justify-content: center; }
 .responses-content-answer p{font-size:14px}
 .topheader{padding-left:0;display:block}
 .topheader .lpanel{display:block}
@@ -1541,8 +1548,11 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .entry-container{padding:20px 0 0 0}
 .user-management-sec .table>:not(caption)>*>*{white-space:nowrap}
 .pagination{margin:1rem 0}
+.title-head .user-list { display:flex; margin-bottom: 1rem; }
+.title-head .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
 .user-list, .user-list .FileResp {display:block}
-.user-list .user-pic{width:44px;display:block}
+.user-list .user-pic, .user-list .user-pic-tow{width:44px;display:block}
+.user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100px; display: block; }
 .three-col .item,.two-col .item{flex:0 0 48%}
 .responses-forms-header-section .d-md-flex { display: flex; flex-flow: column-reverse; }
 .responses-forms-header-section .d-md-flex .forms-managmentsection { width: 100%; }
@@ -1550,6 +1560,9 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .container-cropper, .popup { width: 100%; }
 .container-buttons { margin-top: 20px; }
 .custom_content, .custom_signin_page { max-width: 100%; margin: 20px auto; }
+.training-cat li a { font-size: var(--fontsm); }
+.selectdropdown.ms-auto.d-flex.align-items-center { margin: 1rem 0; }
+.top-bar, .user-roles-box { display: block; }
 }
 @media only screen and (max-width:575px){
 .forms-filter button{margin-right:15px}
