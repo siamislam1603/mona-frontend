@@ -474,12 +474,7 @@ const FranchiseeDashboard = () => {
 
                                 )
                             }
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+                          
                           </div>
                         </div>
                       </aside>

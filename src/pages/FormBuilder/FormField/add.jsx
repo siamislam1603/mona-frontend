@@ -678,6 +678,7 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
+                                    maxLength={255}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
                                       setField(
@@ -686,7 +687,7 @@ const AddFormField = (props) => {
                                         index
                                       );
                                     }}
-                                    placeholder="Some text here for the label"
+                                    placeholder="Text Label"
                                     isInvalid={!!errors[index]?.field_label}
                                   />
                                   <Form.Control.Feedback type="invalid">

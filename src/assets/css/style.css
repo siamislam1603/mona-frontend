@@ -541,7 +541,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .related-images .item a{display:block}
 .related-images .item img{width:100%}
 .related-files{display:flex;flex-flow:wrap}
-.related-files .item{display:flex;align-items:center;margin:1rem 0;flex:0 0 25%;min-width:25%}
+.related-files .item{display:flex;align-items:center;margin:1rem 0;flex:0 0 25%;max-width:25%}
 .related-files .item a{display:flex;align-items:center}
 .related-files img{margin-right:10px}
 .related-files .name{font-weight:600;color:var(--primary)}
@@ -1081,7 +1081,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .rtag{position:absolute;top:43px;right:30px;z-index:2;opacity:.7}
 .uploadfile{border:1px solid var(--gray);border-radius:5px;padding:8px 10px;font-weight:600}
 .showfiles ul{margin:0;padding:0;list-style:none}
-.showfiles li{overflow-wrap:break-word;word-break:break-word}
+.showfiles li{overflow-wrap:break-word;word-break:break-word;display: flex;}
 .complete-training{border-radius:16px;background-color:#e5c8cd;padding:2rem}
 .thumb-vid{border-radius:16px;overflow:hidden;position:relative}
 .thumb-vid img{width:100%}
@@ -1143,11 +1143,11 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .announcement-accordion .accordion-button.collapsed{margin:0}
 .announcement-accordion .head{font-size:var(--fontxl);color:var(--purple);font-weight:700}
 .related-images{display:flex;flex-flow:wrap}
-.related-images .item{border-radius:10px;overflow:hidden;min-height:130px;margin:1rem 0;flex:0 0 33%;min-width:33%;padding-right:1rem}
+.related-images .item{border-radius:10px;overflow:hidden;min-height:130px;margin:1rem 0;flex:0 0 33%;min-width:33%;padding-right:0}
 .related-images .item a{display:block}
 .related-images .item img{width:100%}
 .related-files{display:flex;flex-flow:wrap}
-.related-files .item{display:flex;align-items:center;margin:15px 15px 0 0;padding:10px;flex:0 0 33%;min-width:33%}
+.related-files .item{display:flex;align-items:center;margin:15px 15px 0 0;padding:10px;flex:0 0 33%;max-width:33%}
 .related-files .item:last-child{margin-right: 0; }
 .related-files .item a{display:flex;align-items:center}
 .related-files img{margin-right:10px}
@@ -1185,6 +1185,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .traning-detail-sec .created-by{border-top:none;background-color:var(--offwhite);border-bottom-left-radius:18px;border-bottom-right-radius:18px;margin-top:-18px;padding-top:38px}
 .vidcol{position:relative;cursor:pointer}
 .vidcol .pic{flex:0 0 110px;max-width:110px;border-radius:10px;overflow:hidden;margin-right:1rem;position:relative}
+.vidcol .pic iframe { border-radius: 10px; }
 .vidcol .pic:before{position:absolute;content:'';width:100%;height:100%;background:url("../img/video-ico.svg") no-repeat;background-position:center;background-size:25px}
 .vidcol .pic img{display:block;width:100%}
 .vidcol .pic2{flex:0 0 110px;min-width:200px;border-radius:10px;overflow:hidden;margin-right:1rem;position:relative}
@@ -1404,7 +1405,8 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .title-sm,h3{font-size:18px}
 .title-xs,h4{font-size:16px}
 .title-xxs,h5{font-size:14px}
-.user-management-sec .table>:not(caption)>*>*{padding:15px 10px;font-size:var(--fontsm)}
+.user-management-sec .table>:not(caption)>*>*{padding:15px;font-size:var(--fontsm)}
+.user-management-sec .table tr:before { box-shadow: 0 0 10px 0 rgb(0 0 0 / 20%); }
 .user-management-sec .table tr td .btn-outline-danger,.user-management-sec .table tr td .btn-outline-secondary{font-size:var(--fontsm);min-width:inherit}
 .btn,body{font-size:var(--fontsm)}
 .column-list.access-list .item .pic{flex:0 0 40px}
@@ -1496,6 +1498,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .d-flex.justify-content-center.my-5 { margin: 1rem 0!important; }
 .custom_submit .kids-art { left: -30px; }
 .form-label { margin-bottom:.7rem!important; }
+.related-files .item { flex: 0 0 48%; max-width: 48%; }
 }
 @media only screen and (max-width:991px){
 .entry-container .row>.col-md-5,.entry-container .row>.col-md-7{width:100%}
@@ -1513,6 +1516,10 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .login-bg .container { min-height: auto; }
 .custom_content, .custom_signin_page { max-width: 75%; margin: 40px auto; }
 .app-sidebar .navbar-nav { overflow: scroll; height: 100%; }
+.user-management-sec.repository-sec .title-head { display: flex; flex-direction: column-reverse; }
+.user-management-sec.repository-sec .title-head .user-list { width: 100%; margin-top: 1rem; }
+.user-management-sec.repository-sec .title-head .othpanel { width: 100%; margin-left: 0; }
+.react-bootstrap-table .dropdown-menu.show { transform: translate3d(-30px, -10px, 0)!important; }
 }
 @media only screen and (max-width:767px){
 .new-form-radio-box{width:100%}
@@ -1549,10 +1556,10 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .user-management-sec .table>:not(caption)>*>*{white-space:nowrap}
 .pagination{margin:1rem 0}
 .title-head .user-list { display:flex; margin-bottom: 1rem; }
-.title-head .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
+.title-head .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; margin-left: 10px; }
 .user-list, .user-list .FileResp {display:block}
 .user-list .user-pic, .user-list .user-pic-tow{width:44px;display:block}
-.user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100px; display: block; }
+.user-list .user-name, .vidcol .d-flex { overflow: hidden; text-overflow: ellipsis; width: 180px; display: block!important; }
 .three-col .item,.two-col .item{flex:0 0 48%}
 .responses-forms-header-section .d-md-flex { display: flex; flex-flow: column-reverse; }
 .responses-forms-header-section .d-md-flex .forms-managmentsection { width: 100%; }
@@ -1563,6 +1570,17 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .training-cat li a { font-size: var(--fontsm); }
 .selectdropdown.ms-auto.d-flex.align-items-center { margin: 1rem 0; }
 .top-bar, .user-roles-box { display: block; }
+.training-modal .p-0.modal-body { overflow: visible; overflow-x: visible; }
+.new_module .App { margin-bottom: 10px; }
+.wordcount { margin-top: 0; text-align: left; margin-bottom: 20px; }
+.form-settings-content .mt-4.row { margin-top:0!important;}
+.modal-header { padding: 15px; }
+.announcement-accordion .head-title .ico { flex: 0 0 40px; max-width: 40px; }
+.announcement-accordion .accordion-button::after { right: 10px; position: absolute; top: 25px; }
+.announcement-accordion .head-title { display: block; }
+.announcement-accordion .head-title .date { position: absolute; top: 15px; right: 5px; z-index: 5; }
+.change-pass-sec .custom_hide { top: 48px; }
+.vidcol { padding: 10px; }
 }
 @media only screen and (max-width:575px){
 .forms-filter button{margin-right:15px}
@@ -1578,6 +1596,9 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .new-user-sec{display:block}
 .new-user-sec .user-pic-sec .file-upload-form{margin:auto}
 .passopt .btn-checkbox,.passopt .btn-radio{margin-bottom:15px}
+.related-files .item { flex: 0 0 100%; max-width:100%; margin-right: 0; }
+.related-images .item { min-height: inherit; }
+
 }
 @media only screen and (max-width:480px){
 .three-col .item,.two-col .item{flex:0 0 100%;margin-right:0}

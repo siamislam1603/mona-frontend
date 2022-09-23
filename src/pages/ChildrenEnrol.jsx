@@ -231,7 +231,6 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-
             {
               cell[2] != "undefined" &&
               <div className="user-list">

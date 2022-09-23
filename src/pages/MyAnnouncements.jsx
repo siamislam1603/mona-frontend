@@ -274,7 +274,7 @@ useEffect(() =>{
               </Col>
             </Row>
             <Row>
-              <Col md={4}>
+              <Col lg={4}>
                 <div className="video-col">
                 {data.announcement_files.map((detail,index) =>(
                   <>
@@ -291,7 +291,7 @@ useEffect(() =>{
                      ))}
                 </div>
               </Col>
-              <Col md={8}>
+              <Col lg={8}>
               {data &&data.coverImage && <div className="head">Related Images :</div>
               }
               {data && data.coverImage && 

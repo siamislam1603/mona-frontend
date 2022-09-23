@@ -342,6 +342,11 @@ const EditUser = () => {
       setFormErrors(error);
       setAutoFocus(error);
     } else {
+      let fullname = formData?.fullname.trim();
+      setFormData(prevState => ({
+        ...prevState,
+        fullname
+      }));
       let data = new FormData();
       
       trainingDocuments?.map(async(item)=>{
@@ -1103,14 +1108,14 @@ const EditUser = () => {
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            <small className="fileinput">(pdf, doc, ppt, xslx and other documents)</small>
+                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
                             <small className="fileinput">(max. 5 files, 5MB each)</small>
                             {
                               uploadError  &&
                               uploadError.map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"File is greater than 5MB"}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
                                 )
                               })
                             }
@@ -1207,7 +1212,7 @@ const EditUser = () => {
                     <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
                   </div>
-
+					<div className="row">
                   <Form.Group className="col-md-6 mb-3 relative mt-4">
                     <Form.Label>Termination Date</Form.Label>
                     <Form.Control
@@ -1222,7 +1227,7 @@ const EditUser = () => {
                   </Form.Group>
 
                   <Form.Group className="col-md-12 mb-6 mt-4">
-                    <div className="form-check">
+                    <div className="form-check btn-checkbox">
                       <input 
                         className="form-check-input" 
                         type="checkbox" 
@@ -1240,6 +1245,7 @@ const EditUser = () => {
                       </label>
                     </div>
                   </Form.Group>
+				  </div>
                 </Row>
               </Modal.Body>
 
