@@ -245,7 +245,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
           <Row style={{ marginBottom: '40px' }}>
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
             <header className="title-head mb-4 justify-content-between">
-              {myTrainingData?.length > 0 &&
+              {myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
                 <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
               }
               {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}

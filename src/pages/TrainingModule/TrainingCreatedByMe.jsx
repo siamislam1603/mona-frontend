@@ -119,8 +119,8 @@ const TrainingCreatedByMe = ({ filter }) => {
       setTrainingCategory([
         {
           id: 0,
-          value: 'select category',
-          label: 'Select Category'
+          value: 'all categories',
+          label: 'All Categories'
         },
         ...categoryList.map((data) => ({
           id: data.id,
