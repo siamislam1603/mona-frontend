@@ -9,7 +9,7 @@ const IGNORE_REMOVE_FORM = "Compliance Visit Form";
 
 function App() {
   return (
-    <div id="main">
+    <div id="main"> 
       <Main />
     </div>
   );

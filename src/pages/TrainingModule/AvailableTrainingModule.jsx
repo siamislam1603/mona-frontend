@@ -39,7 +39,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [dueDataTraining,setDueDataTraining]= useState([])
   const [nodueData,setNoDueData]= useState([])
   const [page,setPage] = useState(6)
-  const [filterData, setFilterData] = useState("due_date")
+  // const [filterData, setFilterData] = useState("due_date")
 
   // ERROR HANDLING
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -55,7 +55,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
       let user_id = localStorage.getItem('user_id');
       const token = localStorage.getItem('token');
 
-      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}&filter=${filterData}`, {
+      const response = await axios.get(`${BASE_URL}/training/assigeedTraining/${user_id}?category_id=${filter.category_id}&search=${filter.search}&limit=${page}&filter=${filter.filter}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -251,7 +251,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   useEffect(() => {
     fetchAvailableTrainings();
-  }, [filter.search, page, filter.category_id, filterData]);
+  }, [filter.search, page, filter.category_id, filter.filter]);
 
   useEffect(() => {
     fetchFranchiseeList();
@@ -277,10 +277,10 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
           <Row>
           {
             trainingWithDueDate?.length > 0 &&
-            <div className="top-bar">
+            <div>
               <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
 
-              <div className="selectdropdown ms-auto d-flex align-items-center">
+              {/* <div className="selectdropdown ms-auto d-flex align-items-center">
                 <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
                   <Form.Label className="d-block me-2">Filter by</Form.Label>
                   <Select
@@ -293,7 +293,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     onChange={(e) => setFilterData(e.value)}
                   />
                 </Form.Group>
-              </div>
+              </div> */}
             </div>
           }
           {trainingWithDueDate

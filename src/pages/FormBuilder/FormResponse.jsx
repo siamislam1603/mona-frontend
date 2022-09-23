@@ -22,8 +22,6 @@ function FormResponse(props) {
   const Params = useParams();
 
   const ParamsKey = Params.key
-
-  console.log(ParamsKey, 'Params')
   const location = useLocation();
   const sigPad = useRef({});
   const navigate = useNavigate();
@@ -40,7 +38,6 @@ function FormResponse(props) {
   let hideFlag = false;
 
   useEffect(() => {
-    console.log(':location?.state--->', location?.state);
     if (location?.state?.id) {
       getResponse('');
     } else {
@@ -53,20 +50,20 @@ function FormResponse(props) {
   };
   const trim = (e, index) => {
     e.preventDefault();
-    console.log(
-      'index--->',
-      Index,
-      '-----',
-      JSON.parse(responseData[Index][0].fields)
-    );
+    // console.log(
+    //   'index--->',
+    //   Index,
+    //   '-----',
+    //   JSON.parse(responseData[Index][0].fields)
+    // );
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    console.log(
-      'sigpad--------->><<<<<<<<',
-      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    );
+    // console.log(
+    //   'sigpad--------->><<<<<<<<',
+    //   sigPad.current.getTrimmedCanvas().toDataURL('image/png')
+    // );
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
@@ -140,14 +137,10 @@ function FormResponse(props) {
         }
         result?.result.map((item, index) => {
           item["signature_button"] = true;
-          console.log("item--->", item);
 
           result?.result[index]?.map((inner_item, inner_index) => {
             // if(inner_item.fields)
-
-            console.log("inner_item--->first", inner_item);
             Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              console.log("inner_item--->", field_item);
               if (field_item === "signature") {
                 item["signature_button"] = false;
               }
@@ -234,7 +227,7 @@ function FormResponse(props) {
                             type="date"
                             name="from_date"
                             value={dateFilter?.from_date}
-                            min={new Date().toISOString().slice(0, 10)}
+                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter(prevState => ({
                                 ...prevState,
@@ -250,7 +243,7 @@ function FormResponse(props) {
                             type="date"
                             name="to_date"
                             value={dateFilter?.to_date}
-                            min={new Date().toISOString().slice(0, 10)}
+                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter(prevState => ({
                                 ...prevState,
@@ -263,7 +256,10 @@ function FormResponse(props) {
                         <Button
                           variant="primary"
                           type="submit" className="mt-4"
-                          onClick={() => { getResponse('') }}>
+                          onClick={() => { 
+                            console.log('GETTING FILTERED RESPONSE FROM SERVER!');
+                            getResponse('') 
+                          }}>
                           Apply
                         </Button>
                     </div>
@@ -324,10 +320,10 @@ function FormResponse(props) {
                                           }
                                         >
                                           {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                          {console.log(
+                                          {/* {console.log(
                                             'iner_itemwdasdasddassd---->',
                                             inner_item
-                                          )}
+                                          )} */}
                                           <h5>
                                             {inner_index > 0
                                               ? !responseData[index][
