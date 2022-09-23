@@ -356,9 +356,9 @@ const AddOperatingManual = () => {
     let flag = false;
     console.log("file---->", file);
     if (name === 'cover_image') {
-      if (file.size > 2048 * 1024) {
+      if (file.size > 10 * 1048576) {
         let errorData = { ...errors };
-        errorData['cover_image'] = 'File is too large. File limit 2 MB.';
+        errorData['cover_image'] = 'File is too large. File limit 10 MB.';
         setErrors(errorData);
         flag = true;
       }
@@ -652,6 +652,8 @@ const AddOperatingManual = () => {
                               }}
                             />
                           )}
+                          <div className="text-left">Maximum character 700</div>
+
                           <div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
@@ -709,7 +711,7 @@ const AddOperatingManual = () => {
 
                           <p className="form-errors">{errors.cover_image}</p>
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                          <small className="fileinput">(File limit 2 MB)</small>
+                          <small className="fileinput">(File limit 10 MB)</small>
 
 
 
@@ -798,7 +800,7 @@ const AddOperatingManual = () => {
                                 operatingManualData.related_files
                               }
                             />
-                          <small className="fileinput">((pdf, doc, ppt & xslx))</small>
+                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
                           <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                             <p className="form-errors">
                               {errors.related_files}

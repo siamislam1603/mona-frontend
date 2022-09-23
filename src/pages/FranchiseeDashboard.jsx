@@ -7,14 +7,9 @@ import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment'
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
-const selectRow = {
-  mode: 'checkbox',
-  clickToSelect: true,
-};
-// name: `${dt.fullname}, ${dt.profile_photo}`,
+
 const columns = [
   {
     dataField: 'name',
@@ -132,7 +127,6 @@ const columns1 = [
     text: "",
     formatter: (cell) => {
       cell = cell?.split(",");
-
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -211,8 +205,8 @@ const FranchiseeDashboard = () => {
           action: `${dt.id},${dt.parents[0].id}`
         }
       ))
-
       setEnrollments(tempData);
+
     }
   }
 
@@ -415,7 +409,7 @@ const FranchiseeDashboard = () => {
                               </a>
                             </div>
                             <div className="listing">
-                              <a href={`/form/response/form-visit/${countUser?.complianceVisitFormId}`} className="item">
+                              <a href={`/form/response/form-visit/${countUser?.complianceVisitFormId}/Index`} className="item">
                                 <span className="name">No. of audit forms created in last 30 days</span>
                                 <span className="separator">|</span>
                                 <span className="num">{countUser?.auditForms}</span>
@@ -480,12 +474,7 @@ const FranchiseeDashboard = () => {
 
                                 )
                             }
-                            {/* <div className="listing">
-                              <a href="/" className="item">
-                                <div className="pic"><img src="../img/announcement-ico.png" alt="" /></div>
-                                <div className="name">Regarding Submission of Documents of all classes students admitted in AY 2021-22 <span className="date">12 April, 2022</span></div>
-                              </a>
-                            </div> */}
+                          
                           </div>
                         </div>
                       </aside>

@@ -10,7 +10,9 @@ import FilerepoUploadFile from './FilerepoUploadFile';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { axios } from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 import { BASE_URL } from '../components/App';
 const loginuser = localStorage.getItem('user_role')
 
@@ -23,27 +25,34 @@ const FileRepository = () => {
 
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
   const [category_name, setCategory] = useState()
-  console.log("Category", category_name)
+  // console.log("Category", category_name)
 
-  const Submiton = async (e) => {
-    e.preventDefault();
-    var myHeaders = new Headers();
+  const addAndSaveCategory = async () => {
+    let response = await axios.post(`${BASE_URL}/fileCategory/`, { category_name: category_name }, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+    console.log('RESPONSE:', response);
 
-    myHeaders.append(
-      'Authorization',
-      'Bearer ' + localStorage.getItem('token'),
-    );
-    fetch(`${BASE_URL}/fileCategory/`, {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify({
-        category_name: category_name,
-      })
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson);
-      });
+    if(response.status === 201 && response.data.status === "success") {
+      let { message } = response.data;
+      
+      toast.success(message);
+    } else if(response.status === 200 && response.data.status === "fail") {
+      // toast.error(message);
+    } else {
+      // toast.error('Category creation failed');
+    }
+
   }
+
+
+  const Submiton = (e) => {
+    e.preventDefault();
+    addAndSaveCategory();
+  }
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -108,7 +117,7 @@ const FileRepository = () => {
                                   <li><a onClick={handleLinkClick} path="/created-by-me" className={`${tabLinkPath === "/created-by-me" ? "active" : ""}`}>My Added Files</a></li>
                                 }
                               </>)}
-                              {/* <li>
+                              <li>
                                 {
                                   loginuser === "franchisor_admin" &&
                                   <div className="new_module">
@@ -123,7 +132,7 @@ const FileRepository = () => {
                                     </div>
                                   </div>
                                 }
-                              </li> */}
+                              </li>
                             </ul>
 
                             <Modal
@@ -173,7 +182,7 @@ const FileRepository = () => {
                                 >
                                   Cancel
                                 </Button>
-                                <Button className="done" onClick={Submiton}>
+                                <Button className="done" onClick={(e) => Submiton(e)}>
                                   Save
                                 </Button>
                               </Modal.Footer>

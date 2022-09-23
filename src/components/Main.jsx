@@ -461,7 +461,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/form/response/:key/:id"
+          path="/form/response/:key/:id/:index"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
