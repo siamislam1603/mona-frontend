@@ -499,7 +499,7 @@ p.error:empty{display:none}
 .responses-header-row{flex-wrap:nowrap!important;padding-right:0!important}
 .responses-header-right{padding-top:0!important}
 .responses_model .modal-dialog{min-width:auto}
-.modal-body{padding:20px 15px;overflow:hidden;overflow-x:scroll}
+.modal-body{padding:20px 15px;/*overflow:hidden;overflow-x:scroll*/}
 .user_list_wrp{min-width:calc(700px - 24px)}
 /*.extra-btn .btn-btn-outline,.extra-btn .ctaact{min-width:110px!important}*/
 }
