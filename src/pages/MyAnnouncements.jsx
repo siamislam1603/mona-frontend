@@ -118,7 +118,7 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
   }
 
   useEffect(() =>{
-    // myAnnouncementData()
+    myAnnouncementData()
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
   },[])
