@@ -1185,6 +1185,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .traning-detail-sec .created-by{border-top:none;background-color:var(--offwhite);border-bottom-left-radius:18px;border-bottom-right-radius:18px;margin-top:-18px;padding-top:38px}
 .vidcol{position:relative;cursor:pointer}
 .vidcol .pic{flex:0 0 110px;max-width:110px;border-radius:10px;overflow:hidden;margin-right:1rem;position:relative}
+.vidcol .pic iframe { border-radius: 10px; }
 .vidcol .pic:before{position:absolute;content:'';width:100%;height:100%;background:url("../img/video-ico.svg") no-repeat;background-position:center;background-size:25px}
 .vidcol .pic img{display:block;width:100%}
 .vidcol .pic2{flex:0 0 110px;min-width:200px;border-radius:10px;overflow:hidden;margin-right:1rem;position:relative}
@@ -1513,6 +1514,9 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .login-bg .container { min-height: auto; }
 .custom_content, .custom_signin_page { max-width: 75%; margin: 40px auto; }
 .app-sidebar .navbar-nav { overflow: scroll; height: 100%; }
+.user-management-sec.repository-sec .title-head { display: flex; flex-direction: column-reverse; }
+.user-management-sec.repository-sec .title-head .user-list { width: 100%; margin-top: 1rem; }
+.user-management-sec.repository-sec .title-head .othpanel { width: 100%; margin-left: 0; }
 }
 @media only screen and (max-width:767px){
 .new-form-radio-box{width:100%}
@@ -1549,7 +1553,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .user-management-sec .table>:not(caption)>*>*{white-space:nowrap}
 .pagination{margin:1rem 0}
 .title-head .user-list { display:flex; margin-bottom: 1rem; }
-.title-head .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; }
+.title-head .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100%; display: block; margin-left: 10px; }
 .user-list, .user-list .FileResp {display:block}
 .user-list .user-pic, .user-list .user-pic-tow{width:44px;display:block}
 .user-list .user-name { overflow: hidden; text-overflow: ellipsis; width: 100px; display: block; }
@@ -1563,6 +1567,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .training-cat li a { font-size: var(--fontsm); }
 .selectdropdown.ms-auto.d-flex.align-items-center { margin: 1rem 0; }
 .top-bar, .user-roles-box { display: block; }
+.training-modal .p-0.modal-body { overflow: visible; overflow-x: visible; }
 }
 @media only screen and (max-width:575px){
 .forms-filter button{margin-right:15px}
