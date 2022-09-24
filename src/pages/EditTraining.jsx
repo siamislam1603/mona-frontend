@@ -111,6 +111,8 @@ const EditTraining = () => {
   const [errors, setErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
+  const [docError, setDocError] = useState([]);
+  const [videoError, setVideoError] = useState([]);
 
   // IMAGECROPER
   const [coverImage, setCoverImage] = useState({});
@@ -352,7 +354,7 @@ const EditTraining = () => {
     event.preventDefault();
     window.scrollTo(0, 0);
 
-    let errorObj = EditTrainingFormValidation(trainingData, relatedFiles, fetchedRelatedFiles);
+    let errorObj = EditTrainingFormValidation(trainingData, relatedFiles, fetchedRelatedFiles, fetchedVideoTutorialFiles, videoTutorialFiles);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
     } else {
@@ -387,6 +389,8 @@ const EditTraining = () => {
   };
 
   const handleTrainingFileDelete = async (fileId, fileType) => {
+    console.log('FILE ID:', fileId);
+    console.log('FILE TYPE:', fileType);
     let token = localStorage.getItem('token');
     await axios.delete(`${BASE_URL}/training/deleteFile/${fileId}`, {
       headers: {
@@ -398,8 +402,9 @@ const EditTraining = () => {
         let newData = fetchedRelatedFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
         setFetchedRelatedFiles(newData);
       } else if(fileType === "video_files") {
-        let newData = fetchedVideoTutorialFiles.filter(d => parseInt(d.id) === parseInt(fileId))
-        fetchedVideoTutorialFiles(newData); 
+        let newData = fetchedVideoTutorialFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
+        console.log('NEW DATA:', newData);
+        setFetchedVideoTutorialFiles(newData); 
       }
     })
       .catch(error => {
@@ -448,6 +453,38 @@ const EditTraining = () => {
       }));
     }
   }, [relatedFiles]);
+
+  useEffect(() => {
+    if((videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length) < 5) {
+      setErrors(prevState => ({
+        ...prevState,
+        video: null
+      }));
+    }
+  }, [videoTutorialFiles]);
+
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function(item) {
+        if(result.indexOf(item) < 0) {
+            result.push(item);
+        }
+    });
+
+   return result;
+  }
+
+  useEffect(() => {
+    setVideoError(videoFileErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [videoFileErrorMessage])
+  
+  useEffect(() => {
+    setDocError(docFileError?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [docFileError])
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -655,10 +692,10 @@ const EditTraining = () => {
                             <small className="fileinput">(mp4, flv & mkv)</small>
                             <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                             {
-                              videoFileErrorMessage  &&
-                              videoFileErrorMessage.map(errorObj => {
+                              videoError  &&
+                              getUniqueErrors(videoError).map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{"Video files should be less than 1GB in size"}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
                                 )
                               })
                             }
@@ -683,6 +720,7 @@ const EditTraining = () => {
                                   )
                                 })
                               }
+                              { errors.video !== null && <span className="error">{errors.video}</span> }
                             </div>
                           </Form.Group>
 
@@ -698,10 +736,10 @@ const EditTraining = () => {
                             <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
                             <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                             {
-                              docFileError  &&
-                              docFileError.map(errorObj => {
+                              docError  &&
+                              getUniqueErrors(docError).map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
                                 )
                               })
                             }

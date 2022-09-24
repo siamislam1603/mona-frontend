@@ -1453,7 +1453,7 @@ function ViewFormBuilder(props) {
                                     </>
                                   );
                                 })
-                              :<><p>'No Form Created By Others'</p></>
+                              :<><p>No Form Created By Others</p></>
                               }
                               </div>
                             </Tab>
