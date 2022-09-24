@@ -172,15 +172,45 @@ const AddOperatingManual = () => {
   };
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
-    console.log(field,value)
-    console.log("THE VALUE",value)
+    // console.log(field,value)
+    console.log("THE VALUE",value,field)
+     
 
-    if (field == "description") {
-      setWordCount(wordCount+1)
-      if(value === " "){
-        setWordCount(0)
+    let  text = value
+    console.log("the text",text)
+
+    if (field=="description") {
+
+      if(text.includes("&nbsp")){
+
+        setWordCount(text.length-12);
+      }
+      else if(text.includes("</i>") && text.includes("<strong>") ){
+        console.log("Include <i> and <strong>")
+        if(text.includes("&nbsp")){
+          setWordCount(text.length-31-12);
+        }
+        setWordCount(text.length-31)
+      }
+
+      else if(text.includes("<strong>")){
+        console.log("Strong include")
+        setWordCount(text.length-17-7);
+
+      }
+      else if(text.includes("</i>")){
+        setWordCount(text.length-14)
+      }
+
+    
+      else{
+        setWordCount(text.length-7);
       }
     }
+    if(text === ""){
+      setWordCount(0)
+    }
+    
 
     if (!!errors[field]) {
       setErrors({
@@ -362,7 +392,7 @@ const AddOperatingManual = () => {
         )
       ) {
         let errorData = { ...errors };
-        errorData['cover_image'] = 'File must be JPG or PNG.';
+        errorData['cover_image'] = 'File must be JPG, PNG or JPEG.';
         setErrors(errorData);
         flag = true;
       }
@@ -470,20 +500,39 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   useEffect(() =>{
+
+    if(pageTitle === "Edit Operating Manual"){
+    console.log("edit operating manual")
+
+      
       if (operatingManualData?.description) {
         const text = operatingManualData?.description;
         if(text.includes("&nbsp")){
   
           setWordCount(text.length-12);
         }
+        else if(text.includes("<strong>")){
+          console.log("Strong include")
+          setWordCount(text.length-17-7);
+
+        }
+        else if(text.includes("</i>")){
+          setWordCount(text.length-14)
+        }
+
+        else if(text.includes("</i>") && text.includes("<strong>") ){
+          setWordCount(text.length-32)
+        }
+        else if(operatingManualData?.description === ""){
+          setWordCount(0)
+        }
         else{
           setWordCount(text.length-7);
         }
         
-        if(operatingManualData?.description === ""){
-          setWordCount(0)
-        }
+        
       }
+    }
   },[operatingManualData?.description])
 // console.log("Oepratiing",errors)
 console.log("THe operating manual",operatingManualData)
@@ -814,7 +863,7 @@ console.log("THe operating manual",operatingManualData)
                             <p className="form-errors">
                               {errors.related_files}
                             </p>
-                              {operatingManualData?.related_files?.length>5 && errors.related_files === " "
+                              {operatingManualData?.related_files?.length>5 && !errors.related_files
                                 && 
                                 <p className='form-errors'>
                                 Max limit is 5 files

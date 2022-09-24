@@ -31,7 +31,7 @@ const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
           "Authorization": "Bearer " + token
         }
       });
-      
+      console.log("THE NOTIFICATION RESPONSE",response)
       if(response.status === 200 && response.data.status === "success") {
       
         if(response.data && response.data.notification?.count == 0)
