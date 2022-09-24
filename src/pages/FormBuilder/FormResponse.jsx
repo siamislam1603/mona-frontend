@@ -149,8 +149,11 @@ function FormResponse(props) {
               }
             })
           })
+
+
           if (result?.result?.length - 1 === index) {
             setResponseData(result?.result);
+            seenFormResponse(result?.result);
             setFormData(result?.form);
           }
         });
@@ -158,6 +161,41 @@ function FormResponse(props) {
       })
       .catch((error) => console.log('error', error));
   };
+
+
+
+  const seenFormResponse = (data) => {
+    let seenData = [];
+    data?.map((item) => {
+      item?.map((inner_item) => {
+        seenData.push({
+          id: inner_item.id,
+          user_id: localStorage.getItem('user_id'),
+        });
+      });
+    });
+    var myHeaders = new Headers();
+    myHeaders.append('Content-Type', 'application/json');
+    myHeaders.append('authorization', 'Bearer ' + token);
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: JSON.stringify(seenData),
+      redirect: 'follow',
+    };
+    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
+    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => console.log(result?.message))
+      .catch((error) => console.log('error', error));
+
+  };
+
+
+
+
+
+
 
   const getResponseTow = (search) => {
     var myHeaders = new Headers();
