@@ -149,8 +149,11 @@ function FormResponse(props) {
               }
             })
           })
+
+
           if (result?.result?.length - 1 === index) {
             setResponseData(result?.result);
+            seenFormResponse(result?.result);
             setFormData(result?.form);
           }
         });
@@ -181,12 +184,10 @@ function FormResponse(props) {
       redirect: 'follow',
     };
     console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
-    // fetch(`${BASE_URL}/form/response/seen`, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((result) => console.log(result?.message))
-    //   .catch((error) => console.log('error', error));
-
-
+    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => console.log(result?.message))
+      .catch((error) => console.log('error', error));
 
   };
 
