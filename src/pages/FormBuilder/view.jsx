@@ -227,6 +227,8 @@ function ViewFormBuilder(props) {
       });
   };
   const seenFormResponse = (data) => {
+    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",data)
+
     let seenData = [];
     data?.map((item) => {
       item?.map((inner_item) => {
@@ -246,10 +248,16 @@ function ViewFormBuilder(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result?.message))
-      .catch((error) => console.log('error', error));
+
+    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
+
+    // fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((result) => console.log(result?.message))
+    //   .catch((error) => console.log('error', error));
+
+
+
   };
 
   useEffect(() => {
