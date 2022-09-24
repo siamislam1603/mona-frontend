@@ -181,10 +181,10 @@ function FormResponse(props) {
       redirect: 'follow',
     };
     console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
-    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result?.message))
-      .catch((error) => console.log('error', error));
+    // fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((result) => console.log(result?.message))
+    //   .catch((error) => console.log('error', error));
 
 
 
