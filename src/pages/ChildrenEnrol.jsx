@@ -72,9 +72,7 @@ const ChildrenEnrol = () => {
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
             parentName: `${data[index]?.parents[0]?.user?.fullname} , ${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[3]?.user?.fullname},${data[index]?.parents[4]?.user?.fullname},${data[index]?.parents[5]?.user?.fullname},${data[index]?.parents[6]?.user?.fullname},${data[index]?.parents[7]?.user?.fullname},${data[index]?.parents[8]?.user?.fullname},${data[index]?.parents[9]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo},${data[index]?.parents[3]?.user?.parent_profile_photo},${data[index]?.parents[4]?.user?.parent_profile_photo},${data[index]?.parents[5]?.user?.parent_profile_photo},${data[index]?.parents[6]?.user?.parent_profile_photo},${data[index]?.parents[7]?.user?.parent_profile_photo},${data[index]?.parents[8]?.user?.parent_profile_photo},${data[index]?.parents[9]?.user?.parent_profile_photo}`,
 
-            educatorassisgned: `${data[index]?.users[0]?.fullname},${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.fullname}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.fullname},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.fullname},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.fullname},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.fullname},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.fullname},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.fullname},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.fullname},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.fullname},${data[index]?.users[9]?.educator_profile_photo}`,
-
-                                
+            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,                                
             specailneed: `${dt?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
             enrolldate: `${dt?.enrollment_initiated}`,
@@ -95,30 +93,30 @@ const ChildrenEnrol = () => {
             csv_data.push(item);
             let data = { ...csv_data[index] };
 
-
-
             let d = data.parentName.split(",")
             let educator = data.educatorassisgned.split(",");
-            console.log("the educator",educator)
+
             let educatorArray = [];
 
             let parent = [];
             d.map((item, index) => {
               if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() != "blob") {
-                parent[index] = item.trim();
+                
+                parent[index] = " "+item.trim()+" ";
+                console.log("THe item  ",item)
+              
               }
             })
-            educator.map((item, index) => {
+            educator.map((item,index) =>{
+              if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob" ) {
+                educatorArray[index] = " "+item.trim()+" ";
 
-              if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() !== "blob" && item != "") {
-                educatorArray[index] = item.trim();
-                console.log("item",item)
-            
+              
               }
-            })
-            // console.log("educatorArray[1]",educatorArray[1])
-            let DOB = moment(data.dob).format('DD/MM/YYYY')
 
+
+            })
+              console.log("Educator 123",educatorArray)
             data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
@@ -127,7 +125,6 @@ const ChildrenEnrol = () => {
 
 
             csv_data[index] = data;
-            console.log("THe data",data,parent)
           });
           setCsvData(csv_data);
         }
@@ -321,7 +318,7 @@ const ChildrenEnrol = () => {
               <div className="user-list">
                 <span className="user-pic">
                   {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
-                  <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
+                  <img src={cell[10] === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
                 </span><span className="user-name">
                   {cell[0][0].toUpperCase() + cell[0].slice(1)}
                   {/* <span>{cell[1]}</span> */}
@@ -329,10 +326,22 @@ const ChildrenEnrol = () => {
               </div>
             }
             {
+              cell[1].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[11] === "undefined" || cell[11].trim() === "null" ? "../img/upload.jpg" : cell[11]} />
+                </span><span className="user-name">{
+
+                  cell[1][0].toUpperCase() + cell[1].slice(1)
+                }
+                </span>
+              </div>
+            }
+              {
               cell[2].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
+                  <img src={cell[12].trim() === "undefined" || cell[12].trim() === "null" ? "../img/upload.jpg" : cell[12]} />
                 </span><span className="user-name">{
 
                   cell[2][0].toUpperCase() + cell[2].slice(1)
@@ -341,13 +350,38 @@ const ChildrenEnrol = () => {
               </div>
             }
            {
+              cell[3].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" ? "../img/upload.jpg" : cell[13]} />
+                </span><span className="user-name">{
+
+                  cell[3][0].toUpperCase() + cell[3].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+            {
               cell[4].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[5].trim() === "undefined" || cell[5].trim() === "null" ? "../img/upload.jpg" : cell[5]} />
+                  <img src={cell[14].trim() === "undefined" || cell[14].trim() === "null" ? "../img/upload.jpg" : cell[14]} />
                 </span><span className="user-name">{
 
                   cell[4][0].toUpperCase() + cell[4].slice(1)
+                }
+                </span>
+              </div>
+            }
+            {
+              cell[5].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" ? "../img/upload.jpg" : cell[15]} />
+                </span><span className="user-name">{
+
+                  cell[5][0].toUpperCase() + cell[5].slice(1)
                 }
                 </span>
               </div>
@@ -357,7 +391,7 @@ const ChildrenEnrol = () => {
               cell[6].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[7].trim() === "undefined" || cell[7].trim() === "null" ? "../img/upload.jpg" : cell[7]} />
+                  <img src={cell[16].trim() === "undefined" || cell[16].trim() === "null" ? "../img/upload.jpg" : cell[16]} />
                 </span><span className="user-name">{
 
                   cell[6][0].toUpperCase() + cell[6].slice(1)
@@ -365,11 +399,25 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-            {
+
+          {
+              cell[7].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" ? "../img/upload.jpg" : cell[17]} />
+                </span><span className="user-name">{
+
+                  cell[7][0].toUpperCase() + cell[7].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+        {
               cell[8].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[9].trim() === "undefined" || cell[9].trim() === "null" ? "../img/upload.jpg" : cell[9]} />
+                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
                 </span><span className="user-name">{
 
                   cell[8][0].toUpperCase() + cell[8].slice(1)
@@ -377,58 +425,19 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-
             {
-              cell[10].trim() != "undefined" &&
+              cell[9].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[11].trim() === "undefined" || cell[11].trim() === "null" ? "../img/upload.jpg" : cell[11]} />
+                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" ? "../img/upload.jpg" : cell[19]} />
                 </span><span className="user-name">{
 
-                  cell[10][0].toUpperCase() + cell[10].slice(1)
+                  cell[9][0].toUpperCase() + cell[9].slice(1)
                 }
                 </span>
               </div>
             }
-
-          {
-              cell[12].trim() != "undefined" &&
-              <div className="user-list">
-                <span className="user-pic">
-                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" ? "../img/upload.jpg" : cell[13]} />
-                </span><span className="user-name">{
-
-                  cell[12][0].toUpperCase() + cell[12].slice(1)
-                }
-                </span>
-              </div>
-            }
-
-        {
-              cell[14].trim() != "undefined" &&
-              <div className="user-list">
-                <span className="user-pic">
-                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" ? "../img/upload.jpg" : cell[15]} />
-                </span><span className="user-name">{
-
-                  cell[14][0].toUpperCase() + cell[14].slice(1)
-                }
-                </span>
-              </div>
-            }
-            {
-              cell[16].trim() != "undefined" &&
-              <div className="user-list">
-                <span className="user-pic">
-                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" ? "../img/upload.jpg" : cell[17]} />
-                </span><span className="user-name">{
-
-                  cell[16][0].toUpperCase() + cell[16].slice(1)
-                }
-                </span>
-              </div>
-            }
-            {
+            {/* {
               cell[18].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -439,7 +448,7 @@ const ChildrenEnrol = () => {
                 }
                 </span>
               </div>
-            }
+            } */}
           </div>
         </>
         )
@@ -484,19 +493,7 @@ const ChildrenEnrol = () => {
     },
   ];
 
-  const CSV = () => {
-    return (
-      <CSVLink
-        data={csvData}
-        filename={"my-file.csv"}
-        className="btn btn-primary"
-        target="_blank"
-      >
-        Download me
-      </CSVLink>
-    )
-  }
-  console.log("CSV", csvDownloadFlag)
+
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
@@ -507,7 +504,6 @@ const ChildrenEnrol = () => {
       }, 3000);
     }
   }, []);
-  const csvLink = useRef();
   const headers = [
     { label: "NAME", key: "name" },
     { label: "DOB", key: "dob" },
@@ -603,7 +599,7 @@ const ChildrenEnrol = () => {
                                       <header>Filter by:</header>
 
                                       <div className="custom-radio btn-radio mb-2">
-                                        <label>Special Need:</label>
+                                        <label>Special Needs:</label>
                                         <Form.Group inline>
 
                                           <Form.Check
