@@ -102,14 +102,14 @@ const ChildrenEnrol = () => {
             d.map((item, index) => {
               if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() != "blob") {
                 
-                parent[index] = " "+item.trim()+" ";
+                parent[index] = " "+item.trim();
                 console.log("THe item  ",item)
               
               }
             })
             educator.map((item,index) =>{
               if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob" ) {
-                educatorArray[index] = " "+item.trim()+" ";
+                educatorArray[index] = " "+item.trim();
 
               
               }
