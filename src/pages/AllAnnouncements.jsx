@@ -226,7 +226,7 @@ console.log("Announcemen detal",announcementDetails)
                                  </Col>
                                </Row>
                                <Row>
-                                 <Col md={4}>
+                                 <Col lg={4}>
                                    <div className="video-col">
                                    
                                      {   details?.announcement_files?.map((detail,index) =>(
@@ -247,7 +247,7 @@ console.log("Announcemen detal",announcementDetails)
    
                                    </div>
                                  </Col>
-                                 <Col md={8}>
+                                 <Col lg={8}>
                                    {details &&details?.coverImage && <div className="head">Related Images :</div>}
                                    <div className="cont">
                                      <div className="related-images">
