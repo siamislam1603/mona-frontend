@@ -229,6 +229,8 @@ function ViewFormBuilder(props) {
       });
   };
   const seenFormResponse = (data) => {
+    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",data)
+
     let seenData = [];
     data?.map((item) => {
       item?.map((inner_item) => {
@@ -248,10 +250,16 @@ function ViewFormBuilder(props) {
       redirect: 'follow',
     };
 
-    fetch(`${BASE_URL}/form/response/seen`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => console.log(result?.message))
-      .catch((error) => console.log('error', error));
+
+    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
+
+    // fetch(`${BASE_URL}/form/response/seen`, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((result) => console.log(result?.message))
+    //   .catch((error) => console.log('error', error));
+
+
+
   };
 
   useEffect(() => {
@@ -1005,7 +1013,7 @@ function ViewFormBuilder(props) {
                                                             )}
                                                         </h4>
                                                         {inner_item.form_data?.length && inner_item.form_data?.length>0 ?
-                                                        <span onClick={() => {
+                                                        <h4 onClick={() => {
                                                             setViewResponseFlag(
                                                               true
                                                             );
@@ -1015,7 +1023,7 @@ function ViewFormBuilder(props) {
                                                             setIndex(index);
                                                           }}>Total Responses : {inner_item.form_data?.length}
                                                              {inner_item?.seen_count > 0 &&
-                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</span>
+                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</h4>
                                                             :''
                                                             }
 
@@ -1035,23 +1043,23 @@ function ViewFormBuilder(props) {
                                                         >
                                                           <img
                                                             src="../img/form-user-round.svg"
-                                                            onClick={() => {
-                                                              seenFormResponse(
-                                                                item?.forms[
-                                                                  inner_index
-                                                                ]?.form_data
-                                                              );
-                                                            }}
+                                                            // onClick={() => {
+                                                            //   seenFormResponse(
+                                                            //     item?.forms[
+                                                            //       inner_index
+                                                            //     ]?.form_data
+                                                            //   );
+                                                            // }}
                                                           />{
                                                             inner_item?.seen_count>0 && 
                                                             <span
-                                                            onClick={() => {
-                                                              seenFormResponse(
-                                                                item?.forms[
-                                                                  inner_index
-                                                                ]?.form_data
-                                                              );
-                                                            }}
+                                                            // onClick={() => {
+                                                            //   seenFormResponse(
+                                                            //     item?.forms[
+                                                            //       inner_index
+                                                            //     ]?.form_data
+                                                            //   );
+                                                            // }}
                                                           >
                                                             {
                                                               inner_item?.seen_count
@@ -1274,7 +1282,7 @@ function ViewFormBuilder(props) {
 
 
                                                           {inner_item.form_data?.length && inner_item.form_data?.length>0 ?
-                                                          <span onClick={() => {
+                                                          <h4 onClick={() => {
                                                             setViewResponseFlag(
                                                               true
                                                             );
@@ -1284,7 +1292,7 @@ function ViewFormBuilder(props) {
                                                             setIndex(index);
                                                           }}>Total Responses : {inner_item.form_data?.length}
                                                              {inner_item?.seen_count > 0 &&
-                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</span>
+                                                             <> |<b> New : {inner_item?.seen_count}</b></>}</h4>
                                                             :''
                                                             }
 
@@ -1305,24 +1313,24 @@ function ViewFormBuilder(props) {
                                                           >
                                                             <img
                                                               src="../img/form-user-round.svg"
-                                                              onClick={() => {
-                                                                seenFormResponse(
-                                                                  item?.forms[
-                                                                    inner_index
-                                                                  ]?.form_data
-                                                                );
-                                                              }}
+                                                              // onClick={() => {
+                                                              //   seenFormResponse(
+                                                              //     item?.forms[
+                                                              //       inner_index
+                                                              //     ]?.form_data
+                                                              //   );
+                                                              // }}
                                                             />
 
                                                             {inner_item?.seen_count>0 && 
                                                             <span
-                                                              onClick={() => {
-                                                                seenFormResponse(
-                                                                  item?.forms[
-                                                                    inner_index
-                                                                  ]?.form_data
-                                                                );
-                                                              }}
+                                                              // onClick={() => {
+                                                              //   seenFormResponse(
+                                                              //     item?.forms[
+                                                              //       inner_index
+                                                              //     ]?.form_data
+                                                              //   );
+                                                              // }}
                                                             >
                                                               {
                                                                 inner_item?.seen_count
@@ -1556,6 +1564,7 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
+                                  
                                   navigate('/form/response', {
                                     state: {
                                       id: MeFormData[Index]?.forms[innerIndex]
@@ -1565,6 +1574,9 @@ function ViewFormBuilder(props) {
                                           ?.form_name,
                                     },
                                   });
+
+
+
                                 }}
                               >
                                 View Response
