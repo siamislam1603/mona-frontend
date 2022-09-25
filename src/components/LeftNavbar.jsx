@@ -3,6 +3,8 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
 import axios from 'axios';
 import { BASE_URL, FRONT_BASE_URL } from './App';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
@@ -166,7 +168,9 @@ const LeftNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
           {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
-            
+          {/* <FontAwesomeIcon icon="fa-solid fa-circle-small" /> */}
+
+
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
@@ -180,7 +184,10 @@ const LeftNavbar = () => {
                       (  <div style={{position:"relative", paddingRight: "12px"}} onClick={
                           AnnouncementAlertset
                       }>
-                          {permission.controller.controller_label }  <span style={{color:"red" ,position: "absolute",right: "0", top: "0"}}> { alert } </span>
+                          {permission.controller.controller_label }  <span style={{color:"red" ,position: "absolute",right: "0", top: "0"}}> 
+                            {alert === "*" &&       <FontAwesomeIcon icon={faCircle} style={{fontSize:"7px"}} />
+ }
+                           </span>
                          
                         </div>):(
                           permission.controller.controller_label 
