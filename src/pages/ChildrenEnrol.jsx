@@ -4,7 +4,7 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search, CSVExport }  from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search, CSVExport } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -29,7 +29,11 @@ const ChildrenEnrol = () => {
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
+<<<<<<< HEAD
+  const [search, setSearch] = useState(" ")
+=======
   const [search,setSearch] = useState(" ")
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
   const { SearchBar } = Search;
 
@@ -47,8 +51,13 @@ const ChildrenEnrol = () => {
       let token = localStorage.getItem('token');
       let USER_ROLE = localStorage.getItem('user_role');
       let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/search=${search}` : `${BASE_URL}/children-listing/all-childrens-enrolled/search=${search}`
+<<<<<<< HEAD
+      let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}` : URL;
+
+=======
       let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}/search=${search}` : URL;
       
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
       if (URL) {
         const response = await axios.get(FilterUrl, {
@@ -70,9 +79,14 @@ const ChildrenEnrol = () => {
             name: `${dt.fullname} ,${dt.dob}`,
             dob: `${moment(dt.dob).format('DD/MM/YYYY')}`,
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
+<<<<<<< HEAD
+            parentName: `${data[index]?.parents[0]?.user?.fullname},${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
+            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.fullname}, ${data[index]?.users[1]?.educator_profile_photo}`,
+=======
             parentName: `${data[index]?.parents[0]?.user?.fullname} , ${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[3]?.user?.fullname},${data[index]?.parents[4]?.user?.fullname},${data[index]?.parents[5]?.user?.fullname},${data[index]?.parents[6]?.user?.fullname},${data[index]?.parents[7]?.user?.fullname},${data[index]?.parents[8]?.user?.fullname},${data[index]?.parents[9]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo},${data[index]?.parents[3]?.user?.parent_profile_photo},${data[index]?.parents[4]?.user?.parent_profile_photo},${data[index]?.parents[5]?.user?.parent_profile_photo},${data[index]?.parents[6]?.user?.parent_profile_photo},${data[index]?.parents[7]?.user?.parent_profile_photo},${data[index]?.parents[8]?.user?.parent_profile_photo},${data[index]?.parents[9]?.user?.parent_profile_photo}`,
 
             educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,                                
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
             specailneed: `${dt?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
             enrolldate: `${dt?.enrollment_initiated}`,
@@ -141,7 +155,7 @@ const ChildrenEnrol = () => {
     if (selectedFranchisee) {
       ChildernEnrolled()
     }
-  }, [selectedFranchisee, AppyFilter, Filters,search])
+  }, [selectedFranchisee, AppyFilter, Filters, search])
   const columns = [
     {
       dataField: 'name',
@@ -515,7 +529,22 @@ const ChildrenEnrol = () => {
 
 
   ];
+<<<<<<< HEAD
+  const MyExportCSV = (props) => {
+    const handleClick = () => {
+      props.onExport();
 
+    };
+
+    return (
+      <div>
+        <button className="btn btn-success" onClick={handleClick}>Click me to export CSV</button>
+      </div>
+    );
+  };
+=======
+
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
   return (
     <>
@@ -536,13 +565,13 @@ const ChildrenEnrol = () => {
                   data={chidlEnroll}
                   columns={columns}
                   search
-                  
-                  
-                  
-                  exportCSV={ {
+
+
+
+                  exportCSV={{
                     fileName: 'Children Enroled.csv',
-                  
-                  } }
+
+                  }}
                 >
                   {(props) => (
                     <>
@@ -556,37 +585,37 @@ const ChildrenEnrol = () => {
                               <h1 className="title-lg">Children Enroled</h1>
                               <div className="othpanel">
                                 <div className="extra-btn">
-                                  
+
                                   <div className="data-search me-3">
-                              <Form.Group
-                                className="d-flex"
-                                style={{ position: 'relative' }}
-                              >
-                                <div className="user-search">
-                                  <img
-                                    src="./img/search-icon-light.svg"
-                                    alt=""
-                                  />
-                                </div>
-                                <Form.Control
-                                  className="searchBox"
-                                  type="text"
-                                  placeholder="Search"
-                                  name="search"
-                                  onChange={(e) => {
+                                    <Form.Group
+                                      className="d-flex"
+                                      style={{ position: 'relative' }}
+                                    >
+                                      <div className="user-search">
+                                        <img
+                                          src="./img/search-icon-light.svg"
+                                          alt=""
+                                        />
+                                      </div>
+                                      <Form.Control
+                                        className="searchBox"
+                                        type="text"
+                                        placeholder="Search"
+                                        name="search"
+                                        onChange={(e) => {
 
-                                    //   setSearch(e.target.value, () => {
-                                    //     onFilter();
-                                    //  });
-                                    setSearch(e.target.value);
-                                    // onFilter(e.target.value);
+                                          //   setSearch(e.target.value, () => {
+                                          //     onFilter();
+                                          //  });
+                                          setSearch(e.target.value);
+                                          // onFilter(e.target.value);
 
 
-                                  }}
-                                />
-                              </Form.Group>
-                            </div>
-                                
+                                        }}
+                                      />
+                                    </Form.Group>
+                                  </div>
+
                                   <Dropdown className="filtercol me-3">
                                     <Dropdown.Toggle
                                       id="extrabtn"
@@ -650,15 +679,40 @@ const ChildrenEnrol = () => {
                                   </Dropdown>
 
                                   {/* {localStorage.getItem("user_role") === "franchisor_admin" ? ( */}
+<<<<<<< HEAD
+                                  <Dropdown>
+=======
                                     <Dropdown>
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
-                                      <Dropdown.Toggle
-                                        id="extrabtn"
-                                        className="ctaact"
+                                    <Dropdown.Toggle
+                                      id="extrabtn"
+                                      className="ctaact"
+                                    >
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+
+
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item
+                                        as="button"
+                                        onClick={() => {
+                                          setCsvDownloadFlag(true);
+                                        }}
                                       >
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
 
+<<<<<<< HEAD
+                                        <CSVLink
+                                          data={csvData}
+                                          filename={"Children Enroled.csv"}
+                                          // filename="dskak.csv"
+                                          headers={headers}
+                                          target="_blank"
+                                        // ref={csvLink}
+                                        >
+
+                                          {"Export CSV"}
+=======
 
                                       <Dropdown.Menu>
                                         <Dropdown.Item
@@ -670,18 +724,22 @@ const ChildrenEnrol = () => {
                                             headers={headers}
                                             target="_blank"
                                           >
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
-                                            {"Export CSV"}
-
-                                          </CSVLink>
-                                        </Dropdown.Item>
+                                        </CSVLink>
+                                      </Dropdown.Item>
 
 
-                                        {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+                                      {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                             Delete All Row
                           </Dropdown.Item> */}
+<<<<<<< HEAD
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+=======
                                       </Dropdown.Menu>
                                     </Dropdown>
+>>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
                                   {/* ) : (null)} */}
 
                                 </div>
@@ -693,10 +751,10 @@ const ChildrenEnrol = () => {
                               (
                                 <div>
                                   <BootstrapTable
-                                  {...props.baseProps}
-                                  pagination={paginationFactory()}
-                                />
-                                  </div>
+                                    {...props.baseProps}
+                                    pagination={paginationFactory()}
+                                  />
+                                </div>
                               ) : (
                                 !fullLoaderStatus &&
                                 <div className="text-center mb-5 mt-5"><strong>
