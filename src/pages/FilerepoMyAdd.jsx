@@ -264,7 +264,7 @@ const FilerepoMyAdd = ({ filter }) => {
             });
 
             if (response.status === 200) {
-                SetfileDeleteMessage("Delete succussfully")
+                SetfileDeleteMessage("Delete successfully")
                 setTimeout(() => {
                     SetfileDeleteMessage(null)
                 }, 3000)

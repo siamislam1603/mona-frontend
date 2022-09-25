@@ -10,7 +10,7 @@ import FilerepoUploadFile from './FilerepoUploadFile';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEllipsisVertical, faTrash, faPen } from '@fortawesome/free-solid-svg-icons';
-import { ToastContainer, toast } from 'react-toastify';
+
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -27,7 +27,14 @@ const FileRepository = () => {
   const [CategoryNotCreated, SetCategoryNotCreated] = useState('');
   const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
   const [category_name, setCategory] = useState("")
+  const [category, setgetCategory] = useState([]);
   const [SearchValue, setSearchValue] = useState("");
+  const [Updatecategory_name, setUpdateCategory] = useState({
+    category_name: "",
+    id: ""
+  })
+
+
 
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
 
@@ -37,8 +44,6 @@ const FileRepository = () => {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
     });
-    console.log('RESPONSE:', response);
-
     if (response.status === 201 && response.data.status === "success") {
       let { message } = response.data;
       SetCategoryCreated(message)
@@ -82,16 +87,58 @@ const FileRepository = () => {
     e.preventDefault();
     EditCategory();
   }
-
-  const EditCategory = async (id) => {
-    seteditCategoryModalFlag(true);
-    let response = await axios.put(`${BASE_URL}/fileCategory/`, { category_name: category_name, id: id }, {
+  const handleChange = (evt) => {
+    setUpdateCategory({
+      category_name: evt.target.value,
+      id: localStorage.getItem('category_id')
+    });
+  }
+  const EditCategory = async () => {
+    let response = await axios.put(`${BASE_URL}/fileCategory/`, Updatecategory_name, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }
     });
-    console.log(response);
+    if (response.data.status === "success") {
+      let { message } = response.data;
+      seteditCategoryModalFlag(false);
+      SetCategoryCreated(message)
+      getFileCategory();
+      setTimeout(() => {
+        SetCategoryCreated(null)
+      }, 3000)
+
+    }
+    if (response.data.status === "fail") {
+      let { message } = response.data;
+      seteditCategoryModalFlag(false);
+      SetCategoryNotCreated(message)
+      getFileCategory();
+      setTimeout(() => {
+        SetCategoryNotCreated(null)
+      }, 3000)
+    }
   }
+
+  const GetEditCategory = async (id) => {
+    seteditCategoryModalFlag(true);
+    let response = await axios.get(`${BASE_URL}/fileCategory/${id}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
+    if (response.status === 200) {
+      const category = response.data.category
+      setUpdateCategory({
+        category_name: category.category_name,
+        id: category.id
+      })
+      localStorage.setItem('category_id', category.id)
+
+    }
+    console.log(response, "/fileCategory//fileCategory/");
+  }
+
 
   const handleCategoryDelete = async (id) => {
     const token = localStorage.getItem('token');
@@ -101,7 +148,7 @@ const FileRepository = () => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log(response, "response")
+
       if (response.status === 200) {
         let { message } = response.data;
         SetfileDeleteMessage(message)
@@ -110,7 +157,6 @@ const FileRepository = () => {
           SetfileDeleteMessage(null)
         }, 3000)
       }
-
     } catch (err) {
       SetfileDeleteMessage("You don't have permission to delete this file !");
       getFileCategory();
@@ -119,11 +165,7 @@ const FileRepository = () => {
       }, 3000)
     }
   }
-  // /fileCategory/
-  // const Edit_Category_API = async () => {
 
-  // }
-  const [category, setgetCategory] = useState([]);
 
   const getFileCategory = async () => {
     let result = await axios.get(`${BASE_URL}/fileRepo/files-category`, {
@@ -142,8 +184,6 @@ const FileRepository = () => {
   useEffect(() => {
     getFileCategory()
   }, [])
-  console.log(category, "category")
-
 
   return (
     <>
@@ -243,7 +283,7 @@ const FileRepository = () => {
                                                 <div style={{ display: 'flex', justifyContent: 'space-between' }} >
                                                   <FontAwesomeIcon
                                                     icon={faPen}
-                                                    onClick={(e) => { EditCategory(item.id) }}
+                                                    onClick={(e) => { GetEditCategory(item.id) }}
                                                     // onClick={() => {
                                                     //   setCategoryModalFlag(true);
                                                     // }}
@@ -353,11 +393,12 @@ const FileRepository = () => {
                                         <Form.Label>Category Name</Form.Label>
                                         <Form.Control
                                           type="text"
-                                          name="category_name"
-                                          value={category_name}
-                                          onChange={(e) => {
-                                            setCategory(e.target.value);
-                                          }}
+                                          name="category_Update"
+                                          onChange={handleChange}
+                                          value={Updatecategory_name.category_name}
+                                        // onChange={(e) => {
+                                        //   setUpdateCategory({ category_name: e.target.value });
+                                        // }}
                                         />
                                         <Form.Control.Feedback type="invalid">
                                         </Form.Control.Feedback>
