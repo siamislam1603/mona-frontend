@@ -41,8 +41,8 @@ const FileRepository = () => {
 
     if (response.status === 201 && response.data.status === "success") {
       let { message } = response.data;
-      toast.success(message);
       SetCategoryCreated(message)
+      getFileCategory();
       setCategoryModalFlag(false);
       setTimeout(() => {
         SetCategoryCreated(null)
@@ -101,14 +101,16 @@ const FileRepository = () => {
           "Authorization": "Bearer " + token
         }
       });
-
+      console.log(response, "response")
       if (response.status === 200) {
-        SetfileDeleteMessage("Delete succussfully")
+        let { message } = response.data;
+        SetfileDeleteMessage(message)
         getFileCategory();
         setTimeout(() => {
           SetfileDeleteMessage(null)
         }, 3000)
       }
+
     } catch (err) {
       SetfileDeleteMessage("You don't have permission to delete this file !");
       getFileCategory();
