@@ -177,10 +177,10 @@ const LeftNavbar = () => {
                           &nbsp;
                         </i>
                         {permission.controller.controller_label === "Announcements" ?
-                      (  <div onClick={
+                      (  <div style={{position:"relative", paddingRight: "12px"}} onClick={
                           AnnouncementAlertset
                       }>
-                          {permission.controller.controller_label }  <span style={{color:"red"}}> { alert } </span>
+                          {permission.controller.controller_label }  <span style={{color:"red" ,position: "absolute",right: "0", top: "0"}}> { alert } </span>
                          
                         </div>):(
                           permission.controller.controller_label 
