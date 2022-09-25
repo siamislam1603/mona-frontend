@@ -72,7 +72,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   // const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
-    category_id: null,
+    category_id: 0,
     search: ""
   });
   const [fullLoaderStatus, setfullLoaderStatus] = useState(false);
@@ -371,6 +371,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                           closeMenuOnSelect={true}
                           components={animatedComponents}
                           options={trainingCategory}
+                          value={trainingCategory.filter(d => d.id === filterData?.category_id)}
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,

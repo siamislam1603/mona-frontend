@@ -26,3 +26,10 @@ p.center{font-size:1rem}
 .top-bar {
   display: flex;
 }
+
+/* .datepicker:not(.has-value):before{
+  color: #464646;
+  font-weight: 500;
+  content: attr(placeholder);
+  margin-right: -20rem;
+} */
