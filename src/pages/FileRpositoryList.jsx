@@ -298,15 +298,7 @@ const FileRpositoryList = () => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params?.id === "1" ? "Daily Use" :
-                                                                    Params?.id === "2" ? "Business Management" :
-                                                                        Params?.id === "3" ? "Employment" :
-                                                                            Params?.id === "4" ? "Compliance" :
-                                                                                Params?.id === "5" ? "Care Giving" :
-                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params?.id === "7" ? "Resources" :
-                                                                                            Params?.id === "8" ? "General" : "Null"
-                                                                }
+                                                                {localStorage.getItem('category_type')}
                                                                 <small>
                                                                     {Count > 1 ? (<>
                                                                         {Count} Files

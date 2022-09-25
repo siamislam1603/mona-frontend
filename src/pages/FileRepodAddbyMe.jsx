@@ -82,7 +82,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
 
     useEffect(() => {
         GetSaachhData();
-    }, [SearchValue, selectedFranchisee])
+    }, [SearchValue])
 
     useEffect(() => {
         if (selectedFranchisee) {

@@ -230,7 +230,7 @@ const FileRepository = () => {
                                   </label>
                                   {/* <SearchBar {...props.searchProps} /> */}
                                 </div>
-                                <FilerepoUploadFile />
+                                <FilerepoUploadFile  />
                               </div>
                             </div>
                           </header>

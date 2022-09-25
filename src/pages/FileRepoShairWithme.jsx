@@ -90,11 +90,14 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
+        let category_id = () => {
+          localStorage.setItem("category_type", cell[2])
+        }
         return (
           <>
             <div className="user-list">
               <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
-                <span>
+                <span onClick={category_id}>
                   <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                 </span>
               </Link>
@@ -177,7 +180,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />
-      {userData ? (<>
+      {userData.length > 0 && fullLoaderStatus === false ? (<>
         <ToolkitProvider
           keyField="name"
           data={userData}
@@ -194,11 +197,10 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
         </ToolkitProvider>
       </>) :
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
-
       }
-      {!userData && fullLoaderStatus === false ?
+      {/* {!userData && fullLoaderStatus === false ?
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
-        : null}
+        : null} */}
       {/* <div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div> */}
     </div >
   )
