@@ -82,7 +82,7 @@ const FileRepository = () => {
     e.preventDefault();
     EditCategory();
   }
-  
+
   const EditCategory = async (id) => {
     seteditCategoryModalFlag(true);
     let response = await axios.put(`${BASE_URL}/fileCategory/`, { category_name: category_name, id: id }, {
@@ -225,48 +225,50 @@ const FileRepository = () => {
 
                               <div className="custom-menu-dots">
                                 <div className="file_repo_edit">
-                                  <Dropdown>
-                                    <Dropdown.Toggle id="dropdown-basic">
-                                      <FontAwesomeIcon icon={faEllipsisVertical} />
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      {category.map((item) => {
-                                        return <Dropdown.Item>
-                                          <Row>
-                                            <Col md={8}>
-                                              {item.category_name}
-                                            </Col>
-                                            <Col md={4}>
-                                              <div style={{ display: 'flex', justifyContent: 'space-between' }} >
-                                                <FontAwesomeIcon
-                                                  icon={faPen}
-                                                  onClick={(e) => { EditCategory(item.id) }}
-                                                  // onClick={() => {
-                                                  //   setCategoryModalFlag(true);
-                                                  // }}
-                                                  style={{
-                                                    color: '#455C58',
-                                                    marginRight: "10px"
-                                                  }}
-                                                />
+                                  {loginuser === "franchisor_admin" &&
+                                    <Dropdown>
+                                      <Dropdown.Toggle id="dropdown-basic">
+                                        <FontAwesomeIcon icon={faEllipsisVertical} />
+                                      </Dropdown.Toggle>
+                                      <Dropdown.Menu>
+                                        {category.map((item) => {
+                                          return <Dropdown.Item>
+                                            <Row>
+                                              <Col md={8}>
+                                                {item.category_name}
+                                              </Col>
+                                              <Col md={4}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between' }} >
+                                                  <FontAwesomeIcon
+                                                    icon={faPen}
+                                                    onClick={(e) => { EditCategory(item.id) }}
+                                                    // onClick={() => {
+                                                    //   setCategoryModalFlag(true);
+                                                    // }}
+                                                    style={{
+                                                      color: '#455C58',
+                                                      marginRight: "10px"
+                                                    }}
+                                                  />
 
-                                                <FontAwesomeIcon
-                                                  icon={faTrash}
-                                                  onClick={() => {
-                                                    if (window.confirm("Are you sure you want to delete ?"))
-                                                      handleCategoryDelete(item.id)
-                                                  }}
-                                                  style={{
-                                                    color: '#455C58',
-                                                  }}
-                                                />
-                                              </div>
-                                            </Col>
-                                          </Row>
-                                        </Dropdown.Item>
-                                      })}
-                                    </Dropdown.Menu>
-                                  </Dropdown>
+                                                  <FontAwesomeIcon
+                                                    icon={faTrash}
+                                                    onClick={() => {
+                                                      if (window.confirm("Are you sure you want to delete ?"))
+                                                        handleCategoryDelete(item.id)
+                                                    }}
+                                                    style={{
+                                                      color: '#455C58',
+                                                    }}
+                                                  />
+                                                </div>
+                                              </Col>
+                                            </Row>
+                                          </Dropdown.Item>
+                                        })}
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  }
                                 </div>
                               </div>
                             </ul>
