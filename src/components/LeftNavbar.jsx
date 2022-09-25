@@ -10,6 +10,8 @@ const LeftNavbar = () => {
   const [alert,setAlert]= useState("")
 
   const AnnouncementAlert = async() =>{
+
+    console.log("ANNOuncement alert")
     let token = localStorage.getItem('token');
     let userID = localStorage.getItem('user_id')
     let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
@@ -19,21 +21,34 @@ const LeftNavbar = () => {
       }
     });
     if(response.status === 200 && response.data.message==="Announcements is Active"){
-        setAlert("*")
+        
+        localStorage.setItem("alert_announcement","*")
+        setAlert(localStorage.getItem("alert_announcement"))
+
     }
     console.log("ANNOuncement alert",response)
+
   }
   const AnnouncementAlertset = async() =>{
+    console.log("ANnocunement alert set")
     let token = localStorage.getItem('token');
     let userID = localStorage.getItem('user_id')
     let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
-    const response = await axios.put(Url, {
+    const response = await axios.put(Url,{ }, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
+    if(response.status === 200 && response.data.status==="success"){
+        // setAlert(null)
+        localStorage.removeItem("alert_announcement")
+        setAlert(localStorage.getItem("alert_announcement"))
+
+
+        console.log("localStorage",localStorage.getItem("alert_announcement"))
+    }
     
-    console.log("ANNOuncement set",response)
+    console.log("ANNOuncement set alert",response)
   }
   const fetchPermissionList = async () => {
     
@@ -122,7 +137,20 @@ const LeftNavbar = () => {
 
     fetchPermissionList();
     AnnouncementAlert()
+
   }, []);
+  useEffect(() =>{
+
+    // if(localStorage.getItem("alert_announcement") === "null"){
+    // console.log("ANNouncement alert insidne ueffect caall",localStorage.getItem("alert_announcement"))
+
+    //   setAlert(null)
+    // }
+    if(window.location.href.split("/").pop() === "announcements"){
+      console.log("Window inside announcement" ,window.location.href.split("/").pop())
+        AnnouncementAlertset()
+    }
+  },[window.location.href])
 
   return (
     <>
@@ -151,8 +179,9 @@ const LeftNavbar = () => {
                         {permission.controller.controller_label === "Announcements" ?
                       (  <div onClick={
                           AnnouncementAlertset
-              }>
-                          {permission.controller.controller_label } {alert}
+                      }>
+                          {permission.controller.controller_label }  <span style={{color:"red"}}> { alert } </span>
+                         
                         </div>):(
                           permission.controller.controller_label 
                         )
