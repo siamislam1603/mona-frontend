@@ -19,44 +19,18 @@ const FileRpositoryList = () => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const [category, setCategory] = useState([]);
     const [userData, setUserData] = useState([]);
-    const [user, setUser] = useState([]);
     const [Count, setCount] = useState([]);
-    const [franchiseeList, setFranchiseeList] = useState();
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    const [formSettings, setFormSettings] = useState({
-        user_roles: [],
-        assigned_franchisee: [],
-        assigned_users: []
-    });
-
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-    const [child, setChild] = useState([]);
     const [SearchValue, setSearchValue] = useState();
-
 
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
 
     }
 
-    const fetchFranchiseeList = async () => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
 
-        if (response.status === 200 && response.data.status === "success") {
-            setFranchiseeList(response.data.franchiseeList.map(data => ({
-                id: data.id,
-                cat: data.franchisee_alias,
-                key: `${data.franchisee_name}, ${data.city}`
-            })));
-        }
-    };
 
 
     const GetFile = async () => {
@@ -142,91 +116,11 @@ const FileRpositoryList = () => {
     useEffect(() => {
         GetSearchFile();
     }, [SearchValue])
-    const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.error('error', error));
-    };
 
-
-
-    const getUser = () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-
-        fetch(`${BASE_URL}/auth/users`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                result?.data?.map((item) => {
-                    item['status'] = false;
-                });
-                setUser(result?.data);
-            })
-            .catch((error) => console.error('error', error));
-    };
-
-    const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
-        let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-
-        var request = {
-            headers: myHeaders,
-        };
-
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
-        if (response.status === 200) {
-            setChild(response.data.children)
-        }
-    }
 
     useEffect(() => {
         GetFile();
-        getFileCategory();
-        getUser();
-        fetchFranchiseeList();
     }, [selectedFranchisee])
-
-
-    useEffect(() => {
-        getUser();
-        getChildren()
-    }, [formSettings.franchisee,])
-
-    useEffect(() => {
-        let role = localStorage.getItem('user_role')
-        if (role != 'franchisor_admin') {
-            setFormSettings((prevState) => ({
-                ...prevState,
-                assigned_franchisee: [getFranchisee],
-                franchisee: [getFranchisee]
-            }))
-        }
-    }, [])
 
     const [columns, setColumns] = useState([
         {
@@ -237,7 +131,6 @@ const FileRpositoryList = () => {
                 cell = cell.split(',');
                 return (
                     <>
-
                         <div div className="user-list">
                             {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] === "image" ?
                                 <>
