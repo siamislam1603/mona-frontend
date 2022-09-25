@@ -185,8 +185,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
       let text = str.replace(/<\/?a[^>]*>/g, "");
 
       // let text = str.split(/[><]/)[2];
-      console.log("link link link",link)
-      console.log("text text text",text)
       return { link, text };
   }
 

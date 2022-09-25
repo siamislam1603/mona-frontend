@@ -604,16 +604,28 @@ const NewUser = () => {
     }
   }, [trainingDocuments]);
 
-  // useEffect(() => {
-  //   setFileError(uploadError?.map(errObj => (
-  //     errObj?.error[0]?.message
-  //   )));
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function(item) {
+        if(result.indexOf(item) < 0) {
+            result.push(item);
+        }
+    });
 
-  //   let uniqueList = [...new Set(fileError)];
-  //   console.log('UNIQUE ERRORS:', uniqueList);
-  // }, [uploadError])
+   return result;
+  }
 
-  // fileError && console.log('FILE ERROR:', fileError);
+  useEffect(() => {
+    
+    setFileError(uploadError?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+    // console.log('UNIQUE ERRORS:', uniqueList);
+  }, [uploadError])
+
+  fileError && console.log('FILE ERROR:', fileError);
+  formErrors && console.log('FORM ERRORS:', formErrors);
+
   return (
     <>
       <div id="main">
@@ -1061,11 +1073,11 @@ const NewUser = () => {
                             <small className="fileinput">(max. 5 files, 5MB each)</small>
                             { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                             {
-                              uploadError  &&
-                              uploadError.map(errorObj => {
+                              fileError  &&
+                              getUniqueErrors(fileError).map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
                                 )
                               })
                             }
