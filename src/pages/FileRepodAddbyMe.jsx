@@ -3,17 +3,14 @@ import React, { useState, useEffect } from 'react'
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { FullLoader } from "../components/Loader";
 
-const selectRow = {
-    mode: 'checkbox',
-    clickToSelect: true,
-};
 
 const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
+    const Navigate = useNavigate();
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
@@ -36,8 +33,8 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
 
                     }));
                     setUserData(tempData);
-                    setfullLoaderStatus(false)  
-                } else if (response.status === 404){
+                    setfullLoaderStatus(false)
+                } else if (response.status === 404) {
                     setUserData([])
                     setfullLoaderStatus(false)
                 }
@@ -84,38 +81,36 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
     }, []);
 
     useEffect(() => {
-        GetData();
-    }, []);
-    useEffect(() => {
         GetSaachhData();
     }, [SearchValue])
 
     useEffect(() => {
-        console.log(selectedFranchisee, "selectedFranchisee")
         if (selectedFranchisee) {
             GetData();
         }
     }, [selectedFranchisee]);
 
 
-    const [columns, setColumns] = useState([
+    const columns = [
         {
             dataField: 'name',
             text: 'Name',
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
+                let category_id = () => {
+                    localStorage.setItem("category_type", cell[2])
+                }
                 return (
                     <>
                         <div className="user-list">
                             <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
-                                <span>
+                                <span onClick={category_id}>
                                     <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                 </span>
                             </Link>
                             <span className="user-name">
                                 {cell[2]}
-
                                 <small>
                                     {cell[1] > 1 ? (<>
                                         {cell[1]} Files
@@ -125,7 +120,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                                 </small>
                             </span>
                         </div>
-
                     </>
                 );
             },
@@ -172,7 +166,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             text: '',
 
         },
-    ]);
+    ]
 
     return (
         <div>
@@ -198,11 +192,6 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
                 </>
             )}
-
-            {/* {!userData && !fullLoaderStatus ?
-                <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
-                : null} */}
-            {/* <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div> */}
         </div>
     )
 }
