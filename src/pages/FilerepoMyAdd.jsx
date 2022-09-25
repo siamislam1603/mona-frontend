@@ -64,7 +64,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-                  
+
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -264,7 +264,7 @@ const FilerepoMyAdd = ({ filter }) => {
             });
 
             if (response.status === 200) {
-                SetfileDeleteMessage("Delete succussfully")
+                SetfileDeleteMessage("Delete successfully")
                 setTimeout(() => {
                     SetfileDeleteMessage(null)
                 }, 3000)
@@ -276,7 +276,6 @@ const FilerepoMyAdd = ({ filter }) => {
                 SetfileDeleteMessage(null)
             }, 3000)
         }
-
     }
 
     const isAllRolesChecked = () => {
@@ -497,15 +496,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params?.id === "1" ? "Daily Use" :
-                                                                    Params?.id === "2" ? "Business Management" :
-                                                                        Params?.id === "3" ? "Employment" :
-                                                                            Params?.id === "4" ? "Compliance" :
-                                                                                Params?.id === "5" ? "Care Giving" :
-                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params?.id === "7" ? "Resources" :
-                                                                                            Params?.id === "8" ? "General" : "Null"
-                                                                }
+                                                                {localStorage.getItem('category_type')}
                                                                 <small>
                                                                     {userData?.length > 1 ? (<>
                                                                         {userData?.length} Files
@@ -513,7 +504,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                         {userData?.length} File
                                                                     </>)}
                                                                 </small>
-                                                                {/* <small>{userData?.length} files</small> */}
+
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">

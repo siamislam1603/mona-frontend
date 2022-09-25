@@ -112,10 +112,12 @@ const TrainingDetail = () => {
       }
     });
 
+    console.log('FINISH RESPONSE:', response);
+
     if (response.status === 200 && response.data.status === "success") {
       setTrainingFinishedDate(response.data.finished_date);
       setHideTrainingFinishButton(true);
-    }
+    }  
   };
 
   const fetchTrainingFormDetails = async (id) => {

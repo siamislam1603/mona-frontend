@@ -32,11 +32,4 @@ p.center{font-size:1rem}
   font-weight: 500;
   content: attr(placeholder);
   margin-right: -20rem;
-}
-
-.datepicker:not(.has-value):before{
-  color: #464646;
-  font-weight: 500;
-  content: attr(value);
-  margin-right: -20rem;
 } */

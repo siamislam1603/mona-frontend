@@ -17,6 +17,9 @@ const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
     const [errors, setErrors] = useState({});
@@ -53,6 +56,10 @@ const FilerepoUploadFile = () => {
             })
     };
 
+    const hanelCatoer = () => {
+        handleShow();
+        getFileCategory();
+    }
     //======================== GET FILE Franchisee List==================
 
     const fetchFranchiseeList = async () => {
@@ -345,10 +352,8 @@ const FilerepoUploadFile = () => {
         else if (getUser_Role == "educator") {
             bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
         }
-
         return bool;
     }
-
 
     return (
         <div>
@@ -357,10 +362,11 @@ const FilerepoUploadFile = () => {
             }
             <span
                 className="btn btn-primary me-3"
-                onClick={handleShow}
+                onClick={hanelCatoer}
             >
                 <FontAwesomeIcon
                     icon={faArrowUpFromBracket}
+
                 />{' '}
                 Upload File
             </span>

@@ -235,6 +235,8 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   useEffect(() => {
     setTabName('created_training');
   }, []);
+
+  myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
   return (
     <>
       <div id="main">

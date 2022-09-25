@@ -62,6 +62,7 @@ const Announcements = () => {
   let searchvalue = ""
   let count = ""
 
+
   const handleSearchOnChange = (e) => {
     e.preventDefault();
     if (tabLinkPath === "/all-announcements") {

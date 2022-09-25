@@ -64,8 +64,8 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
         const { searchedData } = response.data;
         setfullLoaderStatus(false)
         // setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0))
-        let withDueDate = searchedData.filter(d => d.training.end_date !== null);
-        let withoutDueDate = searchedData.filter(d => d.training.end_date === null);
+        let withDueDate = searchedData.filter(d => d.training.end_date !== null && d.training.user_training_statuses.length === 0);
+        let withoutDueDate = searchedData.filter(d => d.training.end_date === null && d.training.user_training_statuses.length === 0);
         setTrainingWithDueDate(withDueDate);
         setTrainingWithoutDueDate(withoutDueDate);
 
@@ -265,6 +265,9 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
     setTabName('assigned_training');
   }, []);
 
+
+  trainingWithDueDate && console.log('TRAINING WITH DUE DATE:', trainingWithDueDate);
+  trainingWithoutDueDate && console.log('TRAINING WITHOUT DUE DATE:', trainingWithoutDueDate);
   return (
     <>
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
@@ -371,7 +374,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             }
                             <span className="time">{item.training.completion_time} {item.training.completion_in}</span>
                           </div>
-                        </div>
+                        </div> 
                         <div className="cta-col">
                         { localStorage.getItem('user_role') !== 'educator' &&
                           <Dropdown>
