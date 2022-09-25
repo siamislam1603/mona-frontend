@@ -12,16 +12,7 @@ class DataComponent extends React.Component {
         dangerouslySetInnerHTML={{
           __html: `
           
-          <div class="logo-column-pdf">
-    
-          <Navbar.Brand>
-            
-            ${this.props.imageShow && `
-             <img src=${Logo} alt="" />
-            `}
-            
-          </Navbar.Brand>
-          <div>
+        
   
       
           <div className="module_detail">

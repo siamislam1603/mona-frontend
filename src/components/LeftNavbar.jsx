@@ -7,7 +7,34 @@ import { BASE_URL, FRONT_BASE_URL } from './App';
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
   const [userDashboardLink, setuserDashboardLink] = useState();
+  const [alert,setAlert]= useState("")
 
+  const AnnouncementAlert = async() =>{
+    let token = localStorage.getItem('token');
+    let userID = localStorage.getItem('user_id')
+    let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
+    const response = await axios.get(Url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if(response.status === 200 && response.data.message==="Announcements is Active"){
+        setAlert("*")
+    }
+    console.log("ANNOuncement alert",response)
+  }
+  const AnnouncementAlertset = async() =>{
+    let token = localStorage.getItem('token');
+    let userID = localStorage.getItem('user_id')
+    let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
+    const response = await axios.put(Url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    
+    console.log("ANNOuncement set",response)
+  }
   const fetchPermissionList = async () => {
     
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
@@ -49,6 +76,8 @@ const LeftNavbar = () => {
 
     console.log('MENU LIST:', sortedData);
 
+
+
     // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
     setPermissionList(sortedData.filter(permission => permission.controller.show_in_menu === true));
 
@@ -67,6 +96,8 @@ const LeftNavbar = () => {
     //   localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     // }
   };
+
+  console.log("Charceter",permissionList)
 
   useEffect(() => {
     var user_dashboar_link = '';
@@ -90,6 +121,7 @@ const LeftNavbar = () => {
     setuserDashboardLink(user_dashboar_link)
 
     fetchPermissionList();
+    AnnouncementAlert()
   }, []);
 
   return (
@@ -106,7 +138,7 @@ const LeftNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
           {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
-          
+            
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
@@ -116,7 +148,15 @@ const LeftNavbar = () => {
                         <i className={`ico ${permission.controller.controller_icon}`}>
                           &nbsp;
                         </i>
-                        {permission.controller.controller_label}
+                        {permission.controller.controller_label === "Announcements" ?
+                      (  <div onClick={
+                          AnnouncementAlertset
+              }>
+                          {permission.controller.controller_label } {alert}
+                        </div>):(
+                          permission.controller.controller_label 
+                        )
+                      } 
                       </span>
                     </Nav.Link>
                   </LinkContainer>

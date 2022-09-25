@@ -1045,7 +1045,8 @@ const ViewUser = () => {
                     <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
                   </div>
-
+					
+					<div className="row">
                   <Form.Group className="col-md-6 mb-3 relative mt-4">
                     <Form.Label>Termination Date</Form.Label>
                     <Form.Control
@@ -1060,7 +1061,7 @@ const ViewUser = () => {
                   </Form.Group>
 
                   <Form.Group className="col-md-12 mb-6 mt-4">
-                    <div className="form-check">
+                    <div className="form-check btn-checkbox">
                       <input 
                         className="form-check-input" 
                         type="checkbox" 
@@ -1078,6 +1079,7 @@ const ViewUser = () => {
                       </label>
                     </div>
                   </Form.Group>
+				  </div>
                 </Row>
               </Modal.Body>
 

@@ -198,6 +198,7 @@ function AddFormBuilder(props) {
                         <Form.Control
                           type="text"
                           name="form_name"
+                          maxLength={255}
                           value={form?.form_name}
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);
@@ -249,6 +250,8 @@ function AddFormBuilder(props) {
                         <Form.Label>Form Description *</Form.Label>
                         <Form.Control
                           as="textarea"
+                          maxLength={1000}
+
                           name="form_description"
                           value={form?.form_description}
                           rows={3}
