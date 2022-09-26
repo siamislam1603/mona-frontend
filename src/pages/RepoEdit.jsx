@@ -483,10 +483,52 @@ const RepoEdit = () => {
                                                                     <Form.Label>Select franchise(s)</Form.Label>
                                                                     <div className="select-with-plus">
                                                                         <Multiselect
+                                                                            isClearable={false}
+                                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                                            placeholder={"Select"}
+                                                                            displayValue="key"
+                                                                            className="multiselect-box default-arrow-select"
+                                                                            onRemove={function noRefCheck(data) {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    franchise: [...data.map(data => data.id)],
+                                                                                    franchisee: [...data.map(data => data.id)]
+
+                                                                                }));
+                                                                                setSelectedUser([])
+                                                                                setSelectedChild([])
+                                                                            }}
+                                                                            selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
+                                                                            onSelect={function noRefCheck(data) {
+                                                                                setFormSettings((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    franchise: [...data.map((data) => data.id)],
+                                                                                    franchisee: [...data.map(data => data.id)],
+                                                                                    assigned_childs: [],
+                                                                                    assigned_users: []
+                                                                                }));
+
+                                                                                setSelectedUser([])
+                                                                                setSelectedChild([])
+                                                                            }}
+                                                                            options={franchiseeList}
+                                                                        />
+                                                                        {/* <Multiselect
                                                                             disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                                             placeholder={"Select Franchise"}
                                                                             displayValue="key"
+                                                                            isClearable={false}
                                                                             className="multiselect-box default-arrow-select"
+                                                                            onRemove={function noRefCheck(data) {
+                                                                                setData((prevState) => ({
+                                                                                    ...prevState,
+                                                                                    franchise: [...data.map(data => data.id)],
+                                                                                    franchisee: [...data.map(data => data.id)]
+
+                                                                                }));
+                                                                                setSelectedUser([])
+                                                                                setSelectedChild([])
+                                                                            }}
                                                                             onRemove={function noRefCheck(data) {
                                                                                 setData((prevState) => ({
                                                                                     ...prevState,
@@ -505,7 +547,7 @@ const RepoEdit = () => {
                                                                                 }));
                                                                             }}
                                                                             options={franchiseeList}
-                                                                        />
+                                                                        /> */}
                                                                     </div>
                                                                 </Form.Group>
                                                             </Col>

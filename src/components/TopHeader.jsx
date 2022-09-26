@@ -198,19 +198,17 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
     let userID = localStorage.getItem('user_id');
 
+    const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`, {}, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (response.status == 200) {
+      setTopHeaderNotificationCount(0);
       setTopHeaderNotificationMarkAllRead(1)
-
-    // const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`, {}, {
-    //   headers: {
-    //     "Authorization": "Bearer " + token
-    //   }
-    // });
-    // if (response.status == 200) {
-    //   setTopHeaderNotificationCount(0);
-    //   setTopHeaderNotificationMarkAllRead('marked-read')
-    // } else {
-    //   console.log('TYPE OF COVER IMAGE:', response.msg);
-    // }
+    } else {
+      console.log('TYPE OF COVER IMAGE:', response.msg);
+    }
 
   }
 
@@ -317,7 +315,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""}${topHeaderNotificationCountClass ? "" : "no-notification"} `} >
+    <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""} ${topHeaderNotificationCountClass ? "" : "no-notification"}`} >
       {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
       <Popover.Header as="h3">
         Your Unread Notifications{" "}
