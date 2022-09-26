@@ -22,7 +22,7 @@ const TextArea = (props) => {
           }}
           isInvalid={!!controls.error[controls.field_name]}
         />
-        <p style={{fontSize:"12px",marginBottom:"3px",marginLeft:"78%"}}>(Word Limit :2000)</p>
+        <p style={{fontSize:"12px",marginBottom:"3px",marginLeft:"77%"}}>(Word Limit : 2000)</p>
         <Form.Control.Feedback type="invalid">
           {controls.error[controls.field_name]}
         </Form.Control.Feedback>
