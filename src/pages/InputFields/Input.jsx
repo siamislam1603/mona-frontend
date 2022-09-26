@@ -6,7 +6,6 @@ const Input = (props) => {
     <Col sm={6}>
     <Form.Group className="form-input-section">
       <Form.Label>{controls.field_label}</Form.Label>
-      <p style={{fontSize:"12px",marginBottom:"3px",marginTop:"-9px"}}>(Word Limit :250)</p>
       <Form.Control
         type={controls.field_type}
         name={controls.field_name}
@@ -17,6 +16,7 @@ const Input = (props) => {
         value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
         isInvalid={!!controls.error[controls.field_name]}
       />
+      <p style={{fontSize:"12px",marginBottom:"3px",marginLeft:"80%"}}>(Word Limit :250)</p>
       <Form.Control.Feedback type="invalid">
         {controls.error[controls.field_name]}
       </Form.Control.Feedback>
