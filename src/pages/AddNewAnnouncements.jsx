@@ -304,7 +304,7 @@ const createAnnouncement = async (data) => {
     }
     const handleDataSubmit = event => {
       event.preventDefault();
-      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking,wordCount);
+      let errorObj =  AddNewAnnouncementValidation(announcementData, coverImage, allFranchise,titleError,titleChecking,wordCount,relatedFiles);
        if(Object.keys(errorObj).length>0){
         setError(errorObj);
         // window.scroll(0,0)
@@ -365,7 +365,8 @@ console.log("ds",ds,cureent)
 // const valid = moment().add(10,"minutes").format("HH:mm").isAfter(cureent);
 // console.log("valid",valid)
 
-   console.log("Announcement Data",videoTutorialFiles)
+  //  console.log("Announcement Data",videoTutorialFiles)
+  console.log("Announcement realted file",relatedFiles)
 
   return (
     
@@ -545,6 +546,7 @@ console.log("ds",ds,cureent)
                                 announcementDescription(e, data);
                               }}
                             />
+                            
                            {error.meta_description && <p className="form-errors">{error.meta_description}</p>}
                            <div className="text-left mb-4">Maximum character 1000</div>
 
@@ -666,7 +668,7 @@ console.log("ds",ds,cureent)
                               )
                             })
                           }
-                            <small className="fileinput">((mp4, flv & mkv))</small>
+                            <small className="fileinput">(mp4, flv & mkv)</small>
                           <small className="fileinput">(File limit 1 GB)</small>
                           {/* <DropVideo onSave={setVideoTutorialFiles} /> */}
                         </Form.Group>
@@ -677,6 +679,11 @@ console.log("ds",ds,cureent)
                           <DropAllFile onSave={setRelatedFiles}/>
                           <small className="fileinput">(pdf, doc, ppt & xslx)</small>
                           <small className="fileinput">(max 5 file,File limit 200 mb)</small>
+                           {!error.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
+                          { error.relatedFile && <span className="form-errors">{error.relatedFile}</span> }
+
+
+
                         </Form.Group>
                       </Col>
                       <Col md={12}>
