@@ -5,8 +5,8 @@ import Main from "./Main";
 const BASE_URL = "http://13.237.14.155:4000";
 // const FRONT_BASE_URL = "http://13.237.14.155:5000";
 // const BASE_URL = "http://localhost:4000";
-const FRONT_BASE_URL = "http://localhost:5000";
-// const FRONT_BASE_URL = "http://13.237.14.155:5000";
+// const FRONT_BASE_URL = "http://localhost:5000";
+const FRONT_BASE_URL = "http://13.237.14.155:5000";
 const IGNORE_REMOVE_FORM = "Compliance Visit Form";
 
 function App() {

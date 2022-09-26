@@ -851,6 +851,7 @@ const NewUser = () => {
                               <Select
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
+                                isClearable={false}
                                 components={animatedComponents}
                                 isMulti
                                 options={trainingCategoryData}
@@ -871,6 +872,7 @@ const NewUser = () => {
                               <Select
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
+                                isClearable={false}
                                 components={animatedComponents}
                                 isMulti
                                 options={pdcData}
@@ -1023,6 +1025,7 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                isClearable={false}
                                 placeholder="Select"
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {
