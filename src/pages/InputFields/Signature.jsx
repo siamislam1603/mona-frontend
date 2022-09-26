@@ -23,7 +23,7 @@ const Signature = (props) => {
       <ToastContainer/>
       <Form.Group className="form-input-section">
         <Form.Label>{controls.field_label}</Form.Label>
-        <p style={{fontSize:"12px"}}>(Kindly use the write pad for free hand signature)</p>
+        <p style={{fontSize:"12px",marginBottom:"3px",marginTop:"-9px"}}>(Kindly use the write pad for free hand signature)</p>
         <SignaturePad
           canvasProps={{
             style: {

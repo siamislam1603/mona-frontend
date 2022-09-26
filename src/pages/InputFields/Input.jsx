@@ -6,7 +6,7 @@ const Input = (props) => {
     <Col sm={6}>
     <Form.Group className="form-input-section">
       <Form.Label>{controls.field_label}</Form.Label>
-
+      <p style={{fontSize:"12px",marginBottom:"3px",marginTop:"-9px"}}>(Word Limit :250)</p>
       <Form.Control
         type={controls.field_type}
         name={controls.field_name}

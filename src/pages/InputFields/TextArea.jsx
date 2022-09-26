@@ -6,6 +6,7 @@ const TextArea = (props) => {
     <Col sm={6}>
       <div className="child_info_field">
         <Form.Label>{controls.field_label}</Form.Label>
+        <p style={{fontSize:"12px",marginBottom:"3px",marginTop:"-9px"}}>(Word Limit :2000)</p>
         <Form.Control
           as="textarea"
           rows={controls.row ? controls.row : 3}
