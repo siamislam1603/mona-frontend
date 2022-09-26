@@ -623,8 +623,9 @@ const NewUser = () => {
     // console.log('UNIQUE ERRORS:', uniqueList);
   }, [uploadError])
 
-  fileError && console.log('FILE ERROR:', fileError);
+  // fileError && console.log('FILE ERROR:', fileError);
   formErrors && console.log('FORM ERRORS:', formErrors);
+  formData && console.log('FORM DATA:', formData);
 
   return (
     <>

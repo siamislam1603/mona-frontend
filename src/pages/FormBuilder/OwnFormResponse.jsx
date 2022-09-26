@@ -19,6 +19,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function OwnFormResponse(props) {
   const Params = useParams();
@@ -227,7 +228,7 @@ function OwnFormResponse(props) {
                                             'iner_itemwdasdasddassd---->',
                                             inner_item
                                           )}
-                                          <div className='d-flex'>
+                                          <div className="d-flex">
                                             <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
@@ -241,27 +242,43 @@ function OwnFormResponse(props) {
                                                 : inner_item?.filled_user
                                                     ?.fullname}
                                             </h5>
-                                            {inner_index===0 && (formData?.form_type ===
-                                              'editable' ||
-                                              formData?.form_type ===
-                                                'multi_submission') && (
-                                              <div
-                                                className="edit-icon-form"
-                                                onClick={() => {
-                                                  navigate(
-                                                    `/form/dynamic/${formData.form_name}`,
-                                                    {
-                                                      state: {
-                                                        id: item[index].id,
-                                                        form_id: id,
-                                                      },
-                                                    }
-                                                  );
-                                                }}
-                                              >
-                                                <FontAwesomeIcon icon={faPen} />
-                                              </div>
-                                            )}
+                                            {inner_index === 0 &&
+                                              (formData?.form_type ===
+                                                'editable' ||
+                                                formData?.form_type ===
+                                                  'multi_submission') && (
+                                                <Link style={{marginLeft:"5px"}}
+                                                  to={`/form/dynamic/${formData.form_name}`}
+                                                  state={{
+                                                    id: item[inner_index]?.id,
+                                                    form_id: id ? id : null,
+                                                  }}
+                                                >
+                                                  {console.log("item[index]?.id--->",item[inner_index])}
+                                                  {/* <div
+                                                    className="edit-icon-form"
+                                                    onClick={() => {
+                                                      alert(
+                                                        'Hello--->' +
+                                                          inner_index
+                                                      );
+                                                      navigate(
+                                                        `/form/dynamic/${formData.form_name}`,
+                                                        {
+                                                          state: {
+                                                            id: item[index].id,
+                                                            form_id: id,
+                                                          },
+                                                        }
+                                                      );
+                                                    }}
+                                                  > */}
+                                                    <FontAwesomeIcon
+                                                      icon={faPen}
+                                                    />
+                                                  {/* </div> */}
+                                                </Link>
+                                              )}
                                           </div>
                                           <h6>
                                             <span className="text-capitalize">

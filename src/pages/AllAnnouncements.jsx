@@ -232,7 +232,7 @@ console.log("Announcemen detal",announcementDetails)
                                      {   details?.announcement_files?.map((detail,index) =>(
                                      !detail.is_deleted? 
                                               <>
-                                              {detail.fileType == ".mp4"||detail.fileType == ".mkv" ? (
+                                              {detail.fileType == ".mp4"||detail.fileType == ".mkv" || detail.fileType == ".flv" ? (
                                                  <AnnouncementVideo 
                                                    data={detail}
                                                    title={`Annoucnement Video ${index + 1}`}
@@ -264,7 +264,7 @@ console.log("Announcemen detal",announcementDetails)
    
                                                         
                {details?.announcement_files?.length>0 ? <>
-                    { details?.announcement_files[0]?.fileType === ".mp4" ||details?.announcement_files[0].fileType === ".mkv" ? 
+                    { details?.announcement_files[0]?.fileType === ".mp4" || details?.announcement_files[0]?.fileType === ".flv" ||details?.announcement_files[0].fileType === ".mkv" ? 
                                   (
                                     null
                                     // <div className="head">Related Files :</div>
@@ -285,7 +285,7 @@ console.log("Announcemen detal",announcementDetails)
                                        {details?.announcement_files?.map((detail,index) =>(
                                               <>
                                                
-                                              {detail.fileType != ".mp4" && detail.fileType != '.mkv' && !detail.is_deleted ?(
+                                              {detail.fileType != ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ?(
 
                                                 <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                                  <p>{getRelatedFileName(detail.file)}</p>

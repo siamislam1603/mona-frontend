@@ -12,6 +12,7 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation'
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
+import moment from 'moment';
 
 import DragDropTraning from '../components/DragDropTraning';
 import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
@@ -773,8 +774,8 @@ const AddNewTraining = () => {
                       <Form.Label>Start Date *</Form.Label>
                       <Form.Control
                         type="date"
-                        // className="datepicker"
-                        // placeholder={trainingSettings?.start_date ||"dd/mm/yyyy" }
+                        className="datepicker"
+                        placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         name="start_date"
                         value={trainingSettings?.start_date}
                         min={new Date().toISOString().slice(0, 10)}
@@ -815,6 +816,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="date"
                         name="end_date"
+                        className="datepicker"
+                        placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={trainingSettings?.end_date}
                         onChange={(e) => {
                           handleTrainingSettings(e);
@@ -1173,6 +1176,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        className="datepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
