@@ -441,6 +441,7 @@ const FilerepoUploadFile = () => {
                                                 >
                                                     <option value="">Select</option>
                                                     {category?.map((item) => {
+                                                        // localStorage.setItem("category_type", item.category_name)
                                                         return (
                                                             <option value={item.id}>{item.category_name}</option>
                                                         );

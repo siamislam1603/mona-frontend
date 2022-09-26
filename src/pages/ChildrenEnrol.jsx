@@ -29,11 +29,7 @@ const ChildrenEnrol = () => {
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
-<<<<<<< HEAD
   const [search, setSearch] = useState(" ")
-=======
-  const [search,setSearch] = useState(" ")
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
   const { SearchBar } = Search;
 
@@ -51,13 +47,8 @@ const ChildrenEnrol = () => {
       let token = localStorage.getItem('token');
       let USER_ROLE = localStorage.getItem('user_role');
       let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/search=${search}` : `${BASE_URL}/children-listing/all-childrens-enrolled/search=${search}`
-<<<<<<< HEAD
-      let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}` : URL;
-
-=======
       let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}/search=${search}` : URL;
-      
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
+
 
       if (URL) {
         const response = await axios.get(FilterUrl, {
@@ -68,25 +59,20 @@ const ChildrenEnrol = () => {
         if (response) {
           setfullLoaderStatus(false)
         }
-        console.log("CHild Response",response.data)
+        console.log("CHild Response", response.data)
 
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
-           
+
           let tempData = data.map((dt, index) =>
           ({
 
             name: `${dt.fullname} ,${dt.dob}`,
             dob: `${moment(dt.dob).format('DD/MM/YYYY')}`,
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-<<<<<<< HEAD
-            parentName: `${data[index]?.parents[0]?.user?.fullname},${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
-            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.fullname}, ${data[index]?.users[1]?.educator_profile_photo}`,
-=======
             parentName: `${data[index]?.parents[0]?.user?.fullname} , ${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[3]?.user?.fullname},${data[index]?.parents[4]?.user?.fullname},${data[index]?.parents[5]?.user?.fullname},${data[index]?.parents[6]?.user?.fullname},${data[index]?.parents[7]?.user?.fullname},${data[index]?.parents[8]?.user?.fullname},${data[index]?.parents[9]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo},${data[index]?.parents[3]?.user?.parent_profile_photo},${data[index]?.parents[4]?.user?.parent_profile_photo},${data[index]?.parents[5]?.user?.parent_profile_photo},${data[index]?.parents[6]?.user?.parent_profile_photo},${data[index]?.parents[7]?.user?.parent_profile_photo},${data[index]?.parents[8]?.user?.parent_profile_photo},${data[index]?.parents[9]?.user?.parent_profile_photo}`,
 
-            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,                                
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
+            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,
             specailneed: `${dt?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
             enrolldate: `${dt?.enrollment_initiated}`,
@@ -115,22 +101,22 @@ const ChildrenEnrol = () => {
             let parent = [];
             d.map((item, index) => {
               if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() != "blob") {
-                
-                parent[index] = " "+item.trim();
-                console.log("THe item  ",item)
-              
+
+                parent[index] = " " + item.trim();
+                console.log("THe item  ", item)
+
               }
             })
-            educator.map((item,index) =>{
-              if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob" ) {
-                educatorArray[index] = " "+item.trim();
+            educator.map((item, index) => {
+              if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob") {
+                educatorArray[index] = " " + item.trim();
 
-              
+
               }
 
 
             })
-              console.log("Educator 123",educatorArray)
+            console.log("Educator 123", educatorArray)
             data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
@@ -184,14 +170,14 @@ const ChildrenEnrol = () => {
       text: 'Parent Name',
       formatter: (cell) => {
         cell = cell.split(',');
-        
+
         return (<>
           <div className="parentName" style={{ maxHeight: '100px', overflowY: "scroll" }}>
             {
               cell[0] != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[10].trim()  === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
+                  <img src={cell[10].trim() === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
                 </span>
                 <span className="user-name">
                   {/* {cell[0] === "undefined" ? null : cell[0]} */}
@@ -244,7 +230,7 @@ const ChildrenEnrol = () => {
                   } </span>
               </div>
             }
-           {
+            {
               cell[5].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -291,7 +277,7 @@ const ChildrenEnrol = () => {
               </div>
             }
 
-          {
+            {
               cell[8].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -302,7 +288,7 @@ const ChildrenEnrol = () => {
                   } </span>
               </div>
             }
-           {
+            {
               cell[9].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -351,7 +337,7 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-              {
+            {
               cell[2].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -363,7 +349,7 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
-           {
+            {
               cell[3].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -414,7 +400,7 @@ const ChildrenEnrol = () => {
               </div>
             }
 
-          {
+            {
               cell[7].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -427,7 +413,7 @@ const ChildrenEnrol = () => {
               </div>
             }
 
-        {
+            {
               cell[8].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
@@ -529,22 +515,6 @@ const ChildrenEnrol = () => {
 
 
   ];
-<<<<<<< HEAD
-  const MyExportCSV = (props) => {
-    const handleClick = () => {
-      props.onExport();
-
-    };
-
-    return (
-      <div>
-        <button className="btn btn-success" onClick={handleClick}>Click me to export CSV</button>
-      </div>
-    );
-  };
-=======
-
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
 
   return (
     <>
@@ -565,9 +535,6 @@ const ChildrenEnrol = () => {
                   data={chidlEnroll}
                   columns={columns}
                   search
-
-
-
                   exportCSV={{
                     fileName: 'Children Enroled.csv',
 
@@ -677,22 +644,13 @@ const ChildrenEnrol = () => {
                                       </footer>
                                     </Dropdown.Menu>
                                   </Dropdown>
-
-                                  {/* {localStorage.getItem("user_role") === "franchisor_admin" ? ( */}
-<<<<<<< HEAD
                                   <Dropdown>
-=======
-                                    <Dropdown>
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
-
                                     <Dropdown.Toggle
                                       id="extrabtn"
                                       className="ctaact"
                                     >
                                       <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
-
-
                                     <Dropdown.Menu>
                                       <Dropdown.Item
                                         as="button"
@@ -700,46 +658,54 @@ const ChildrenEnrol = () => {
                                           setCsvDownloadFlag(true);
                                         }}
                                       >
-
-<<<<<<< HEAD
-                                        <CSVLink
-                                          data={csvData}
-                                          filename={"Children Enroled.csv"}
-                                          // filename="dskak.csv"
-                                          headers={headers}
-                                          target="_blank"
-                                        // ref={csvLink}
-                                        >
-
-                                          {"Export CSV"}
-=======
-
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item
-                                          as="button"
-                                        >
-                                          <CSVLink
-                                            data={csvData}
-                                            filename={"Children Enroled.csv"}
-                                            headers={headers}
-                                            target="_blank"
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item
+                                            as="button"
                                           >
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
+                                            <CSVLink
+                                              data={csvData}
+                                              filename={"Children Enroled.csv"}
+                                              headers={headers}
+                                              target="_blank"
+                                            >
 
-                                        </CSVLink>
+                                            </CSVLink>
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
                                       </Dropdown.Item>
-
-
-                                      {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                            Delete All Row
-                          </Dropdown.Item> */}
-<<<<<<< HEAD
                                     </Dropdown.Menu>
                                   </Dropdown>
-=======
-                                      </Dropdown.Menu>
-                                    </Dropdown>
->>>>>>> b3b4f4665d8ed0b3fcfce8646fdaba287c9801a2
+
+                                  {/* {localStorage.getItem("user_role") === "franchisor_admin" ? ( */}
+                                  {/* <Dropdown>
+                                    <Dropdown.Toggle
+                                      id="extrabtn"
+                                      className="ctaact"
+                                    >
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item
+                                        as="button"
+                                        onClick={() => {
+                                          setCsvDownloadFlag(true);
+                                        }}
+                                      >
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item
+                                            as="button"
+                                          >
+                                            <CSVLink
+                                              data={csvData}
+                                              filename={"Children Enroled.csv"}
+                                              headers={headers}
+                                              target="_blank"
+                                            >
+
+                                            </CSVLink>
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown> */}
                                   {/* ) : (null)} */}
 
                                 </div>
@@ -760,7 +726,6 @@ const ChildrenEnrol = () => {
                                 <div className="text-center mb-5 mt-5"><strong>
                                   No child enrol yet
                                 </strong></div>
-
                               )
                           }
                         </div>

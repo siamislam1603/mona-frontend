@@ -34,8 +34,6 @@ const FileRepository = () => {
     id: ""
   })
 
-
-
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
 
   const addAndSaveCategory = async () => {
@@ -102,6 +100,7 @@ const FileRepository = () => {
     if (response.data.status === "success") {
       let { message } = response.data;
       seteditCategoryModalFlag(false);
+      window.location.reload(false)
       SetCategoryCreated(message)
       getFileCategory();
       setTimeout(() => {
@@ -166,7 +165,6 @@ const FileRepository = () => {
     }
   }
 
-
   const getFileCategory = async () => {
     let result = await axios.get(`${BASE_URL}/fileRepo/files-category`, {
       headers: {
@@ -228,9 +226,9 @@ const FileRepository = () => {
                                       value={SearchValue}
                                       onChange={HandelSearch} />
                                   </label>
-                                
+
                                 </div>
-                                <FilerepoUploadFile  />
+                                <FilerepoUploadFile />
                               </div>
                             </div>
                           </header>
@@ -284,9 +282,7 @@ const FileRepository = () => {
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                     onClick={(e) => { GetEditCategory(item.id) }}
-                                                    // onClick={() => {
-                                                    //   setCategoryModalFlag(true);
-                                                    // }}
+
                                                     style={{
                                                       color: '#455C58',
                                                       marginRight: "10px"
@@ -424,7 +420,6 @@ const FileRepository = () => {
 
                           </div>
                           <div className="training-column">
-
                             {tabLinkPath === "/available-Files"
                               && <FileRepoShairWithme
                                 selectedFranchisee={selectedFranchisee}
@@ -434,6 +429,7 @@ const FileRepository = () => {
                               && <FileRepodAddbyMe
                                 selectedFranchisee={selectedFranchisee}
                                 SearchValue={SearchValue}
+                                seteditCategoryModalFlag={seteditCategoryModalFlag}
                               />}
                           </div>
                         </>
