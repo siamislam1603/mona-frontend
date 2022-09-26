@@ -849,6 +849,7 @@ const EditUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                isClearable={false}
                                 placeholder="Select"
                                 value={trainingCategoryData?.filter(d => formData?.trainingCategories?.includes(parseInt(d.id)))}
                                 options={trainingCategoryData}
@@ -870,6 +871,7 @@ const EditUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                isClearable={false}
                                 placeholder="Select"
                                 value={pdcData?.filter(d => formData?.professionalDevCategories?.includes(parseInt(d.id)))}
                                 options={pdcData}
@@ -1000,6 +1002,7 @@ const EditUser = () => {
                                 components={animatedComponents}
                                 isMulti
                                 placeholder="Select"
+                                isClearable={false}
                                 value={businessAssetData?.filter(d => formData?.businessAssets?.includes(parseInt(d.id)))}
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {

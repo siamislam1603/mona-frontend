@@ -64,8 +64,8 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
         const { searchedData } = response.data;
         setfullLoaderStatus(false)
         // setAvailableTrainingData(searchedData.filter(d => d.training.user_training_statuses.length === 0))
-        let withDueDate = searchedData.filter(d => d.training.end_date !== null && d.training.user_training_statuses.length === 0);
-        let withoutDueDate = searchedData.filter(d => d.training.end_date === null && d.training.user_training_statuses.length === 0);
+        let withDueDate = searchedData.filter(d => d.training.end_date !== null);
+        let withoutDueDate = searchedData.filter(d => d.training.end_date === null);
         setTrainingWithDueDate(withDueDate);
         setTrainingWithoutDueDate(withoutDueDate);
 
@@ -141,10 +141,14 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
       if(training?.shares.length > 0) {
         copyDataToStates(training);
       } else {
-        setTopErrorMessage('Sharing details for this user doesn\'t exist!');
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 4000)
+        let trainingObj = {
+          assigned_users: [],
+          assigned_roles: [],
+          assigned_franchisee: [selectedFranchisee],
+          applicable_to: 'roles',
+          send_to_all_franchisee: false,
+        }
+        copyDefaultDataToStates(trainingObj);
       }
     }
   };
@@ -171,6 +175,19 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
       localStorage.getItem('user_role') === 'franchisor_admin'
       ? fetchFranchiseeUsers(training?.shares[0]?.franchisee[0])
       : fetchFranchiseeUsers(selectedFranchisee);
+  }
+
+  const copyDefaultDataToStates = (training) => {
+    setFormSettings(prevState => ({
+      ...prevState,
+      assigned_users: training?.assigned_users,
+      assigned_roles: training?.assigned_roles,
+      assigned_franchisee: training?.assigned_franchisee,
+      applicable_to: training?.applicable_to,
+      send_to_all_franchisee: training?.send_to_all_franchisee
+    }));
+
+    fetchFranchiseeUsers(selectedFranchisee);
   }
 
   const fetchFranchiseeList = async () => {

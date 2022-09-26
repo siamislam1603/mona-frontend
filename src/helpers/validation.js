@@ -631,7 +631,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
   
   if (!phone) errors.phone = 'Phone number is required';
 
-  if(phone.length < 4)
+  if(phone.length > 0 && phone.length < 4)
     errors.phone = "Phone number must have atleast 4 digits";
   
   if (!franchisee) errors.franchisee = 'Franchise is required';
@@ -684,7 +684,7 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if(phone.length < 4)
+  if(phone.length > 0 && phone.length < 4)
     errors.phone = "Phone number must have atleast 4 digits";
 
   if (password?.length > 0 && !regexPassword.test(password)) {
