@@ -680,7 +680,7 @@ console.log("THe operating manual",operatingManualData)
                               }}
                             />
                           )}
-                          <div className="text-left">Maximum character 1000</div>
+                          <div className="text-left mb-4">Maximum character 1000</div>
 
                         </Form.Group>
                       </Col>
