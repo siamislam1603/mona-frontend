@@ -315,7 +315,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""}${topHeaderNotificationCountClass ? "" : "no-notification"} `} >
+    <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""} ${topHeaderNotificationCountClass ? "" : "no-notification"}`} >
       {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
       <Popover.Header as="h3">
         Your Unread Notifications{" "}
