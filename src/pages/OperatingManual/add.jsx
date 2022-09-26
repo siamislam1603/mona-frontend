@@ -173,44 +173,44 @@ const AddOperatingManual = () => {
   const setOperatingManualField = (field, value) => {
     setOperatingManualData({ ...operatingManualData, [field]: value });
     // console.log(field,value)
-    console.log("THE VALUE",value,field)
-     
+    console.log("THE VALUE", value, field)
 
-    let  text = value
-    console.log("the text",text)
 
-    if (field=="description") {
+    let text = value
+    console.log("the text", text)
 
-      if(text.includes("&nbsp")){
+    if (field == "description") {
 
-        setWordCount(text.length-12);
+      if (text.includes("&nbsp")) {
+
+        setWordCount(text.length - 12);
       }
-      else if(text.includes("</i>") && text.includes("<strong>") ){
+      else if (text.includes("</i>") && text.includes("<strong>")) {
         console.log("Include <i> and <strong>")
-        if(text.includes("&nbsp")){
-          setWordCount(text.length-31-12);
+        if (text.includes("&nbsp")) {
+          setWordCount(text.length - 31 - 12);
         }
-        setWordCount(text.length-31)
+        setWordCount(text.length - 31)
       }
 
-      else if(text.includes("<strong>")){
+      else if (text.includes("<strong>")) {
         console.log("Strong include")
-        setWordCount(text.length-17-7);
+        setWordCount(text.length - 17 - 7);
 
       }
-      else if(text.includes("</i>")){
-        setWordCount(text.length-14)
+      else if (text.includes("</i>")) {
+        setWordCount(text.length - 14)
       }
 
-    
-      else{
-        setWordCount(text.length-7);
+
+      else {
+        setWordCount(text.length - 7);
       }
     }
-    if(text === ""){
+    if (text === "") {
       setWordCount(0)
     }
-    
+
 
     if (!!errors[field]) {
       setErrors({
@@ -406,7 +406,7 @@ const AddOperatingManual = () => {
         flag = true;
       }
       
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')) {
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv') && file.name.split(".").pop() != "flv") {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
@@ -414,7 +414,7 @@ const AddOperatingManual = () => {
       }
     }
 
-  
+
     if (flag === false) {
       if (name === 'cover_image') {
         setImageLoaderFlag(true);
@@ -499,44 +499,44 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-  useEffect(() =>{
+  useEffect(() => {
 
-    if(pageTitle === "Edit Operating Manual"){
-    console.log("edit operating manual")
+    if (pageTitle === "Edit Operating Manual") {
+      console.log("edit operating manual")
 
-      
+
       if (operatingManualData?.description) {
         const text = operatingManualData?.description;
-        if(text.includes("&nbsp")){
-  
-          setWordCount(text.length-12);
+        if (text.includes("&nbsp")) {
+
+          setWordCount(text.length - 12);
         }
-        else if(text.includes("<strong>")){
+        else if (text.includes("<strong>")) {
           console.log("Strong include")
-          setWordCount(text.length-17-7);
+          setWordCount(text.length - 17 - 7);
 
         }
-        else if(text.includes("</i>")){
-          setWordCount(text.length-14)
+        else if (text.includes("</i>")) {
+          setWordCount(text.length - 14)
         }
 
-        else if(text.includes("</i>") && text.includes("<strong>") ){
-          setWordCount(text.length-32)
+        else if (text.includes("</i>") && text.includes("<strong>")) {
+          setWordCount(text.length - 32)
         }
-        else if(operatingManualData?.description === ""){
+        else if (operatingManualData?.description === "") {
           setWordCount(0)
         }
-        else{
-          setWordCount(text.length-7);
+        else {
+          setWordCount(text.length - 7);
         }
-        
-        
+
+
       }
     }
-  },[operatingManualData?.description])
-// console.log("Oepratiing",errors)
-console.log("THe operating manual",operatingManualData)
-// console.log("PERMISSION SELECT",selectedUser,formSettingData)
+  }, [operatingManualData?.description])
+  // console.log("Oepratiing",errors)
+  console.log("THe operating manual", operatingManualData)
+  // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>
       <div id="main">
@@ -858,18 +858,18 @@ console.log("THe operating manual",operatingManualData)
                                 operatingManualData.related_files
                               }
                             />
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
-                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
+                            <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                            <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                             <p className="form-errors">
                               {errors.related_files}
                             </p>
-                              {operatingManualData?.related_files?.length>5 && !errors.related_files
-                                && 
-                                <p className='form-errors'>
+                            {operatingManualData?.related_files?.length > 5 && !errors.related_files
+                              &&
+                              <p className='form-errors'>
                                 Max limit is 5 files
-                               </p>
-                              }
-                
+                              </p>
+                            }
+
                           </Form.Group>
                         </div>
                       </Col>
