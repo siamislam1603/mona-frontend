@@ -69,6 +69,7 @@ const FileRepository = () => {
   const Submiton = (e) => {
     e.preventDefault();
     addAndSaveCategory();
+    localStorage.setItem("category_type", category_name)
   }
 
 
