@@ -674,7 +674,8 @@ const AddNewTraining = () => {
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-                          <small className="fileinput mt-1">(png, jpg & jpeg)</small>
+                          <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
+                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution)</small>
                           {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
