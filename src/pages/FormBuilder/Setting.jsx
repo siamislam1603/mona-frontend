@@ -4,6 +4,7 @@ import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Multiselect from 'multiselect-react-dropdown';
 import { FullLoader } from '../../components/Loader';
+import moment from 'moment';
 
 let selectedFillAccessUserId = '';
 let selectedFillAccessUser = [];
@@ -489,6 +490,8 @@ function Setting(props) {
                       <Form.Control
                         type="date"
                         name="start_date"
+                        className="datepicker"
+                        placeholder={form?.start_date ? moment(form?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={form?.start_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
@@ -523,6 +526,8 @@ function Setting(props) {
                       <Form.Control
                         type="date"
                         name="end_date"
+                        className="datepicker"
+                        placeholder={form?.end_date ? moment(form?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={form?.end_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);

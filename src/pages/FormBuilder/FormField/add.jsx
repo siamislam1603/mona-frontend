@@ -19,6 +19,7 @@ let selectedFillAccessUserId = '';
 let selectedFillAccessUser = [];
 let selectedSignatoriesUserId = '';
 let selectedSignatoriesUser = [];
+let signature_count = 1;
 const token = localStorage.getItem('token');
 const AddFormField = (props) => {
   const location = useLocation();
@@ -57,7 +58,6 @@ const AddFormField = (props) => {
     ? location?.state?.form_name
     : null;
   useEffect(() => {
-    setFormSettingFlag(false);
     if (form_name) {
       getFormField();
       getFormData();
@@ -65,6 +65,9 @@ const AddFormField = (props) => {
     } else {
       setfullLoaderStatus(false);
     }
+  }, []);
+  useEffect(() => {
+    setFormSettingFlag(false);
   }, [user]);
   useEffect(() => {
     getUser();
@@ -312,9 +315,10 @@ const AddFormField = (props) => {
               flag === false
             ) {
               res?.result?.push({
-                field_label: 'Signature',
+                field_label: `Signature ${signature_count}`,
                 field_type: 'signature',
               });
+              signature_count++;
             }
             setForm(res?.result);
             setGroupModelData(res?.result);
@@ -362,9 +366,10 @@ const AddFormField = (props) => {
                     ) {
                       console.log('Hello23423423423');
                       result?.result?.push({
-                        field_label: 'Signature',
+                        field_label: `Signature ${signature_count}`,
                         field_type: 'signature',
                       });
+                      signature_count++;
                     }
                     setForm(result?.result);
                     setGroupModelData(result?.result);
@@ -379,10 +384,11 @@ const AddFormField = (props) => {
               { field_type: 'radio', option: [{ '': '' }, { '': '' }] },
               { field_type: 'checkbox', option: [{ '': '' }, { '': '' }] },
               {
-                field_label: 'Signature',
+                field_label: `Signature ${signature_count}`,
                 field_type: 'signature',
               },
             ]);
+            signature_count++;
             counter++;
             setCount(counter);
           }
@@ -410,9 +416,9 @@ const AddFormField = (props) => {
       .then((result) => console.log('delete data successfully!'))
       .catch((error) => console.log('error', error));
   };
-  const onSubmit = (e,form_submit_status) => {
+  const onSubmit = (e, form_submit_status) => {
     e.preventDefault();
-    console.log("form_submit_status--->",form_submit_status);
+    console.log('form_submit_status--->', form_submit_status);
     const newErrors = createFormFieldValidation(form);
     console.log('form---->', form);
     let flag = false;
@@ -498,29 +504,21 @@ const AddFormField = (props) => {
         })
           .then((res) => res.json())
           .then((res) => {
-            if(form_submit_status===true)
-            {
+            if (form_submit_status === true) {
               navigate('/form', {
                 state: {
                   message: 'Form added successfully.',
                   form_template: true,
                 },
               });
-
+            } else {
+              navigate(`/form/preview/${location?.state?.form_name}`, {
+                state: {
+                  id: location?.state?.id,
+                  form_name: location?.state?.form_name,
+                },
+              });
             }
-            else
-            {
-              navigate(
-                `/form/preview/${location?.state?.form_name}`,
-                {
-                  state: {
-                    id: location?.state?.id,
-                    form_name: location?.state?.form_name,
-                  },
-                }
-              );
-            }
-            
 
             res?.result?.map((item) => {
               if (item.option) {
@@ -973,10 +971,17 @@ const AddFormField = (props) => {
                                         setIndex(index);
                                       }}
                                     >
-                                      
-                                      {item?.section_name
-                                        ? <u><FontAwesomeIcon icon={faPen} />{"Section: " + item.section_name}</u>
-                                        : <><FontAwesomeIcon icon={faPlus} /> Add to Group</>}
+                                      {item?.section_name ? (
+                                        <u>
+                                          <FontAwesomeIcon icon={faPen} />
+                                          {'Section: ' + item.section_name}
+                                        </u>
+                                      ) : (
+                                        <>
+                                          <FontAwesomeIcon icon={faPlus} /> Add
+                                          to Group
+                                        </>
+                                      )}
                                     </Button>
                                   </div>
                                   <div className="required">
@@ -1027,12 +1032,17 @@ const AddFormField = (props) => {
                         <Button
                           className="preview"
                           onClick={(e) => {
-                            onSubmit(e,false);
+                            onSubmit(e, false);
                           }}
                         >
                           Preview
                         </Button>
-                        <Button className="saveForm" onClick={(e)=>{onSubmit(e,true)}}>
+                        <Button
+                          className="saveForm"
+                          onClick={(e) => {
+                            onSubmit(e, true);
+                          }}
+                        >
                           Save Form
                         </Button>
                       </div>
@@ -1939,7 +1949,7 @@ const AddFormField = (props) => {
                                   });
                                   if (flag === false)
                                     data.push({
-                                      field_label: 'Signature',
+                                      field_label: `Signature ${signature_count}`,
                                       field_type: 'signature',
                                       section_name: data[Index]['section_name'],
                                       accessible_to_role:
@@ -1950,6 +1960,7 @@ const AddFormField = (props) => {
                                       signatories_role:
                                         data[Index]['signatories_role'],
                                     });
+                                  signature_count++;
                                 }
                                 setForm(data);
                               }}
@@ -1985,7 +1996,10 @@ const AddFormField = (props) => {
                                 </Button>
                                 <Button
                                   className="right-button"
-                                  style={{backgroundColor:"#455C58",width:"80px"}}
+                                  style={{
+                                    backgroundColor: '#455C58',
+                                    width: '80px',
+                                  }}
                                   disabled={sectionTitle === '' ? true : false}
                                   onClick={() => {
                                     counter++;

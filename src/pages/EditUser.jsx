@@ -48,6 +48,7 @@ const EditUser = () => {
     city: 'Sydney',
     phone: '',
     role: '',
+    crn: '',
     telcode: '+61',
     terminationDate: "",
     password: "",
@@ -76,6 +77,7 @@ const EditUser = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
   const [uploadError, setUploadError] = useState(null);
+  const [fileError, setFileError] = useState([]);
 
   // DIALOG STATES
   const [showConsentDialog, setShowConsentDialog] = useState(false);
@@ -623,8 +625,24 @@ const EditUser = () => {
     }
   }, [trainingDocuments, fetchedTrainingDocuments]);
 
-  formData && console.log('EDIT USER DATA:', formData);
-  formErrors && console.log('Errors:', formErrors);
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function(item) {
+        if(result.indexOf(item) < 0) {
+            result.push(item);
+        }
+    });
+
+   return result;
+  }
+
+  useEffect(() => {
+    
+    setFileError(uploadError?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+    // console.log('UNIQUE ERRORS:', uniqueList);
+  }, [uploadError]);
 
   return (
     <>
@@ -799,7 +817,13 @@ const EditUser = () => {
                                 ref={crn}
                                 name="crn"
                                 value={formData.crn}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                  handleChange(e);
+                                  setFormErrors(prevState => ({
+                                    ...prevState,
+                                    crn: null
+                                  }))
+                                }}
                               />
                               { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
                             </Form.Group>
@@ -1006,7 +1030,8 @@ const EditUser = () => {
                                     }));
                                   }}
                                 />
-                                { formErrors.password !== null && <span className="error">{formErrors.password}</span> }
+                                <span style={{ marginTop: '5px', marginBottom: 0 }} className="fileinput">(Minimum 8 characters, at least one uppercase, one lowercase, one number and one special character)</span>
+                                { formErrors.password !== null && <span className="error" style={{marginBottom: "10px"}}>{formErrors.password}</span> }
                               </Form.Group>
 
                               <Form.Group className="col-md-6 mb-3 relative">
@@ -1028,7 +1053,7 @@ const EditUser = () => {
                               </Form.Group>
                             </>
                           }
-                          <div className="col-md-12 mb-3 relative passopt">
+                          <div className="col-md-12 mb-3 relative passopt mt-3">
                           <Form.Label>Password Settings</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">
@@ -1111,11 +1136,11 @@ const EditUser = () => {
                             <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
                             <small className="fileinput">(max. 5 files, 5MB each)</small>
                             {
-                              uploadError  &&
-                              uploadError.map(errorObj => {
+                              fileError  &&
+                              getUniqueErrors(fileError).map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
                                 )
                               })
                             }

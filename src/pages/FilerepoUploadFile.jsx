@@ -17,6 +17,9 @@ const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
     const [errors, setErrors] = useState({});
@@ -53,6 +56,10 @@ const FilerepoUploadFile = () => {
             })
     };
 
+    const hanelCatoer = () => {
+        handleShow();
+        getFileCategory();
+    }
     //======================== GET FILE Franchisee List==================
 
     const fetchFranchiseeList = async () => {
@@ -144,7 +151,6 @@ const FilerepoUploadFile = () => {
         } else {
             setFormSettingData({ ...formSettingData, [field]: value });
         }
-
         if (!!errors[field]) {
             setErrors({
                 ...errors,
@@ -263,6 +269,7 @@ const FilerepoUploadFile = () => {
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                     window.location.reload();
                     setUpladFile("File Upload successfully");
+
                 }
             })
             .then((result) => {
@@ -270,6 +277,7 @@ const FilerepoUploadFile = () => {
                     setLoaderFlag(false);
                     setShow(false);
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
+                   
                 }
             })
             .catch((error) => console.error('error', error));
@@ -345,10 +353,8 @@ const FilerepoUploadFile = () => {
         else if (getUser_Role == "educator") {
             bool = ["guardian"].every(item => formSettingData?.shared_role?.includes(item))
         }
-
         return bool;
     }
-
 
     return (
         <div>
@@ -357,10 +363,11 @@ const FilerepoUploadFile = () => {
             }
             <span
                 className="btn btn-primary me-3"
-                onClick={handleShow}
+                onClick={hanelCatoer}
             >
                 <FontAwesomeIcon
                     icon={faArrowUpFromBracket}
+
                 />{' '}
                 Upload File
             </span>
@@ -380,13 +387,11 @@ const FilerepoUploadFile = () => {
                                         <Form.Group>
                                             <Form.Label>Upload File*</Form.Label>
                                             <DragDropFileEdit onChange={setField} />
-                                            {/* <DragDropRepository onChange={setField} /> */}
                                             {error && !formSettingData?.setting_files && < span className="error"> File  is required!</span>}
                                             <p className="error">{errors.setting_files}</p>
                                         </Form.Group>
                                     </Col>
                                 </Row>
-
                                 <div className="setting-heading">
                                     <h2>Settings</h2>
                                 </div>
@@ -428,9 +433,9 @@ const FilerepoUploadFile = () => {
                                             </>) : (
                                             <>
                                                 <Form.Select
-                                                    name="file_category"
+                                                    name="file_category"    
                                                     onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
+                                                        setField(e.target.name, e.target.value);  
                                                     }}
                                                 >
                                                     <option value="">Select</option>

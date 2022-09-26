@@ -129,7 +129,7 @@ function FormResponse(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-
+    
     const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`
     fetch(URL_, requestOptions)
       .then((response) => response.json())
@@ -224,7 +224,7 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  dateFilter && console.log('Filter Date:', dateFilter);
+  // dateFilter && console.log('Filter Date:', dateFilter);
   return (
     <>
       <div id="main">
@@ -419,10 +419,11 @@ function FormResponse(props) {
                                   )}
                                 </div>
                                 <div className="responses-header-right">
+                                  {console.log('CREATED AT:', item[0].createdAt)}
                                   <p>
                                     Completed on: <br />
                                     {moment(item[0].createdAt)
-                                      .utcOffset('+11:00')
+                                      // .utcOffset('+10:00')
                                       .format('DD/MM/YYYY') +
                                       ', ' +
                                       item[0].createdAt

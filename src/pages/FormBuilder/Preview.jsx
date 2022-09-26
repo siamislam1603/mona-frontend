@@ -126,6 +126,19 @@ const Preview = (props) => {
                     })}
                   </Row>
                 </Form>
+                <Button 
+                  variant="transparent" 
+                  className="me-3"
+                  onClick={() => {
+                    navigate('/form/field/add', {
+                      state: {
+                        id: location?.state?.id,
+                        form_name: location?.state?.form_name,
+                      },
+                    });
+                  }}>
+                  Edit
+                </Button>
                 <Button  onClick={()=>{
                   navigate('/form', {
                     state: {
