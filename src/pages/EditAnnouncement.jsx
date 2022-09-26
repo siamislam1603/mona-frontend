@@ -597,9 +597,8 @@ useEffect(() =>{
                               }}
                             />
                            {errors.meta_description && <p className="form-errors">{errors.meta_description}</p>}
-                           <div className="text-left">Maximum character 700</div>
+                           <div className="text-left">Maximum character 1000</div>
 
-<div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>
