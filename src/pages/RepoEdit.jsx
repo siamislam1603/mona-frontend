@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import makeAnimated from 'react-select/animated';
 import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
