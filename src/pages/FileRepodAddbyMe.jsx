@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { FullLoader } from "../components/Loader";
-import { Dropdown } from 'react-bootstrap'
 
 const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModalFlag }) => {
     const Navigate = useNavigate();
@@ -93,14 +92,12 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                let category_id = () => {
-                    localStorage.setItem("category_type", cell[2])
-                }
+
                 return (
                     <>
                         <div className="user-list">
                             <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
-                                <span onClick={category_id}>
+                                <span>
                                     <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                 </span>
                             </Link>
@@ -192,6 +189,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                         {userData.length > 0 ? (
                             <BootstrapTable
                                 {...props.baseProps}
+                                pagination={paginationFactory()}
                             />
                         ) :
                             (!fullLoaderStatus && <>
