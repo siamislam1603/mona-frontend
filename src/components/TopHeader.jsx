@@ -34,7 +34,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [searchTraining, setSearchTraining] = useState([]);
   const [searchUser, setSearchUser] = useState([]);
   const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
-
+  const [topHeaderNotificationMarkAllRead, setTopHeaderNotificationMarkAllRead] = useState(null);
 
   // const savePermissionInState = async () => {
   //   let menu_list = JSON.parse(localStorage.getItem('menu_list'));
@@ -197,6 +197,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const handleMarkRearAll = async notificationId => {
 
     let userID = localStorage.getItem('user_id');
+
     const response = await axios.put(`${BASE_URL}/notification/unread/${userID}`, {}, {
       headers: {
         "Authorization": "Bearer " + token
@@ -204,6 +205,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     });
     if (response.status == 200) {
       setTopHeaderNotificationCount(0);
+      setTopHeaderNotificationMarkAllRead(1)
     } else {
       console.log('TYPE OF COVER IMAGE:', response.msg);
     }
@@ -313,7 +315,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   }
 
   const popover = (
-    <Popover id="popover-basic" className= {topHeaderNotificationCountClass?"notificationpopup":"notificationpopup no-notification"}>
+    <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""} ${topHeaderNotificationCountClass ? "" : "no-notification"}`} >
+      {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
       <Popover.Header as="h3">
         Your Unread Notifications{" "}
         <Link style={{ marginLeft: 10 }} to="/notifications">
@@ -541,7 +544,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                   </Dropdown.Menu>
                 </Dropdown>
               </div>
-              : <div className="selectdropdown">
+              : <div className="selectdropdown dddddddddddddddddddd">
                 <Dropdown onSelect={selectFranchisee}>
 
                   <Dropdown.Toggle id="dropdown-basic">

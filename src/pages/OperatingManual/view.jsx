@@ -989,7 +989,6 @@ const OperatingManual = () => {
           </Container>
         </section>
       </div>
-
       <Modal
         size="lg"
         className="video-modal module_video_model"
@@ -1001,6 +1000,8 @@ const OperatingManual = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="embed-responsive embed-responsive-16by9">
+          {/* <iframe title="video file" className="embed-responsive-item" src={data.file} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+
             <iframe
               width="1366"
               height="445"

@@ -196,7 +196,7 @@ const AllEvent = (props) => {
                     <div className="video-col">
                       {data?.announcement_files?.map((detail, index) => (
                         <>
-                          {detail.fileType == ".mp4" || detail.fileType === ".mkv" && !detail.is_deleted ? (
+                          {detail.fileType == ".mp4" || detail.fileType === ".mkv" || detail.fileType === ".flv" && !detail.is_deleted ? (
                             <AnnouncementVideo
                               data={detail}
                               title={`Annoucnement Video ${index + 1}`}
@@ -224,7 +224,7 @@ const AllEvent = (props) => {
                     }
 
                     {data?.announcement_files?.length > 0 ? <>
-                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv" ?
+                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv"  || data?.announcement_files[0].fileType === ".flv" ?
                         (
                           null
                         ) :
@@ -247,7 +247,7 @@ const AllEvent = (props) => {
                       <div className="related-files">
                         {data?.announcement_files && data?.announcement_files?.map((detail, index) => (
                           <>
-                            {detail.fileType !== ".mp4" && !detail.is_deleted ? (
+                            {detail.fileType !== ".mp4" &&  detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
                               <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt="" /> <span className="name">
                                 <p>{getRelatedFileName(detail.file)}</p>
                                 <small>{getAddedTime(detail.createdAt)}</small></span></a></div>
