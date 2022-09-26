@@ -1030,7 +1030,8 @@ const EditUser = () => {
                                     }));
                                   }}
                                 />
-                                { formErrors.password !== null && <span className="error">{formErrors.password}</span> }
+                                <span style={{ marginTop: '5px', marginBottom: 0 }} className="fileinput">(Minimum 8 characters, at least one uppercase, one lowercase, one number and one special character)</span>
+                                { formErrors.password !== null && <span className="error" style={{marginBottom: "10px"}}>{formErrors.password}</span> }
                               </Form.Group>
 
                               <Form.Group className="col-md-6 mb-3 relative">
@@ -1052,7 +1053,7 @@ const EditUser = () => {
                               </Form.Group>
                             </>
                           }
-                          <div className="col-md-12 mb-3 relative passopt">
+                          <div className="col-md-12 mb-3 relative passopt mt-3">
                           <Form.Label>Password Settings</Form.Label>
                           <Form.Group>
                             <div className="btn-checkbox">

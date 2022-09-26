@@ -415,7 +415,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
+                      <div className="iconame"><a href="/training-detail">{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">

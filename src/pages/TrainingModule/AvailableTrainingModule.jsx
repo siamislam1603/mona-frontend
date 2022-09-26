@@ -309,7 +309,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                       <div className="fixcol">
                         <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                         <div className="iconame">
-                          <a href={`/training-detail/${item.training.id}`}>{item.training.title}</a>
+                          <a href={`/training-detail/${item.training.id}`}>{item.training.title.length > 40 ? item.training.title.slice(0, 40) + "..." : item.training.title}</a>
                           <div className="datecol">
                             {
                               item.training.end_date !== null &&
@@ -366,7 +366,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                       <div className="fixcol">
                         <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                         <div className="iconame">
-                          <a href={`/training-detail/${item.training.id}`}>{item.training.title}</a>
+                          <a href={`/training-detail/${item.training.id}`}>{item.training.title.length > 40 ? item.training.title.slice(0, 40) + "..." : item.training.title}</a>
                           <div className="datecol">
                             {
                               item.training.end_date !== null &&

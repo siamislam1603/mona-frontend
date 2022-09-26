@@ -624,6 +624,9 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
     errors.crn = "Field should only contain digits";
   
   if (!phone) errors.phone = 'Phone number is required';
+
+  if(phone.length < 4)
+    errors.phone = "Phone number must have atleast 4 digits";
   
   if (!franchisee) errors.franchisee = 'Franchise is required';
 
@@ -675,8 +678,11 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
 
   if (!phone) errors.phone = 'Phone number is required';
 
+  if(phone.length < 4)
+    errors.phone = "Phone number must have atleast 4 digits";
+
   if (password?.length > 0 && !regexPassword.test(password)) {
-    errors.password = 'Minimum 8 characters, at least one letter, one number and one special character'
+    errors.password = 'Minimum 8 characters, at least one uppercase, one lowercase, one number and one special character'
   }
 
   if (password && !confirm_password) {

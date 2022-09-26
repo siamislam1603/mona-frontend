@@ -27,9 +27,16 @@ p.center{font-size:1rem}
   display: flex;
 }
 
-/* .datepicker:not(.has-value):before{
+.datepicker:not(.has-value):before{
   color: #464646;
   font-weight: 500;
   content: attr(placeholder);
   margin-right: -20rem;
-} */
+}
+
+.timepicker:not(.has-value):before{
+  color: #464646;
+  font-weight: 500;
+  content: attr(placeholder);
+  margin-right: -20rem;
+}

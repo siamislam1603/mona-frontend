@@ -13,6 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FullLoader } from '../../../components/Loader';
 
+let signatureFieldValue = null;
 let counter = 0;
 let selectedUserRole = [];
 let selectedFillAccessUserId = '';
@@ -52,6 +53,7 @@ const AddFormField = (props) => {
   const [sectionTitle, setSectionTitle] = useState('');
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
+  const [signatureFieldLabel, setSignatureFieldLabel] = useState("");
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -159,7 +161,6 @@ const AddFormField = (props) => {
       .then((response) => response.json())
       .then((res) => {
         setUserRole(res?.userRoleList);
-        console.log('response0-------->1', res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
@@ -197,18 +198,12 @@ const AddFormField = (props) => {
       const keyOfOption = tempOption[inner_index];
 
       if (!keyOfOption[key]['option']) {
-        console.log('Hello');
         keyOfOption[key]['option'] = [{ '': '' }, { '': '' }];
       }
 
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
-      console.log('tempOption[inner_index]', tempOption[inner_index]);
       tempArr[index]['option'] = tempOption;
-      console.log(
-        'keyOfOption[key][option][inner_inner_index]',
-        tempArr[index]['option']
-      );
       setForm(tempArr);
     } else {
       const keyOfOption = tempOption[inner_index];
@@ -360,7 +355,6 @@ const AddFormField = (props) => {
                       res?.form[0]?.form_permissions[0]?.signatories === true &&
                       flag === false
                     ) {
-                      console.log('Hello23423423423');
                       result?.result?.push({
                         field_label: 'Signature',
                         field_type: 'signature',
@@ -392,7 +386,6 @@ const AddFormField = (props) => {
         }
       })
       .catch((error) => {
-        console.log('error', error);
         setfullLoaderStatus(false);
       });
   };
@@ -412,9 +405,7 @@ const AddFormField = (props) => {
   };
   const onSubmit = (e,form_submit_status) => {
     e.preventDefault();
-    console.log("form_submit_status--->",form_submit_status);
     const newErrors = createFormFieldValidation(form);
-    console.log('form---->', form);
     let flag = false;
     form.map((item, index) => {
       if (flag === false) {
@@ -457,7 +448,6 @@ const AddFormField = (props) => {
         myHeaders.append('authorization', 'Bearer ' + token);
         let data = [...form];
         data?.map((item) => {
-          console.log('item.accessible_to_role--->', item.accessible_to_role);
           data['accessible_to_role'] = item.accessible_to_role;
           data['signatories'] = item.signatories;
           if (
@@ -532,7 +522,16 @@ const AddFormField = (props) => {
       }
     }
   };
+
+  function checkIfSignatureFieldAlreadyExists(form, index) {
+    if(form[index]?.field_type === "signature")
+      return 'signature_1';
+
+    return  form[index]?.field_label;
+  }
+
   const setField = (field, value, index, inner_index) => {
+    console.log('DATA>>>>>>>>>>>>>', field, value, index, inner_index);
     counter++;
     setCount(counter);
     setIndex(index);
@@ -558,7 +557,6 @@ const AddFormField = (props) => {
       tempArr[index] = tempObj;
       setForm(tempArr);
     }
-    console.log('form--->', tempObj);
 
     if (!!errors[index][field]) {
       if (field === 'option') {
@@ -578,7 +576,6 @@ const AddFormField = (props) => {
   };
   return (
     <>
-      {console.log('form----->111122222', form)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -675,12 +672,15 @@ const AddFormField = (props) => {
                             <Row>
                               <Col sm={6}>
                                 <div className="my-form-input">
+                                  {console.log('DATA:', checkIfSignatureFieldAlreadyExists(form, index))}
                                   <Form.Control
                                     type="text"
                                     name="field_label"
                                     maxLength={255}
-                                    value={form[index]?.field_label}
+                                    // placeholder={}
+                                    value={ checkIfSignatureFieldAlreadyExists(form, index, form[index]?.file) }
                                     onChange={(e) => {
+                                      console.log('EVENT:>>>>>>>>>>', e.target.value);
                                       setField(
                                         e.target.name,
                                         e.target.value,
@@ -820,10 +820,6 @@ const AddFormField = (props) => {
                                     (item, inner_index) => {
                                       return (
                                         <Col sm={6}>
-                                          {console.log(
-                                            'item---->',
-                                            item[Object.keys(item)[0]]
-                                          )}
                                           <div className="my-form-input">
                                             <Form.Control
                                               type="text"
@@ -1391,25 +1387,15 @@ const AddFormField = (props) => {
                                           .toLocaleLowerCase()
                                           .split(' ')
                                           .join('_');
-                                        console.log(
-                                          'e.target.value--->',
-                                          e.target.value
-                                        );
-                                        console.log('form--->', form);
                                         const tempArr = [...form];
                                         let flag = false;
                                         tempArr?.map((item, index) => {
                                           if (flag === false) {
                                             if (item.section_name) {
-                                              console.log(
-                                                'item.section_name--->',
-                                                item.section_name
-                                              );
                                               if (
                                                 item.section_name ===
                                                 e.target.value
                                               ) {
-                                                console.log('matched-->');
                                                 const tempObj = tempArr[Index];
                                                 tempObj[e.target.name] =
                                                   e.target.value;
@@ -1425,7 +1411,6 @@ const AddFormField = (props) => {
                                                 setForm(tempArr);
                                                 flag = true;
                                               } else {
-                                                console.log('Not matched-->');
                                                 const tempObj = tempArr[Index];
                                                 tempObj[e.target.name] =
                                                   e.target.value;
@@ -1439,7 +1424,6 @@ const AddFormField = (props) => {
                                                 setForm(tempArr);
                                               }
                                             } else {
-                                              console.log('Not matched-->');
                                               const tempObj = tempArr[Index];
                                               tempObj[e.target.name] =
                                                 e.target.value;
