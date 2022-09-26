@@ -3,11 +3,55 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from "react-router-bootstrap";
 import axios from 'axios';
 import { BASE_URL, FRONT_BASE_URL } from './App';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircle } from '@fortawesome/free-solid-svg-icons';
 
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
   const [userDashboardLink, setuserDashboardLink] = useState();
+  const [alert,setAlert]= useState("")
 
+  const AnnouncementAlert = async() =>{
+
+    console.log("ANNOuncement alert")
+    let token = localStorage.getItem('token');
+    let userID = localStorage.getItem('user_id')
+    let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
+    const response = await axios.get(Url, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if(response.status === 200 && response.data.message==="Announcements is Active"){
+        
+        localStorage.setItem("alert_announcement","*")
+        setAlert(localStorage.getItem("alert_announcement"))
+
+    }
+    console.log("ANNOuncement alert",response)
+
+  }
+  const AnnouncementAlertset = async() =>{
+    console.log("ANnocunement alert set")
+    let token = localStorage.getItem('token');
+    let userID = localStorage.getItem('user_id')
+    let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
+    const response = await axios.put(Url,{ }, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if(response.status === 200 && response.data.status==="success"){
+        // setAlert(null)
+        localStorage.removeItem("alert_announcement")
+        setAlert(localStorage.getItem("alert_announcement"))
+
+
+        console.log("localStorage",localStorage.getItem("alert_announcement"))
+    }
+    
+    console.log("ANNOuncement set alert",response)
+  }
   const fetchPermissionList = async () => {
     
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
@@ -49,6 +93,8 @@ const LeftNavbar = () => {
 
     console.log('MENU LIST:', sortedData);
 
+
+
     // console.log('REFORMED:', menu_list.filter(permission => permission.controller.show_in_menu === true));
     setPermissionList(sortedData.filter(permission => permission.controller.show_in_menu === true));
 
@@ -67,6 +113,8 @@ const LeftNavbar = () => {
     //   localStorage.setItem('menu_list', JSON.stringify(permissionsObject));
     // }
   };
+
+  console.log("Charceter",permissionList)
 
   useEffect(() => {
     var user_dashboar_link = '';
@@ -90,7 +138,21 @@ const LeftNavbar = () => {
     setuserDashboardLink(user_dashboar_link)
 
     fetchPermissionList();
+    AnnouncementAlert()
+
   }, []);
+  useEffect(() =>{
+
+    // if(localStorage.getItem("alert_announcement") === "null"){
+    // console.log("ANNouncement alert insidne ueffect caall",localStorage.getItem("alert_announcement"))
+
+    //   setAlert(null)
+    // }
+    if(window.location.href.split("/").pop() === "announcements"){
+      console.log("Window inside announcement" ,window.location.href.split("/").pop())
+        AnnouncementAlertset()
+    }
+  },[window.location.href])
 
   return (
     <>
@@ -106,7 +168,9 @@ const LeftNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
           {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
-          
+          {/* <FontAwesomeIcon icon="fa-solid fa-circle-small" /> */}
+
+
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
@@ -116,7 +180,19 @@ const LeftNavbar = () => {
                         <i className={`ico ${permission.controller.controller_icon}`}>
                           &nbsp;
                         </i>
-                        {permission.controller.controller_label}
+                        {permission.controller.controller_label === "Announcements" ?
+                      (  <div style={{position:"relative", paddingRight: "12px"}} onClick={
+                          AnnouncementAlertset
+                      }>
+                          {permission.controller.controller_label }  <span style={{color:"red" ,position: "absolute",right: "0", top: "0"}}> 
+                            {alert === "*" &&       <FontAwesomeIcon icon={faCircle} style={{fontSize:"7px"}} />
+ }
+                           </span>
+                         
+                        </div>):(
+                          permission.controller.controller_label 
+                        )
+                      } 
                       </span>
                     </Nav.Link>
                   </LinkContainer>

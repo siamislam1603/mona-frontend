@@ -60,7 +60,6 @@ export default function DropAllRelatedFile({ relatedFilesData, onSave }) {
     onSave(relatedFiles);
   }, [relatedFiles]);
 
-  console.log("THE SIZE OF FILE",relatedFiles,relatedFiles.length)
 
   return (
     <>

@@ -12,6 +12,7 @@ import axios from 'axios';
 import { TrainingFormValidation } from '../helpers/validation'
 import { BASE_URL } from '../components/App';
 import * as ReactBootstrap from 'react-bootstrap';
+import moment from 'moment';
 
 import DragDropTraning from '../components/DragDropTraning';
 import ImageCropTraning from '../components/ImageCropPopup/ImageCropTraning';
@@ -115,6 +116,8 @@ const AddNewTraining = () => {
   const [trainingSettingErrors, setTrainingSettingErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
+  const [docFileError, setDocFileError] = useState([]);
+  const [videoFileError, setVideoFileError] = useState([]);
 
   // FETCHING FRANCHISEE LIST
   const fetchFranchiseeList = async () => {
@@ -307,7 +310,7 @@ const AddNewTraining = () => {
     event.preventDefault();
     // window.scrollTo(0, 0);
     console.log(coverImage, "coverImage")
-    let errorObj = TrainingFormValidation(trainingData, relatedFiles);
+    let errorObj = TrainingFormValidation(trainingData, relatedFiles, videoTutorialFiles);
     console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -402,6 +405,38 @@ const AddNewTraining = () => {
       }));
     }
   }, [relatedFiles]);
+
+  useEffect(() => {
+    if(videoTutorialFiles?.length > 5) {
+      setErrors(prevState => ({
+        ...prevState,
+        video: null
+      }))
+    }
+  }, [videoTutorialFiles])
+
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function(item) {
+        if(result.indexOf(item) < 0) {
+            result.push(item);
+        }
+    });
+
+   return result;
+  }
+
+  useEffect(() => {
+    setVideoFileError(videoFileErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [videoFileErrorMessage])
+  
+  useEffect(() => {
+    setDocFileError(docErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [docErrorMessage])
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
@@ -658,14 +693,14 @@ const AddNewTraining = () => {
                           <small className="fileinput">(mp4, flv & mkv)</small>
                           <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                           {
-                            videoFileErrorMessage  &&
-                            videoFileErrorMessage.map(errorObj => {
+                            videoFileError  &&
+                            getUniqueErrors(videoFileError).map(errorObj => {
                               return (
-                                // errorObj?.error[0].message
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message === "Too many files" ? "Only five files allowed" : errorObj?.error[0].message}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
                               )
                             })
                           }
+                          { errors.video !== null && <span className="error">{errors.video}</span> }
                         </Form.Group>
                       </Col>
 
@@ -679,11 +714,10 @@ const AddNewTraining = () => {
                           <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
                           <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                           {
-                            docErrorMessage  &&
-                            docErrorMessage.map(errorObj => {
+                            docFileError  &&
+                            getUniqueErrors(docFileError).map(errorObj => {
                               return (
-                                // errorObj?.error[0].message
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{"File should be less than 5MB in size"}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
                               )
                             })
                           }
@@ -740,6 +774,8 @@ const AddNewTraining = () => {
                       <Form.Label>Start Date *</Form.Label>
                       <Form.Control
                         type="date"
+                        className="datepicker"
+                        placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         name="start_date"
                         value={trainingSettings?.start_date}
                         min={new Date().toISOString().slice(0, 10)}
@@ -780,6 +816,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="date"
                         name="end_date"
+                        className="datepicker"
+                        placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={trainingSettings?.end_date}
                         onChange={(e) => {
                           handleTrainingSettings(e);
@@ -1138,6 +1176,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        className="datepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {

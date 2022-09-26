@@ -12,12 +12,12 @@ const FileRepoVideo = ({ data, title, duration, Src }) => {
                 <div className="vidcol">
                     <div className="align-items-center" onClick={handleShow}>
                         <div className="pic2">
-                            {/* <video width="200" style={{ maxHeight: "250px" }}>
+                            <video width="200" style={{ maxHeight: "250px" }}>
                                 <source src={data} type="video/mp4" />
                                 <source src={data} type="video/ogg" />
-                            </video> */}
+                            </video>
                             {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
-                            <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                            {/* <iframe title="video file" style={{ width: '200px' }} className="embed-responsive-item" src='https://youtu.be/NUhFD3j5xBA' frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
                         </div>
                         <div className="vid-title">
                             {title}<span className="time">{duration}</span>

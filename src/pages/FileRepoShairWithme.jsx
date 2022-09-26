@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-
+import paginationFactory from 'react-bootstrap-table2-paginator';
 const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
@@ -90,6 +90,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
+
         return (
           <>
             <div className="user-list">
@@ -177,7 +178,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   return (
     <div>
       <FullLoader loading={fullLoaderStatus} />
-      {userData ? (<>
+      {userData.length > 0 && fullLoaderStatus === false ? (<>
         <ToolkitProvider
           keyField="name"
           data={userData}
@@ -188,17 +189,17 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
             <>
               <BootstrapTable
                 {...props.baseProps}
+                pagination={paginationFactory()}
               />
             </>
           )}
         </ToolkitProvider>
       </>) :
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
-
       }
-      {!userData && fullLoaderStatus === false ?
+      {/* {!userData && fullLoaderStatus === false ?
         <div className="text-center mb-5 mt-5">  <strong>No File shared with You</strong> </div>
-        : null}
+        : null} */}
       {/* <div className="text-center mb-5 mt-5"><strong>No File shared with You</strong></div> */}
     </div >
   )

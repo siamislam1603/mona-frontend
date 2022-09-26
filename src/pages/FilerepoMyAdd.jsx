@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Dropdown, Form, Modal, Row, Col } from 'react-bootstrap';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
@@ -15,12 +15,11 @@ import { FullLoader } from "../components/Loader";
 
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
-const { SearchBar } = Search;
+
 let selectedUserId = '';
 
 const FilerepoMyAdd = ({ filter }) => {
     let Params = useParams();
-
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
@@ -37,7 +36,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    const [SearchValue, setSearchValue] = useState();
+    const [SearchValue, setSearchValue] = useState('');
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -46,10 +45,38 @@ const FilerepoMyAdd = ({ filter }) => {
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
-    const [selected_Franchisee, setselected_Franchisee] = useState();
+    const [selected_Franchisee, setselected_Franchisee] = useState('');
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
     }
+
+
+    const GetEditCategory = async (id) => {
+        let response = await axios.get(`${BASE_URL}/fileCategory/${Params.id}`, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+        if (response.status === 200) {
+            const category = response.data.category
+            setUpdateCategory({
+                category_name: category.category_name,
+                id: category.id
+            })
+
+        }
+
+    }
+    const [Updatecategory_name, setUpdateCategory] = useState({
+        category_name: "",
+        id: ""
+    })
+
+    console.log("Updatecategory_name", Updatecategory_name)
+
+    useEffect(() => {
+        GetEditCategory()
+    }, [])
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
@@ -64,7 +91,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-                  
+
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -264,7 +291,7 @@ const FilerepoMyAdd = ({ filter }) => {
             });
 
             if (response.status === 200) {
-                SetfileDeleteMessage("Delete succussfully")
+                SetfileDeleteMessage("Delete successfully")
                 setTimeout(() => {
                     SetfileDeleteMessage(null)
                 }, 3000)
@@ -276,7 +303,6 @@ const FilerepoMyAdd = ({ filter }) => {
                 SetfileDeleteMessage(null)
             }, 3000)
         }
-
     }
 
     const isAllRolesChecked = () => {
@@ -497,15 +523,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params?.id === "1" ? "Daily Use" :
-                                                                    Params?.id === "2" ? "Business Management" :
-                                                                        Params?.id === "3" ? "Employment" :
-                                                                            Params?.id === "4" ? "Compliance" :
-                                                                                Params?.id === "5" ? "Care Giving" :
-                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params?.id === "7" ? "Resources" :
-                                                                                            Params?.id === "8" ? "General" : "Null"
-                                                                }
+                                                                {Updatecategory_name.category_name}
                                                                 <small>
                                                                     {userData?.length > 1 ? (<>
                                                                         {userData?.length} Files
@@ -513,7 +531,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                         {userData?.length} File
                                                                     </>)}
                                                                 </small>
-                                                                {/* <small>{userData?.length} files</small> */}
+
                                                             </span>
                                                         </div>
                                                         <div className="othpanel">
@@ -533,11 +551,16 @@ const FilerepoMyAdd = ({ filter }) => {
                                                             </div>
                                                         </div>
                                                     </header>
-                                                    <BootstrapTable
-                                                        {...props.baseProps}
+                                                    {userData.length > 0 ?
+                                                        <BootstrapTable
+                                                            {...props.baseProps}
+                                                            pagination={paginationFactory()}
+                                                        /> : (!fullLoaderStatus && <>
+                                                            <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
+                                                        </>
+                                                        )
+                                                    }
 
-                                                        pagination={paginationFactory()}
-                                                    />
                                                 </>
                                             )}
                                         </ToolkitProvider>

@@ -12,52 +12,42 @@ import axios from "axios";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
-const getUser_Role = localStorage.getItem(`user_role`)
-const getFranchisee = localStorage.getItem('franchisee_id')
 
 const FileRpositoryList = () => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const [category, setCategory] = useState([]);
     const [userData, setUserData] = useState([]);
-    const [user, setUser] = useState([]);
     const [Count, setCount] = useState([]);
-    const [franchiseeList, setFranchiseeList] = useState();
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    const [formSettings, setFormSettings] = useState({
-        user_roles: [],
-        assigned_franchisee: [],
-        assigned_users: []
-    });
-
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-    const [child, setChild] = useState([]);
-    const [SearchValue, setSearchValue] = useState();
-
+    const [SearchValue, setSearchValue] = useState('');
 
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
-
     }
-
-    const fetchFranchiseeList = async () => {
-        const token = localStorage.getItem('token');
-        const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+    const GetEditCategory = async (id) => {
+        let response = await axios.get(`${BASE_URL}/fileCategory/${Params.id}`, {
             headers: {
-                "Authorization": `Bearer ${token}`
+                "Authorization": "Bearer " + localStorage.getItem('token')
             }
         });
-
-        if (response.status === 200 && response.data.status === "success") {
-            setFranchiseeList(response.data.franchiseeList.map(data => ({
-                id: data.id,
-                cat: data.franchisee_alias,
-                key: `${data.franchisee_name}, ${data.city}`
-            })));
+        if (response.status === 200) {
+            const category = response.data.category
+            setUpdateCategory({
+                category_name: category.category_name,
+                id: category.id
+            })
         }
-    };
+    }
+    const [Updatecategory_name, setUpdateCategory] = useState({
+        category_name: "",
+        id: ""
+    })
 
+    useEffect(() => {
+        GetEditCategory()
+    }, [])
 
     const GetFile = async () => {
         var myHeaders = new Headers();
@@ -142,91 +132,11 @@ const FileRpositoryList = () => {
     useEffect(() => {
         GetSearchFile();
     }, [SearchValue])
-    const getFileCategory = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-        let result = await fetch(`${BASE_URL}/fileRepo/files-category`, requestOptions);
-        result = await result.json()
-            .then((result) => setCategory(result.category))
-            .catch((error) => console.error('error', error));
-    };
 
-
-
-    const getUser = () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
-        var requestOptions = {
-            method: 'GET',
-            redirect: 'follow',
-            headers: myHeaders,
-        };
-
-        fetch(`${BASE_URL}/auth/users`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                result?.data?.map((item) => {
-                    item['status'] = false;
-                });
-                setUser(result?.data);
-            })
-            .catch((error) => console.error('error', error));
-    };
-
-    const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
-
-        let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-
-        var request = {
-            headers: myHeaders,
-        };
-
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
-        if (response.status === 200) {
-            setChild(response.data.children)
-        }
-    }
 
     useEffect(() => {
         GetFile();
-        getFileCategory();
-        getUser();
-        fetchFranchiseeList();
     }, [selectedFranchisee])
-
-
-    useEffect(() => {
-        getUser();
-        getChildren()
-    }, [formSettings.franchisee,])
-
-    useEffect(() => {
-        let role = localStorage.getItem('user_role')
-        if (role != 'franchisor_admin') {
-            setFormSettings((prevState) => ({
-                ...prevState,
-                assigned_franchisee: [getFranchisee],
-                franchisee: [getFranchisee]
-            }))
-        }
-    }, [])
 
     const [columns, setColumns] = useState([
         {
@@ -237,7 +147,6 @@ const FileRpositoryList = () => {
                 cell = cell.split(',');
                 return (
                     <>
-
                         <div div className="user-list">
                             {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] === "image" ?
                                 <>
@@ -405,15 +314,7 @@ const FileRpositoryList = () => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {Params?.id === "1" ? "Daily Use" :
-                                                                    Params?.id === "2" ? "Business Management" :
-                                                                        Params?.id === "3" ? "Employment" :
-                                                                            Params?.id === "4" ? "Compliance" :
-                                                                                Params?.id === "5" ? "Care Giving" :
-                                                                                    Params?.id === "6" ? "Curriculum & Planning" :
-                                                                                        Params?.id === "7" ? "Resources" :
-                                                                                            Params?.id === "8" ? "General" : "Null"
-                                                                }
+                                                                {Updatecategory_name.category_name}
                                                                 <small>
                                                                     {Count > 1 ? (<>
                                                                         {Count} Files
@@ -442,12 +343,17 @@ const FileRpositoryList = () => {
                                                             </div>
                                                         </div>
                                                     </header>
-                                                    <BootstrapTable
-                                                        {...props.baseProps}
-                                                        // selectRow={selectRow}
-                                                        pagination={paginationFactory()}
+                                                    {userData.length > 0 ?
+                                                        <BootstrapTable
+                                                            {...props.baseProps}
+                                                            // selectRow={selectRow}
+                                                            pagination={paginationFactory()}
 
-                                                    />
+                                                        /> : (!fullLoaderStatus && <>
+                                                            <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
+                                                        </>
+                                                        )
+                                                    }
 
                                                 </>
                                             )}

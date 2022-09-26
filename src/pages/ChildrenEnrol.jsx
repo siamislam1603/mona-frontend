@@ -4,7 +4,7 @@ import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search, CSVExport }  from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider, { Search, CSVExport } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
@@ -29,7 +29,7 @@ const ChildrenEnrol = () => {
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
-  const [search,setSearch] = useState()
+  const [search, setSearch] = useState(" ")
 
   const { SearchBar } = Search;
 
@@ -46,9 +46,9 @@ const ChildrenEnrol = () => {
     try {
       let token = localStorage.getItem('token');
       let USER_ROLE = localStorage.getItem('user_role');
-      let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/${search}` : `${BASE_URL}/children-listing/all-childrens-enrolled/${search}`
-      let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}` : URL;
-      
+      let URL = USER_ROLE === "franchisor_admin" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/search=${search}` : `${BASE_URL}/children-listing/all-childrens-enrolled/search=${search}`
+      let FilterUrl = AppyFilter === "0" || AppyFilter === "1" ? `${BASE_URL}/children-listing/all-childrens-enrolled/franchisee=${selectedFranchisee}/special-needs=${AppyFilter}/search=${search}` : URL;
+
 
       if (URL) {
         const response = await axios.get(FilterUrl, {
@@ -59,6 +59,7 @@ const ChildrenEnrol = () => {
         if (response) {
           setfullLoaderStatus(false)
         }
+        console.log("CHild Response", response.data)
 
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
@@ -66,11 +67,12 @@ const ChildrenEnrol = () => {
           let tempData = data.map((dt, index) =>
           ({
 
-            name: `${dt.child_name} ,${dt.dob}`,
+            name: `${dt.fullname} ,${dt.dob}`,
             dob: `${moment(dt.dob).format('DD/MM/YYYY')}`,
             //   franchise: `${dt.user.profile_photo},${dt.user.fullname},${dt.user.franchisee.franchisee_name} `,
-            parentName: `${data[index]?.parents[0]?.user?.parent_name},${data[index]?.parents[1]?.user?.parent_name},${data[index]?.parents[2]?.user?.parent_name},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo}`,
-            educatorassisgned: `${data[index]?.users[0]?.educator_assigned}, ${data[index]?.users[0]?.educator_profile_photo},${data[index]?.users[1]?.educator_assigned}, ${data[index]?.users[1]?.educator_profile_photo}`,
+            parentName: `${data[index]?.parents[0]?.user?.fullname} , ${data[index]?.parents[1]?.user?.fullname},${data[index]?.parents[2]?.user?.fullname},${data[index]?.parents[3]?.user?.fullname},${data[index]?.parents[4]?.user?.fullname},${data[index]?.parents[5]?.user?.fullname},${data[index]?.parents[6]?.user?.fullname},${data[index]?.parents[7]?.user?.fullname},${data[index]?.parents[8]?.user?.fullname},${data[index]?.parents[9]?.user?.fullname},${data[index]?.parents[0]?.user?.parent_profile_photo},${data[index]?.parents[1]?.user?.parent_profile_photo},${data[index]?.parents[2]?.user?.parent_profile_photo},${data[index]?.parents[3]?.user?.parent_profile_photo},${data[index]?.parents[4]?.user?.parent_profile_photo},${data[index]?.parents[5]?.user?.parent_profile_photo},${data[index]?.parents[6]?.user?.parent_profile_photo},${data[index]?.parents[7]?.user?.parent_profile_photo},${data[index]?.parents[8]?.user?.parent_profile_photo},${data[index]?.parents[9]?.user?.parent_profile_photo}`,
+
+            educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,
             specailneed: `${dt?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
             enrolldate: `${dt?.enrollment_initiated}`,
@@ -82,7 +84,6 @@ const ChildrenEnrol = () => {
 
           let temp = tempData;
           let csv_data = [];
-          console.log("Temo new", tempData)
           temp.map((item, index) => {
 
             delete item.is_deleted;
@@ -92,30 +93,30 @@ const ChildrenEnrol = () => {
             csv_data.push(item);
             let data = { ...csv_data[index] };
 
-            console.log("THE DATA", data)
-
             let d = data.parentName.split(",")
             let educator = data.educatorassisgned.split(",");
-            console.log()
+
             let educatorArray = [];
 
             let parent = [];
             d.map((item, index) => {
-              if (item != "undefined" && item != "null" && item.trim().split('.').pop() != "blob") {
-                parent[index] = item;
+              if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() != "blob") {
+
+                parent[index] = " " + item.trim();
+                console.log("THe item  ", item)
+
               }
             })
-
             educator.map((item, index) => {
+              if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob") {
+                educatorArray[index] = " " + item.trim();
 
-              if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() !== "blob" && item != "") {
-                educatorArray[index] = item;
+
               }
-            })
-            // console.log("educatorArray[1]",educatorArray[1])
-            let DOB = moment(data.dob).format('DD/MM/YYYY')
-            console.log("EDut", educatorArray[1])
 
+
+            })
+            console.log("Educator 123", educatorArray)
             data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
@@ -140,7 +141,7 @@ const ChildrenEnrol = () => {
     if (selectedFranchisee) {
       ChildernEnrolled()
     }
-  }, [selectedFranchisee, AppyFilter, Filters,search])
+  }, [selectedFranchisee, AppyFilter, Filters, search])
   const columns = [
     {
       dataField: 'name',
@@ -169,13 +170,14 @@ const ChildrenEnrol = () => {
       text: 'Parent Name',
       formatter: (cell) => {
         cell = cell.split(',');
+
         return (<>
           <div className="parentName" style={{ maxHeight: '100px', overflowY: "scroll" }}>
             {
               cell[0] != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[3] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[3]} />
+                  <img src={cell[10].trim() === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
                 </span>
                 <span className="user-name">
                   {/* {cell[0] === "undefined" ? null : cell[0]} */}
@@ -185,23 +187,115 @@ const ChildrenEnrol = () => {
               </div>
             }
             {
-              cell[1] != "undefined" &&
+              cell[1].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[4] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[4]} />
+                  <img src={cell[11].trim() === "undefined" || cell[11].trim() === "null" ? "../img/upload.jpg" : cell[11]} />
                 </span>
                 <span className="user-name">
                   {cell[1] === "undefined" ? null : cell[1][0].toUpperCase() + cell[1].slice(1)} </span>
               </div>
             }
             {
-              cell[2] != "undefined" &&
+              cell[2].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[5] === "undefined" || cell[3] === "null" ? "../img/upload.jpg" : cell[5]} />
+                  <img src={cell[12].trim() === "undefined" || cell[12].trim() === "null" ? "../img/upload.jpg" : cell[12]} />
                 </span>
                 <span className="user-name">
                   {cell[2] === "undefined" ? null : cell[2][0].toUpperCase() + cell[2].slice(1)
+                  } </span>
+              </div>
+            }
+            {
+              cell[3].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" ? "../img/upload.jpg" : cell[13]} />
+                </span>
+                <span className="user-name">
+                  {cell[3] === "undefined" ? null : cell[3][0].toUpperCase() + cell[3].slice(1)
+                  } </span>
+              </div>
+            }
+
+            {
+              cell[4].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[14].trim() === "undefined" || cell[14].trim() === "null" ? "../img/upload.jpg" : cell[14]} />
+                </span>
+                <span className="user-name">
+                  {cell[4] === "undefined" ? null : cell[4][0].toUpperCase() + cell[4].slice(1)
+                  } </span>
+              </div>
+            }
+            {
+              cell[5].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" ? "../img/upload.jpg" : cell[15]} />
+                </span>
+                <span className="user-name">
+                  {cell[5] === "undefined" ? null : cell[5][0].toUpperCase() + cell[5].slice(1)
+                  } </span>
+              </div>
+            }
+            {
+              cell[6].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[16].trim() === "undefined" || cell[16].trim() === "null" ? "../img/upload.jpg" : cell[16]} />
+                </span>
+                <span className="user-name">
+                  {cell[6] === "undefined" ? null : cell[6][0].toUpperCase() + cell[6].slice(1)
+                  } </span>
+              </div>
+            }
+
+            {
+              cell[7].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" ? "../img/upload.jpg" : cell[17]} />
+                </span>
+                <span className="user-name">
+                  {cell[7] === "undefined" ? null : cell[7][0].toUpperCase() + cell[7].slice(1)
+                  } </span>
+              </div>
+            }
+
+            {
+              cell[8].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
+                </span>
+                <span className="user-name">
+                  {cell[8] === "undefined" ? null : cell[8][0].toUpperCase() + cell[8].slice(1)
+                  } </span>
+              </div>
+            }
+
+            {
+              cell[8].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
+                </span>
+                <span className="user-name">
+                  {cell[8] === "undefined" ? null : cell[8][0].toUpperCase() + cell[8].slice(1)
+                  } </span>
+              </div>
+            }
+            {
+              cell[9].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" ? "../img/upload.jpg" : cell[19]} />
+                </span>
+                <span className="user-name">
+                  {cell[9] === "undefined" ? null : cell[9][0].toUpperCase() + cell[9].slice(1)
                   } </span>
               </div>
             }
@@ -220,11 +314,11 @@ const ChildrenEnrol = () => {
         return (<>
           <div className="parentName" style={{ maxHeight: '100px', overflowY: "scroll" }}>
             {
-              cell[0] != "undefined" &&
+              cell[0].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
                   {/* <img src={ cell[1] === "null"  ? "../img/upload.jpg" : cell[1]} /> */}
-                  <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
+                  <img src={cell[10] === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
                 </span><span className="user-name">
                   {cell[0][0].toUpperCase() + cell[0].slice(1)}
                   {/* <span>{cell[1]}</span> */}
@@ -232,10 +326,22 @@ const ChildrenEnrol = () => {
               </div>
             }
             {
-              cell[2] != "undefined" &&
+              cell[1].trim() != "undefined" &&
               <div className="user-list">
                 <span className="user-pic">
-                  <img src={cell[3] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[3]} />
+                  <img src={cell[11] === "undefined" || cell[11].trim() === "null" ? "../img/upload.jpg" : cell[11]} />
+                </span><span className="user-name">{
+
+                  cell[1][0].toUpperCase() + cell[1].slice(1)
+                }
+                </span>
+              </div>
+            }
+            {
+              cell[2].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[12].trim() === "undefined" || cell[12].trim() === "null" ? "../img/upload.jpg" : cell[12]} />
                 </span><span className="user-name">{
 
                   cell[2][0].toUpperCase() + cell[2].slice(1)
@@ -243,6 +349,106 @@ const ChildrenEnrol = () => {
                 </span>
               </div>
             }
+            {
+              cell[3].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" ? "../img/upload.jpg" : cell[13]} />
+                </span><span className="user-name">{
+
+                  cell[3][0].toUpperCase() + cell[3].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+            {
+              cell[4].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[14].trim() === "undefined" || cell[14].trim() === "null" ? "../img/upload.jpg" : cell[14]} />
+                </span><span className="user-name">{
+
+                  cell[4][0].toUpperCase() + cell[4].slice(1)
+                }
+                </span>
+              </div>
+            }
+            {
+              cell[5].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" ? "../img/upload.jpg" : cell[15]} />
+                </span><span className="user-name">{
+
+                  cell[5][0].toUpperCase() + cell[5].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+            {
+              cell[6].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[16].trim() === "undefined" || cell[16].trim() === "null" ? "../img/upload.jpg" : cell[16]} />
+                </span><span className="user-name">{
+
+                  cell[6][0].toUpperCase() + cell[6].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+            {
+              cell[7].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" ? "../img/upload.jpg" : cell[17]} />
+                </span><span className="user-name">{
+
+                  cell[7][0].toUpperCase() + cell[7].slice(1)
+                }
+                </span>
+              </div>
+            }
+
+            {
+              cell[8].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
+                </span><span className="user-name">{
+
+                  cell[8][0].toUpperCase() + cell[8].slice(1)
+                }
+                </span>
+              </div>
+            }
+            {
+              cell[9].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" ? "../img/upload.jpg" : cell[19]} />
+                </span><span className="user-name">{
+
+                  cell[9][0].toUpperCase() + cell[9].slice(1)
+                }
+                </span>
+              </div>
+            }
+            {/* {
+              cell[18].trim() != "undefined" &&
+              <div className="user-list">
+                <span className="user-pic">
+                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" ? "../img/upload.jpg" : cell[19]} />
+                </span><span className="user-name">{
+
+                  cell[18][0].toUpperCase() + cell[18].slice(1)
+                }
+                </span>
+              </div>
+            } */}
           </div>
         </>
         )
@@ -250,7 +456,7 @@ const ChildrenEnrol = () => {
     },
     {
       dataField: 'specailneed',
-      text: 'Special Need',
+      text: 'Special Needs',
       formatter: (cell) => {
 
         return (<><div className="user-list"><span className="user-name">{cell === "1" ? "Yes" : <>
@@ -287,19 +493,7 @@ const ChildrenEnrol = () => {
     },
   ];
 
-  const CSV = () => {
-    return (
-      <CSVLink
-        data={csvData}
-        filename={"my-file.csv"}
-        className="btn btn-primary"
-        target="_blank"
-      >
-        Download me
-      </CSVLink>
-    )
-  }
-  console.log("CSV", csvDownloadFlag)
+
 
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
@@ -310,7 +504,6 @@ const ChildrenEnrol = () => {
       }, 3000);
     }
   }, []);
-  const csvLink = useRef();
   const headers = [
     { label: "NAME", key: "name" },
     { label: "DOB", key: "dob" },
@@ -322,18 +515,6 @@ const ChildrenEnrol = () => {
 
 
   ];
-  const MyExportCSV = (props) => {
-    const handleClick = () => {
-      props.onExport();
-      
-    };
-  
-    return (
-      <div>
-        <button className="btn btn-success" onClick={ handleClick }>Click me to export CSV</button>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -354,13 +535,10 @@ const ChildrenEnrol = () => {
                   data={chidlEnroll}
                   columns={columns}
                   search
-                  
-                  
-                  
-                  exportCSV={ {
+                  exportCSV={{
                     fileName: 'Children Enroled.csv',
-                  
-                  } }
+
+                  }}
                 >
                   {(props) => (
                     <>
@@ -374,37 +552,37 @@ const ChildrenEnrol = () => {
                               <h1 className="title-lg">Children Enroled</h1>
                               <div className="othpanel">
                                 <div className="extra-btn">
-                                  
+
                                   <div className="data-search me-3">
-                              <Form.Group
-                                className="d-flex"
-                                style={{ position: 'relative' }}
-                              >
-                                <div className="user-search">
-                                  <img
-                                    src="./img/search-icon-light.svg"
-                                    alt=""
-                                  />
-                                </div>
-                                <Form.Control
-                                  className="searchBox"
-                                  type="text"
-                                  placeholder="Search"
-                                  name="search"
-                                  onChange={(e) => {
+                                    <Form.Group
+                                      className="d-flex"
+                                      style={{ position: 'relative' }}
+                                    >
+                                      <div className="user-search">
+                                        <img
+                                          src="./img/search-icon-light.svg"
+                                          alt=""
+                                        />
+                                      </div>
+                                      <Form.Control
+                                        className="searchBox"
+                                        type="text"
+                                        placeholder="Search"
+                                        name="search"
+                                        onChange={(e) => {
 
-                                    //   setSearch(e.target.value, () => {
-                                    //     onFilter();
-                                    //  });
-                                    setSearch(e.target.value);
-                                    // onFilter(e.target.value);
+                                          //   setSearch(e.target.value, () => {
+                                          //     onFilter();
+                                          //  });
+                                          setSearch(e.target.value);
+                                          // onFilter(e.target.value);
 
 
-                                  }}
-                                />
-                              </Form.Group>
-                            </div>
-                                
+                                        }}
+                                      />
+                                    </Form.Group>
+                                  </div>
+
                                   <Dropdown className="filtercol me-3">
                                     <Dropdown.Toggle
                                       id="extrabtn"
@@ -417,7 +595,7 @@ const ChildrenEnrol = () => {
                                       <header>Filter by:</header>
 
                                       <div className="custom-radio btn-radio mb-2">
-                                        <label>Special Need:</label>
+                                        <label>Special Needs:</label>
                                         <Form.Group inline>
 
                                           <Form.Check
@@ -466,47 +644,69 @@ const ChildrenEnrol = () => {
                                       </footer>
                                     </Dropdown.Menu>
                                   </Dropdown>
-
-                                  {localStorage.getItem("user_role") === "franchisor_admin" ? (
-                                    <Dropdown>
-
-                                      <Dropdown.Toggle
-                                        id="extrabtn"
-                                        className="ctaact"
+                                  <Dropdown>
+                                    <Dropdown.Toggle
+                                      id="extrabtn"
+                                      className="ctaact"
+                                    >
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item
+                                        as="button"
+                                        onClick={() => {
+                                          setCsvDownloadFlag(true);
+                                        }}
                                       >
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-
-
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item
-                                          as="button"
-                                          onClick={() => {
-                                            setCsvDownloadFlag(true);
-                                          }}
-                                        >
-
-                                          <CSVLink
-                                            data={csvData}
-                                            filename={"Children Enroled.csv"}
-                                            // filename="dskak.csv"
-                                            headers={headers}
-                                            target="_blank"
-                                          // ref={csvLink}
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item
+                                            as="button"
                                           >
+                                            <CSVLink
+                                              data={csvData}
+                                              filename={"Children Enroled.csv"}
+                                              headers={headers}
+                                              target="_blank"
+                                            >
 
-                                            {"Export CSV"}
+                                            </CSVLink>
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
 
-                                          </CSVLink>
-                                        </Dropdown.Item>
+                                  {/* {localStorage.getItem("user_role") === "franchisor_admin" ? ( */}
+                                  {/* <Dropdown>
+                                    <Dropdown.Toggle
+                                      id="extrabtn"
+                                      className="ctaact"
+                                    >
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item
+                                        as="button"
+                                        onClick={() => {
+                                          setCsvDownloadFlag(true);
+                                        }}
+                                      >
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item
+                                            as="button"
+                                          >
+                                            <CSVLink
+                                              data={csvData}
+                                              filename={"Children Enroled.csv"}
+                                              headers={headers}
+                                              target="_blank"
+                                            >
 
-
-                                        {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
-                            Delete All Row
-                          </Dropdown.Item> */}
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  ) : (null)}
+                                            </CSVLink>
+                                          </Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown> */}
+                                  {/* ) : (null)} */}
 
                                 </div>
                               </div>
@@ -517,16 +717,15 @@ const ChildrenEnrol = () => {
                               (
                                 <div>
                                   <BootstrapTable
-                                  {...props.baseProps}
-                                  pagination={paginationFactory()}
-                                />
-                                  </div>
+                                    {...props.baseProps}
+                                    pagination={paginationFactory()}
+                                  />
+                                </div>
                               ) : (
                                 !fullLoaderStatus &&
                                 <div className="text-center mb-5 mt-5"><strong>
                                   No child enrol yet
                                 </strong></div>
-
                               )
                           }
                         </div>

@@ -299,7 +299,7 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-export const TrainingFormValidation = (form, relatedFiles) => {
+export const TrainingFormValidation = (form, relatedFiles, videoTutorialFiles) => {
   let errors = {};
   let {
     title,
@@ -344,10 +344,14 @@ export const TrainingFormValidation = (form, relatedFiles) => {
 
   if(relatedFiles?.length > 5)
     errors.doc = "Only 5 documents can be uploaded"
+
+  if(videoTutorialFiles?.length > 5)
+    errors.video = "Only 5 videos can be uploaded"
+
   return errors;
 };
 
-export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFiles) => {
+export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFiles, videoTutorialFiles, fetchedVideoTutorialFiles) => {
   let errors = {};
   let {
     title,
@@ -392,6 +396,9 @@ export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFil
 
   if((relatedFiles?.length + fetchedRelatedFiles?.length) > 5)
     errors.doc = "Only 5 documents can be uploaded"
+
+  if((videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length) > 5)
+    errors.video = "Only 5 videos can be uploaded"
   return errors;
 };
 
@@ -617,6 +624,9 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
     errors.crn = "Field should only contain digits";
   
   if (!phone) errors.phone = 'Phone number is required';
+
+  if(phone.length < 4)
+    errors.phone = "Phone number must have atleast 4 digits";
   
   if (!franchisee) errors.franchisee = 'Franchise is required';
 
@@ -668,8 +678,11 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
 
   if (!phone) errors.phone = 'Phone number is required';
 
+  if(phone.length < 4)
+    errors.phone = "Phone number must have atleast 4 digits";
+
   if (password?.length > 0 && !regexPassword.test(password)) {
-    errors.password = 'Minimum 8 characters, at least one letter, one number and one special character'
+    errors.password = 'Minimum 8 characters, at least one uppercase, one lowercase, one number and one special character'
   }
 
   if (password && !confirm_password) {
