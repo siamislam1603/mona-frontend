@@ -18,7 +18,11 @@ const columns = [
     formatter: (cell) => {
       console.log("The cell", cell)
       cell = cell?.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src="../img/upload.jpg" alt='' /></span><span className="user-name">{cell} </span></div></>)
+      return (<><div className="user-list">
+        <span className="user-pic">
+          <img src="../img/upload.jpg" alt='' />
+        </span>
+        <span className="user-name">{cell} </span></div></>)
     },
   },
   {
