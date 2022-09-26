@@ -35,7 +35,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                     'text/.xlsx': ['.xlsx'],
                     'text/doc': ['.doc'],
                     'text/pdf': ['.pdf'],
-                    'video/mp4': ['video/mp4'],
+                    'video/mp4': ['.mp4'],
                     'audio/mpeg': ['.audio/mpeg', '.mp3']
                 },
                 useFsAccessApi: false,

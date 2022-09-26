@@ -63,9 +63,9 @@ const FilerepoMyAdd = ({ filter }) => {
                 category_name: category.category_name,
                 id: category.id
             })
-        
+
         }
-      
+
     }
     const [Updatecategory_name, setUpdateCategory] = useState({
         category_name: "",
@@ -551,11 +551,16 @@ const FilerepoMyAdd = ({ filter }) => {
                                                             </div>
                                                         </div>
                                                     </header>
-                                                    <BootstrapTable
-                                                        {...props.baseProps}
+                                                    {userData.length > 0 ?
+                                                        <BootstrapTable
+                                                            {...props.baseProps}
+                                                            pagination={paginationFactory()}
+                                                        /> : (!fullLoaderStatus && <>
+                                                            <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
+                                                        </>
+                                                        )
+                                                    }
 
-                                                        pagination={paginationFactory()}
-                                                    />
                                                 </>
                                             )}
                                         </ToolkitProvider>

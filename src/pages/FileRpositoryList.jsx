@@ -343,12 +343,17 @@ const FileRpositoryList = () => {
                                                             </div>
                                                         </div>
                                                     </header>
-                                                    <BootstrapTable
-                                                        {...props.baseProps}
-                                                        // selectRow={selectRow}
-                                                        pagination={paginationFactory()}
+                                                    {userData.length > 0 ?
+                                                        <BootstrapTable
+                                                            {...props.baseProps}
+                                                            // selectRow={selectRow}
+                                                            pagination={paginationFactory()}
 
-                                                    />
+                                                        /> : (!fullLoaderStatus && <>
+                                                            <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
+                                                        </>
+                                                        )
+                                                    }
 
                                                 </>
                                             )}
