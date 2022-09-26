@@ -189,6 +189,11 @@ console.log("checkPassword", checkResetPassword)
                         icon={faEyeSlash}
                       />
                     )}
+                                       
+        {
+          !errors.new_password &&<Form.Text className="text-muted">
+Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character</Form.Text> 
+        }      
                       <span className="error">
                         {errors.new_password}
                       </span>
@@ -225,6 +230,8 @@ console.log("checkPassword", checkResetPassword)
                         icon={faEyeSlash}
                       />
                     )}
+                    
+                    <p>Minimum 8 characters, at least one letter, one number and one special character</p>
                     <span className="error">
                         {errors.confirm_password}
                       </span>

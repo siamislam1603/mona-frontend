@@ -462,14 +462,14 @@ export const PasswordValidation = (form) => {
     errors.new_password = 'New Password is required';
   }
   if (new_password && !regex.test(new_password)) {
-    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+    errors.new_password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
 
     // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
 
   }
 
   if (!confirm_password) {
-    errors.confirm_password = 'Confirm password';
+    errors.confirm_password = 'Confirm password is required';
   }
   if (new_password && confirm_password && new_password !== confirm_password) {
     errors.new_password = 'New password and Confirm password need to be same';
@@ -492,7 +492,7 @@ export const ResetPasswordValidation = (form) => {
     errors.new_password = 'New password require';
   }
   if (new_password && !regex.test(new_password)) {
-    errors.new_password = 'Minimum 8 characters, at least one letter, one number and one special character'
+    errors.new_password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
 
     // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
 
@@ -632,7 +632,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
 export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocuments) => {
   let errors = {};
   let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}');
+  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
   let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
   
   if (!fullname) errors.fullname = 'Full name is required';
@@ -669,7 +669,7 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
   if (!phone) errors.phone = 'Phone number is required';
 
   if (password?.length > 0 && !regexPassword.test(password)) {
-    errors.password = 'Minimum 8 characters, at least one letter, one number and one special character'
+    errors.password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
   }
 
   if (password && !confirm_password) {
