@@ -171,8 +171,10 @@ const AddOperatingManual = () => {
     }
   };
   const setOperatingManualField = (field, value) => {
+    
     setOperatingManualData({ ...operatingManualData, [field]: value });
     // console.log(field,value)
+    
     console.log("THE VALUE",value,field)
      
 
@@ -399,6 +401,8 @@ const AddOperatingManual = () => {
 
     }
     if (name === 'reference_video') {
+      console.log("FIle inside",file.name.split(".").pop())
+
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File is too large. File limit 1 GB.';
@@ -406,7 +410,7 @@ const AddOperatingManual = () => {
         flag = true;
       }
       
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')) {
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')&& file.name.split(".").pop() !="flv" ) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
