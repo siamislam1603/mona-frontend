@@ -164,8 +164,8 @@ export const createOperatingManualValidation = (form,wordCount) => {
   if (!order || order === '') newErrors.order = 'Position is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if(wordCount>700){
-    newErrors.description = 'Description count is more than 700';
+  if(wordCount>1000){
+    newErrors.description = 'Description character count is more than 1000';
   }
   if(related_files.length>5){
     newErrors.related_files="Max limit is 5 files"
@@ -184,8 +184,8 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
     newErrors.title = 'Announcement Title is Required ';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
   let reg = /^\s|\s$/
-  if(wordCount>700){
-    newErrors.meta_description = 'Description count is more than 700';
+  if(wordCount>1000){
+    newErrors.meta_description = 'Description character count is more than 1000';
   }
  if(title){
   if(title.match(reg)){
@@ -243,8 +243,8 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,
       // console.log("contains spaces");
       newErrors.meta_description = 'Contain unwanted space';
       } 
-   if(wordCount>700){
-    newErrors.meta_description = 'Description count is more than 700';
+   if(wordCount>1000){
+    newErrors.meta_description = 'Description character count is more than 1000';
   
    }   
   if ((start_date === ' ' && !start_date) || start_date === ' ')
