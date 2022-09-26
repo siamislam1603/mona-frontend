@@ -209,9 +209,9 @@ const EditTraining = () => {
     setTrainingSettings(prevState => ({
       ...prevState,
       start_date: moment(training?.start_date).format('YYYY-MM-DD'),
-      start_time: moment(training?.start_date).subtract(5.5, 'hours').format('HH:mm'),
+      start_time: moment(training?.start_date).add(4.5, 'hours').format('HH:mm'),
       end_date: training?.end_date ? moment(training?.end_date).format('YYYY-MM-DD') : '',
-      end_time: training?.end_date ? moment(training?.end_date).subtract(5.5, 'hours').format('HH:mm') : '',
+      end_time: training?.end_date ? moment(training?.end_date).add(4.5, 'hours').format('HH:mm') : '',
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee: training?.shares[0]?.franchisee[0] === 'all' ? true : false,
       assigned_franchisee: training?.shares[0]?.franchisee,
@@ -822,6 +822,8 @@ const EditTraining = () => {
                         <Form.Control
                           type="date"
                           name="start_date"
+                          className="datepicker"
+                          placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
@@ -851,6 +853,8 @@ const EditTraining = () => {
                         <Form.Control
                           type="date"
                           name="end_date"
+                          className="datepicker"
+                          placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.end_date}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
@@ -1176,6 +1180,8 @@ const EditTraining = () => {
                         <Form.Control
                           type="date"
                           name="start_date"
+                          className="datepicker"
+                          placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
@@ -1191,6 +1197,8 @@ const EditTraining = () => {
                         <Form.Control
                           type="time"
                           name="start_time"
+                          // className="timepicker"
+                          // placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
                           value={trainingSettings?.start_time}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
@@ -1205,6 +1213,8 @@ const EditTraining = () => {
                         <Form.Control
                           type="date"
                           name="end_date"
+                          className="datepicker"
+                          placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.end_date}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,

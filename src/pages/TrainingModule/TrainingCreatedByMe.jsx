@@ -138,7 +138,7 @@ const TrainingCreatedByMe = ({ filter }) => {
     console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -426,7 +426,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                               </div>
                               <div className="fixcol">
                                 <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                                <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                                <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a> <span className="time">{training.completion_time}</span></div>
                                 <div className="cta-col">
                                   <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">

@@ -323,9 +323,16 @@ const attempt = localStorage.getItem("attempts")
                       icon={faEyeSlash}
                     />
                   )}
+                   
+        {
+          !errors.new_password &&<Form.Text className="text-muted">
+Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character</Form.Text> 
+        }                
+
                     <span className="error">
                       {errors.new_password}
                     </span>
+
                 </Form.Group>
                     </Col>
                     {/* <Col md={12} className="mb-3">

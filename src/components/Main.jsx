@@ -56,7 +56,6 @@ import Noticefication from '../pages/Notification';
 import PageNotFound from '../pages/PageNotFound';
 import SearchResult from '../pages/SearchResult';
 import ChildrenEnrol from '../pages/ChildrenEnrol';
-
 import TrainingCreatedByOther from '../pages/TrainingModule/TrainingCreatedByOther';
 import { logoutUser } from '../helpers/logout';
 import AllEvent from '../pages/AllEvent';
@@ -148,6 +147,8 @@ const Main = () => {
             </Protected>
           }
         />
+
+      
 
         <Route
           path="/child-enrollment"
