@@ -138,7 +138,7 @@ const TrainingCreatedByMe = ({ filter }) => {
     console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
