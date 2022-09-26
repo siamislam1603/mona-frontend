@@ -269,6 +269,7 @@ const FilerepoUploadFile = () => {
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                     window.location.reload();
                     setUpladFile("File Upload successfully");
+
                 }
             })
             .then((result) => {
@@ -276,6 +277,7 @@ const FilerepoUploadFile = () => {
                     setLoaderFlag(false);
                     setShow(false);
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
+                   
                 }
             })
             .catch((error) => console.error('error', error));
@@ -385,7 +387,6 @@ const FilerepoUploadFile = () => {
                                         <Form.Group>
                                             <Form.Label>Upload File*</Form.Label>
                                             <DragDropFileEdit onChange={setField} />
-                                            {/* <DragDropRepository onChange={setField} /> */}
                                             {error && !formSettingData?.setting_files && < span className="error"> File  is required!</span>}
                                             <p className="error">{errors.setting_files}</p>
                                         </Form.Group>
@@ -432,14 +433,13 @@ const FilerepoUploadFile = () => {
                                             </>) : (
                                             <>
                                                 <Form.Select
-                                                    name="file_category"
+                                                    name="file_category"    
                                                     onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
+                                                        setField(e.target.name, e.target.value);  
                                                     }}
                                                 >
                                                     <option value="">Select</option>
                                                     {category?.map((item) => {
-
                                                         return (
                                                             <option value={item.id}>{item.category_name}</option>
                                                         );

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { BASE_URL } from '../components/App';
 import { FullLoader } from "../components/Loader";
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-
+import paginationFactory from 'react-bootstrap-table2-paginator';
 const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   const [userData, setUserData] = useState([]);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
@@ -90,14 +90,12 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       sort: true,
       formatter: (cell) => {
         cell = cell.split(',');
-        let category_id = () => {
-          localStorage.setItem("category_type", cell[2])
-        }
+
         return (
           <>
             <div className="user-list">
               <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
-                <span onClick={category_id}>
+                <span>
                   <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                 </span>
               </Link>
@@ -191,6 +189,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
             <>
               <BootstrapTable
                 {...props.baseProps}
+                pagination={paginationFactory()}
               />
             </>
           )}

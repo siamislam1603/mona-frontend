@@ -12,8 +12,6 @@ import axios from "axios";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
-const getUser_Role = localStorage.getItem(`user_role`)
-const getFranchisee = localStorage.getItem('franchisee_id')
 
 const FileRpositoryList = () => {
     let Params = useParams();
@@ -23,15 +21,33 @@ const FileRpositoryList = () => {
     const [Count, setCount] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-    const [SearchValue, setSearchValue] = useState();
+    const [SearchValue, setSearchValue] = useState('');
 
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
-
     }
+    const GetEditCategory = async (id) => {
+        let response = await axios.get(`${BASE_URL}/fileCategory/${Params.id}`, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+        if (response.status === 200) {
+            const category = response.data.category
+            setUpdateCategory({
+                category_name: category.category_name,
+                id: category.id
+            })
+        }
+    }
+    const [Updatecategory_name, setUpdateCategory] = useState({
+        category_name: "",
+        id: ""
+    })
 
-
-
+    useEffect(() => {
+        GetEditCategory()
+    }, [])
 
     const GetFile = async () => {
         var myHeaders = new Headers();
@@ -298,7 +314,7 @@ const FileRpositoryList = () => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {localStorage.getItem('category_type')}
+                                                                {Updatecategory_name.category_name}
                                                                 <small>
                                                                     {Count > 1 ? (<>
                                                                         {Count} Files

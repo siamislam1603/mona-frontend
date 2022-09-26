@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Container, Dropdown, Form, Modal, Row, Col } from 'react-bootstrap';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
@@ -15,12 +15,11 @@ import { FullLoader } from "../components/Loader";
 
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
-const { SearchBar } = Search;
+
 let selectedUserId = '';
 
 const FilerepoMyAdd = ({ filter }) => {
     let Params = useParams();
-
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
     const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
@@ -37,7 +36,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const [applicableToAll, setApplicableToAll] = useState(false);
     const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-    const [SearchValue, setSearchValue] = useState();
+    const [SearchValue, setSearchValue] = useState('');
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -46,10 +45,38 @@ const FilerepoMyAdd = ({ filter }) => {
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
-    const [selected_Franchisee, setselected_Franchisee] = useState();
+    const [selected_Franchisee, setselected_Franchisee] = useState('');
     const HandelSearch = (event) => {
         setSearchValue(event.target.value);
     }
+
+
+    const GetEditCategory = async (id) => {
+        let response = await axios.get(`${BASE_URL}/fileCategory/${Params.id}`, {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
+        if (response.status === 200) {
+            const category = response.data.category
+            setUpdateCategory({
+                category_name: category.category_name,
+                id: category.id
+            })
+        
+        }
+      
+    }
+    const [Updatecategory_name, setUpdateCategory] = useState({
+        category_name: "",
+        id: ""
+    })
+
+    console.log("Updatecategory_name", Updatecategory_name)
+
+    useEffect(() => {
+        GetEditCategory()
+    }, [])
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
@@ -496,7 +523,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                                             </span>
                                                             <span className="user-name">
-                                                                {localStorage.getItem('category_type')}
+                                                                {Updatecategory_name.category_name}
                                                                 <small>
                                                                     {userData?.length > 1 ? (<>
                                                                         {userData?.length} Files
