@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
 import FileRepoVideo from '../components/FileRepoVideo';
+import VideoPopupfForFile from "./VideoPopupfForFile";
 export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCrop }) {
     const [myFiles, setMyFiles] = useState([])
     const [currentURI, setCurrentURI] = useState();

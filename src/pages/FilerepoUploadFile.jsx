@@ -391,7 +391,6 @@ const FilerepoUploadFile = () => {
                                         </Form.Group>
                                     </Col>
                                 </Row>
-
                                 <div className="setting-heading">
                                     <h2>Settings</h2>
                                 </div>
