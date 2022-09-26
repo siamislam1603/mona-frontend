@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row, Form } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
-import makeAnimated from 'react-select/animated';
 import Multiselect from 'multiselect-react-dropdown';
 import { BASE_URL } from '../components/App';
 import axios from 'axios';
@@ -10,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
+import VideoPopupfForFile from '../components/VideoPopupfForFile';
 
 
 const getUser_Role = localStorage.getItem(`user_role`)
@@ -336,9 +336,12 @@ const RepoEdit = () => {
                                                                                 data.file_type === "video/mp4" ? (
                                                                                     <>
                                                                                         <div style={{ display: "inline-table" }}>
-                                                                                            <FileRepoVideo
+                                                                                            <VideoPopupfForFile
                                                                                                 data={data.image}
                                                                                             />
+                                                                                            {/* <FileRepoVideo
+                                                                                                data={data.image}
+                                                                                            /> */}
                                                                                         </div>
                                                                                     </>
                                                                                 ) : (
@@ -427,7 +430,7 @@ const RepoEdit = () => {
                                                 </Row>
                                                 {getUser_Role === "guardian" ? (<></>) :
                                                     (<>
-                                                        {getUser_Role !== "franchisor_admin" ? (<></>) :(<Row className="mt-4">
+                                                        {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                                             <Col lg={3} md={6}>
                                                                 <Form.Group>
                                                                     <Form.Label>Give access to all franchises</Form.Label>

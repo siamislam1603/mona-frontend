@@ -38,10 +38,41 @@ const DynamicForm = () => {
     console.log('field', field);
     console.log('value', value);
     console.log('type', type);
+    let flag=false;
+    if(type==='text')
+    {
+      value=value.trimEnd();
+      console.log("length----->",value.split(" ").length);
+      if(value.split(" ").length>250)
+      {
+        let errorsData={...errors};
+        errorsData[
+          `${field}`
+        ] = `Text word limit must be less or equal to 250.`;
+        setErrors(errorsData);
+        flag=true;
+      }
+      
+    }
+    if(type==='textarea')
+    {
+      value=value.trimEnd();
+      if(value.split(" ").length>2000)
+      {
+        let errorsData={...errors};
+        errorsData[
+          `${field}`
+        ] = `Text area word limit must be less or equal to 2000.`;
+        setErrors(errorsData);
+        flag=true;
+      }
+      
+    }
     if(location?.state?.id)
     { 
       console.log("field---->",field);
       console.log("value---->",value);
+      
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
@@ -85,13 +116,16 @@ const DynamicForm = () => {
       }
     }
     
-
-    if (!!errors[field]) {
-      setErrors({
-        ...errors,
-        [field]: null,
-      });
+    if(!flag)
+    {
+      if (!!errors[field]) {
+        setErrors({
+          ...errors,
+          [field]: null,
+        });
+      }
     }
+   
 
     // if (field === 'hobby') {
     //   values.includes(value) ? values.pop(value) : values.push(value);

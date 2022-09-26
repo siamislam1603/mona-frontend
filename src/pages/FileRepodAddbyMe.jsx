@@ -8,8 +8,7 @@ import { BASE_URL } from '../components/App';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { FullLoader } from "../components/Loader";
 
-
-const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
+const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModalFlag }) => {
     const Navigate = useNavigate();
     const [userData, setUserData] = useState([]);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
@@ -22,6 +21,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                         authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
                 })
+
                 if (response.status === 200 && response.data.status === "success") {
                     const users = response.data.dataDetails;
                     let tempData = users.map((dt) => ({
@@ -30,13 +30,11 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                         createdAt: dt.createdAt,
                         userID: dt.id,
                         creatorName: dt.ModifierName + "," + dt.updatedBy,
-
                     }));
                     setUserData(tempData);
                     setfullLoaderStatus(false)
                 } else if (response.status === 404) {
                     setUserData([])
-                    setfullLoaderStatus(false)
                 }
             }
         } catch (err) {
@@ -52,9 +50,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             })
-            if (response) {
-                setfullLoaderStatus(false)
-            }
+
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
@@ -69,11 +65,9 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             }
             else if (response.status === 404) {
                 setUserData([])
-                setfullLoaderStatus(false)
             }
         } catch (err) {
             setUserData([])
-            setfullLoaderStatus(false)
         }
     }
     useEffect(() => {
@@ -82,7 +76,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
 
     useEffect(() => {
         GetSaachhData();
-    }, [SearchValue, selectedFranchisee])
+    }, [SearchValue])
 
     useEffect(() => {
         if (selectedFranchisee) {
@@ -98,14 +92,12 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                let category_id = () => {
-                    localStorage.setItem("category_type", cell[2])
-                }
+
                 return (
                     <>
                         <div className="user-list">
                             <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
-                                <span onClick={category_id}>
+                                <span>
                                     <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                 </span>
                             </Link>
@@ -162,36 +154,54 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue }) => {
             }
         },
         {
-            dataField: 'repository_files',
+            dataField: 'userID',
             text: '',
-
+            formatter: (cell) => {
+                return (
+                    <>
+                        {/* <div className="cta-col">
+                            <Dropdown>
+                                <Dropdown.Toggle variant="transparent" id="ctacol">
+                                    <img src="../img/dot-ico.svg" alt="" />
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => { seteditCategoryModalFlag(true) }}>Edit</Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </div> */}
+                    </>
+                );
+            },
         },
     ]
 
     return (
         <div>
             <FullLoader loading={fullLoaderStatus} />
-            {userData.length > 0 ? (
-                <ToolkitProvider
-                    keyField="name"
-                    data={userData}
-                    columns={columns}
-                    search
-                >
-                    {(props) => (
-                        <>
+            <ToolkitProvider
+                keyField="name"
+                data={userData}
+                columns={columns}
+                search
+            >
+                {(props) => (
+                    <>
+                        {userData.length > 0 ? (
                             <BootstrapTable
                                 {...props.baseProps}
+                                pagination={paginationFactory()}
                             />
-                        </>
-                    )}
+                        ) :
+                            (!fullLoaderStatus && <>
+                                <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
+                            </>
+                            )
+                        }
+                    </>
+                )}
 
-                </ToolkitProvider>
-            ) : (
-                <>
-                    <div className="text-center mb-5 mt-5"><strong>No File Added By You</strong></div>
-                </>
-            )}
+            </ToolkitProvider>
+
         </div>
     )
 }

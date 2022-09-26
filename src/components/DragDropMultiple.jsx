@@ -14,7 +14,7 @@ function fileSizeValidator(file) {
     if(fileSize > 1024) {
       return {
         code: "file-too-large",
-        message: `File shoudld be less than ${1}GB`
+        message: `File should be less than ${1}GB`
       };
     }
   } else if(fileType === 'application') {
