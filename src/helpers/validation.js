@@ -174,7 +174,7 @@ export const createOperatingManualValidation = (form,wordCount) => {
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount) => {
+export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount,relatedFiles) => {
   console.log('The form validation', titleError,titleChecking);
   let newErrors = {};
   console.log('The form validat', form);
@@ -194,6 +194,9 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
      
     }
  } 
+ if(relatedFiles?.length>5){
+  newErrors.relatedFile = "Max limit of files is 5"
+ }
  
   
   if (!start_date || start_date === 'undefined')
@@ -219,7 +222,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 
   return newErrors;
 };
-export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount) => {
+export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount,relatedFiles) => {
   let newErrors = {};
   console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
@@ -255,6 +258,9 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,
     if (!allFranchise) {
       newErrors.franchise = "Please Select Franchise"
 
+    }
+    if(relatedFiles?.length>5){
+      newErrors.relatedFile = 'Max limit of files is 5'
     }
 
   }
