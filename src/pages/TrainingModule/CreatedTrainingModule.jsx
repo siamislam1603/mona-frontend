@@ -3,6 +3,7 @@ import { Col, Row, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import Multiselect from 'multiselect-react-dropdown';
+import moment from 'moment';
 import { FullLoader } from "../../components/Loader";
 import { Link } from "react-router-dom";
 
@@ -277,7 +278,15 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
+                      <div className="datecol">
+                            {
+                              training.end_date !== null &&
+                              <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                            }
+                            <span className="time">{training.completion_time} {training.completion_in}</span>
+                          </div>
+                      </div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -333,7 +342,15 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a>
+                      <div className="datecol">
+                        {
+                          training.end_date !== null &&
+                          <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                        }
+                        <span className="time">{training.completion_time} {training.completion_in}</span>
+                      </div>
+                      </div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">

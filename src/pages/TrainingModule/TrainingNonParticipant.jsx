@@ -1,7 +1,7 @@
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-import { Col, Container, Button } from "react-bootstrap";
+import { Col, Container, Button, Form } from "react-bootstrap";
 
 import TopHeader from "../../components/TopHeader";
 import { useParams } from 'react-router-dom';
@@ -22,6 +22,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
   // STATES
   const [nonParticipants, setNonParticipants] = useState(null);
+  const [resultCount, setResultCount] = useState(0);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [totalLoadedNonParticipants, setTotalLoadedNonParticipants] = useState(0);
   const [totalNonParticipantCount, setTotalNonParticipantCount] = useState(0);
@@ -37,7 +38,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       let token = localStorage.getItem('token');
       let userId = localStorage.getItem('user_id');
 
-      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=${limit}&offset=${offset}&search=${search}`, {
+      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=${search ? "" : limit}&offset=${search ? "" : offset}&search=${search}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -60,8 +61,29 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     }
   };
 
+  const fetchNonParticipantCount = async () => {
+    try {
+      let token = localStorage.getItem('token');
+      let userId = localStorage.getItem('user_id');
+
+      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=&offset=&search=`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log('COUNT RESPONSE:', response);
+      if(response.status === 200 && response.data.status === "success") {
+        let { finalResponse } = response.data;
+        setResultCount(finalResponse.length);
+      }
+    } catch(error) {
+      setfullLoaderStatus(false)
+    }
+  };
+
   useEffect(() => {
     fetchNonParticipants();
+    fetchNonParticipantCount();
   }, []);
 
   const handelLoadMore = (e) => {
@@ -94,10 +116,20 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       }
     }
   }
+
+  useEffect(() => {
+    // setNonParticipants(null);
+    if(paginationProps?.search === "") {
+      setTotalLoadedNonParticipants(0);
+      setTotalNonParticipantCount(0);
+    }
+    fetchNonParticipants();
+  }, [paginationProps?.search])
   
 
   console.log('TOTAL LOADED NON PARTICIPANTS:', totalLoadedNonParticipants);
   console.log('TOTAL LOADED NON PARTICIPANT COUNT:', totalNonParticipantCount);
+  resultCount && console.log('RESULT COUNT:', resultCount);
   return (
     <>
       <ToastContainer />
@@ -115,16 +147,40 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                 <FullLoader loading={fullLoaderStatus} />
                 <div className="entry-container">
                   <header className="title-head mynewForm-heading mb-3">
-                    <Button className="me-3"
-                          onClick={() => {
-                            navigate('/training');
+                    <div className="data-search d-md-flex w-100">
+                      <h1 className="title-lg mb-0">
+                        <Button className="me-3"
+                              onClick={() => {
+                                navigate('/training');
+                              }}
+                            >
+                          <img src="../../img/back-arrow.svg" />
+                        </Button>
+                        Training Participants Not Attended
+                      </h1> 
+                      <Form.Group
+                        className="ms-auto relative"
+                        style={{ marginRight: '2.3rem' }}
+                      >
+                        <div className="user-search">
+                          <img
+                            src="../img/search-icon-light.svg"
+                            alt=""
+                          />
+                        </div>
+                        <Form.Control
+                          className="searchBox"
+                          type="text"
+                          placeholder="Search"
+                          onChange={(e) => {
+                            setPaginationProps(prevState => ({
+                              ...prevState,
+                              search: e.target.value
+                            }))
                           }}
-                        >
-                      <img src="../../img/back-arrow.svg" />
-                    </Button>
-                    <h1 className="title-lg mb-0">
-                      Training Participants Not Attended
-                    </h1> 
+                        />
+                      </Form.Group>
+                    </div>
                   </header> 
                   {
                     nonParticipants &&
@@ -149,7 +205,8 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                     </Col>
                   }        
                   {
-                    totalLoadedNonParticipants >= totalNonParticipantCount ? (
+                    paginationProps?.search === '' ?
+                    totalLoadedNonParticipants < resultCount ? (
                       <>
                         <br></br>
                         <div class="text-center">
@@ -162,6 +219,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                         </div>
                       </>
                       ) :''
+                      : ''
                   }          
                 </div>
               </div>
