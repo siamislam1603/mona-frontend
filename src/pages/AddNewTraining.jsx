@@ -105,6 +105,8 @@ const AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
   const [docErrorMessage, setDocErrorMessage] = useState(null);
+  const [imageFileErrorMessage, setImageFileErrorMessage] = useState(null);
+  const [imageFileError, setImageFileError] = useState(null);
 
 
   const [popupVisible, setPopupVisible] = useState(false);
@@ -437,6 +439,12 @@ const AddNewTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [docErrorMessage])
+  
+  useEffect(() => {
+    setImageFileError(docErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [imageFileErrorMessage])
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
@@ -664,6 +672,7 @@ const AddNewTraining = () => {
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
                             setPopupVisible={setPopupVisible}
+                            setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
                           />
 
@@ -676,6 +685,14 @@ const AddNewTraining = () => {
                           }
                           <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
                           <small className="fileinput mt-1 mb-1">(1162 x 402 resolution)</small>
+                          {
+                            imageFileError  &&
+                            getUniqueErrors(imageFileError).map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only one image file allowed" : errorObj}</p>
+                              )
+                            })
+                          }
                           {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
