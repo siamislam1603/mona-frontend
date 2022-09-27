@@ -1,9 +1,7 @@
 
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from "react";
-// import { Button, Container, Form, Dropdown } from "react-bootstrap";
-// import LeftNavbar from "../components/LeftNavbar";
-import { Col, Row, Dropdown, Container,Modal, Form, Button } from "react-bootstrap";
+import { Col, Container, Button } from "react-bootstrap";
 
 import TopHeader from "../../components/TopHeader";
 import { useParams } from 'react-router-dom';
@@ -12,29 +10,53 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../components/App';
 import { useEffect } from "react";
 import axios from "axios";
-// import { Link } from "react-router-dom";
+import { FullLoader } from "../../components/Loader";
 import moment from "moment";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const { trainingId } = useParams();
   const navigate = useNavigate();
+  // toast.configure();
 
   // STATES
   const [nonParticipants, setNonParticipants] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [totalLoadedNonParticipants, setTotalLoadedNonParticipants] = useState(0);
+  const [totalNonParticipantCount, setTotalNonParticipantCount] = useState(0);
+  const [paginationProps, setPaginationProps] = useState({
+    limit: 10,
+    offset: 0,
+    search: ""
+  })
 
   const fetchNonParticipants = async () => {
-    let token = localStorage.getItem('token');
-    let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${localStorage.getItem('user_id')}?limit=`, {
-      headers: {
-        "Authorization": "Bearer " + token
+    try {
+      let { limit, offset, search } = paginationProps;
+      let token = localStorage.getItem('token');
+      let userId = localStorage.getItem('user_id');
+
+      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=${limit}&offset=${offset}&search=${search}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      console.log('RESPONSE NON PARTICIPANTS:', response);
+      if(response.status === 200 && response.data.status === "success") {
+        let { finalResponse } = response.data;
+
+        if(finalResponse && finalResponse?.length){
+          setTotalLoadedNonParticipants(totalLoadedNonParticipants + finalResponse.length);
+        }
+        setTotalNonParticipantCount(finalResponse.length);
+        
+        setfullLoaderStatus(false)
+        setNonParticipants(finalResponse);
       }
-    });
-
-    console.log('RESPONSE NON PARTICIPANTS:', response);
-    if(response.status === 200 && response.data.status === "success") {
-      let { finalResponse } = response.data;
-
-      setNonParticipants(finalResponse);
+    } catch(error) {
+      setfullLoaderStatus(false)
     }
   };
 
@@ -42,9 +64,43 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     fetchNonParticipants();
   }, []);
 
-  nonParticipants && console.log('NON PARTICIPANTS:', nonParticipants);
+  const handelLoadMore = (e) => {
+    e.preventDefault()
+    LoadMoreALl()
+  }
+
+  const LoadMoreALl = async (e) => {
+    let { limit, search } = paginationProps;
+    let token = localStorage.getItem('token');
+    let userId = localStorage.getItem('user_id');
+    const response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?offset=${totalLoadedNonParticipants}&limit=${limit}&search=${search}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    
+    if(response.status === 200 && response.data.status === "success") {
+      let { finalResponse } = response.data;
+      if(finalResponse && finalResponse?.length){
+        setTotalLoadedNonParticipants(totalLoadedNonParticipants + finalResponse.length);
+        setNonParticipants(prevState => ([
+          ...prevState,
+          ...finalResponse
+        ]));
+      } else {
+        toast.success('No more results.', {
+          position: toast.POSITION.TOP_RIGHT
+        });
+      }
+    }
+  }
+  
+
+  console.log('TOTAL LOADED NON PARTICIPANTS:', totalLoadedNonParticipants);
+  console.log('TOTAL LOADED NON PARTICIPANT COUNT:', totalNonParticipantCount);
   return (
     <>
+      <ToastContainer />
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -56,6 +112,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   />
+                <FullLoader loading={fullLoaderStatus} />
                 <div className="entry-container">
                   <header className="title-head mynewForm-heading mb-3">
                     <Button className="me-3"
@@ -78,8 +135,8 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                             nonParticipants.map(user => {
                               return (
                                 <div className="item">
-                                  <div className="userpic"><a href=""><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
-                                  <div className="name"><a href="">{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                  <div className="userpic"><a><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
+                                  <div className="name"><a>{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                   <div className="completed-col">
                                     Assigned on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                   </div>
@@ -90,7 +147,22 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                         </div>
                       </div>
                     </Col>
-                  }                  
+                  }        
+                  {
+                    totalLoadedNonParticipants >= totalNonParticipantCount ? (
+                      <>
+                        <br></br>
+                        <div class="text-center">
+                          <button 
+                            type="button" 
+                            onClick={handelLoadMore} 
+                            className="btn btn-primary">
+                              Load More
+                          </button>
+                        </div>
+                      </>
+                      ) :''
+                  }          
                 </div>
               </div>
             </div>

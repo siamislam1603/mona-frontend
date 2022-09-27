@@ -816,7 +816,8 @@ const AddNewTraining = () => {
                         type="time"
                         name="start_time"
                         min={moment().format('HH:mm')}
-                        max
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -1196,6 +1197,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         min={moment().format('HH:mm')}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}

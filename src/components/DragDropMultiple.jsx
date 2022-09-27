@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
+  console.log('FILE>>>>>>>>>>>', file);
   let fileType = file.type.split("/")[0];
   console.log('FILE TYPE:', fileType);
 
