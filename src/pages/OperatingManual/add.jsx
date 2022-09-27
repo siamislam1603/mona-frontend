@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import TopHeader from '../../components/TopHeader';
@@ -48,6 +48,8 @@ const AddOperatingManual = () => {
   const [wordCount, setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
+
+  let description = useRef(null)
 
   useEffect(() => {
     getUserRoleData();
@@ -276,8 +278,22 @@ const AddOperatingManual = () => {
     const newErrors = createOperatingManualValidation(operatingManualData, wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      console.log("newErrors--->", Object.keys(newErrors)[0]);
+      console.log("newErrors--->", newErrors);
+        
       document.getElementById(Object.keys(newErrors)[0]).focus();
+      if(newErrors.description){
+        // console.log("MEta description",document.getElementById('meta_description').current.focus())
+        // meta_description.current.focus();
+        // meta_description.current.focus();
+        // document.getElementById('meta_description').focus();
+        window.scrollTo({
+          top: description.current.offsetTop,
+          behavior: "smooth",
+          // You can also assign value "auto"
+          // to the behavior parameter.
+        });
+
+      }
     } else {
       upperRoleUser = getUpperRoleUser();
       var myHeaders = new Headers();
@@ -653,7 +669,7 @@ console.log("THe operating manual",operatingManualData)
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={12}>
+                      <Col sm={12} ref={description}>
                         <Form.Group>
                           <Form.Label id="description" className="formlabel">
                             Description *

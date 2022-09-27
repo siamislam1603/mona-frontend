@@ -18,7 +18,11 @@ const columns = [
     formatter: (cell) => {
       console.log("The cell", cell)
       cell = cell?.split(",");
-      return (<><div className="user-list"><span className="user-pic"><img src="../img/upload.jpg" alt='' /></span><span className="user-name">{cell} </span></div></>)
+      return (<><div className="user-list">
+        <span className="user-pic">
+          <img src="../img/upload.jpg" alt='' />
+        </span>
+        <span className="user-name">{cell} </span></div></>)
     },
   },
   {
@@ -38,7 +42,7 @@ const columns = [
     text: "",
     formatter: (cell) => {
       cell = cell?.split(",");
-  
+
       return (<><div className="cta-col">
         <Dropdown>
           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -99,7 +103,7 @@ const EducatorDashboard = () => {
         name: `${dt?.fullname}`,
         specialneed: `${dt?.has_special_needs}`,
         action: `${dt?.id},${dt?.parents[0]?.id}`,
-        
+
       }))
       console.log("THE TEM", tempData)
       setChildrenData(tempData)
@@ -279,7 +283,7 @@ const EducatorDashboard = () => {
                                             <img src="../img/dot-ico.svg" alt="" />
                                           </Dropdown.Toggle>
                                           <Dropdown.Menu>
-                                            <Dropdown.Item href="/training">View</Dropdown.Item>
+                                            <Dropdown.Item href={`/training-detail/${first?.id}`}>View</Dropdown.Item>
                                           </Dropdown.Menu>
                                         </Dropdown>
                                       </div>
