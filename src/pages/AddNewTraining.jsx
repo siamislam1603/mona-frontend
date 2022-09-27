@@ -684,7 +684,7 @@ const AddNewTraining = () => {
                               setPopupVisible={setPopupVisible} />
                           }
                           <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
-                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution)</small>
+                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB each)</small>
                           {
                             imageFileError  &&
                             getUniqueErrors(imageFileError).map(errorObj => {

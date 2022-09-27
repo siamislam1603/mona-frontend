@@ -676,7 +676,7 @@ const EditTraining = () => {
                               (<></>)
                             }
                             <small className="fileinput mt-0">(png, jpg & jpeg)</small>
-                            <small className="fileinput mt-1">(1162 x 402 resolution)</small>
+                            <small className="fileinput mt-1">(1162 x 402 resolution, less than 10MB each)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
