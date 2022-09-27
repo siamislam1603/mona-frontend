@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import TopHeader from '../../components/TopHeader';
@@ -14,6 +14,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
+import DropAllFile from "../../components/DragDropMultiple";
+
 import 'react-toastify/dist/ReactToastify.css';
 import { includes } from 'lodash';
 let selectedUserId = '';
@@ -48,6 +50,10 @@ const AddOperatingManual = () => {
   const [wordCount, setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
+  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+
+
+  let description = useRef(null)
 
   useEffect(() => {
     getUserRoleData();
@@ -276,8 +282,22 @@ const AddOperatingManual = () => {
     const newErrors = createOperatingManualValidation(operatingManualData, wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      console.log("newErrors--->", Object.keys(newErrors)[0]);
+      console.log("newErrors--->", newErrors);
+        
       document.getElementById(Object.keys(newErrors)[0]).focus();
+      if(newErrors.description){
+        // console.log("MEta description",document.getElementById('meta_description').current.focus())
+        // meta_description.current.focus();
+        // meta_description.current.focus();
+        // document.getElementById('meta_description').focus();
+        window.scrollTo({
+          top: description.current.offsetTop,
+          behavior: "smooth",
+          // You can also assign value "auto"
+          // to the behavior parameter.
+        });
+
+      }
     } else {
       upperRoleUser = getUpperRoleUser();
       var myHeaders = new Headers();
@@ -379,6 +399,7 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
+    console.log("Upload file function call",videoTutorialFiles)
     console.log("file---->", file);
     if (name === 'cover_image') {
       if (file.size > 10 * 1048576) {
@@ -401,8 +422,8 @@ const AddOperatingManual = () => {
       }
 
     }
-    if (name === 'reference_video') {
-      console.log("FIle inside",file.name.split(".").pop())
+    if (name === 'reference_video' || videoTutorialFiles[0].type === "video/x-flv") {
+      console.log("FIle inside",file)
 
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
@@ -507,7 +528,13 @@ const AddOperatingManual = () => {
  
 // console.log("Oepratiing",errors)
 console.log("THe operating manual",operatingManualData)
+console.log("THe video file",videoTutorialFiles)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
+useEffect(() =>{
+  if(videoTutorialFiles?.length>0){
+    uploadFiles()
+  }
+},[videoTutorialFiles])
   return (
     <>
       <div id="main">
@@ -653,7 +680,7 @@ console.log("THe operating manual",operatingManualData)
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={12}>
+                      <Col sm={12} ref={description}>
                         <Form.Group>
                           <Form.Label id="description" className="formlabel">
                             Description *
@@ -773,6 +800,7 @@ console.log("THe operating manual",operatingManualData)
                                   />
                                   Add Video
                                 </span>
+
                                 <Form.Control
                                   className="add_image_input"
                                   type="file"
@@ -844,6 +872,14 @@ console.log("THe operating manual",operatingManualData)
                         </div>
                       </Col>
                     </Row>
+
+                    <DropAllFile
+                                  title="Videos"
+                                  type="video"
+                                  // setUploadError={setVideoFileErrorMessage}
+                                  onSave={setVideoTutorialFiles}
+
+                               />
                   </div>
                   <Row>
                     <Col sm={12}>

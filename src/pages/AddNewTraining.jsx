@@ -447,7 +447,7 @@ const AddNewTraining = () => {
   }, [imageFileErrorMessage])
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-
+  console.log('CURRENT TIME:', moment().format('HH:mm'));
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -796,7 +796,7 @@ const AddNewTraining = () => {
                         placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         name="start_date"
                         value={trainingSettings?.start_date}
-                        min={new Date().toISOString().slice(0, 10)}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
 
@@ -815,6 +815,9 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        min={moment().format('HH:mm')}
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -837,6 +840,7 @@ const AddNewTraining = () => {
                         className="datepicker"
                         placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={trainingSettings?.end_date}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
                           setTrainingSettingErrors(prevState => ({
@@ -844,7 +848,6 @@ const AddNewTraining = () => {
                             start_time: null
                           }));
                         }}
-                        min={trainingSettings?.start_date}
                       />
                     </Form.Group>
                   </Col>
@@ -1194,8 +1197,9 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
-                        className="datepicker"
-                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
+                        min={moment().format('HH:mm')}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {

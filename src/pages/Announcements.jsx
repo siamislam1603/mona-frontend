@@ -9,6 +9,7 @@ import MyAnnouncements from "./MyAnnouncements";
 import AllEvent from "./AllEvent";
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useParams } from "react-router-dom";
+import { useHistory ,useLocation } from 'react-router-dom';
 
 
 
@@ -17,10 +18,11 @@ import { useParams } from "react-router-dom";
 const Announcements = () => {
   const Params = useParams();
 
-  // console.log("index", Params.key)
 
-  let ActiveLink = Params.key
 
+  let ActiveLink = Params
+
+  console.log("Params id",Params)
   const [allAnnouncement, setAllAnnouncement] = useState([])
   const [theMyAnnouncement, setTheMyAnnoucemenet] = useState([])
 
@@ -49,6 +51,8 @@ const Announcements = () => {
   const [loadMy, setLoadMy] = useState(true);
   const [loadEvent, setLoadEvent] = useState(true)
   const [loadAllAnnouncement, setLoadAllAnnouncement] = useState(true)
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -612,6 +616,36 @@ const Announcements = () => {
 
     }
   }
+
+
+  //delete
+  const checkDelete = async () =>{
+    const query = new URL(window.location);
+    const id = query.searchParams.get('id')
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get(`${BASE_URL}/announcement/check-announcement?id=${id}`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("check response",response)
+    if(response.status === 200 && response.data.status === "success"){
+      // console.log(" 123 Announcement exit")
+    }
+    else{
+      console.log("123 ANnouncement dont exit ")
+      setTopErrorMessage("Announcement either delete or no longer available!")
+
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 3000)
+    }
+  }
+
+  useEffect(() =>{ 
+    checkDelete()
+  },[])
   useEffect(() => {
 
     if (tabLinkPath === "/all-announcements") {
@@ -753,6 +787,7 @@ const Announcements = () => {
   return (
     <>
       {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>}
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
 
       <div id="main">
         <section className="mainsection">
