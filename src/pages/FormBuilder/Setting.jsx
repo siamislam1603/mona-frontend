@@ -509,6 +509,8 @@ function Setting(props) {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        className="timepicker"
+                        placeholder={form?.start_time ? moment(form?.start_time, 'HH:mm').format("hh:mm A") : "hh:mm am" }
                         value={form?.start_time}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
@@ -545,6 +547,8 @@ function Setting(props) {
                       <Form.Control
                         type="time"
                         name="end_time"
+                        className="timepicker"
+                        placeholder={form?.end_time ? moment(form?.end_time, 'HH:mm').format("hh:mm A") : "hh:mm am" }
                         value={form?.end_time}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);

@@ -106,7 +106,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
     } catch (error) {
       setfullLoaderStatus(false)
-      setOtherTrainingData([])
+      // setOtherTrainingData([])
 
     }
 

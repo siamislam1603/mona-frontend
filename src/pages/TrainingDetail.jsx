@@ -344,8 +344,8 @@ const TrainingDetail = () => {
                                   nonParticipants.map(user => {
                                     return (
                                       <div className="item">
-                                        <div className="userpic"><a href=""><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
-                                        <div className="name"><a href="">{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                        <div className="userpic"><a><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
+                                        <div className="name"><a>{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                         <div className="completed-col">
                                           Assigned on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                         </div>
