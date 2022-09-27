@@ -465,13 +465,13 @@ const DynamicForm = () => {
                                           <option value={item.id} selected>
                                             {item.child
                                               ? item.fullname
-                                              : item.email}
+                                              : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
                                           <option value={item.id}>
                                             {item.child
                                               ? item.fullname
-                                              : item.email}
+                                              : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
                                       </>
@@ -499,13 +499,13 @@ const DynamicForm = () => {
                                           <option value={item.id} selected>
                                             {item.child
                                               ? item.fullname
-                                              : item.email}
+                                              : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
                                           <option value={item.id}>
                                             {item.child
                                               ? item.fullname
-                                              : item.email}
+                                              : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
                                       </>
@@ -536,7 +536,7 @@ const DynamicForm = () => {
                                           <option value={item.id}>
                                             {item.child
                                               ? item.fullname
-                                              : item.email}
+                                              : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
                                       </>
