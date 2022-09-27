@@ -118,10 +118,11 @@ const AddOperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
+        console.log("Get after upload", response)
         setOperatingManualData(response?.result);
         setImageUrl(response?.result?.cover_image);
         setVideoThumbnailUrl(response?.result?.video_thumbnail);
-        setVideoUrl(response?.result?.reference_video);
+        setVideoUrl(response?.result?.url);
         let data = formSettingData;
         data['applicable_to_all'] =
           response?.result?.permission?.accessible_to_all;
@@ -425,19 +426,19 @@ const AddOperatingManual = () => {
     if (name === 'reference_video' || videoTutorialFiles[0].type === "video/x-flv") {
       console.log("FIle inside",file)
 
-      if (file.size > 1024 * 1024 * 1024) {
+      if (videoTutorialFiles[0].size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File is too large. File limit 1 GB.';
         setErrors(errorData);
         flag = true;
       }
       
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')&& file.name.split(".").pop() !="flv" ) {
-        let errorData = { ...errors };
-        errorData['reference_video'] = 'File format not supported.';
-        setErrors(errorData);
-        flag = true;
-      }
+      // if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')&& file.name.split(".").pop() !="flv" ) {
+      //   let errorData = { ...errors };
+      //   errorData['reference_video'] = 'File format not supported.';
+      //   setErrors(errorData);
+      //   flag = true;
+      // }
     }
 
 
@@ -445,13 +446,13 @@ const AddOperatingManual = () => {
       if (name === 'cover_image') {
         setImageLoaderFlag(true);
       }
-      if (name === 'reference_video') {
+      if (videoTutorialFiles?.length>0) {
         setVideoLoaderFlag(true);
 
       }
-
+      let file1 = videoTutorialFiles[0];
       const body = new FormData();
-      body.append('image', file);
+      body.append('image', file1);
       body.append('description', 'operating manual');
       body.append('title', name);
       body.append('uploadedBy', 'vaibhavi');
@@ -465,11 +466,16 @@ const AddOperatingManual = () => {
         body: body,
         headers: myHeaders,
       })
-        .then((res) => res.json())
+        .then((res) => 
+        
+        res.json()
+        )
         .then((res) => {
-          if (name === 'reference_video') {
+          console.log("res video after upload",res)
+          if (res.thumbnail) {
             setVideoThumbnailUrl(res.thumbnail);
             setVideoUrl(res.url);
+            console.log("res video insdie ",res)
 
             setTimeout(() => {
               setVideoLoaderFlag(false);
@@ -791,7 +797,17 @@ useEffect(() =>{
                                 }
                               ></img>
                             </div>
-                            <div className="add_image">
+                            <DropAllFile
+                                  title="Videos"
+                                  type="video"
+                                  // setUploadError={setVideoFileErrorMessage}
+                                  onSave={setVideoTutorialFiles}
+                                  // videoUrl= {videoThumbnailUrl}
+                                  setVideoThumbnailUrl={setVideoThumbnailUrl}
+                                  setVideoUrl={setVideoUrl}
+                                  // operatinAdd ={false}
+                               />
+                            {/* <div className="add_image">
                               <div className="add_image_box">
                                 <span>
                                   <img
@@ -815,8 +831,9 @@ useEffect(() =>{
                                   }}
                                 />
                               </div>
-                            </div>
-                            <Button
+                            </div> */}
+                            {pageTitle ==="Edit Operating manual" &&
+                              <Button
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
@@ -826,6 +843,8 @@ useEffect(() =>{
                             >
                               <img src="../../img/removeIcon.svg" />
                             </Button>
+                            }
+                          
                           </div>
                           <p className="form-errors">
                             {errors.reference_video}
@@ -873,13 +892,7 @@ useEffect(() =>{
                       </Col>
                     </Row>
 
-                    <DropAllFile
-                                  title="Videos"
-                                  type="video"
-                                  // setUploadError={setVideoFileErrorMessage}
-                                  onSave={setVideoTutorialFiles}
-
-                               />
+                   
                   </div>
                   <Row>
                     <Col sm={12}>

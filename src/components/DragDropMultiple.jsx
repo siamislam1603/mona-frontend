@@ -44,8 +44,10 @@ function fileSizeValidator(file) {
   return null
 }
 
-export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} }) {
-
+export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} ,videoUrl,setVideoThumbnailUrl,setVideoUrl}) {
+ 
+  console.log("Video Thumnail ",videoUrl)
+  
   let typeObj;
 
   if(type === "video") {
@@ -76,7 +78,11 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   });
 
   const handleFileDelete = (file) => {
+    console.log("The file for operating module",file)
     let temp = [...data];
+    
+    setVideoThumbnailUrl("")
+    setVideoUrl('')
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
