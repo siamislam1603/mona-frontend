@@ -63,11 +63,15 @@ const TrainingDetail = () => {
       const { training } = response.data;
 
       // FETCHING DUE DATE
-      const { end_date } = training;
+      const { end_date, addedBy } = training;
       let due_date = moment(end_date).format('YYYY-MM-DD');
       let today = moment().format('YYYY-MM-DD');
+      let currentUserId = localStorage.getItem('user_id');
+      let currentUserRole = localStorage.getItem('user_role');
+      console.log('CURRENT USER ROLE:', currentUserRole);
+      console.log('CURRENT USER ID:', currentUserId);
 
-      if(due_date < today) {
+      if(due_date < today && addedBy !== currentUserId && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
       } else {
         setTrainingDetails(training);
