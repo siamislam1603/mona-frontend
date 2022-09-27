@@ -44,7 +44,8 @@ const TrainingDetail = () => {
   const [showSurveyForm, setShowSurveyForm] = useState(false);
   const [nonParticipants, setNonParticipants] = useState(null);
   const [popupNotification, setPopupNotification] = useState(null);
-  const [trainingDeletePopup, setTrainingDeletePopup] = useState(true);
+  const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
+  const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -60,7 +61,17 @@ const TrainingDetail = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      setTrainingDetails(training);
+
+      // FETCHING DUE DATE
+      const { end_date } = training;
+      let due_date = moment(end_date).format('YYYY-MM-DD');
+      let today = moment().format('YYYY-MM-DD');
+
+      if(due_date < today) {
+        setTrainingExpiredPopup(true);
+      } else {
+        setTrainingDetails(training);
+      }
     } else if(response.status === 200 && response.data.status === "fail") {
       const { message } = response.data;
       setPopupNotification(message);
@@ -483,6 +494,27 @@ const TrainingDetail = () => {
           <Modal.Body>
             <div>
               <p>{popupNotification}</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleTrainingTransition()}>Back To Training</button>
+          </Modal.Footer>
+        </Modal>
+      }
+
+      {
+        <Modal 
+          show={trainingExpiredPopup}
+          onHide={() => setTrainingExpiredPopup(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>The training has been expired. You can no longer view or access the training material.</p>
             </div>
           </Modal.Body>
           <Modal.Footer>
