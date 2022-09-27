@@ -620,6 +620,7 @@ const Announcements = () => {
 
   //delete
   const checkDelete = async () =>{
+    console.log("Check delete announcement")
     const query = new URL(window.location);
     const id = query.searchParams.get('id')
     const token = localStorage.getItem('token');
@@ -639,7 +640,7 @@ const Announcements = () => {
 
       setTimeout(() => {
         setTopErrorMessage(null);
-      }, 3000)
+      }, 5000)
     }
   }
 
