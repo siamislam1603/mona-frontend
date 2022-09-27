@@ -43,6 +43,9 @@ const TrainingDetail = () => {
   const [relatedForms, setRelatedForms] = useState();
   const [showSurveyForm, setShowSurveyForm] = useState(false);
   const [nonParticipants, setNonParticipants] = useState(null);
+  const [popupNotification, setPopupNotification] = useState(null);
+  const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
+  const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -57,14 +60,26 @@ const TrainingDetail = () => {
     console.log("The response", response)
 
     if (response.status === 200 && response.data.status === "success") {
-      console.log('SUCCESS TRAINING DETAIL');
       const { training } = response.data;
-      setTrainingDetails(training);
-    }// } else {
-    //   localStorage.setItem('success_msg', 'Training Created Successfully!');
-    //   // localStorage.setItem('active_tab', '/created-training');
-    //   window.location.href = "/training";
-    // }
+
+      // FETCHING DUE DATE
+      const { end_date, addedBy } = training;
+      let due_date = moment(end_date).format('YYYY-MM-DD');
+      let today = moment().format('YYYY-MM-DD');
+      let currentUserId = localStorage.getItem('user_id');
+      let currentUserRole = localStorage.getItem('user_role');
+      console.log('CURRENT USER ROLE:', currentUserRole);
+      console.log('CURRENT USER ID:', currentUserId);
+
+      if(due_date < today && addedBy !== currentUserId && currentUserRole !== 'franchisor_admin') {
+        setTrainingExpiredPopup(true);
+      } else {
+        setTrainingDetails(training);
+      }
+    } else if(response.status === 200 && response.data.status === "fail") {
+      const { message } = response.data;
+      setPopupNotification(message);
+    }
   }
 
   const handleFinishTraining = (event) => {
@@ -139,6 +154,10 @@ const TrainingDetail = () => {
     }
   }
 
+  const handleTrainingTransition = () => {
+    window.location.href = "/training";
+  }
+
   const fetchTrainingFormDetails = async (id) => {
     const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
 
@@ -191,10 +210,11 @@ const TrainingDetail = () => {
     fetchNonParticipants();
   }, []);
 
-  users && console.log('USERS:', users);
-  
-  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  nonParticipants && console.log('NON PARTICIPANTS:', nonParticipants);
+  // useEffect(() => {
+  //   if(popupNotification) {
+  //     OpenPopup
+  //   }
+  // }, [popupNotification]);
   return (
     <>
       <div id="main">
@@ -317,8 +337,8 @@ const TrainingDetail = () => {
                                   users.map(user => {
                                     return (
                                       <div className="item">
-                                        <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                                        <div className="name"><a href="">{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                        <div className="userpic"><a><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
+                                        <div className="name"><a>{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                         <div className="completed-col">
                                           Completed on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                         </div>
@@ -462,6 +482,49 @@ const TrainingDetail = () => {
             <button 
               className="modal-button"
               onClick={() => handleSurveyTransition()}>Next</button>
+          </Modal.Footer>
+        </Modal>
+      }
+
+      {
+        popupNotification &&
+        <Modal 
+          show={trainingDeletePopup}
+          onHide={() => setTrainingDeletePopup(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>{popupNotification}</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleTrainingTransition()}>Back To Training</button>
+          </Modal.Footer>
+        </Modal>
+      }
+
+      {
+        <Modal 
+          show={trainingExpiredPopup}
+          onHide={() => setTrainingExpiredPopup(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>The training has been expired. You can no longer view or access the training material.</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleTrainingTransition()}>Back To Training</button>
           </Modal.Footer>
         </Modal>
       }
