@@ -92,6 +92,7 @@ const UserManagement = () => {
   const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
+  const [openFilter, setOpenFilter] = useState(false);
 
 
   const rowEvents = {
@@ -582,7 +583,6 @@ const UserManagement = () => {
 
 
   const csvLink = useRef();
-
   return (
     <>
       <div id="main">
@@ -642,10 +642,11 @@ const UserManagement = () => {
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 variant="btn-outline"
+                                onClickCapture={() => setOpenFilter(!openFilter)}
                               >
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
-                              <Dropdown.Menu>
+                              <Dropdown.Menu style={{ display: openFilter ? "block" : "none" }}>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
@@ -663,7 +664,7 @@ const UserManagement = () => {
                                             id={`${role.value}-${index}`}
                                             checked={filter === `${role.value}`}
                                             onChange={(event) => {
-                                              console.log(event.target.value);
+                                              // console.log(event.target.value);
                                               setFilter(event.target.value)
                                             }}
                                           />
@@ -704,7 +705,10 @@ const UserManagement = () => {
                                   <Button
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => { handleApplyFilter(filter) }}
+                                    onClick={() => { 
+                                      handleApplyFilter(filter);
+                                      setOpenFilter(!openFilter);
+                                     }}
                                   >
                                     Apply
                                   </Button>
