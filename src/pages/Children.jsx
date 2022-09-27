@@ -449,7 +449,7 @@ const Children = () => {
                                             </h1>
 
                                             {
-                                                localStorage.getItem('user_role') !== "guardian" &&
+                                                localStorage.getItem('user_role') !== "guardian" && localStorage.getItem('user_role') !== "educator" &&
                                                 <Link 
                                                     to={`/child-enrollment-init/${params.id}`}
                                                     style={{
