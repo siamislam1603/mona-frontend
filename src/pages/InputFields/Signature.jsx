@@ -36,9 +36,9 @@ const Signature = (props) => {
           }}
           ref={sigPad}
         />
-        <div>
-          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
+        <div style={{marginTop:"5px"}}>
           <Button style={{minWidth:"70px !important"}} onClick={trim}>Save</Button>
+          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
         </div>
       </Form.Group>
       <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>
