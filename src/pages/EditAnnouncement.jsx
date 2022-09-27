@@ -8,7 +8,7 @@ import MyEditor from './CkeditorAnnouncement';
 
 import { useParams } from 'react-router-dom';
 import * as ReactBootstrap from 'react-bootstrap';
-
+// import DropAllFile from '../components/DragDropMultiple';
 
 import moment from 'moment';
 
@@ -48,6 +48,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [wordCount, setWordCount] = useState(0)
+  const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
   
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
@@ -154,7 +155,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise,wordCount);
+    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise,wordCount,relatedFiles);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setAutoFocus(newErrors)
@@ -693,10 +694,12 @@ useEffect(() =>{
                           
                           />
                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+                            <small className="fileinput">(png, jpg & jpeg)</small>
 
                            <span  className="error">
                             {errors.coverImage}
                            </span>
+
                            
 
                           {/* <p className="form-errors">{errors.cover_image}</p> */}
@@ -712,10 +715,24 @@ useEffect(() =>{
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 
                            /> */}
-                       <DropVideo onSave={setTheVideo}/>
+                       <DropAllFile 
+                        onSave={setTheVideo}
+                        type="video"
+                        setUploadError={setVideoFileErrorMessage}
+                        />
+
+
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          {
+                            videoFileErrorMessage  &&
+                            videoFileErrorMessage.map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message}</p>
+                              )
+                            })
+                          }
                           <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -739,6 +756,8 @@ useEffect(() =>{
                                 ))
                               }
                             </div>
+                            <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(File limit 1 GB)</small>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -765,6 +784,11 @@ useEffect(() =>{
                               )
                               : null
                           ))}
+                          {/* {relatedFile} */}
+                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
+                          {!errors.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
+                          { errors.relatedFile && <span className="form-errors">{errors.relatedFile}</span> }
                         </div>
                         </Form.Group>
                       </Col>
