@@ -179,7 +179,7 @@ const EditTraining = () => {
   const fetchTrainingData = async () => {
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/getTrainingById/${trainingId}/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -675,7 +675,8 @@ const EditTraining = () => {
                             </>) :
                               (<></>)
                             }
-                            <small className="fileinput mt-1">(png, jpg & jpeg)</small>
+                            <small className="fileinput mt-0">(png, jpg & jpeg)</small>
+                            <small className="fileinput mt-1">(1162 x 402 resolution)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
