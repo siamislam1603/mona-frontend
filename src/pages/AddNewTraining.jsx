@@ -446,8 +446,16 @@ const AddNewTraining = () => {
     )));
   }, [imageFileErrorMessage])
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-  console.log('CURRENT TIME:', moment().format('HH:mm'));
+  // useEffect(() => {
+  //   if(trainingSettings?.start_time && trainingSettings?.start_time < moment().format('HH:mm')) {
+  //     setTrainingSettingErrors(prevState => ({
+  //       ...prevState,
+  //       start_time: 'Choose valid time'
+  //     }));
+  //   }
+  // }, [trainingSettings?.start_time]);
+
+  
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -815,7 +823,7 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
-                        min={moment().format('HH:mm')}
+                        // min={moment().format(pickTime: false )}
                         className="timepicker"
                         placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         style={{ zIndex: "9999999 !important" }}
