@@ -78,7 +78,9 @@ const TrainingDetail = () => {
       }
     } else if(response.status === 200 && response.data.status === "fail") {
       const { message } = response.data;
+      console.log('MESSAGE:', message);
       setPopupNotification(message);
+      setTrainingDeletePopup(true);
     }
   }
 
@@ -487,7 +489,6 @@ const TrainingDetail = () => {
       }
 
       {
-        popupNotification &&
         <Modal 
           show={trainingDeletePopup}
           onHide={() => setTrainingDeletePopup(false)}>
