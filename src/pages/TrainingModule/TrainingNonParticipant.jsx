@@ -123,7 +123,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                       <img src="../../img/back-arrow.svg" />
                     </Button>
                     <h1 className="title-lg mb-0">
-                      Non-participants for this training
+                      Training Participants Not Attended
                     </h1> 
                   </header> 
                   {

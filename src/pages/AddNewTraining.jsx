@@ -1197,14 +1197,9 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
-<<<<<<< HEAD
-                        // className="datepicker"
-                        // placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
-=======
                         className="timepicker"
                         placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         min={moment().format('HH:mm')}
->>>>>>> dcc2c3559b4a191c9e3816b05cc07395e3259451
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
