@@ -645,36 +645,36 @@ const ChildrenEnrol = () => {
                                     </Dropdown.Menu>
                                   </Dropdown>
                                   <Dropdown>
-                                    <Dropdown.Toggle
-                                      id="extrabtn"
-                                      className="ctaact"
-                                    >
-                                      <img src="../img/dot-ico.svg" alt="" />
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item
-                                        as="button"
-                                        onClick={() => {
-                                          setCsvDownloadFlag(true);
-                                        }}
-                                      >
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item
-                                            as="button"
-                                          >
-                                            <CSVLink
-                                              data={csvData}
-                                              filename={"Children Enroled.csv"}
-                                              headers={headers}
-                                              target="_blank"
-                                            >
 
-                                            </CSVLink>
-                                          </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
+                                <Dropdown.Toggle
+                                    id="extrabtn"
+                                    className="ctaact"
+                                 >
+                                <img src="../img/dot-ico.svg" alt="" />
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu> 
+                                 <Dropdown.Item
+       as="button"
+  >
+    <CSVLink
+      data={csvData}
+      filename={"Children Enroled.csv"}
+      headers={headers}
+      target="_blank"
+    >
+
+      {"Export CSV"}
+
+    </CSVLink>
+  </Dropdown.Item>
+
+
+  {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
+Delete All Row
+</Dropdown.Item> */}
+</Dropdown.Menu>
+</Dropdown>
 
                                   {/* {localStorage.getItem("user_role") === "franchisor_admin" ? ( */}
                                   {/* <Dropdown>
