@@ -118,10 +118,10 @@ const AddOperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log("Get after upload")
+        console.log("Get after upload", response)
         setOperatingManualData(response?.result);
         setImageUrl(response?.result?.cover_image);
-        setVideoThumbnailUrl(response?.result?.thumbnail);
+        setVideoThumbnailUrl(response?.result?.video_thumbnail);
         setVideoUrl(response?.result?.url);
         let data = formSettingData;
         data['applicable_to_all'] =
@@ -832,7 +832,8 @@ useEffect(() =>{
                                 />
                               </div>
                             </div> */}
-                            {/* <Button
+                            {pageTitle ==="Edit Operating manual" &&
+                              <Button
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
@@ -841,7 +842,9 @@ useEffect(() =>{
                               }}
                             >
                               <img src="../../img/removeIcon.svg" />
-                            </Button> */}
+                            </Button>
+                            }
+                          
                           </div>
                           <p className="form-errors">
                             {errors.reference_video}
