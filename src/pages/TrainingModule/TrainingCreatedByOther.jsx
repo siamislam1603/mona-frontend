@@ -172,6 +172,8 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
+      let tempData = otherTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+      setOtherTrainingData(tempData);
       setTrainingDeleteMessage(response.data.message);
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);

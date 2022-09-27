@@ -208,6 +208,8 @@ const TrainingCreatedByMe = ({ filter }) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
+      let tempData = myTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+      setMyTrainingData(tempData);
       setTrainingDeleteMessage(response.data.message);
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
