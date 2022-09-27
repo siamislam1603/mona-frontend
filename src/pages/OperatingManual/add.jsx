@@ -14,6 +14,8 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
+import DropAllFile from "../../components/DragDropMultiple";
+
 import 'react-toastify/dist/ReactToastify.css';
 import { includes } from 'lodash';
 let selectedUserId = '';
@@ -48,6 +50,8 @@ const AddOperatingManual = () => {
   const [wordCount, setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
+  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
+
 
   let description = useRef(null)
 
@@ -395,6 +399,7 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
+    console.log("Upload file function call",videoTutorialFiles)
     console.log("file---->", file);
     if (name === 'cover_image') {
       if (file.size > 10 * 1048576) {
@@ -417,8 +422,8 @@ const AddOperatingManual = () => {
       }
 
     }
-    if (name === 'reference_video') {
-      console.log("FIle inside",file.name.split(".").pop())
+    if (name === 'reference_video' || videoTutorialFiles[0].type === "video/x-flv") {
+      console.log("FIle inside",file)
 
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
@@ -523,7 +528,13 @@ const AddOperatingManual = () => {
  
 // console.log("Oepratiing",errors)
 console.log("THe operating manual",operatingManualData)
+console.log("THe video file",videoTutorialFiles)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
+useEffect(() =>{
+  if(videoTutorialFiles?.length>0){
+    uploadFiles()
+  }
+},[videoTutorialFiles])
   return (
     <>
       <div id="main">
@@ -789,6 +800,7 @@ console.log("THe operating manual",operatingManualData)
                                   />
                                   Add Video
                                 </span>
+
                                 <Form.Control
                                   className="add_image_input"
                                   type="file"
@@ -860,6 +872,14 @@ console.log("THe operating manual",operatingManualData)
                         </div>
                       </Col>
                     </Row>
+
+                    <DropAllFile
+                                  title="Videos"
+                                  type="video"
+                                  // setUploadError={setVideoFileErrorMessage}
+                                  onSave={setVideoTutorialFiles}
+
+                               />
                   </div>
                   <Row>
                     <Col sm={12}>
