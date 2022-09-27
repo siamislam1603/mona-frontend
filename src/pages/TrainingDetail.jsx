@@ -9,6 +9,7 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import { Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const getRoleName = (role) => {
   const obj = {
@@ -27,6 +28,7 @@ const getRoleName = (role) => {
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
+
   const [trainingDetails, setTrainingDetails] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
@@ -40,6 +42,7 @@ const TrainingDetail = () => {
   const [users, setUsers] = useState();
   const [relatedForms, setRelatedForms] = useState();
   const [showSurveyForm, setShowSurveyForm] = useState(false);
+  const [nonParticipants, setNonParticipants] = useState(null);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -120,6 +123,22 @@ const TrainingDetail = () => {
     }  
   };
 
+  const fetchNonParticipants = async () => {
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${localStorage.getItem('user_id')}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    console.log('RESPONSE NON PARTICIPANTS:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      let { finalResponse } = response.data;
+
+      setNonParticipants(finalResponse.slice(0, 6));
+    }
+  }
+
   const fetchTrainingFormDetails = async (id) => {
     const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
 
@@ -168,11 +187,14 @@ const TrainingDetail = () => {
     }
   }, []);
 
+  useEffect(() => {
+    fetchNonParticipants();
+  }, []);
+
   users && console.log('USERS:', users);
   
   trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  console.log('IS BUTTON VISIBLE:', hideTrainingFinishButton);
-  // console.log('VIDEO URL:', fetchVideoDuration('https://www.youtube.com/watch?v=wi5h46V6NQM'));
+  nonParticipants && console.log('NON PARTICIPANTS:', nonParticipants);
   return (
     <>
       <div id="main">
@@ -289,7 +311,7 @@ const TrainingDetail = () => {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
-                              <h3 className="title-sm">Training Participants</h3>
+                              <h3 className="title-sm">Training Participants Attended</h3>
                               <div className="column-list files-list three-col">
                                 {
                                   users.map(user => {
@@ -299,6 +321,33 @@ const TrainingDetail = () => {
                                         <div className="name"><a href="">{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                         <div className="completed-col">
                                           Completed on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
+                            </div>
+                          </Col>
+                        }
+
+                        {
+                          nonParticipants &&
+                          <Col md={12}>
+                            <div className="training-participants-sec mb-5">
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 className="title-sm">Training Participants Not Attended</h3>
+                                <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>
+                              </div>
+                              <div className="column-list files-list three-col">
+                                {
+                                  nonParticipants.map(user => {
+                                    return (
+                                      <div className="item">
+                                        <div className="userpic"><a href=""><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
+                                        <div className="name"><a href="">{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                        <div className="completed-col">
+                                          Assigned on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                         </div>
                                       </div>
                                     );

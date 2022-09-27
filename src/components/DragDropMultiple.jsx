@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
+  console.log('FILE>>>>>>>>>>>', file);
   let fileType = file.type.split("/")[0];
+  console.log('FILE TYPE:', fileType);
 
   if(fileType === 'video') {
     console.log('FILE IS A VIDEO!');
@@ -21,11 +23,21 @@ function fileSizeValidator(file) {
     console.log('FILE IS A DOCUMENT!');
     let fileSize = bytesToMegaBytes(file.size);
     console.log('FILE SIZE:', fileSize);
-    if(fileSize > 5) {
+    if(fileSize > 10) {
       return {
         code: "file-too-large",
-        message: `File should be less than ${5}MB`
+        message: `File should be less than ${10}MB`
       };
+    }
+  } else if(fileType === "image") {
+    console.log('FILE IS AN IMAGE');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 10) {
+      return {
+        code: "file-too-large",
+        message: `Image should be less than ${10}MB`
+      }
     }
   }
 
