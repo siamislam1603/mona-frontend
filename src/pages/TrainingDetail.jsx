@@ -28,6 +28,7 @@ const getRoleName = (role) => {
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
+
   const [trainingDetails, setTrainingDetails] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
@@ -310,7 +311,7 @@ const TrainingDetail = () => {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
-                              <h3 className="title-sm">Training Participants</h3>
+                              <h3 className="title-sm">Training Participants Attended</h3>
                               <div className="column-list files-list three-col">
                                 {
                                   users.map(user => {
@@ -335,8 +336,8 @@ const TrainingDetail = () => {
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <h3 className="title-sm">Training Non-participants</h3>
-                                <Link to="/training-createdby-me" className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>
+                                <h3 className="title-sm">Training Participants Not Attended</h3>
+                                <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>
                               </div>
                               <div className="column-list files-list three-col">
                                 {

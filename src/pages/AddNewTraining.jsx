@@ -105,6 +105,8 @@ const AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
   const [docErrorMessage, setDocErrorMessage] = useState(null);
+  const [imageFileErrorMessage, setImageFileErrorMessage] = useState(null);
+  const [imageFileError, setImageFileError] = useState(null);
 
 
   const [popupVisible, setPopupVisible] = useState(false);
@@ -437,9 +439,15 @@ const AddNewTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [docErrorMessage])
+  
+  useEffect(() => {
+    setImageFileError(docErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [imageFileErrorMessage])
 
   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-
+  console.log('CURRENT TIME:', moment().format('HH:mm'));
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -664,6 +672,7 @@ const AddNewTraining = () => {
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
                             setPopupVisible={setPopupVisible}
+                            setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
                           />
 
@@ -676,6 +685,14 @@ const AddNewTraining = () => {
                           }
                           <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
                           <small className="fileinput mt-1 mb-1">(1162 x 402 resolution)</small>
+                          {
+                            imageFileError  &&
+                            getUniqueErrors(imageFileError).map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only one image file allowed" : errorObj}</p>
+                              )
+                            })
+                          }
                           {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
@@ -779,7 +796,7 @@ const AddNewTraining = () => {
                         placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         name="start_date"
                         value={trainingSettings?.start_date}
-                        min={new Date().toISOString().slice(0, 10)}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
 
@@ -798,6 +815,8 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        min={moment().format('HH:mm')}
+                        max
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -820,6 +839,7 @@ const AddNewTraining = () => {
                         className="datepicker"
                         placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={trainingSettings?.end_date}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
                           setTrainingSettingErrors(prevState => ({
@@ -827,7 +847,6 @@ const AddNewTraining = () => {
                             start_time: null
                           }));
                         }}
-                        min={trainingSettings?.start_date}
                       />
                     </Form.Group>
                   </Col>
@@ -1177,8 +1196,7 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
-                        className="datepicker"
-                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
+                        min={moment().format('HH:mm')}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
