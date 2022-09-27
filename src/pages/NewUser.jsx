@@ -981,7 +981,7 @@ const NewUser = () => {
                             {
                               (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
                               <Select
-                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0]?.label || "Select"}
+                                placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Select"}
                                 isDisabled={true}
                                 closeMenuOnSelect={true}
                                 hideSelectedOptions={true}
