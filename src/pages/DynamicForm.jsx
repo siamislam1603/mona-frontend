@@ -560,7 +560,20 @@ const DynamicForm = () => {
                           {formData[item]?.map((inner_item, index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
+                                (inner_item.form_field_permissions[0].fill_access_users || []).includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")) && location?.state?.id ? (
+                                  <InputFields
+                                    {...inner_item}
+                                    signature_flag={signatureAccessFlag}
+                                    field_data={fieldData}
+                                    error={errors}
+                                    onChange={(key, value, type) => {
+                                      setField("",key, value, type);
+                                    }}
+                                  />
+                                ) :
+                                (inner_item.form_field_permissions[0].fill_access_users || []).includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")) &&
                               <>
+                              {console.log("inner_item111111",inner_item.form_field_permissions[0].fill_access_users)}
                                 {index === 0 && (
                                   <h6 className="text-capitalize">
                                     {item.split('_').join(' ')}

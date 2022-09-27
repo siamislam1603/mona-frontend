@@ -84,7 +84,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
         setfullLoaderStatus(false)
       }
     } catch (error) {
-      setMyTrainingData([])
+      // setMyTrainingData([])
     }
 
   }
@@ -106,7 +106,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
     } catch (error) {
       setfullLoaderStatus(false)
-      setOtherTrainingData([])
+      // setOtherTrainingData([])
 
     }
 
@@ -333,7 +333,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
