@@ -10,126 +10,70 @@ import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../components/App';
 import { useEffect } from "react";
 import axios from "axios";
-import { FullLoader } from "../../components/Loader";
+import { slice } from 'lodash';
 import moment from "moment";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
+const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   const { trainingId } = useParams();
   const navigate = useNavigate();
   // toast.configure();
 
   // STATES
   const [nonParticipants, setNonParticipants] = useState(null);
-  const [resultCount, setResultCount] = useState(0);
-  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const [totalLoadedNonParticipants, setTotalLoadedNonParticipants] = useState(0);
-  const [totalNonParticipantCount, setTotalNonParticipantCount] = useState(0);
+  const [isCompleted, setIsCompleted] = useState(false)
+  const [index, setIndex] = useState(9)
+  let initialUsers = slice(nonParticipants, 0, index)
   const [paginationProps, setPaginationProps] = useState({
-    limit: 10,
-    offset: 0,
+    // limit: 9,
+    // offset: 0,
     search: ""
   })
 
   const fetchNonParticipants = async () => {
     try {
-      let { limit, offset, search } = paginationProps;
+      let { search } = paginationProps;
+      // if(search) {
+      //   setIndex(0);
+      //   initialUsers = slice(nonParticipants, 0, index);
+      // }
+
       let token = localStorage.getItem('token');
       let userId = localStorage.getItem('user_id');
 
-      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=${search ? "" : limit}&offset=${search ? "" : offset}&search=${search}`, {
+      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?search=${search}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
 
-      console.log('RESPONSE NON PARTICIPANTS:', response);
       if(response.status === 200 && response.data.status === "success") {
         let { finalResponse } = response.data;
-
-        if(finalResponse && finalResponse?.length){
-          setTotalLoadedNonParticipants(totalLoadedNonParticipants + finalResponse.length);
-        }
-        setTotalNonParticipantCount(finalResponse.length);
-        
-        setfullLoaderStatus(false)
-        setNonParticipants(finalResponse);
+        setNonParticipants(finalResponse);  
       }
     } catch(error) {
-      setfullLoaderStatus(false)
     }
   };
 
-  const fetchNonParticipantCount = async () => {
-    try {
-      let token = localStorage.getItem('token');
-      let userId = localStorage.getItem('user_id');
-
-      let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?limit=&offset=&search=`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      console.log('COUNT RESPONSE:', response);
-      if(response.status === 200 && response.data.status === "success") {
-        let { finalResponse } = response.data;
-        setResultCount(finalResponse.length);
-      }
-    } catch(error) {
-      setfullLoaderStatus(false)
+  const loadMore = () => {
+    setIndex(index + 5)
+    console.log(index)
+    if (index >= nonParticipants.length) {
+      setIsCompleted(true)
+    } else {
+      setIsCompleted(false)
     }
-  };
+  }
 
   useEffect(() => {
     fetchNonParticipants();
-    fetchNonParticipantCount();
   }, []);
 
-  const handelLoadMore = (e) => {
-    e.preventDefault()
-    LoadMoreALl()
-  }
-
-  const LoadMoreALl = async (e) => {
-    let { limit, search } = paginationProps;
-    let token = localStorage.getItem('token');
-    let userId = localStorage.getItem('user_id');
-    const response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${userId}?offset=${totalLoadedNonParticipants}&limit=${limit}&search=${search}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    
-    if(response.status === 200 && response.data.status === "success") {
-      let { finalResponse } = response.data;
-      if(finalResponse && finalResponse?.length){
-        setTotalLoadedNonParticipants(totalLoadedNonParticipants + finalResponse.length);
-        setNonParticipants(prevState => ([
-          ...prevState,
-          ...finalResponse
-        ]));
-      } else {
-        toast.success('No more results.', {
-          position: toast.POSITION.TOP_RIGHT
-        });
-      }
-    }
-  }
-
   useEffect(() => {
-    // setNonParticipants(null);
-    if(paginationProps?.search === "") {
-      setTotalLoadedNonParticipants(0);
-      setTotalNonParticipantCount(0);
-    }
     fetchNonParticipants();
-  }, [paginationProps?.search])
+  }, [paginationProps.search]);
   
-
-  console.log('TOTAL LOADED NON PARTICIPANTS:', totalLoadedNonParticipants);
-  console.log('TOTAL LOADED NON PARTICIPANT COUNT:', totalNonParticipantCount);
-  resultCount && console.log('RESULT COUNT:', resultCount);
   return (
     <>
       <ToastContainer />
@@ -144,7 +88,6 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   />
-                <FullLoader loading={fullLoaderStatus} />
                 <div className="entry-container">
                   <header className="title-head mynewForm-heading mb-3">
                     <div className="data-search d-md-flex w-100">
@@ -183,12 +126,12 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                     </div>
                   </header> 
                   {
-                    nonParticipants &&
+                    initialUsers &&
                     <Col md={12}>
                       <div className="training-participants-sec mb-5" style={{ marginTop: "2.5rem" }}>
                         <div className="column-list files-list three-col">
                           {
-                            nonParticipants.map(user => {
+                            initialUsers.map(user => {
                               return (
                                 <div className="item">
                                   <div className="userpic"><a><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
@@ -203,24 +146,28 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                         </div>
                       </div>
                     </Col>
-                  }        
+                  }  
+
                   {
-                    paginationProps?.search === '' ?
-                    totalLoadedNonParticipants < resultCount ? (
-                      <>
-                        <br></br>
-                        <div class="text-center">
-                          <button 
-                            type="button" 
-                            onClick={handelLoadMore} 
-                            className="btn btn-primary">
-                              Load More
-                          </button>
-                        </div>
-                      </>
-                      ) :''
-                      : ''
-                  }          
+                    paginationProps.search === "" &&
+                    <div style={{ justifyContent: 'center', display: initialUsers.length > 0 ? "flex": "none" }}>
+                      {isCompleted ? (
+                        <button 
+                          type="button" 
+                          onClick={loadMore} 
+                          className="btn btn-primary invisible">
+                            That's It
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={loadMore} 
+                          type="button" 
+                          className="btn btn-primary">
+                          Load More
+                        </button>
+                      )}
+                    </div>
+                   }      
                 </div>
               </div>
             </div>
@@ -231,4 +178,4 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   );
 };
 
-export default TrainingCreatedByOther;
+export default TrainingNonParticipant;
