@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import TopHeader from '../../components/TopHeader';
@@ -14,8 +14,6 @@ import {
 import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
-import DropAllFile from "../../components/DragDropMultiple";
-
 import 'react-toastify/dist/ReactToastify.css';
 import { includes } from 'lodash';
 let selectedUserId = '';
@@ -50,10 +48,6 @@ const AddOperatingManual = () => {
   const [wordCount, setWordCount] = useState(0)
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
-  const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
-
-
-  let description = useRef(null)
 
   useEffect(() => {
     getUserRoleData();
@@ -118,11 +112,10 @@ const AddOperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log("Get after upload", response)
         setOperatingManualData(response?.result);
         setImageUrl(response?.result?.cover_image);
         setVideoThumbnailUrl(response?.result?.video_thumbnail);
-        setVideoUrl(response?.result?.url);
+        setVideoUrl(response?.result?.reference_video);
         let data = formSettingData;
         data['applicable_to_all'] =
           response?.result?.permission?.accessible_to_all;
@@ -178,12 +171,12 @@ const AddOperatingManual = () => {
     }
   };
   const setOperatingManualField = (field, value) => {
-    
+
     setOperatingManualData({ ...operatingManualData, [field]: value });
     // console.log(field,value)
-    
-    console.log("THE VALUE",value,field)
-     
+
+    console.log("THE VALUE", value, field)
+
 
 
     let text = value
@@ -283,21 +276,8 @@ const AddOperatingManual = () => {
     const newErrors = createOperatingManualValidation(operatingManualData, wordCount);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      console.log("newErrors--->", newErrors);
+      console.log("newErrors--->", Object.keys(newErrors)[0]);
       document.getElementById(Object.keys(newErrors)[0]).focus();
-      if(newErrors.description){
-        // console.log("MEta description",document.getElementById('meta_description').current.focus())
-        // meta_description.current.focus();
-        // meta_description.current.focus();
-        // document.getElementById('meta_description').focus();
-        window.scrollTo({
-          top: description.current.offsetTop,
-          behavior: "smooth",
-          // You can also assign value "auto"
-          // to the behavior parameter.
-        });
-
-      }
     } else {
       upperRoleUser = getUpperRoleUser();
       var myHeaders = new Headers();
@@ -399,7 +379,6 @@ const AddOperatingManual = () => {
 
   const uploadFiles = async (name, file) => {
     let flag = false;
-    console.log("Upload file function call",videoTutorialFiles)
     console.log("file---->", file);
     if (name === 'cover_image') {
       if (file.size > 10 * 1048576) {
@@ -422,35 +401,38 @@ const AddOperatingManual = () => {
       }
 
     }
-    if (name === 'reference_video' || videoTutorialFiles[0].type === "video/x-flv") {
-      console.log("FIle inside",file)
+    if (name === 'reference_video') {
+      console.log("FIle inside", file)
 
-      if (videoTutorialFiles[0].size > 1024 * 1024 * 1024) {
+      if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File is too large. File limit 1 GB.';
         setErrors(errorData);
         flag = true;
       }
-      
-      // if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')&& file.name.split(".").pop() !="flv" ) {
-      //   let errorData = { ...errors };
-      //   errorData['reference_video'] = 'File format not supported.';
-      //   setErrors(errorData);
-      //   flag = true;
-      // }
-    }
 
+      if (
+        !file.type.includes('mp4') &&
+        !file.type.includes('mkv') &&
+        !file.type.includes('video/x-matroska')
+        && !file.type.includes('video/*')) {
+        let errorData = { ...errors };
+        errorData['reference_video'] = 'File format not supported.';
+        setErrors(errorData);
+        flag = true;
+      }
+    }
 
     if (flag === false) {
       if (name === 'cover_image') {
         setImageLoaderFlag(true);
       }
-      if (videoTutorialFiles?.length>0) {
+      if (name === 'reference_video') {
         setVideoLoaderFlag(true);
       }
-      let file1 = videoTutorialFiles[0];
+
       const body = new FormData();
-      body.append('image', file1);
+      body.append('image', file);
       body.append('description', 'operating manual');
       body.append('title', name);
       body.append('uploadedBy', 'vaibhavi');
@@ -464,16 +446,11 @@ const AddOperatingManual = () => {
         body: body,
         headers: myHeaders,
       })
-        .then((res) => 
-        
-        res.json()
-        )
+        .then((res) => res.json())
         .then((res) => {
-          console.log("res video after upload",res)
-          if (res.thumbnail) {
+          if (name === 'reference_video') {
             setVideoThumbnailUrl(res.thumbnail);
             setVideoUrl(res.url);
-            console.log("res video insdie ",res)
 
             setTimeout(() => {
               setVideoLoaderFlag(false);
@@ -529,16 +506,10 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
- 
-// console.log("Oepratiing",errors)
-console.log("THe operating manual",operatingManualData)
-console.log("THe video file",videoTutorialFiles)
-// console.log("PERMISSION SELECT",selectedUser,formSettingData)
-useEffect(() =>{
-  if(videoTutorialFiles?.length>0){
-    uploadFiles()
-  }
-},[videoTutorialFiles])
+
+  // console.log("Oepratiing",errors)
+  console.log("THe operating manual", operatingManualData)
+  // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>
       <div id="main">
@@ -684,7 +655,7 @@ useEffect(() =>{
                       </Col>
                     </Row>
                     <Row>
-                      <Col sm={12} ref={description}>
+                      <Col sm={12}>
                         <Form.Group>
                           <Form.Label id="description" className="formlabel">
                             Description *
@@ -795,17 +766,7 @@ useEffect(() =>{
                                 }
                               ></img>
                             </div>
-                            <DropAllFile
-                                  title="Videos"
-                                  type="video"
-                                  // setUploadError={setVideoFileErrorMessage}
-                                  onSave={setVideoTutorialFiles}
-                                  // videoUrl= {videoThumbnailUrl}
-                                  setVideoThumbnailUrl={setVideoThumbnailUrl}
-                                  setVideoUrl={setVideoUrl}
-                                  // operatinAdd ={false}
-                               />
-                            {/* <div className="add_image">
+                            <div className="add_image">
                               <div className="add_image_box">
                                 <span>
                                   <img
@@ -814,7 +775,6 @@ useEffect(() =>{
                                   />
                                   Add Video
                                 </span>
-
                                 <Form.Control
                                   className="add_image_input"
                                   type="file"
@@ -829,9 +789,8 @@ useEffect(() =>{
                                   }}
                                 />
                               </div>
-                            </div> */}
-                            {pageTitle ==="Edit Operating manual" &&
-                              <Button
+                            </div>
+                            <Button
                               variant="link"
                               className="remove_bin"
                               onClick={() => {
@@ -841,17 +800,12 @@ useEffect(() =>{
                             >
                               <img src="../../img/removeIcon.svg" />
                             </Button>
-                            }
-                          
                           </div>
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
                           <small className="fileinput">(mp4, flv & mkv)</small>
                           <small className="fileinput">(File limit 1 GB)</small>
-
-
-
                         </Form.Group>
                       </Col>
                     </Row>
@@ -889,8 +843,6 @@ useEffect(() =>{
                         </div>
                       </Col>
                     </Row>
-
-                   
                   </div>
                   <Row>
                     <Col sm={12}>
