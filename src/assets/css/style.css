@@ -716,7 +716,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .row>[class*=col-].floating-label.float-select .float-label{left:15px}
 .row>[class*=col-].floating-label.float-select .float-label.ml-3{left:0}
 input:-webkit-autofill{-webkit-animation-name:autofill;-webkit-animation-fill-mode:both}
-.btn{border-radius:10px;font-weight:400;padding:0 10px;line-height:43px;transition-duration:.4s;min-width:155px;white-space:nowrap}
+.btn{border-radius:10px;font-weight:400;padding:0 10px;line-height:43px;transition-duration:.4s;min-width:115px;white-space:nowrap}
 .btn-group-lg>.btn,.btn-lg{padding:.5rem 1rem;font-size:20px;line-height:1.5}
 .btn-lg{padding:15px 30px}
 .btn-sm{padding:0 1rem;line-height:40px}

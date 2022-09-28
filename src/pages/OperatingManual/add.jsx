@@ -399,7 +399,6 @@ const AddOperatingManual = () => {
       }
       if (name === 'reference_video') {
         setVideoLoaderFlag(true);
-
       }
 
       const body = new FormData();

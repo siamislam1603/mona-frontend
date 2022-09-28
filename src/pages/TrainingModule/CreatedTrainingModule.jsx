@@ -3,6 +3,7 @@ import { Col, Row, Dropdown, Modal, Form, Button } from "react-bootstrap";
 import { BASE_URL } from "../../components/App";
 import axios from "axios";
 import Multiselect from 'multiselect-react-dropdown';
+import moment from 'moment';
 import { FullLoader } from "../../components/Loader";
 import { Link } from "react-router-dom";
 
@@ -106,14 +107,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
     } catch (error) {
       setfullLoaderStatus(false)
-      setOtherTrainingData([])
+      // setOtherTrainingData([])
 
     }
 
   }
 
   const fetchFranchiseeUsers = async (franchisee_id) => {
-
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
@@ -130,7 +130,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   };
 
 
-  const handleTrainingDelete = async (trainingId) => {
+  const handleTrainingDelete = async (trainingId, stateName) => {
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -141,7 +141,21 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
-      setTrainingDeleteMessage(response.data.message);
+      if(stateName === "others") {
+        
+        let tempData = otherTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+        setOtherTrainingData(tempData);
+        setTrainingDeleteMessage(response.data.message);
+        // trainingCreatedByOther();
+
+      } else if(stateName === "me") {
+        
+        let tempData = myTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+        setMyTrainingData(tempData);
+        setTrainingDeleteMessage(response.data.message);
+        // trainingCreatedByMe();
+      
+      }
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
     }
@@ -277,7 +291,15 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
+                      <div className="datecol">
+                            {
+                              training.end_date !== null &&
+                              <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                            }
+                            <span className="time">{training.completion_time} {training.completion_in}</span>
+                          </div>
+                      </div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -291,7 +313,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             }}>Share</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
+                                handleTrainingDelete(training.id, "me")
                             }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -333,7 +355,15 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a> <span className="time">{training.completion_time}</span></div>
+                      <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a>
+                      <div className="datecol">
+                        {
+                          training.end_date !== null &&
+                          <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                        }
+                        <span className="time">{training.completion_time} {training.completion_in}</span>
+                      </div>
+                      </div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -347,7 +377,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             }}>Share</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
+                                handleTrainingDelete(training.id, "others")
                             }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>

@@ -8,145 +8,20 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment'
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import { FullLoader } from "../components/Loader";
 
-
-const columns = [
-  {
-    dataField: 'name',
-    text: 'Child Name',
-    formatter: (cell) => {
-      return (<>
-        <div className="user-list">
-          <span className="user-pic">
-            <img src="../img/audit-form.png" alt="" />
-          </span><span className="user-name">
-            {cell}
-          </span>
-        </div></>)
-    },
-  },
-  {
-    dataField: 'educatatoName',
-    text: 'Educator Name',
-    formatter: (cell) => {
-      cell = cell.split(",");
-      return (<>
-        {
-          cell[0] != "undefined" &&
-          <div className="user-list">
-            <span className="user-pic">
-              <img src={cell[1]} />
-            </span>
-            <span className="user-name">
-              {cell[0]}
-            </span>
-          </div>
-        }
-        {
-          cell[2] != "undefined" &&
-          <div className="user-list">
-            <span className="user-pic">
-              <img src={cell[3]} />
-            </span>
-            <span className="user-name">
-              {cell[2]}
-            </span>
-          </div>
-        }
-      </>)
-    },
-  },
-  {
-    dataField: "action",
-    text: "",
-    formatter: (cell) => {
-      cell = cell?.split(",");
-
-      return (<><div className="cta-col">
-        <Dropdown>
-          <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt="" />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div></>)
-    },
-  }
-];
-
-const columns1 = [
-  {
-    dataField: 'name',
-    text: 'Child Name',
-    formatter: (cell) => {
-      return (<>
-        <div className="user-list">
-          <span className="user-pic">
-            <img src="../img/audit-form.png" alt="" />
-          </span><span className="user-name">
-            {cell}
-          </span>
-        </div></>)
-    },
-  },
-  {
-    dataField: 'educatatoName',
-    text: 'Educator Name',
-    formatter: (cell) => {
-      cell = cell.split(",");
-      return (<>
-        {
-          cell[0] != "undefined" &&
-          <div className="user-list">
-            <span className="user-pic">
-              <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
-            </span>
-            <span className="user-name">
-              {cell[0]}
-            </span>
-          </div>
-        }
-        {
-          cell[2] != "undefined" &&
-          <div className="user-list">
-            <span className="user-pic">
-              <img src={cell[3]} />
-            </span>
-            <span className="user-name">
-              {cell[2]}
-            </span>
-          </div>
-        }
-      </>)
-    },
-  },
-  {
-    dataField: "action",
-    text: "",
-    formatter: (cell) => {
-      cell = cell?.split(",");
-      return (<><div className="cta-col">
-        <Dropdown>
-          <Dropdown.Toggle variant="transparent" id="ctacol">
-            <img src="../img/dot-ico.svg" alt="" />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div></>)
-    },
-  }
-];
 
 const FranchiseeDashboard = () => {
-  const [countUser, setcountUser] = React.useState(null);
-  const [latest_announcement, setlatest_announcement] = React.useState([{}]);
+  const [countUser, setcountUser] = useState({
+    totalUsers: 0,
+    totalLocations: 0,
+    newEnrollments: 0,
+    auditForms: 0,
+  });
+  const [latest_announcement, setlatest_announcement] = useState([{}]);
   const [enrollments, setEnrollments] = useState([])
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
-
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const announcement = () => {
     let token = localStorage.getItem('token');
@@ -220,19 +95,168 @@ const FranchiseeDashboard = () => {
       }
     }).then((response) => {
       setcountUser(response.data);
+      setfullLoaderStatus(false)
     }).catch((e) => {
       console.log("Error", e);
+      setfullLoaderStatus(false)
     })
   }
 
-  React.useEffect(() => {
+
+  useEffect(() => {
     count_User_Api();
     announcement();
+    Enrollments();
     FormData();
   }, []);
 
+  useEffect(() => {
 
+    if (localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
 
+    }
+
+    // Redirect to baseurl when not not specific Role
+    if (localStorage.getItem('user_role') !== 'franchisee_admin') {
+      window.location.href = '/';
+    }
+  }, []);
+
+  const columns = [
+    {
+      dataField: 'name',
+      text: 'Child Name',
+      formatter: (cell) => {
+        return (<>
+          <div className="user-list">
+            <span className="user-pic">
+              <img src="../img/audit-form.png" alt="" />
+            </span><span className="user-name">
+              {cell}
+            </span>
+          </div></>)
+      },
+    },
+    {
+      dataField: 'educatatoName',
+      text: 'Educator Name',
+      formatter: (cell) => {
+        cell = cell.split(",");
+        return (<>
+          {
+            cell[0] != "undefined" &&
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[1]} />
+              </span>
+              <span className="user-name">
+                {cell[0]}
+              </span>
+            </div>
+          }
+          {
+            cell[2] != "undefined" &&
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[3]} />
+              </span>
+              <span className="user-name">
+                {cell[2]}
+              </span>
+            </div>
+          }
+        </>)
+      },
+    },
+    {
+      dataField: "action",
+      text: "",
+      formatter: (cell) => {
+        cell = cell?.split(",");
+
+        return (<><div className="cta-col">
+          <Dropdown>
+            <Dropdown.Toggle variant="transparent" id="ctacol">
+              <img src="../img/dot-ico.svg" alt="" />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div></>)
+      },
+    }
+  ];
+
+  const columns1 = [
+    {
+      dataField: 'name',
+      text: 'Child Name',
+      formatter: (cell) => {
+        return (<>
+          <div className="user-list">
+            <span className="user-pic">
+              <img src="../img/audit-form.png" alt="" />
+            </span><span className="user-name">
+              {cell}
+            </span>
+          </div></>)
+      },
+    },
+    {
+      dataField: 'educatatoName',
+      text: 'Educator Name',
+      formatter: (cell) => {
+        cell = cell.split(",");
+        return (<>
+          {
+            cell[0] != "undefined" &&
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
+              </span>
+              <span className="user-name">
+                {cell[0]}
+              </span>
+            </div>
+          }
+          {
+            cell[2] != "undefined" &&
+            <div className="user-list">
+              <span className="user-pic">
+                <img src={cell[3]} />
+              </span>
+              <span className="user-name">
+                {cell[2]}
+              </span>
+            </div>
+          }
+        </>)
+      },
+    },
+    {
+      dataField: "action",
+      text: "",
+      formatter: (cell) => {
+        cell = cell?.split(",");
+        return (<><div className="cta-col">
+          <Dropdown>
+            <Dropdown.Toggle variant="transparent" id="ctacol">
+              <img src="../img/dot-ico.svg" alt="" />
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href={`/child-enrollment-init/edit/${cell[0]}/${cell[1]}`}>View</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div></>)
+      },
+    }
+  ];
 
   const getAddedTime = (str) => {
     const Added = moment(str).format('DD/MM/YYYY')
@@ -258,48 +282,13 @@ const FranchiseeDashboard = () => {
   }
 
 
-
-  React.useEffect(() => {
-    announcement();
-    // count_Api();
-    Enrollments();
-  }, []);
-
-
-
-
-
-  useEffect(() => {
-
-    if (localStorage.getItem('success_msg')) {
-      setTopSuccessMessage(localStorage.getItem('success_msg'));
-
-      localStorage.removeItem('success_msg');
-      setTimeout(() => {
-
-        setTopSuccessMessage(null);
-
-      }, 3000);
-
-    }
-
-    // Redirect to baseurl when not not specific Role
-    if (localStorage.getItem('user_role') !== 'franchisee_admin') {
-      window.location.href = '/';
-    }
-
-
-
-  }, []);
-
-
   return (
     <>
 
       {
         topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
-
+      <FullLoader loading={fullLoaderStatus} />
       <div id="main">
         <section className="mainsection">
           <Container>
