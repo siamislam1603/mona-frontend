@@ -729,7 +729,7 @@ const UserManagement = () => {
                             </Dropdown>
                             {
                               verifyPermission("user_management", "add") &&
-                              <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                              <Link to="/new-user" className="btn btn-primary me-3">+ Create New User</Link>
                             }
                             <Dropdown>
                               <Dropdown.Toggle
