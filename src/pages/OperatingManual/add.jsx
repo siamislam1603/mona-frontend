@@ -284,7 +284,6 @@ const AddOperatingManual = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       console.log("newErrors--->", newErrors);
-        
       document.getElementById(Object.keys(newErrors)[0]).focus();
       if(newErrors.description){
         // console.log("MEta description",document.getElementById('meta_description').current.focus())
@@ -448,7 +447,6 @@ const AddOperatingManual = () => {
       }
       if (videoTutorialFiles?.length>0) {
         setVideoLoaderFlag(true);
-
       }
       let file1 = videoTutorialFiles[0];
       const body = new FormData();

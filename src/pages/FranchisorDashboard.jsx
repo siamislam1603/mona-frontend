@@ -1,26 +1,32 @@
 
 import React, { useState, useEffect } from "react";
-import { Button, Col, Container, Row, Form, Dropdown } from "react-bootstrap";
+import { Col, Container, Row, Form, Dropdown } from "react-bootstrap";
 import LeftNavbar from "../components/LeftNavbar";
 import TopHeader from "../components/TopHeader";
 import { Link, useNavigate } from 'react-router-dom';
-import { Progress } from 'react-sweet-progress';
 import "react-sweet-progress/lib/style.css";
 import BootstrapTable from "react-bootstrap-table-next";
 import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
-
+import { FullLoader } from "../components/Loader";
 
 const FranchisorDashboard = () => {
   const navigate = useNavigate();
-  const [count, setcount] = React.useState();
+  const [count, setcount] = React.useState({
+    totalFranchisees: 0,
+    totalUsers: 0,
+    totalChildren: 0,
+    noOfEnrollmentFormsSignedInPast7Days: 0,
+    usersYetToLogin: 0,
+
+  });
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [latest_announcement, setlatest_announcement] = React.useState([{}]);
-  const [forms_count, setForms_count] = React.useState([])
+  const [forms_count, setForms_count] = useState([0])
   const [formData, setFormData] = useState([])
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
-
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const columns1 = [
     {
@@ -102,8 +108,10 @@ const FranchisorDashboard = () => {
       }
     }).then((response) => {
       setcount(response.data);
+      setfullLoaderStatus(false)
     }).catch((e) => {
       console.log(e);
+      setfullLoaderStatus(false)
     })
   }
 
@@ -185,7 +193,7 @@ const FranchisorDashboard = () => {
         topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
 
-
+      <FullLoader loading={fullLoaderStatus} />
       <div id="main">
         <section className="mainsection">
           <Container>
