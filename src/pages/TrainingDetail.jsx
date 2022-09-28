@@ -68,17 +68,17 @@ const TrainingDetail = () => {
       let today = moment().format('YYYY-MM-DD');
       let currentUserId = localStorage.getItem('user_id');
       let currentUserRole = localStorage.getItem('user_role');
-      console.log('CURRENT USER ROLE:', currentUserRole);
-      console.log('CURRENT USER ID:', currentUserId);
 
-      if(due_date < today && addedBy !== currentUserId && currentUserRole !== 'franchisor_admin') {
+      if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
       } else {
         setTrainingDetails(training);
       }
     } else if(response.status === 200 && response.data.status === "fail") {
       const { message } = response.data;
+      console.log('MESSAGE:', message);
       setPopupNotification(message);
+      setTrainingDeletePopup(true);
     }
   }
 
@@ -487,7 +487,6 @@ const TrainingDetail = () => {
       }
 
       {
-        popupNotification &&
         <Modal 
           show={trainingDeletePopup}
           onHide={() => setTrainingDeletePopup(false)}>

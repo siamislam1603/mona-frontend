@@ -348,8 +348,8 @@ const UserManagement = () => {
       setfullLoaderStatus(false)
     }
     if (response.status === 200) {
-
       const { users } = response.data;
+      console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
@@ -430,6 +430,9 @@ const UserManagement = () => {
 
 
   const handleApplyFilter = async () => {
+    if(openFilter === true) {
+      setOpenFilter(false);
+    }
     fetchUserDetails();
   }
 
@@ -583,6 +586,7 @@ const UserManagement = () => {
 
 
   const csvLink = useRef();
+  openFilter && console.log('OPEN FILTER:', openFilter);
   return (
     <>
       <div id="main">
@@ -642,11 +646,14 @@ const UserManagement = () => {
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 variant="btn-outline"
-                                onClickCapture={() => setOpenFilter(!openFilter)}
+                                onClickCapture={() => {
+                                  if(openFilter === false)
+                                  setOpenFilter(true)
+                                }}
                               >
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
-                              <Dropdown.Menu style={{ display: openFilter ? "block" : "none" }}>
+                              <Dropdown.Menu style={{ display: openFilter === true ? "block" : "none" }}>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
@@ -664,7 +671,7 @@ const UserManagement = () => {
                                             id={`${role.value}-${index}`}
                                             checked={filter === `${role.value}`}
                                             onChange={(event) => {
-                                              // console.log(event.target.value);
+                                              console.log(event.target.value);
                                               setFilter(event.target.value)
                                             }}
                                           />
@@ -698,16 +705,20 @@ const UserManagement = () => {
                                   <Button
                                     variant="transparent"
                                     type="submit"
-                                    onClick={() => { setFilter(''); }}
+                                    onClick={() => { 
+                                      setFilter('');
+                                      if(openFilter === true) {
+                                        setOpenFilter(false);
+                                      } 
+                                    }}
                                   >
                                     Reset
                                   </Button>
                                   <Button
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => { 
+                                    onClickCapture={() => { 
                                       handleApplyFilter(filter);
-                                      setOpenFilter(!openFilter);
                                      }}
                                   >
                                     Apply

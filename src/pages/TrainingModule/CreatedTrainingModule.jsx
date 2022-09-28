@@ -114,7 +114,6 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }
 
   const fetchFranchiseeUsers = async (franchisee_id) => {
-
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
@@ -131,7 +130,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   };
 
 
-  const handleTrainingDelete = async (trainingId) => {
+  const handleTrainingDelete = async (trainingId, stateName) => {
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -142,7 +141,21 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
-      setTrainingDeleteMessage(response.data.message);
+      if(stateName === "others") {
+        
+        let tempData = otherTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+        setOtherTrainingData(tempData);
+        setTrainingDeleteMessage(response.data.message);
+        // trainingCreatedByOther();
+
+      } else if(stateName === "me") {
+        
+        let tempData = myTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+        setMyTrainingData(tempData);
+        setTrainingDeleteMessage(response.data.message);
+        // trainingCreatedByMe();
+      
+      }
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
     }
@@ -300,7 +313,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             }}>Share</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
+                                handleTrainingDelete(training.id, "me")
                             }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -364,7 +377,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             }}>Share</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
+                                handleTrainingDelete(training.id, "others")
                             }}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>

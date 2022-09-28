@@ -27,7 +27,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const [totalLoadedNonParticipants, setTotalLoadedNonParticipants] = useState(0);
   const [totalNonParticipantCount, setTotalNonParticipantCount] = useState(0);
   const [paginationProps, setPaginationProps] = useState({
-    limit: 10,
+    limit: 9,
     offset: 0,
     search: ""
   })
@@ -45,9 +45,13 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       });
 
       console.log('RESPONSE NON PARTICIPANTS:', response);
+      // RESETTING THE COUNTER
+      setTotalLoadedNonParticipants(0);
+      setTotalNonParticipantCount(0);
+      setNonParticipants(null);
       if(response.status === 200 && response.data.status === "success") {
         let { finalResponse } = response.data;
-
+        console.log('FINAL RESPONSE:', finalResponse);
         if(finalResponse && finalResponse?.length){
           setTotalLoadedNonParticipants(totalLoadedNonParticipants + finalResponse.length);
         }
@@ -122,6 +126,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     if(paginationProps?.search === "") {
       setTotalLoadedNonParticipants(0);
       setTotalNonParticipantCount(0);
+      setNonParticipants(null); 
     }
     fetchNonParticipants();
   }, [paginationProps?.search])
