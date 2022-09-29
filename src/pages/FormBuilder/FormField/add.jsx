@@ -709,6 +709,14 @@ const AddFormField = (props) => {
                                     }}
                                   >
                                     <option
+                                      value="text_headings"
+                                      selected={
+                                        form[index]?.field_type === 'text_headings'
+                                      }
+                                    >
+                                      Text
+                                    </option>
+                                    <option
                                       value="text"
                                       selected={
                                         form[index]?.field_type === 'text'
@@ -739,6 +747,14 @@ const AddFormField = (props) => {
                                       }
                                     >
                                       Date
+                                    </option>
+                                    <option
+                                      value="time"
+                                      selected={
+                                        form[index]?.field_type === 'time'
+                                      }
+                                    >
+                                      Time
                                     </option>
                                     <option
                                       value="image_upload"
@@ -1123,6 +1139,16 @@ const AddFormField = (props) => {
                                         }}
                                       >
                                         <option
+                                          value="text_headings"
+                                          selected={
+                                            Object.values(item)[0][
+                                              'field_type'
+                                            ] === 'text_headings'
+                                          }
+                                        >
+                                          Text
+                                        </option>
+                                        <option
                                           value="text"
                                           selected={
                                             Object.values(item)[0][
@@ -1161,6 +1187,16 @@ const AddFormField = (props) => {
                                           }
                                         >
                                           Date
+                                        </option>
+                                        <option
+                                          value="time"
+                                          selected={
+                                            Object.values(item)[0][
+                                              'field_type'
+                                            ] === 'time'
+                                          }
+                                        >
+                                          Time
                                         </option>
                                         <option
                                           value="image_upload"
