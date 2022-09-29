@@ -65,21 +65,25 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
     }
   }
   const deleteAnnouncement = async (id) =>{
-    const token = localStorage.getItem('token');
-    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }); 
+      console.log("The response after delete",response)
+      if(response.status === 200){
+          setTopMessage("Delete succussfully")
+          // myAnnouncementData()
+          removeItem(id)
+  
+          setTimeout(() =>{
+            setTopMessage(null)
+        },3000)
       }
-    }); 
-    console.log("The response after delete",response)
-    if(response.status === 200){
-        setTopMessage("Delete succussfully")
-        // myAnnouncementData()
-        removeItem(id)
-
-        setTimeout(() =>{
-          setTopMessage(null)
-      },3000)
+    } catch (error) {
+      console.log("The response after delete",error)
     }
   }
 

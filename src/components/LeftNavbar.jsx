@@ -114,8 +114,6 @@ const LeftNavbar = () => {
     // }
   };
 
-  console.log("Charceter",permissionList)
-
   useEffect(() => {
     var user_dashboar_link = '';
     if (localStorage.getItem('user_role') === 'coordinator')

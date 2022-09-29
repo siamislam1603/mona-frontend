@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import { Col, Form } from "react-bootstrap";
 
 const TextArea = (props) => {
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[])
   const { ...controls } = props;
   return (
     <Col sm={6}>
@@ -11,6 +18,7 @@ const TextArea = (props) => {
           as="textarea"
           rows={controls.row ? controls.row : 3}
           name={controls.field_name}
+          id={controls.field_name}
           maxLength={1200}
 
           className="child_input"
@@ -23,7 +31,7 @@ const TextArea = (props) => {
           isInvalid={!!controls.error[controls.field_name]}
         />
         <p style={{fontSize:"12px",marginBottom:"3px",marginLeft:"77%"}}>(Word Limit : 2000)</p>
-        <Form.Control.Feedback type="invalid">
+        <Form.Control.Feedback type="invalid" style={{marginTop:"-10px"}}>
           {controls.error[controls.field_name]}
         </Form.Control.Feedback>
       </div>

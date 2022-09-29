@@ -675,13 +675,11 @@ const EditTraining = () => {
                             </>) :
                               (<></>)
                             }
-                            <small className="fileinput mt-0">(png, jpg & jpeg)</small>
-                            <small className="fileinput mt-1">(1162 x 402 resolution, less than 10MB)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
 
-                        <Col md={6} className="mb-3">
+                        <Col md={6} className="mb-3 vidcol">
                           <Form.Group>
                             <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
@@ -690,8 +688,6 @@ const EditTraining = () => {
                               setUploadError={setVideoFileErrorMessage}
                               onSave={setVideoTutorialFiles}
                             />
-                            <small className="fileinput">(mp4, flv & mkv)</small>
-                            <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                             {
                               videoError  &&
                               getUniqueErrors(videoError).map(errorObj => {
@@ -706,7 +702,7 @@ const EditTraining = () => {
                                 fetchedVideoTutorialFiles.map((video, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                      <div className="pic"><img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} /></div>
                                       <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
                                       <img
                                         onClick={() => {
@@ -734,8 +730,6 @@ const EditTraining = () => {
                               setUploadError={setDocFileError}
                               onSave={setRelatedFiles}
                             />
-                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
                             {
                               docError  &&
                               getUniqueErrors(docError).map(errorObj => {
@@ -826,11 +820,11 @@ const EditTraining = () => {
                           className="datepicker"
                           placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
+                          min={moment().format('YYYY-MM-DD')}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
                             start_date: e.target.value
                           }))}
-                          max={trainingSettings?.end_date}
                         />
                       </Form.Group>
                     </Col>
@@ -857,11 +851,11 @@ const EditTraining = () => {
                           className="datepicker"
                           placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.end_date}
+                          min={moment().format('YYYY-MM-DD')}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
                             end_date: e.target.value
                           }))}
-                          min={trainingSettings?.start_date}
                         />
                       </Form.Group>
                     </Col>

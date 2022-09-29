@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
 const Radio = (props) => {
@@ -14,12 +14,18 @@ const Radio = (props) => {
     e.preventDefault();
     props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
   };
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[])
 
   return (
     <>
       <Col sm={6}>
         <Form.Group className='form-input-section'>
-          <Form.Label>{controls.field_label}</Form.Label>
+          <Form.Label id={controls.field_name}>{controls.field_label}</Form.Label>
           <div className="new-form-radio flex_wrap_radio">
             {eval(controls.option)?.map((item, index) => {
               return (
@@ -27,18 +33,21 @@ const Radio = (props) => {
                   {Object.keys(eval(controls.option)[index])[0] ===
                   Object.values(eval(controls.option)[index])[0] ? (
                     <div className="new-form-radio-box">
-                      <label for={Object.keys(item)[0]}>
+                      <label for={Object.keys(item)[0]+props?.diff_index}>
+                        {console.log("props.field_data",props.field_name, Object.keys(item)[0])}
                         <input
                           type="radio"
+                          key={props?.diff_index}
                           value={Object.keys(item)[0]}
                           name={controls.field_name}
-                          id={Object.keys(item)[0]}
+                          id={Object.keys(item)[0]+props?.diff_index}
                           onClick={(e) => {
+                            console.log("e.target.name--->",controls.field_name);
                             props.onChange(e.target.name, e.target.value,"radio");
                             setOptionValue(e.target.value);
                             setIndex(index);
                           }}
-                          checked={props.field_data && props.field_data.fields[`${controls.field_name}`]===Object.keys(item)[0]}
+                          // checked={props.field_data && props.field_data.fields[`${controls.field_name}`]===Object.keys(item)[0]+props?.diff_index}
                         />
                         <span className="radio-round"></span>
                         <p>{Object.keys(item)[0]}</p>
@@ -47,14 +56,14 @@ const Radio = (props) => {
                   ) : (
                     <>
                       <div className="new-form-radio-box">
-                        <label for={Object.keys(item)[0]}>
+                        <label for={Object.keys(item)[0]+props?.diff_index}>
                           <input
                             type="radio"
                             value={Object.keys(item)[0]}
                             name={controls.field_name}
-                            id={Object.keys(item)[0]}
+                            id={Object.keys(item)[0]+props?.diff_index}
                             onClick={(e) => {
-                              props.onChange(e.target.name, e.target.value);
+                              props.onChange(e.target.name, e.target.value,"radio");
                               setOptionValue(e.target.value);
                               setIndex(index);
                             }}

@@ -683,8 +683,6 @@ const AddNewTraining = () => {
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-                          <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
-                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB)</small>
                           {
                             imageFileError  &&
                             getUniqueErrors(imageFileError).map(errorObj => {
@@ -699,7 +697,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3 relative">
+                      <Col md={6} className="mb-3 relative vidcol">
                         <Form.Group>
                           <Form.Label>Upload Videos</Form.Label>
                           <DropAllFile
@@ -708,8 +706,6 @@ const AddNewTraining = () => {
                             setUploadError={setVideoFileErrorMessage}
                             onSave={setVideoTutorialFiles}
                           />
-                          <small className="fileinput">(mp4, flv & mkv)</small>
-                          <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                           {
                             videoFileError  &&
                             getUniqueErrors(videoFileError).map(errorObj => {
@@ -729,8 +725,6 @@ const AddNewTraining = () => {
                             setUploadError={setDocErrorMessage}
                             onSave={setRelatedFiles}
                           />
-                          <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                          <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
                           {
                             docFileError  &&
                             getUniqueErrors(docFileError).map(errorObj => {

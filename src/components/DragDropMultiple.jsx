@@ -132,7 +132,19 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
         <input {...getInputProps()} />
         <span className="text-center uploadfile cursor">
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> {module === "user-management" ? "Upload": "Add" } {title}
-        </span>
+        </span>        
+        {
+          type === "video" ?
+          <div style={{ marginTop: "5px" }}>
+            <small className="fileinput">(mp4, flv & mkv)</small>
+            <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
+          </div>
+          :
+          <div style={{ marginTop: "5px" }}>
+            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
+            <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
+          </div>
+        }
       </div>
 
       {theFiles ? (
@@ -159,7 +171,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
         <ul>
           {
             data && data?.map((file, index) => (
-              <li className="mt-3" key={index}>
+              <li className="mt-1" key={index}>
                 {file.path}
                 {/* {file.path} - {file.size} bytes */}
                 <span className="ms-2">

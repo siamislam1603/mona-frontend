@@ -9,6 +9,10 @@ export const DynamicFormValidation = (
 ) => {
   console.log("signature_access_flag",signature_access_flag);
   let newErrors = {};
+  if (behalf_of_flag === true) {
+    if (!behalf_of || behalf_of === '')
+      newErrors.behalf_of = 'Behalf of is required';
+  }
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
@@ -35,10 +39,7 @@ export const DynamicFormValidation = (
       }
     });
   });
-  if (behalf_of_flag === true) {
-    if (!behalf_of || behalf_of === '')
-      newErrors.behalf_of = 'Behalf of is required';
-  }
+  
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
@@ -668,23 +669,23 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
   
   if (!postalCode) errors.postalCode = 'Post code is required';
   
-  if(postalCode.length > 0 && postalCode.length < 4)
+  if(postalCode?.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+  if(postalCode?.length === 4 && isNaN(parseInt(postalCode)))
     errors.postalCode = 'Post code must only consist digits';
   
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
   if(role === "guardian" && crn?.length > 0 && !(/^[0-9]+$/i.test(crn)))
     errors.crn = "Field should only contain digits";
   
-  if(email.length > 0 && !regex.test(email)) {
+  if(email?.length > 0 && !regex.test(email)) {
     errors.email = "Email format is invalid";
   }
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if(phone.length > 0 && phone.length < 4)
+  if(phone?.length > 0 && phone?.length < 4)
     errors.phone = "Phone number must have atleast 4 digits";
 
   if (password?.length > 0 && !regexPassword.test(password)) {
