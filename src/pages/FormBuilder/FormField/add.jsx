@@ -877,7 +877,7 @@ const AddFormField = (props) => {
                                                   const tempObj =
                                                     tempArr[index];
                                                   if (
-                                                    tempObj['option'].length > 2
+                                                    tempObj['option'].length > 1
                                                   ) {
                                                     counter++;
                                                     setCount(counter);
@@ -1317,7 +1317,7 @@ const AddFormField = (props) => {
                                                     if (
                                                       keyOfOption[
                                                         Object.keys(item)[0]
-                                                      ].option.length > 2
+                                                      ].option.length > 1
                                                     ) {
                                                       keyOfOption[
                                                         Object.keys(item)[0]
