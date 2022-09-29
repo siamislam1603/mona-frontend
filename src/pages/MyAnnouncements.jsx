@@ -148,7 +148,7 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
 useEffect(() =>{
   setTimeout(() => {
     setTopErrorMessage(null);
-  }, 3000)
+  }, 6000)
 },[topErrorMessage])
 
 useEffect(() =>{
@@ -225,7 +225,7 @@ useEffect(() =>{
                             setTopErrorMessage(null)
 
                           ):(
-                            setTopErrorMessage("Cannot edit started announcement")
+                            setTopErrorMessage("Cannot edit started announcement/event")
 
                           )
                           }
