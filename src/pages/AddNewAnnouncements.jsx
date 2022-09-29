@@ -39,6 +39,10 @@ const [loader, setLoader] = useState(false);
 const [timeError,setTimeError] = useState()
 const [addNewAnnouncement,setAddnewAnnouncement] = useState(false)
 const [userRoles, setUserRoles] = useState([]);
+const [docFileError, setDocFileError] = useState([]);
+const [docErrorMessage, setDocErrorMessage] = useState(null);
+const [videoFileError, setVideoFileError] = useState([]);
+
 const [announcementData, setAnnouncementData] = useState({
   user_roles: [],
   is_event:0,
@@ -351,6 +355,16 @@ const createAnnouncement = async (data) => {
       }
   };
 
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function(item) {
+        if(result.indexOf(item) < 0) {
+            result.push(item);
+        }
+    });
+
+   return result;
+  }
   
 
   useEffect(() => {
@@ -372,10 +386,16 @@ const createAnnouncement = async (data) => {
       setUserRole(role)
       localStorage.removeItem('success_msg')
     },[])
-
- 
-
-
+    useEffect(() => {
+      setDocFileError(docErrorMessage?.map(errObj => (
+        errObj?.error[0]?.message
+      )));
+    }, [docErrorMessage])
+    useEffect(() => {
+      setVideoFileError(videoFileErrorMessage?.map(errObj => (
+        errObj?.error[0]?.message
+      )));
+    }, [videoFileErrorMessage])
 var ds=moment().add(10,"minutes").format("HH:mm")
 var cureent = moment().format("HH:mm")
 
@@ -679,25 +699,33 @@ console.log("ds",ds,cureent)
                           />
                           {/* <small className="fileinput">(mp4, flv & mkv)</small> */}
 
-                           {
-                            videoFileErrorMessage  &&
-                            videoFileErrorMessage.map(errorObj => {
+                          {
+                            videoFileError  &&
+                            getUniqueErrors(videoFileError).map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
                               )
                             })
                           }
-                            <small className="fileinput">(mp4, flv & mkv)</small>
-                          <small className="fileinput">(File limit 1 GB)</small>
+                          
                           {/* <DropVideo onSave={setVideoTutorialFiles} /> */}
                         </Form.Group>
                       </Col>
                       <Col md={6} className="mb-3">
                         <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Files </Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}/>
-                          <small className="fileinput">(pdf, doc, ppt & xls)</small>
-                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
+                          <DropAllFile 
+                            setUploadError={setDocErrorMessage}
+
+                          onSave={setRelatedFiles}/>
+ {
+                            docFileError  &&
+                            getUniqueErrors(docFileError).map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                              )
+                            })
+                          }
                            {!error.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
                           { error.relatedFile && <span className="form-errors">{error.relatedFile}</span> }
 
