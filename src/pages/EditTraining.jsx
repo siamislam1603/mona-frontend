@@ -676,12 +676,12 @@ const EditTraining = () => {
                               (<></>)
                             }
                             <small className="fileinput mt-0">(png, jpg & jpeg)</small>
-                            <small className="fileinput mt-1">(1162 x 402 resolution, less than 10MB each)</small>
+                            <small className="fileinput mt-1">(1162 x 402 resolution, less than 10MB)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
 
-                        <Col md={6} className="mb-3">
+                        <Col md={6} className="mb-3 vidcol">
                           <Form.Group>
                             <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
@@ -706,7 +706,7 @@ const EditTraining = () => {
                                 fetchedVideoTutorialFiles.map((video, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                      <div className="pic"><img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} /></div>
                                       <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
                                       <img
                                         onClick={() => {
@@ -735,7 +735,7 @@ const EditTraining = () => {
                               onSave={setRelatedFiles}
                             />
                             <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
+                            <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
                             {
                               docError  &&
                               getUniqueErrors(docError).map(errorObj => {

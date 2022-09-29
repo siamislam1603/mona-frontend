@@ -636,7 +636,7 @@ const Announcements = () => {
     }
     else{
       console.log("123 ANnouncement dont exit ")
-      setTopErrorMessage("Announcement either delete or no longer available!")
+      setTopErrorMessage("Announcement either deleted or no longer available!")
 
       setTimeout(() => {
         setTopErrorMessage(null);

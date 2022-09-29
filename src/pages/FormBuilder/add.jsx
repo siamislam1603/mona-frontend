@@ -88,6 +88,7 @@ function AddFormBuilder(props) {
     const newErrors = createFormValidation(form);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      document.getElementById(Object.keys(newErrors)[0]).focus();
     } else {
       var myHeaders = new Headers();
       myHeaders.append('authorization', 'Bearer ' + token);
@@ -197,6 +198,7 @@ function AddFormBuilder(props) {
                         <Form.Label>Form Title *</Form.Label>
                         <Form.Control
                           type="text"
+                          id="form_name"
                           name="form_name"
                           maxLength={255}
                           value={form?.form_name}
@@ -215,6 +217,7 @@ function AddFormBuilder(props) {
                         <Form.Label>Form Type *</Form.Label>
                         <Form.Select
                           name="form_type"
+                          id="form_type"
                           onChange={(e) => {
                             setField(e.target.name, e.target.value.trim());
                           }}
@@ -251,7 +254,7 @@ function AddFormBuilder(props) {
                         <Form.Control
                           as="textarea"
                           maxLength={1000}
-
+                          id="form_description"
                           name="form_description"
                           value={form?.form_description}
                           rows={3}
@@ -320,6 +323,7 @@ function AddFormBuilder(props) {
                           <Form.Label>Select Previous Form *</Form.Label>
                           <Form.Select
                             name="previous_form"
+                            id="previous_form"
                             onChange={(e) => {
                               setField(e.target.name, e.target.value);
                             }}
@@ -350,6 +354,7 @@ function AddFormBuilder(props) {
                         <Form.Label>Select Category *</Form.Label>
                         <Form.Select
                           name="category_id"
+                          id="category_id"
                           isInvalid={!!errors.category_id}
                           onChange={(e) => {
                             setField(e.target.name, e.target.value);

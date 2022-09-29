@@ -1137,7 +1137,7 @@ const EditUser = () => {
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
                             <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 files, 5MB each)</small>
+                            <small className="fileinput">(max. 5 files, 10MB each)</small>
                             {
                               fileError  &&
                               getUniqueErrors(fileError).map(errorObj => {
