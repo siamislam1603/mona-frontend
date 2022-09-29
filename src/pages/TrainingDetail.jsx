@@ -20,6 +20,18 @@ const getRoleName = (role) => {
   return obj[role];
 }
 
+function getDuration(duration) {
+  const sec = parseInt(duration, 10); // convert value to number if it's string
+  let hours   = Math.floor(sec / 3600); // get hours
+  let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+  let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+  // add 0 if value < 10; Example: 2 => 02
+  if (hours   < 10) {hours   = "0"+hours;}
+  if (minutes < 10) {minutes = "0"+minutes;}
+  if (seconds < 10) {seconds = "0"+seconds;}
+  return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
+}
+
 const videoExtension = ['.mp4', '.flv', '.mkv'];
 const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt'];
 
@@ -282,7 +294,7 @@ const TrainingDetail = () => {
                                         <VideoPop
                                           data={data}
                                           title={`Training Video ${index + 1}`}
-                                          duration={trainingDetails.completion_time}
+                                          duration={getDuration(trainingDetails.duration[index])}
                                           fun={handleClose} />
                                       )
                                     )
@@ -300,14 +312,14 @@ const TrainingDetail = () => {
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
                                   {
-                                    trainingDetails.training_files.map((data, index) => fileExtension.includes(data.fileType) && (
+                                    trainingDetails.training_files.map((data, index) => fileExtension && (
                                       <div className="item">
                                         <div className="pic"><a href="">
                                           <img src="../img/book-ico.png" alt="" /></a>
                                         </div>
                                         <div className="name">
                                           <a href={data.file} target="_blank" rel="noreferrer">
-                                            {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
+                                            {`document${index - 1}${data.fileType}`} <span className="time">{getDuration(trainingDetails.duration)}</span>
                                           </a>
                                         </div>
                                         {/* <div className="cta-col">
