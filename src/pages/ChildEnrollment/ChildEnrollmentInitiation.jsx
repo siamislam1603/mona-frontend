@@ -26,7 +26,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let name_of_school = useRef(null);
   let educator = useRef(null);
   let franchise = useRef(null);
-
+  
+  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [formOneChildData, setFormOneChildData] = useState({
     fullname: "",
     family_name: "",
@@ -39,14 +40,12 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     name_of_school: "",
     has_special_needs: 0,
     educator: [],
-    franchisee_id: null
+    franchisee_id: null 
   });
   const [educatorData, setEducatorData] = useState(null);
   const [franchiseData, setFranchiseData] = useState(null);
-  const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
   const [errors, setErrors] = useState({});
-
 
   const fetchEducatorList = async (franchise) => {
     // console.log('FETCHING EDUCATOR LIST', franchise);
@@ -187,6 +186,15 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   useEffect(() => {
     fetchFranchiseList();
   }, [])
+
+  useEffect(() => {
+    if(localStorage.getItem('user_role') !== 'franchisor_admin') {
+      setFormOneChildData(prevState => ({
+        ...prevState,
+        franchisee_id: selectedFranchisee
+      }));
+    }
+  }, [selectedFranchisee]);
   
   formOneChildData && console.log('CHILD DATA:', formOneChildData);
   errors && console.log('Errors:', errors);
@@ -285,7 +293,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   ref={start_date}
-                                  max={new Date().toISOString().slice(0, 10)}
+                                  // max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
@@ -347,30 +355,46 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   {errors.home_address !== null && <span className="error">{errors.home_address}</span>}
                               </Form.Group>
                             </Col>
+                            
+                            {
+                              localStorage.getItem('user_role') === 'franchisor_admin' ?
+                              <Col md={6}>
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>Select Franchise *</Form.Label>
+                                  <Select
+                                    placeholder={"Select"}
+                                    closeMenuOnSelect={true}
+                                    ref={franchise}
+                                    options={franchiseData}
+                                    onChange={(e) => {
+                                      setFormOneChildData((prevState) => ({
+                                        ...prevState,
+                                        franchisee_id: e.id
+                                      }));
 
-                            <Col md={6}>
-                              <Form.Group className="mb-3 relative">
-                                <Form.Label>Select Franchise *</Form.Label>
-                                <Select
-                                  placeholder={"Select"}
-                                  closeMenuOnSelect={true}
-                                  ref={franchise}
-                                  options={franchiseData}
-                                  onChange={(e) => {
-                                    setFormOneChildData((prevState) => ({
-                                      ...prevState,
-                                      franchisee_id: e.id
-                                    }));
-
-                                    setErrors(prevState => ({
-                                      ...prevState,
-                                      franchiseData: null
-                                    }))
-                                  }}
-                                />
-                                {errors.franchiseData !== null && <span className="error">{errors.franchiseData}</span>}
-                              </Form.Group>
-                            </Col>
+                                      setErrors(prevState => ({
+                                        ...prevState,
+                                        franchiseData: null
+                                      }))
+                                    }}
+                                  />
+                                  {errors.franchiseData !== null && <span className="error">{errors.franchiseData}</span>}
+                                </Form.Group>
+                              </Col> :
+                              <Col md={6}>
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>Select Franchise *</Form.Label>
+                                  <Select
+                                    placeholder={franchiseData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0]?.label}
+                                    closeMenuOnSelect={true}
+                                    isDisabled={true}
+                                    ref={franchise}
+                                    options={franchiseData}
+                                  />
+                                  {errors.franchiseData !== null && <span className="error">{errors.franchiseData}</span>}
+                                </Form.Group>
+                              </Col>
+                            }
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
@@ -437,6 +461,10 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      child_crn: null
+                                    }))
                                   }} />
 
                                   { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }

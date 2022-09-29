@@ -79,7 +79,6 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
-  console.log(userEducator, "userEducator", userData)
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
@@ -93,6 +92,7 @@ const UserManagement = () => {
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
+  const [parentConnectedToEducator, setParentConnectedToEducator] = useState(null);
 
 
   const rowEvents = {
@@ -293,9 +293,7 @@ const UserManagement = () => {
       text: '',
       formatter: (cell) => {
         let button = null;
-        console.log('CELL:>>>>>>', cell);
         cell = cell.split(",");
-        console.log('CELL AFTER SPLIT:>>>>>>', cell);
 
         if (parseInt(cell[0]) === 1) {
           button = "Deactivate";
@@ -349,7 +347,7 @@ const UserManagement = () => {
     }
     if (response.status === 200) {
       const { users } = response.data;
-      console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
+      // console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
@@ -422,8 +420,6 @@ const UserManagement = () => {
       filteredData = data.filter(d => d.role !== 'franchisee_admin');
     }
 
-    console.log(`FILTERED DATA for ${localStorage.getItem('user_role')}:`, filteredData);
-
     setUserData(filteredData);
   };
 
@@ -436,12 +432,24 @@ const UserManagement = () => {
     fetchUserDetails();
   }
 
+  const fetchParentsConnectedToEducator = async () => {
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/enrollment/list/parent/parentList`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { parentData } = response.data;
+      setParentConnectedToEducator(parentData);
+    }
+  }
 
   const Show_eduactor = async () => {
     let api_url = '';
     let filter = Key.key
     let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    console.log(selectedFranchisee, filter, "filter")
     if (filter) {
       api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
     }
@@ -529,6 +537,25 @@ const UserManagement = () => {
     }
   }
 
+  function getFilteredDataForEducator(tempData, userData) {
+    console.log('TEMP DATA >>>>>>>>>>>>>>>>>', tempData);
+    let filteredTempData = tempData.map((d, index) => {
+      let { children } = d;
+      let data = children.map(child => child.users.map(user => user.email === localStorage.getItem('email')));
+      console.log('DATA 1>>>>>>>>>>>', data);
+      data = data.filter(d => d.includes(false));
+      console.log('DATA 2 >>>>>>>>>>', data);
+      if(data?.length)
+        return d.user_parent_id;
+    })
+    // let filteredTempData = tempData.map((d, index) => ({
+    //   id: d.user_parent_id,
+    //   data: d.children.map(child => child.users.map(user => user.email === localStorage.getItem('email')))
+    // }))
+    console.log('FILTERED TEMP DATA>>>>>>>>>>>>>>>>', filteredTempData);
+
+    return userData;
+  }
 
   useEffect(() => {
     Show_eduactor()
@@ -573,17 +600,26 @@ const UserManagement = () => {
   }, [])
 
   useEffect(() => {
-    console.log('ROLES HAVE BEEN POPULATED')
-    console.log('USER ROLE DATA:', userRoleData);
     trimRoleList();
   }, [userRoleData]);
 
-  useEffect(() => {
-    if (displayRoles) {
-      console.log('DISPLAY ROLES:', displayRoles);
-    }
-  }, [displayRoles])
+  // useEffect(() => {
+  //   if (displayRoles) {
+  //     console.log('DISPLAY ROLES:', displayRoles);
+  //   }
+  // }, [displayRoles])
 
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === 'educator') {
+      fetchParentsConnectedToEducator()
+    }
+  }, []);
+
+  useEffect(() => {
+    if(parentConnectedToEducator && userData) {
+      let filteredData = getFilteredDataForEducator(parentConnectedToEducator, userData);
+    }
+  }, [parentConnectedToEducator]);
 
   const csvLink = useRef();
   openFilter && console.log('OPEN FILTER:', openFilter);
@@ -766,7 +802,6 @@ const UserManagement = () => {
                           </div>
                         </div>
                       </header>
-                      {/* userEducator */}
                       {!Key.key ? (
                         <>
                           <ToolkitProvider

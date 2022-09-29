@@ -13,6 +13,16 @@ import CoparentAssignPopup from '../components/CoparentAssignPopup';
 import { FullLoader } from "../components/Loader";
 let DeleteId = [];
 
+function getFilteredChildren(children) {
+
+    let loggedInUserEmail = localStorage.getItem('email');
+    let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email.toLowerCase() === loggedInUserEmail));
+    filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
+    let newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
+
+    return localStorage.getItem('user_role') === 'educator' ? newFilteredList : children;
+}
+
 const Children = () => {
 
     const { id: paramsParentId } = useParams();
@@ -90,7 +100,10 @@ const Children = () => {
             const { parentData } = response.data;
             if(parentData !== null) {
                 setfullLoaderStatus(false)
-                setChildrenList(parentData?.children)
+                let { children } = parentData;
+                let filteredChildren = getFilteredChildren(children);
+                console.log('CHILDREN:', filteredChildren);
+                setChildrenList(filteredChildren)
              } else {
                 setfullLoaderStatus(false)
                 setChildrenList([]);
@@ -376,6 +389,7 @@ const Children = () => {
                 let Button = parseInt(cell.active) === 1 ? "Deactivate" : "Activate";
                 return (
                     <>  {
+                            localStorage.getItem("user_role") !== "educator" &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -449,7 +463,7 @@ const Children = () => {
                                             </h1>
 
                                             {
-                                                localStorage.getItem('user_role') !== "guardian" &&
+                                                localStorage.getItem('user_role') !== "educator" && localStorage.getItem('user_role') !== "guardian" &&
                                                 <Link 
                                                     to={`/child-enrollment-init/${params.id}`}
                                                     style={{

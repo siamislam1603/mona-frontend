@@ -20,11 +20,8 @@ const getRoleName = (role) => {
   return obj[role];
 }
 
-// function fetchVideoDuration(videoURL) {
-//   getVideoDurationInSeconds(videoURL).then((duration) => {
-//     console.log(duration)
-//   });
-// }
+const videoExtension = ['.mp4', '.flv', '.mkv'];
+const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt'];
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
@@ -271,7 +268,7 @@ const TrainingDetail = () => {
 
                       <Row>
                         {
-                              trainingDetails?.training_files.map(d => d.fileType === ".mp4").includes(true) &&
+                          trainingDetails?.training_files.map(d => videoExtension.includes(d.fileType)).includes(true) &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
                               <>
@@ -280,7 +277,7 @@ const TrainingDetail = () => {
                                   {console.log(trainingDetails, "trainingDetails")}
                                   {
                                     trainingDetails.training_files.map((data, index) =>
-                                      data.fileType === '.mp4' &&
+                                    videoExtension.includes(data.fileType) &&
                                       (
                                         <VideoPop
                                           data={data}
@@ -298,12 +295,12 @@ const TrainingDetail = () => {
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {
-                              trainingDetails?.training_files.map(d => d.fileType !== ".mp4").includes(true) &&
+                              trainingDetails?.training_files.map(d => fileExtension.includes(d.fileType)).includes(true) &&
                               <>
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
                                   {
-                                    trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
+                                    trainingDetails.training_files.map((data, index) => fileExtension.includes(data.fileType) && (
                                       <div className="item">
                                         <div className="pic"><a href="">
                                           <img src="../img/book-ico.png" alt="" /></a>
