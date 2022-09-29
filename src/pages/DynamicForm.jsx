@@ -29,6 +29,7 @@ const DynamicForm = () => {
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
   const [childId, setChildId] = useState();
+  const [errorFocus,setErrorFocus]=useState('');
   const token = localStorage.getItem('token');
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
@@ -342,6 +343,8 @@ const DynamicForm = () => {
       );
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
+        setErrorFocus(Object.keys(newErrors)[0]);
+        document.getElementById(Object.keys(newErrors)[0]).focus();
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -472,6 +475,7 @@ const DynamicForm = () => {
                               'guardian' ? (
                                 <Form.Select
                                   name={'behalf_of'}
+                                  id="behalf_of"
                                   onChange={(e) => {
                                     setBehalfOf(e.target.value);
                                     if (e.target.value !== '') {
@@ -506,6 +510,7 @@ const DynamicForm = () => {
                               ) : location?.state?.id ? (
                                 <Form.Select
                                   name={'behalf_of'}
+                                  id="behalf_of"
                                   onChange={(e) => {
                                     setBehalfOf(e.target.value);
                                     if (e.target.value !== '') {
@@ -540,6 +545,7 @@ const DynamicForm = () => {
                               ) : (
                                 <Form.Select
                                   name={'behalf_of'}
+                                  id="behalf_of"
                                   onChange={(e) => {
                                     setBehalfOf(e.target.value);
                                     if (e.target.value !== '') {
@@ -548,6 +554,7 @@ const DynamicForm = () => {
                                       setErrors(errorData);
                                     }
                                   }}
+                                  isInvalid={!!errors.behalf_of}
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item) => {
@@ -598,6 +605,7 @@ const DynamicForm = () => {
                                   signature_flag={signatureAccessFlag}
                                   field_data={fieldData}
                                   error={errors}
+                                  errorFocus={errorFocus}
                                   onChange={(key, value, type) => {
                                     setField('', key, value, type);
                                   }}
@@ -627,6 +635,7 @@ const DynamicForm = () => {
                                       {...inner_item}
                                       signature_flag={signatureAccessFlag}
                                       error={errors}
+                                      errorFocus={errorFocus}
                                       onChange={(key, value, type) => {
                                         setField(item, key, value, type);
                                       }}
@@ -640,6 +649,7 @@ const DynamicForm = () => {
                                 signature_flag={signatureAccessFlag}
                                 field_data={fieldData}
                                 error={errors}
+                                errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
                                   setField('', key, value, type);
                                 }}
@@ -649,6 +659,7 @@ const DynamicForm = () => {
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
                                 error={errors}
+                                errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
                                   setField('', key, value, type);
                                 }}
@@ -664,6 +675,7 @@ const DynamicForm = () => {
                               signature_flag={signatureAccessFlag}
                               field_data={fieldData}
                               error={errors}
+                              errorFocus={errorFocus}
                               onChange={(key, value, type) => {
                                 setField('', key, value, type);
                               }}
@@ -673,6 +685,7 @@ const DynamicForm = () => {
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
                               error={errors}
+                              errorFocus={errorFocus}
                               onChange={(key, value, type) => {
                                 setField(item, key, value, type);
                               }}
