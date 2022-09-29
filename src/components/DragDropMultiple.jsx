@@ -68,10 +68,9 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   });
 
   const handleFileDelete = (file) => {
+    console.log('CLICKED FOR DELETE')
     let temp = [...data];
-    
-    setVideoThumbnailUrl("")
-    setVideoUrl('')
+
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }

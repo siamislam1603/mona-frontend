@@ -538,24 +538,30 @@ const UserManagement = () => {
     }
   }
 
-  function getFilteredDataForEducator(tempData, userData) {
-    console.log('TEMP DATA >>>>>>>>>>>>>>>>>', tempData);
-    let filteredTempData = tempData.map((d, index) => {
-      let { children } = d;
-      let data = children.map(child => child.users.map(user => user.email === localStorage.getItem('email')));
-      console.log('DATA 1>>>>>>>>>>>', data);
-      data = data.filter(d => d.includes(false));
-      console.log('DATA 2 >>>>>>>>>>', data);
-      if(data?.length)
-        return d.user_parent_id;
-    })
+  function getFilteredDataForEducator(tempData, userDataList) {
+
+    let filteredTempData = tempData.map((d, index) => d.user_parent_id);
+    let data = userDataList.filter(user => parseInt(user.roleDetail.split(",")[1]) !== 0);
+    data = data.map(data => data.userID);
+    let parentToExclude = filteredTempData.filter(d => !data.includes(d));
+    console.log('PARENT TO EXCLUDE:', parentToExclude);
+    // let filteredTempData = tempData.map((d, index) => {
+    //   let { children } = d;
+    //   let data = children.map(child => child.users.map(user => user.email === localStorage.getItem('email')));
+    //   console.log('DATA 1>>>>>>>>>>>', data);
+    //   data = data.filter(d => d.includes(true));
+    //   console.log('DATA 2 >>>>>>>>>>', data);
+    //   if(data?.length === 0)
+    //     return d.user_parent_id;
+    // })
     // let filteredTempData = tempData.map((d, index) => ({
     //   id: d.user_parent_id,
     //   data: d.children.map(child => child.users.map(user => user.email === localStorage.getItem('email')))
     // }))
-    console.log('FILTERED TEMP DATA>>>>>>>>>>>>>>>>', filteredTempData);
-
-    return userData;
+    // let filteredTempData = tempData.map((d, index) => d.user_parent_id);
+    let userD = userDataList.filter(user => !parentToExclude.includes(user.userId));
+    console.log('USER DATA:>>>>>>>>>>>>>>>>>>>', userD);
+    return userD;
   }
 
   useEffect(() => {
@@ -619,7 +625,8 @@ const UserManagement = () => {
   useEffect(() => {
     if(parentConnectedToEducator && userData) {
       let filteredData = getFilteredDataForEducator(parentConnectedToEducator, userData);
-    }
+      setUserData(filteredData);
+    } 
   }, [parentConnectedToEducator]);
 
   const csvLink = useRef();
