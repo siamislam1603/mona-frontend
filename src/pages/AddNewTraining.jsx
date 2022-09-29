@@ -113,7 +113,6 @@ const AddNewTraining = () => {
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
-  console.log(errors, "errors")
 
   const [trainingSettingErrors, setTrainingSettingErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -163,7 +162,6 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
-    console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -172,8 +170,6 @@ const AddNewTraining = () => {
       }
     }
     );
-
-    console.log('Training Details Response:', response);
 
     if (response.status === 201 && response.data.status === "success") {
       let { id } = response.data.training;
@@ -260,7 +256,6 @@ const AddNewTraining = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
-      console.log('CATEGORY:',)
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
@@ -311,9 +306,7 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-    console.log(coverImage, "coverImage")
     let errorObj = TrainingFormValidation(trainingData, relatedFiles, videoTutorialFiles);
-    console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
       setAutoFocusOnTraining(errorObj);
@@ -674,7 +667,6 @@ const AddNewTraining = () => {
                           // setTrainingData={setTraining}
                           /> */}
 
-                          {console.log(croppedImage, "croppedImage", coverImage)}
                           <DragDropTraning
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
@@ -692,7 +684,7 @@ const AddNewTraining = () => {
                               setPopupVisible={setPopupVisible} />
                           }
                           <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
-                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution)</small>
+                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB)</small>
                           {
                             imageFileError  &&
                             getUniqueErrors(imageFileError).map(errorObj => {
@@ -738,7 +730,7 @@ const AddNewTraining = () => {
                             onSave={setRelatedFiles}
                           />
                           <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                          <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
+                          <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
                           {
                             docFileError  &&
                             getUniqueErrors(docFileError).map(errorObj => {
@@ -1153,7 +1145,6 @@ const AddNewTraining = () => {
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  console.log('CLOSING POPUP');
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);
@@ -1494,7 +1485,6 @@ const AddNewTraining = () => {
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  console.log('CLOSING POPUP');
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);
