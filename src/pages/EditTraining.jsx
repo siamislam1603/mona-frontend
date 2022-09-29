@@ -681,7 +681,7 @@ const EditTraining = () => {
                           </Form.Group>
                         </Col>
 
-                        <Col md={6} className="mb-3">
+                        <Col md={6} className="mb-3 vidcol">
                           <Form.Group>
                             <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
@@ -706,7 +706,7 @@ const EditTraining = () => {
                                 fetchedVideoTutorialFiles.map((video, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
+                                      <div className="pic"><img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} /></div>
                                       <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
                                       <img
                                         onClick={() => {
