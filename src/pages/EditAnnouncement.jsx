@@ -785,7 +785,7 @@ useEffect(() =>{
                               : null
                           ))}
                           {/* {relatedFile} */}
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">(pdf, doc, ppt & xls)</small>
                           <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                           {!errors.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
                           { errors.relatedFile && <span className="form-errors">{errors.relatedFile}</span> }

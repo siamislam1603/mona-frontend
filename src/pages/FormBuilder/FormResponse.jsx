@@ -20,12 +20,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function FormResponse(props) {
   const Params = useParams();
-  const ParamsKey = Params.key
+  const ParamsKey = Params.key;
   const Index_id = Number(Params.index);
   const location = useLocation();
   const sigPad = useRef({});
-
-
 
   const navigate = useNavigate();
   const [responseData, setResponseData] = useState([]);
@@ -35,10 +33,11 @@ function FormResponse(props) {
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
   const [dateFilter, setDateFilter] = useState({
-    from_date: "",
-    to_date: ""
+    from_date: '',
+    to_date: '',
   });
   let hideFlag = false;
+  let count=0;
 
   useEffect(() => {
     if (location?.state?.id) {
@@ -87,7 +86,6 @@ function FormResponse(props) {
     fetch(`${BASE_URL}/form/form_data`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-
         getResponse('');
         setSignatureModel(false);
         if (result) {
@@ -129,27 +127,31 @@ function FormResponse(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-    
-    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${location?.state?.id ? location?.state?.id : 1}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`
+
+    const URL_ = `${BASE_URL}/form/response?search=${search}&form_id=${
+      location?.state?.id ? location?.state?.id : 1
+    }&user_id=${localStorage.getItem(
+      'user_id'
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=${
+      dateFilter.from_date
+    }&to_date=${dateFilter.to_date}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-
         if (result) {
           setfullLoaderStatus(false);
         }
         result?.result.map((item, index) => {
-          item["signature_button"] = true;
+          item['signature_button'] = true;
 
           result?.result[index]?.map((inner_item, inner_index) => {
             // if(inner_item.fields)
             Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              if (field_item === "signature") {
-                item["signature_button"] = false;
+              if (field_item === 'signature') {
+                item['signature_button'] = false;
               }
-            })
-          })
-
+            });
+          });
 
           if (result?.result?.length - 1 === index) {
             setResponseData(result?.result);
@@ -157,12 +159,9 @@ function FormResponse(props) {
             setFormData(result?.form);
           }
         });
-
       })
       .catch((error) => console.log('error', error));
   };
-
-
 
   const seenFormResponse = (data) => {
     let seenData = [];
@@ -183,19 +182,12 @@ function FormResponse(props) {
       body: JSON.stringify(seenData),
       redirect: 'follow',
     };
-    console.log("seen responceeeeeeeeeeeeeeeeeeeeeee",seenData)
+    console.log('seen responceeeeeeeeeeeeeeeeeeeeeee', seenData);
     fetch(`${BASE_URL}/form/response/seen`, requestOptions)
       .then((response) => response.json())
       .then((result) => console.log(result?.message))
       .catch((error) => console.log('error', error));
-
   };
-
-
-
-
-
-
 
   const getResponseTow = (search) => {
     var myHeaders = new Headers();
@@ -205,14 +197,19 @@ function FormResponse(props) {
       redirect: 'follow',
       headers: myHeaders,
     };
-    const Url = ParamsKey === "form-visit" ? `${BASE_URL}/form/response?search=&form_id=${Params.id}&user_id=${localStorage.getItem('user_id')}&user_role=${localStorage.getItem('user_role')}`
-      : `${BASE_URL}/form/response?search=&form_id=${Params.id}&user_id=${localStorage.getItem(
-        'user_id'
-      )}&user_role=franchisee_admin`
-    fetch(Url
-      ,
-      requestOptions
-    )
+    const Url =
+      ParamsKey === 'form-visit'
+        ? `${BASE_URL}/form/response?search=&form_id=${
+            Params.id
+          }&user_id=${localStorage.getItem(
+            'user_id'
+          )}&user_role=${localStorage.getItem('user_role')}`
+        : `${BASE_URL}/form/response?search=&form_id=${
+            Params.id
+          }&user_id=${localStorage.getItem(
+            'user_id'
+          )}&user_role=franchisee_admin`;
+    fetch(Url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         setResponseData(result?.result);
@@ -228,7 +225,6 @@ function FormResponse(props) {
   return (
     <>
       <div id="main">
-
         <ToastContainer />
         <section className="mainsection">
           <Container>
@@ -272,10 +268,10 @@ function FormResponse(props) {
                             value={dateFilter?.from_date}
                             // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              setDateFilter(prevState => ({
+                              setDateFilter((prevState) => ({
                                 ...prevState,
-                                from_date: e.target.value
-                              }))
+                                from_date: e.target.value,
+                              }));
                             }}
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
@@ -288,25 +284,28 @@ function FormResponse(props) {
                             value={dateFilter?.to_date}
                             // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              setDateFilter(prevState => ({
+                              setDateFilter((prevState) => ({
                                 ...prevState,
-                                to_date: e.target.value
-                              }))
+                                to_date: e.target.value,
+                              }));
                             }}
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
-                          type="submit" className="mt-4"
-                          onClick={() => { 
-                            console.log('GETTING FILTERED RESPONSE FROM SERVER!');
-                            getResponse('') 
-                          }}>
+                          type="submit"
+                          className="mt-4"
+                          onClick={() => {
+                            console.log(
+                              'GETTING FILTERED RESPONSE FROM SERVER!'
+                            );
+                            getResponse('');
+                          }}
+                        >
                           Apply
                         </Button>
                       </div>
-
                     </div>
                     <div className="forms-search me-0 ms-auto mt-3">
                       <Form.Group>
@@ -351,13 +350,13 @@ function FormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                              (inner_index > 0 &&
-                                                responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user
-                                                    ?.fullname
-                                                ))
+                                            (inner_index > 0 &&
+                                              responseData[index][
+                                                inner_index - 1
+                                              ]?.filled_user?.fullname?.includes(
+                                                inner_item?.filled_user
+                                                  ?.fullname
+                                              ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -370,48 +369,48 @@ function FormResponse(props) {
                                           <h5>
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.fullname?.includes(
+                                                  inner_index - 1
+                                                ].filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                ) &&
                                                 inner_item?.filled_user
                                                   ?.fullname
-                                              ) &&
-                                              inner_item?.filled_user
-                                                ?.fullname
                                               : inner_item?.filled_user
-                                                ?.fullname}
+                                                  ?.fullname}
                                           </h5>
                                           <h6>
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ')
-                                                  .includes(
-                                                    inner_item?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ')
-                                                  ) &&
-                                                inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','
+                                                    inner_index - 1
+                                                  ]?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ')
+                                                    .includes(
+                                                      inner_item?.filled_user?.role
+                                                        .split('_')
+                                                        .join(' ')
+                                                    ) &&
+                                                  inner_item?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ') + ','
                                                 : inner_item?.filled_user?.role
-                                                  .split('_')
-                                                  .join(' ') + ','}
+                                                    .split('_')
+                                                    .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                inner_index - 1
-                                              ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  inner_index - 1
+                                                ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  inner_item?.filled_user
+                                                    ?.franchisee
+                                                    ?.franchisee_name
+                                                ) &&
                                                 inner_item?.filled_user
-                                                  ?.franchisee
-                                                  ?.franchisee_name
-                                              ) &&
-                                              inner_item?.filled_user
-                                                ?.franchisee?.franchisee_name
+                                                  ?.franchisee?.franchisee_name
                                               : inner_item?.filled_user
-                                                ?.franchisee?.franchisee_name}
+                                                  ?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -419,7 +418,10 @@ function FormResponse(props) {
                                   )}
                                 </div>
                                 <div className="responses-header-right">
-                                  {console.log('CREATED AT:', item[0].createdAt)}
+                                  {console.log(
+                                    'CREATED AT:',
+                                    item[0].createdAt
+                                  )}
                                   <p>
                                     Completed on: <br />
                                     {moment(item[0].createdAt)
@@ -458,55 +460,109 @@ function FormResponse(props) {
 
                                     {Object.keys(JSON.parse(item.fields)).map(
                                       (inner_item, inner_index) => {
+                                        {
+                                          console.log(
+                                            'field_type----',
+                                            Object.keys(
+                                              JSON.parse(item.fields)
+                                            )[inner_index]
+                                          );
+                                        }
+                                        {(Object.keys(
+                                          JSON.parse(item.fields)
+                                        )[inner_index] === 'headings' ||
+                                        Object.keys(
+                                          JSON.parse(item.fields)
+                                        )[inner_index] ===
+                                          'text_headings') && count++ }
                                         return (
-                                          <div className="responses-content-box">
+                                          <div className="responses-content-box" style={{ marginTop:"12px"}}>
                                             <div className="responses-content-question">
-                                              <span>{inner_index + 1}</span>
-                                              <h6 className="text-capitalize">
+                                              {!(Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings' ||
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings') && <span>{inner_index + 1 - count}</span> }
+                                              {Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings'
+                                                 ? (
+                                                <h6 className="text-capitalize" style={{fontSize:"20px",color:"#AA0061"}}>
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                </h6>
+                                              ) : Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] ===
+                                                'text_headings' ? 
+                                                <h6 className="text-capitalize" style={{fontSize:"16px",color:"#455c58"}}>
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                </h6>
+                                                : <h6 className="text-capitalize">
                                                 {inner_item
                                                   .split('_')
                                                   .join(' ')}
-                                              </h6>
+                                              </h6>}
                                             </div>
                                             <div className="responses-content-answer">
-                                              <img
+                                              {(!(Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings' ||
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings')) && <img
                                                 src="../img/bx_right-arrow-alt.svg"
                                                 alt=""
-                                              />
+                                              />}
 
                                               {Object.values(
                                                 JSON.parse(item.fields)
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.png'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpg'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpeg'
-                                                ) ? (
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.png'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpg'
+                                              ) ||
+                                              Object.values(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.jpeg'
+                                              ) ? (
                                                 <>
-                                                  <img style={{ height: "40px", width: "51px" }}
-                                                    src={`${Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                      }`}
+                                                  <img
+                                                    style={{
+                                                      height: '40px',
+                                                      width: '51px',
+                                                    }}
+                                                    src={`${
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }`}
                                                   ></img>
                                                 </>
                                               ) : Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.doc'
-                                              ) ||
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.doc'
+                                                ) ||
                                                 Object.values(
                                                   JSON.parse(item.fields)
                                                 )[inner_index]?.includes(
@@ -575,21 +631,33 @@ function FormResponse(props) {
                                                     {
                                                       Object.values(
                                                         JSON.parse(item.fields)
-                                                      )[inner_index].split("/")[Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index].split("/").length - 1]
+                                                      )[inner_index].split('/')[
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index].split(
+                                                          '/'
+                                                        ).length - 1
+                                                      ]
                                                     }
                                                   </p>
                                                 </a>
-                                              ) : (
-                                                <p>
+                                              ) : 
+                                                (!(Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings' ||
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings')) && <p>
                                                   {
                                                     Object.values(
                                                       JSON.parse(item.fields)
                                                     )[inner_index]
                                                   }
                                                 </p>
-                                              )}
+                                              }
                                             </div>
                                           </div>
                                         );
@@ -598,16 +666,17 @@ function FormResponse(props) {
                                   </div>
                                 );
                               })}
-                              {location?.state?.signature_access && item.signature_button && (
-                                <Button
-                                  onClick={() => {
-                                    setSignatureModel(true);
-                                    setIndex(index);
-                                  }}
-                                >
-                                  Add Signature
-                                </Button>
-                              )}
+                              {location?.state?.signature_access &&
+                                item.signature_button && (
+                                  <Button
+                                    onClick={() => {
+                                      setSignatureModel(true);
+                                      setIndex(index);
+                                    }}
+                                  >
+                                    Add Signature
+                                  </Button>
+                                )}
                             </Accordion.Body>
                           </Accordion.Item>
                         );
