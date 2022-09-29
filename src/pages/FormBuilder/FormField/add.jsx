@@ -5,7 +5,7 @@ import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
-import { createFormFieldValidation } from '../../../helpers/validation';
+import {  createFormFieldValidation } from '../../../helpers/validation';
 import { BASE_URL } from '../../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
@@ -426,12 +426,16 @@ const AddFormField = (props) => {
       if (flag === false) {
         form.map((inner_item, inner_index) => {
           if (index !== inner_index) {
-            if (
-              item.field_label.toLowerCase() ===
-              inner_item.field_label.toLowerCase()
-            ) {
-              flag = true;
+            if(item.field_label && inner_item.field_label)
+            {
+              if (
+                item.field_label.toLowerCase() ===
+                inner_item.field_label.toLowerCase()
+              ) {
+                flag = true;
+              }
             }
+            
           }
         });
       }
@@ -457,6 +461,37 @@ const AddFormField = (props) => {
       });
       if (error_flag) {
         setErrors(newErrors);
+        if(newErrors.length>0)
+        {
+          let flag=false;
+          newErrors.map((item,index)=>{
+            console.log("Object.keys(item).length---->",Object.keys(item).length);
+            if(Object.keys(item).length>0 && !flag)
+            {
+              console.log("Object.keys(item)[0]--->",Object.keys(item)[0]);
+              if(Object.keys(item)[0]==="option")
+              {
+                Object.values(item)[0].map((inner_item,inner_index)=>{
+                  if(Object.keys(inner_item).length>0 && !flag)
+                  {
+                    console.log("inner_item--->",Object.keys(inner_item).length,"---",inner_index);
+                    document.getElementById("option"+index+inner_index).focus();
+                    flag=true;
+                  }
+                  
+                })
+
+              }
+              else
+              {
+                document.getElementById(Object.keys(item)[0]+index).focus();
+                flag=true;
+              }
+              
+            }
+              
+          })
+        }
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -676,6 +711,7 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
+                                    id={"field_label"+index}
                                     maxLength={255}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
@@ -842,6 +878,7 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
+                                              id={"option"+index+inner_index}
                                               value={Object.keys(item)[0]}
                                               onChange={(e) => {
                                                 setField(
@@ -1106,6 +1143,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
+                                      id={"field_label"+index}
                                       name="field_label"
                                       value={
                                         Object.values(item)[0]['field_label']

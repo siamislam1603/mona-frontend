@@ -609,7 +609,8 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .column-table.user_management_sec .table thead tr:before{opacity:0}
 .column-table.user_management_sec .table>:not(caption)>*>*{border:none;padding:15px 10px;vertical-align:middle}
 .dropzone,.uploadfile{display:inline-block;overflow:hidden}
-.fileinput{display:block;margin-top:-5px;margin-bottom:10px;font-size:10px}
+.fileinput{display:block;margin-top:-5px;font-size:10px}
+.fileinput:not(:last-child) { margin-bottom: 10px }
 .error_page_detail{max-width:350px}
 .error_page_detail span{display:block;ont-size:16px;margin-bottom:15px}
 .error_page_detail h1{font-size:28px;color:var(--primary)}

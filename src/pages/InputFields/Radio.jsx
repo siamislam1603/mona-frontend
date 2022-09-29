@@ -33,18 +33,21 @@ const Radio = (props) => {
                   {Object.keys(eval(controls.option)[index])[0] ===
                   Object.values(eval(controls.option)[index])[0] ? (
                     <div className="new-form-radio-box">
-                      <label for={Object.keys(item)[0]}>
+                      <label for={Object.keys(item)[0]+props?.diff_index}>
+                        {console.log("props.field_data",props.field_name, Object.keys(item)[0])}
                         <input
                           type="radio"
+                          key={props?.diff_index}
                           value={Object.keys(item)[0]}
                           name={controls.field_name}
-                          id={Object.keys(item)[0]}
+                          id={Object.keys(item)[0]+props?.diff_index}
                           onClick={(e) => {
+                            console.log("e.target.name--->",controls.field_name);
                             props.onChange(e.target.name, e.target.value,"radio");
                             setOptionValue(e.target.value);
                             setIndex(index);
                           }}
-                          checked={props.field_data && props.field_data.fields[`${controls.field_name}`]===Object.keys(item)[0]}
+                          // checked={props.field_data && props.field_data.fields[`${controls.field_name}`]===Object.keys(item)[0]+props?.diff_index}
                         />
                         <span className="radio-round"></span>
                         <p>{Object.keys(item)[0]}</p>
@@ -53,14 +56,14 @@ const Radio = (props) => {
                   ) : (
                     <>
                       <div className="new-form-radio-box">
-                        <label for={Object.keys(item)[0]}>
+                        <label for={Object.keys(item)[0]+props?.diff_index}>
                           <input
                             type="radio"
                             value={Object.keys(item)[0]}
                             name={controls.field_name}
-                            id={Object.keys(item)[0]}
+                            id={Object.keys(item)[0]+props?.diff_index}
                             onClick={(e) => {
-                              props.onChange(e.target.name, e.target.value);
+                              props.onChange(e.target.name, e.target.value,"radio");
                               setOptionValue(e.target.value);
                               setIndex(index);
                             }}
