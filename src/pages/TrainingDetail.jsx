@@ -33,7 +33,7 @@ function getDuration(duration) {
 }
 
 const videoExtension = ['.mp4', '.flv', '.mkv'];
-const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt'];
+const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt', '.pdf'];
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
@@ -55,6 +55,9 @@ const TrainingDetail = () => {
   const [popupNotification, setPopupNotification] = useState(null);
   const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
   const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [videoFiles, setVideoFiles] = useState(null);
+  const [relatedFiles, setRelatedFiles] = useState(null);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -69,10 +72,10 @@ const TrainingDetail = () => {
     console.log("The response", response)
 
     if (response.status === 200 && response.data.status === "success") {
-      const { training } = response.data;
+      const { all_trainings, user } = response.data.training;
 
       // FETCHING DUE DATE
-      const { end_date, addedBy } = training;
+      const { end_date, addedBy } = all_trainings;
       let due_date = moment(end_date).format('YYYY-MM-DD');
       let today = moment().format('YYYY-MM-DD');
       let currentUserId = localStorage.getItem('user_id');
@@ -81,7 +84,11 @@ const TrainingDetail = () => {
       if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
       } else {
-        setTrainingDetails(training);
+        setTrainingDetails(all_trainings);
+        setUserDetails(user);
+
+        setVideoFiles(all_trainings.training_files.filter(d => videoExtension.includes(d.fileType)));
+        setRelatedFiles(all_trainings.training_files.filter(d => fileExtension.includes(d.fileType)));
       }
     } else if(response.status === 200 && response.data.status === "fail") {
       const { message } = response.data;
@@ -219,11 +226,8 @@ const TrainingDetail = () => {
     fetchNonParticipants();
   }, []);
 
-  // useEffect(() => {
-  //   if(popupNotification) {
-  //     OpenPopup
-  //   }
-  // }, [popupNotification]);
+  videoFiles && console.log('Video Files:', videoFiles);
+  relatedFiles && console.log('Related Files:', relatedFiles);
   return (
     <>
       <div id="main">
@@ -244,20 +248,11 @@ const TrainingDetail = () => {
                         <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
                         {
                           trainingDetails?.end_date &&
-
                           <small className="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
                         }
                       </div>
                       <div className="othpanel">
                         <div className="extra-btn">
-                          {/* <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt="" />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown> */}
                         </div>
                       </div>
                     </header>
@@ -270,9 +265,9 @@ const TrainingDetail = () => {
                       <div className="created-by">
                         <h4 className="title">Created by:</h4>
                         <div className="createrimg">
-                          <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                          <img src={userDetails?.profile_photo} alt="" />
                         </div>
-                        <p>{trainingDetails.user_data.fullname}, <span>{trainingDetails.user_data.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                        <p>{userDetails?.fullname}, <span>{userDetails?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
                       </div>
                       <div className="training-cont mt-3 mb-5">
                         <p>{trainingDetails.description}</p>
@@ -280,21 +275,19 @@ const TrainingDetail = () => {
 
                       <Row>
                         {
-                          trainingDetails?.training_files.map(d => videoExtension.includes(d.fileType)).includes(true) &&
+                          videoFiles &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
                               <>
                                 <h3 className="title-sm">Video Tutorials</h3>
                                 <div className="vid-col-sec">
-                                  {console.log(trainingDetails, "trainingDetails")}
                                   {
-                                    trainingDetails.training_files.map((data, index) =>
-                                    videoExtension.includes(data.fileType) &&
+                                    videoFiles.map((data, index) =>
                                       (
                                         <VideoPop
                                           data={data}
                                           title={`Training Video ${index + 1}`}
-                                          duration={getDuration(trainingDetails.duration[index])}
+                                          duration={getDuration(data.duration)}
                                           fun={handleClose} />
                                       )
                                     )
@@ -307,19 +300,19 @@ const TrainingDetail = () => {
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {
-                              trainingDetails?.training_files.map(d => fileExtension.includes(d.fileType)).includes(true) &&
+                              relatedFiles &&
                               <>
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
                                   {
-                                    trainingDetails.training_files.map((data, index) => fileExtension && (
+                                    relatedFiles.map((data, index) => (
                                       <div className="item">
-                                        <div className="pic"><a href="">
+                                        <div className="pic"><a>
                                           <img src="../img/book-ico.png" alt="" /></a>
                                         </div>
                                         <div className="name">
                                           <a href={data.file} target="_blank" rel="noreferrer">
-                                            {`document${index - 1}${data.fileType}`} <span className="time">{getDuration(trainingDetails.duration)}</span>
+                                            {`document${index - 1}${data.fileType}`} <span className="time">{}</span>
                                           </a>
                                         </div>
                                         {/* <div className="cta-col">
