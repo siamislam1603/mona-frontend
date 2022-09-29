@@ -92,6 +92,7 @@ const UserManagement = () => {
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
+  const [tempEduData, setTempEduData] = useState(null);
   const [parentConnectedToEducator, setParentConnectedToEducator] = useState(null);
 
 
@@ -406,22 +407,26 @@ const UserManagement = () => {
 
     if (role === 'franchisor_admin') {
       filteredData = data.filter(d => d);
+      setUserData(filteredData);
     }
 
     if (role === 'franchisee_admin') {
       filteredData = data.filter(d => d)
+      setUserData(filteredData);
     }
 
     if (role === 'coordinator') {
       filteredData = data.filter(d => d.role !== "franchisor_admin");
+      setUserData(filteredData);
     }
 
     if (role === 'educator') {
       filteredData = data.filter(d => d.role !== 'franchisor_admin');
       filteredData = data.filter(d => d.role !== 'franchisee_admin');
+      // setUserData(filteredData);
+      setTempEduData(filteredData);
     }
-
-    setUserData(filteredData);
+    // setStateChangeData(filterData);
   };
 
 
@@ -538,29 +543,25 @@ const UserManagement = () => {
     }
   }
 
-  function getFilteredDataForEducator(tempData, userDataList) {
+  function getFilteredDataForEducator(tempData, tempEduData) {
+    console.log('TEMP DATA:', tempData);
+    let filteredTempData = tempData.map((parent, index) => {
+      let {children} = parent;
+      console.log('CHILDREN:', children);
+      let childList = children.map(child => child?.users?.map(user => user.email === localStorage.getItem('email')));
+      console.log('CHILDLIST:', childList);
+      let data = childList.map(child => child.includes(true));
+      data = data.includes(true);
 
-    let filteredTempData = tempData.map((d, index) => d.user_parent_id);
-    let data = userDataList.filter(user => parseInt(user.roleDetail.split(",")[1]) !== 0);
+      if(data === true)
+        return parent.user_parent_id;
+    });
+    filteredTempData = filteredTempData.filter(d => typeof d !== "undefined");
+    let data = tempEduData.filter(user => parseInt(user.roleDetail.split(",")[1]) !== 0);
     data = data.map(data => data.userID);
-    let parentToExclude = filteredTempData.filter(d => !data.includes(d));
-    console.log('PARENT TO EXCLUDE:', parentToExclude);
-    // let filteredTempData = tempData.map((d, index) => {
-    //   let { children } = d;
-    //   let data = children.map(child => child.users.map(user => user.email === localStorage.getItem('email')));
-    //   console.log('DATA 1>>>>>>>>>>>', data);
-    //   data = data.filter(d => d.includes(true));
-    //   console.log('DATA 2 >>>>>>>>>>', data);
-    //   if(data?.length === 0)
-    //     return d.user_parent_id;
-    // })
-    // let filteredTempData = tempData.map((d, index) => ({
-    //   id: d.user_parent_id,
-    //   data: d.children.map(child => child.users.map(user => user.email === localStorage.getItem('email')))
-    // }))
-    // let filteredTempData = tempData.map((d, index) => d.user_parent_id);
-    let userD = userDataList.filter(user => !parentToExclude.includes(user.userId));
-    console.log('USER DATA:>>>>>>>>>>>>>>>>>>>', userD);
+
+    let parentToExclude = data.filter(d => !filteredTempData.includes(d));
+    let userD = tempEduData.filter(user => !parentToExclude.includes(parseInt(user.userID)));
     return userD;
   }
 
@@ -623,14 +624,16 @@ const UserManagement = () => {
   }, []);
 
   useEffect(() => {
-    if(parentConnectedToEducator && userData) {
-      let filteredData = getFilteredDataForEducator(parentConnectedToEducator, userData);
-      setUserData(filteredData);
+    if(parentConnectedToEducator && tempEduData) {
+      console.log('TEMP EDU DATA:', parentConnectedToEducator);
+      let d = getFilteredDataForEducator(parentConnectedToEducator, tempEduData);
+      setUserData(d);
     } 
-  }, [parentConnectedToEducator]);
+  }, [parentConnectedToEducator, tempEduData]);
 
   const csvLink = useRef();
-  openFilter && console.log('OPEN FILTER:', openFilter);
+  // openFilter && console.log('OPEN FILTER:', openFilter);
+  // tempEduData && console.log('USER DATA:>>>>>>>>>>>>>>>', tempEduData);
   return (
     <>
       <div id="main">

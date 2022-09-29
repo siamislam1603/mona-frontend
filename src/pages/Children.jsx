@@ -16,9 +16,12 @@ let DeleteId = [];
 function getFilteredChildren(children) {
 
     let loggedInUserEmail = localStorage.getItem('email');
-    let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email.toLowerCase() === loggedInUserEmail));
+    console.log('CHILDREN:', children);
+    let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email === loggedInUserEmail));
+    console.log('EMAIL CHILDREN:', filteredChildrenByEmail)
     filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
     let newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
+    console.log('FILTERED LIST:', newFilteredList);
 
     return localStorage.getItem('user_role') === 'educator' ? newFilteredList : children;
 }
