@@ -9,6 +9,10 @@ export const DynamicFormValidation = (
 ) => {
   console.log("signature_access_flag",signature_access_flag);
   let newErrors = {};
+  if (behalf_of_flag === true) {
+    if (!behalf_of || behalf_of === '')
+      newErrors.behalf_of = 'Behalf of is required';
+  }
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
     data[item].map((inner_item) => {
@@ -35,10 +39,7 @@ export const DynamicFormValidation = (
       }
     });
   });
-  if (behalf_of_flag === true) {
-    if (!behalf_of || behalf_of === '')
-      newErrors.behalf_of = 'Behalf of is required';
-  }
+  
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
