@@ -7,6 +7,7 @@ import Signature from "./InputFields/Signature";
 import FileUpload from "./InputFields/FileUpload";
 import ImageUpload from "./InputFields/ImageUpload";
 import Headings from "./InputFields/Headings";
+import TextHeadings from "./InputFields/TextHeadings";
 
 const InputFields = (props) => {
   let inputElement = null;
@@ -19,6 +20,9 @@ const InputFields = (props) => {
     case "radio":
       inputElement = <Radio {...controls} field_data={props.field_data}/>;
       break;
+    case "text_headings":
+      inputElement = <TextHeadings {...controls} />;
+      break; 
     case "headings":
       inputElement = <Headings {...controls} />;
       break;

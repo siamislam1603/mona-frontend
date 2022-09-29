@@ -784,9 +784,6 @@ const AddOperatingManual = () => {
                           </p>
                           <small className="fileinput">((mp4, flv & mkv))</small>
                           <small className="fileinput">(File limit 1 GB)</small>
-
-
-
                         </Form.Group>
                       </Col>
                     </Row>

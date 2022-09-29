@@ -707,7 +707,7 @@ const AddNewTraining = () => {
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3 relative">
+                      <Col md={6} className="mb-3 relative vidcol">
                         <Form.Group>
                           <Form.Label>Upload Videos</Form.Label>
                           <DropAllFile
