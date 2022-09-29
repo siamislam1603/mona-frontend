@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Col, Form } from "react-bootstrap";
+import { Button, Col, Form } from "react-bootstrap";
 import SignaturePad from "react-signature-canvas";
 
 const UserSignature = (props) => {
@@ -29,9 +29,9 @@ const UserSignature = (props) => {
           }}
           ref={sigPad}
         />
-        <div>
-          <button onClick={clear} style={{ padding: "12px 35px", marginRight: "10px" }}>Clear</button>
-          <button onClick={trim} style={{ padding: "12px 35px" }}>Submit</button>
+        <div style={{marginTop:"5px"}}>
+          <Button style={{minWidth:"70px !important"}} onClick={trim}>Save</Button>
+          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
         </div>
       </Form.Group>
     </Col>

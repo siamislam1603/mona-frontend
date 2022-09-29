@@ -13,6 +13,7 @@ const Select = (props) => {
             onChange={(e) => {
               props.onChange(e.target.name, e.target.value, 'select');
             }}
+            isInvalid={!!controls.error[controls.field_name]}
           >
             <option>Select {controls.label}</option>
             {eval(controls.option)?.map((item2) => {

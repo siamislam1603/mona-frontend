@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
 const Radio = (props) => {
@@ -14,12 +14,18 @@ const Radio = (props) => {
     e.preventDefault();
     props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
   };
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[])
 
   return (
     <>
       <Col sm={6}>
         <Form.Group className='form-input-section'>
-          <Form.Label>{controls.field_label}</Form.Label>
+          <Form.Label id={controls.field_name}>{controls.field_label}</Form.Label>
           <div className="new-form-radio flex_wrap_radio">
             {eval(controls.option)?.map((item, index) => {
               return (
