@@ -18,7 +18,7 @@ import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
@@ -243,7 +243,8 @@ const UserManagement = () => {
                 <img src={cell[0] === 'null' ? '../img/upload.jpg' : cell[0]} alt="" />
               </span>
               <span className="user-name">
-                <a href={`/view-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+                <Link to={`/view-user/${cell[4]}`}>{cell[1]}</Link><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+
               </span>
             </div>
           </>
@@ -426,7 +427,7 @@ const UserManagement = () => {
 
 
   const handleApplyFilter = async () => {
-    if(openFilter === true) {
+    if (openFilter === true) {
       setOpenFilter(false);
     }
     fetchUserDetails();
@@ -683,8 +684,8 @@ const UserManagement = () => {
                                 id="extrabtn"
                                 variant="btn-outline"
                                 onClickCapture={() => {
-                                  if(openFilter === false)
-                                  setOpenFilter(true)
+                                  if (openFilter === false)
+                                    setOpenFilter(true)
                                 }}
                               >
                                 <i className="filter-ico"></i> Add Filters
@@ -741,11 +742,11 @@ const UserManagement = () => {
                                   <Button
                                     variant="transparent"
                                     type="submit"
-                                    onClick={() => { 
+                                    onClick={() => {
                                       setFilter('');
-                                      if(openFilter === true) {
+                                      if (openFilter === true) {
                                         setOpenFilter(false);
-                                      } 
+                                      }
                                     }}
                                   >
                                     Reset
@@ -753,9 +754,9 @@ const UserManagement = () => {
                                   <Button
                                     variant="primary"
                                     type="submit"
-                                    onClickCapture={() => { 
+                                    onClickCapture={() => {
                                       handleApplyFilter(filter);
-                                     }}
+                                    }}
                                   >
                                     Apply
                                   </Button>
@@ -764,7 +765,7 @@ const UserManagement = () => {
                             </Dropdown>
                             {
                               verifyPermission("user_management", "add") &&
-                              <a href="/new-user" className="btn btn-primary me-3">+ Create New User</a>
+                              <Link to="/new-user" className="btn btn-primary me-3">+ Create New User</Link>
                             }
                             <Dropdown>
                               <Dropdown.Toggle
