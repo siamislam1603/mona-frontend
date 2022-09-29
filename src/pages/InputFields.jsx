@@ -18,7 +18,7 @@ const InputFields = (props) => {
   console.log("props-2132--->", props.signature_flag);
   switch (controls.field_type) {
     case "radio":
-      inputElement = <Radio {...controls} field_data={props.field_data} errorFocus={props.errorFocus}/>;
+      inputElement = <Radio {...controls} field_data={props.field_data} diff_index={props.diff_index} errorFocus={props.errorFocus}/>;
       break;
     case "text_headings":
       inputElement = <TextHeadings {...controls} />;

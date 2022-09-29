@@ -120,6 +120,8 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
                 <span className="text-center uploadfile cursor">
                     <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add Image
                 </span>
+                <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
+                <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB)</small>
             </div>
             <div className="">
                 {

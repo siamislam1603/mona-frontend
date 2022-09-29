@@ -122,18 +122,36 @@ const Announcements = () => {
   const removeitem = async(id) =>{
     // let newData = myLoadData.filter(d => d.id !==id)
     // console.log("THE NEW DATA",newData)
-    let usedId = localStorage.getItem("user_id")
+    try{
+      console.log("Inside try block remove item")
+      console.log("My page delte",mypage)
+  
+      let usedId = localStorage.getItem("user_id")
+  
+      let api_url = '';
+      api_url = `${BASE_URL}/announcement/created-announcement-events/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "" : searchvalue}&limit=${myDataLength}`
+  
+      const response = await  axios.get(api_url, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log("The response delete",response)
+      let myData = response.data.result.searchedData
+      console.log("My page delte",myData)
+      setMyLoadData(myData)
+      setMyDataLength(myData?.length)
+      myDataCount()
+    }
+    catch(error ){
+      console.log("Delete error",error,myLoadData)
+      if(error.response.status === 404){
+        myDataCount()
+        onLoadMyAnnouncement()
+      console.log("Delete error",error,myLoadData)
 
-    let api_url = '';
-    api_url = `${BASE_URL}/announcement/created-announcement-events/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "" : searchvalue}&limit=${mypage}`
-
-    const response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    let myData = response.data.result.searchedData
-    setMyLoadData(myData)
+      }
+    }
     // setMyLoadData(newData)
     // LoadMoreMyData(id);
 
@@ -196,6 +214,7 @@ const Announcements = () => {
       setMyCount(0)
       setMyDataLength(0)
       setLoadMy(false)
+      setMyLoadData([])
     }
 
   }
@@ -471,7 +490,7 @@ const Announcements = () => {
         setLoadMy(true)
         console.log("THE SEARCH LENGHT", response.data.result.searchedData.length)
         // setMyCount(0)
-        setMyDataLength(myCount)
+        // setMyDataLength(myCount)
 
         if (response.data.result.searchedData.length === 0) {
           setLoadMy(false)
@@ -705,12 +724,15 @@ const Announcements = () => {
   }, [selectedFranchisee])
   useEffect(() => {
     LoadMoreALl()
-    TheCount()
+    // TheCount()
+
     LoadMoreMyData()
-    myDataCount()
+    // myDataCount()
+
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
-    EventCount()
+
+    // EventCount()
     LoadMoreEvent()
   }, [])
 
@@ -720,7 +742,7 @@ const Announcements = () => {
   }, [loadMoreData])
 
   useEffect(() => {
-    myDataCount()
+    // myDataCount()
     setMyDataLength(myLoadData.length)
   }, [myLoadData])
 
