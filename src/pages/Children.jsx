@@ -506,7 +506,7 @@ const Children = () => {
                               cell[0] != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[10].trim() === "undefined" || cell[10].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
+                                  <img src={cell[10].trim() === "undefined" || cell[10].trim() === "null" || cell[10].trim() === "" ? "../img/upload.jpg" : cell[10]} />
                                 </span>
                                 <span className="user-name">
                                   {/* {cell[0] === "undefined" ? null : cell[0]} */}
@@ -519,7 +519,7 @@ const Children = () => {
                               cell[1].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[11].trim() === "undefined" || cell[11].trim() === "null" ? "../img/upload.jpg" : cell[11]} />
+                                  <img src={cell[11].trim() === "undefined" || cell[11].trim() === "null" || cell[11].trim() === "" ? "../img/upload.jpg" : cell[11]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[1] === "undefined" ? null : cell[1][0]?.toUpperCase() + cell[1].slice(1)} </span>
@@ -529,7 +529,7 @@ const Children = () => {
                               cell[2].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[12].trim() === "undefined" || cell[12].trim() === "null" ? "../img/upload.jpg" : cell[12]} />
+                                  <img src={cell[12].trim() === "undefined" || cell[12].trim() === "null" || cell[12].trim() === "" ? "../img/upload.jpg" : cell[12]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[2] === "undefined" ? null : cell[2][0]?.toUpperCase() + cell[2].slice(1)
@@ -540,7 +540,7 @@ const Children = () => {
                               cell[3].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" ? "../img/upload.jpg" : cell[13]} />
+                                  <img src={cell[13].trim() === "undefined" || cell[13].trim() === "null" || cell[13].trim() === ""? "../img/upload.jpg" : cell[13]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[3] === "undefined" ? null : cell[3][0]?.toUpperCase() + cell[3].slice(1)
@@ -552,7 +552,7 @@ const Children = () => {
                               cell[4].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[14].trim() === "undefined" || cell[14].trim() === "null" ? "../img/upload.jpg" : cell[14]} />
+                                  <img src={cell[14].trim() === "undefined" || cell[14].trim() === "null" || cell[14].trim() === ""? "../img/upload.jpg" : cell[14]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[4] === "undefined" ? null : cell[4][0]?.toUpperCase() + cell[4].slice(1)
@@ -563,7 +563,7 @@ const Children = () => {
                               cell[5].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" ? "../img/upload.jpg" : cell[15]} />
+                                  <img src={cell[15].trim() === "undefined" || cell[15].trim() === "null" || cell[15].trim() === ""? "../img/upload.jpg" : cell[15]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[5] === "undefined" ? null : cell[5][0]?.toUpperCase() + cell[5].slice(1)
@@ -574,7 +574,7 @@ const Children = () => {
                               cell[6].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[16].trim() === "undefined" || cell[16].trim() === "null" ? "../img/upload.jpg" : cell[16]} />
+                                  <img src={cell[16].trim() === "undefined" || cell[16].trim() === "null" || cell[16].trim() === ""? "../img/upload.jpg" : cell[16]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[6] === "undefined" ? null : cell[6][0]?.toUpperCase() + cell[6].slice(1)
@@ -586,7 +586,7 @@ const Children = () => {
                               cell[7].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" ? "../img/upload.jpg" : cell[17]} />
+                                  <img src={cell[17].trim() === "undefined" || cell[17].trim() === "null" || cell[17].trim() === ""? "../img/upload.jpg" : cell[17]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[7] === "undefined" ? null : cell[7][0]?.toUpperCase() + cell[7].slice(1)
@@ -598,7 +598,7 @@ const Children = () => {
                               cell[8].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
+                                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" || cell[18].trim() === ""? "../img/upload.jpg" : cell[18]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[8] === "undefined" ? null : cell[8][0]?.toUpperCase() + cell[8].slice(1)
@@ -606,22 +606,22 @@ const Children = () => {
                               </div>
                             }
                 
-                            {
+                            {/* {
                               cell[8].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" ? "../img/upload.jpg" : cell[18]} />
+                                  <img src={cell[18].trim() === "undefined" || cell[18].trim() === "null" || cell[18].trim() === ""? "../img/upload.jpg" : cell[18]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[8] === "undefined" ? null : cell[8][0]?.toUpperCase() + cell[8].slice(1)
                                   } </span>
                               </div>
-                            }
+                            } */}
                             {
                               cell[9].trim() != "undefined" &&
                               <div className="user-list">
                                 <span className="user-pic">
-                                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" ? "../img/upload.jpg" : cell[19]} />
+                                  <img src={cell[19].trim() === "undefined" || cell[19].trim() === "null" || cell[19].trim() === ""? "../img/upload.jpg" : cell[19]} />
                                 </span>
                                 <span className="user-name">
                                   {cell[9] === "undefined" ? null : cell[9][0]?.toUpperCase() + cell[9].slice(1)
