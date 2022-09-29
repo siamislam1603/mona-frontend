@@ -18,7 +18,7 @@ import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
 import { useRef } from 'react';
 import { debounce } from 'lodash';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from "../components/Loader";
 import { useParams } from 'react-router-dom';
@@ -243,7 +243,7 @@ const UserManagement = () => {
                 <img src={cell[0] === 'null' ? '../img/upload.jpg' : cell[0]} alt="" />
               </span>
               <span className="user-name">
-                <a href={`/view-user/${cell[4]}`}>{cell[1]}</a><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
+              <Link to={`/view-user/${cell[4]}`}>{cell[1]}</Link><small>{cell[2]}</small> <small className={`${status}`}>{status}</small>
               </span>
             </div>
           </>
@@ -348,8 +348,8 @@ const UserManagement = () => {
       setfullLoaderStatus(false)
     }
     if (response.status === 200) {
-
       const { users } = response.data;
+      console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
@@ -430,6 +430,9 @@ const UserManagement = () => {
 
 
   const handleApplyFilter = async () => {
+    if(openFilter === true) {
+      setOpenFilter(false);
+    }
     fetchUserDetails();
   }
 
@@ -583,6 +586,7 @@ const UserManagement = () => {
 
 
   const csvLink = useRef();
+  openFilter && console.log('OPEN FILTER:', openFilter);
   return (
     <>
       <div id="main">
@@ -642,11 +646,14 @@ const UserManagement = () => {
                               <Dropdown.Toggle
                                 id="extrabtn"
                                 variant="btn-outline"
-                                onClickCapture={() => setOpenFilter(!openFilter)}
+                                onClickCapture={() => {
+                                  if(openFilter === false)
+                                  setOpenFilter(true)
+                                }}
                               >
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
-                              <Dropdown.Menu style={{ display: openFilter ? "block" : "none" }}>
+                              <Dropdown.Menu style={{ display: openFilter === true ? "block" : "none" }}>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
@@ -664,7 +671,7 @@ const UserManagement = () => {
                                             id={`${role.value}-${index}`}
                                             checked={filter === `${role.value}`}
                                             onChange={(event) => {
-                                              // console.log(event.target.value);
+                                              console.log(event.target.value);
                                               setFilter(event.target.value)
                                             }}
                                           />
@@ -698,16 +705,20 @@ const UserManagement = () => {
                                   <Button
                                     variant="transparent"
                                     type="submit"
-                                    onClick={() => { setFilter(''); }}
+                                    onClick={() => { 
+                                      setFilter('');
+                                      if(openFilter === true) {
+                                        setOpenFilter(false);
+                                      } 
+                                    }}
                                   >
                                     Reset
                                   </Button>
                                   <Button
                                     variant="primary"
                                     type="submit"
-                                    onClick={() => { 
+                                    onClickCapture={() => { 
                                       handleApplyFilter(filter);
-                                      setOpenFilter(!openFilter);
                                      }}
                                   >
                                     Apply

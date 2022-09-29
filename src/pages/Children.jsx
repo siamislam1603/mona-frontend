@@ -376,6 +376,7 @@ const Children = () => {
                 let Button = parseInt(cell.active) === 1 ? "Deactivate" : "Activate";
                 return (
                     <>  {
+                            localStorage.getItem("user_role") !== "educator" &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -449,7 +450,7 @@ const Children = () => {
                                             </h1>
 
                                             {
-                                                localStorage.getItem('user_role') !== "guardian" && localStorage.getItem('user_role') !== "educator" &&
+                                                localStorage.getItem('user_role') !== "educator" && localStorage.getItem('user_role') !== "guardian" &&
                                                 <Link 
                                                     to={`/child-enrollment-init/${params.id}`}
                                                     style={{
