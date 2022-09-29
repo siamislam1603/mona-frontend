@@ -103,9 +103,17 @@ const createAnnouncement = async (data) => {
           );
       
         if(imgSaveResponse.status === 201 && imgSaveResponse.data.status === "success") {
-              
+          console.log("Anouncement is event ",announcementData.is_event)
           setLoader(false)
-          localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+          {
+            announcementData.is_event===0 ? (
+              
+                            localStorage.setItem('success_msg', 'Announcement Created Successfully!')
+                
+            ):(
+              localStorage.setItem('success_msg', 'Event Created Successfully!')
+            )
+          }
           localStorage.setItem('active_tab', '/my-announcements');
           window.location.href="/announcements";
         
@@ -124,8 +132,18 @@ const createAnnouncement = async (data) => {
     } 
   
     else if(response.status === 201 && response.data.status === "success" && coverImage.length <1){
-      localStorage.setItem('success_msg', 'Announcement Created Successfully!');
-      localStorage.setItem('active_tab_announcement', '/my-announcements');
+      console.log("Anouncement is event 1",announcementData.is_event)
+      
+      {
+
+        announcementData.is_event===0 ? (
+          
+                        localStorage.setItem('success_msg', 'Announcement Created Successfully!')
+            
+        ):(
+          localStorage.setItem('success_msg', 'Event Created Successfully!')
+        )
+      }
       window.location.href="/announcements";
         
     }
@@ -352,6 +370,7 @@ const createAnnouncement = async (data) => {
     useEffect(() =>{
       const role = localStorage.getItem("user_role")
       setUserRole(role)
+      localStorage.removeItem('success_msg')
     },[])
 
  
@@ -366,7 +385,7 @@ console.log("ds",ds,cureent)
 // console.log("valid",valid)
 
   //  console.log("Announcement Data",videoTutorialFiles)
-  console.log("Announcement realted file",relatedFiles)
+  console.log("Announcement realted file",announcementData)
 
   return (
     
@@ -677,7 +696,7 @@ console.log("ds",ds,cureent)
                         <Form.Group className="mb-3 form-group">
                           <Form.Label>Upload Files </Form.Label>
                           <DropAllFile onSave={setRelatedFiles}/>
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">(pdf, doc, ppt & xls)</small>
                           <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                            {!error.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
                           { error.relatedFile && <span className="form-errors">{error.relatedFile}</span> }
