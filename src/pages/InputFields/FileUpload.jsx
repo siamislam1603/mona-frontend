@@ -1,8 +1,15 @@
 import { Form, Col } from 'react-bootstrap';
 import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 const FileUpload = (props) => {
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[])
   const { ...controls } = props;
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -66,6 +73,7 @@ const FileUpload = (props) => {
         <Form.Control
           type="file"
           name={controls.field_name}
+          id={controls.field_name}
           value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
           onChange={async (e) => {
             let file = e.target.files[0];

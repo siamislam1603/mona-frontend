@@ -5,14 +5,10 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
-  console.log('FILE>>>>>>>>>>>', file);
   let fileType = file.type.split("/")[0];
-  console.log('FILE TYPE:', fileType);
 
   if(fileType === 'video') {
-    console.log('FILE IS A VIDEO!');
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
     if(fileSize > 1024) {
       return {
         code: "file-too-large",
@@ -20,9 +16,7 @@ function fileSizeValidator(file) {
       };
     }
   } else if(fileType === 'application') {
-    console.log('FILE IS A DOCUMENT!');
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
     if(fileSize > 10) {
       return {
         code: "file-too-large",
@@ -30,9 +24,7 @@ function fileSizeValidator(file) {
       };
     }
   } else if(fileType === "image") {
-    console.log('FILE IS AN IMAGE');
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
     if(fileSize > 10) {
       return {
         code: "file-too-large",
@@ -45,8 +37,6 @@ function fileSizeValidator(file) {
 }
 
 export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} ,videoUrl,setVideoThumbnailUrl,setVideoUrl}) {
- 
-  console.log("Video Thumnail ",videoUrl)
   
   let typeObj;
 
@@ -78,11 +68,9 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   });
 
   const handleFileDelete = (file) => {
-    console.log("The file for operating module",file)
+    console.log('CLICKED FOR DELETE')
     let temp = [...data];
-    
-    setVideoThumbnailUrl("")
-    setVideoUrl('')
+
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
@@ -99,15 +87,12 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   ));
 
   const handleDelete =(file) =>{
-    console.log("The file e4",file)
     let temp = [...theFiles];
     temp.splice(temp.indexOf(file), 1);
     setTheFiles(temp);
-    console.log("The",theFiles.length)
 
     if(theFiles.length<2){
       setTheFiles(null)
-      console.log("The new lenght",theFiles.length)
     }
   }
 
@@ -130,7 +115,6 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     let rejectionArray = fileRejections.map(d => ({
       error: d.errors.map(e => e)
     }));
-    console.log(rejectionArray);
     setUploadError(rejectionArray);
   }, [fileRejections]);
 
