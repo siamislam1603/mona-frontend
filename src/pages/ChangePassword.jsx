@@ -18,6 +18,7 @@ const ChangePassword = () => {
   const [secHide, setSecHide] = useState(true);
   const [ThreHide, setThreHide] = useState(true);
   const [check, setCheck] = useState(null);
+  const [passwordInitiationFlag, setPasswordInitiationFlag] = useState(0);
 
 
 
@@ -107,7 +108,8 @@ const ChangePassword = () => {
         id: userId,
         oldPassword:data.oldpassword,
         newPassword:data.new_password,
-        isLoggedIn: 1
+        isLoggedIn: 1,
+        changePasswordNextLogin: 0
       },{
         headers: {
           "Authorization": "Bearer " + token
@@ -158,6 +160,20 @@ const ChangePassword = () => {
     }
   };
 
+  const checkPasswordChangeRequestInitiation = async () => {
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/auth/getPasswordChangeInitiationFlag`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+  
+    if(response.status === 200 && response.data.status === 'success') {
+      let { passwordChangeInitiationFlag } = response.data;
+      setPasswordInitiationFlag(passwordChangeInitiationFlag);
+    }
+  };
+
   const onSubmit = event =>{
     event.preventDefault()
     let count =  localStorage.getItem("attempts") 
@@ -186,16 +202,9 @@ const ChangePassword = () => {
     fetchFranchiseeList();
   }, []);
 
-//   useEffect(() => {
-//     fetchFranchiseeUsers(trainingSettings.assigned_franchisee[0]);
-//   }, [trainingSettings.assigned_franchisee.length > 0]);
-
-//   trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
-//   trainingData && console.log('TRAINING DATA:', trainingData);
-// console.log("All password", passwords)
-// const [count, setCount] = useState(0);
-
-
+  useEffect(() => {
+    checkPasswordChangeRequestInitiation();
+  }, []);
 
   // Get the previous value (was passed into hook on last render)
   
@@ -225,9 +234,17 @@ const attempt = localStorage.getItem("attempts")
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                   {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
                 <div className="change-pass-sec">
-                 {}
-                 <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>You've logged in for the first time.</p>
-                 <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
+                {
+                  passwordInitiationFlag ?
+                  <>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>A password change request has been initiated by the Administrator.</p>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
+                  </>:
+                  <>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>You've logged in for the first time.</p>
+                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
+                  </>
+                }
                   <Row>
                   {/* <Col md={12} className="mb-3">
                         <Form.Group>
