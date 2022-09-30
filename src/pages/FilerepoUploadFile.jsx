@@ -441,7 +441,7 @@ const FilerepoUploadFile = () => {
                                                     disabled={true}
                                                 >
                                                     {/* <option value="8">Select</option> */}
-                                                    <option value={8} selected={true}>General</option>
+                                                    <option value={generalCategory} selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (
                                             <>
