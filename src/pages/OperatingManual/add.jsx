@@ -742,17 +742,7 @@ const AddOperatingManual = () => {
                                   />
                                   Add Video
                                 </span>
-                                <Form.Control type="file"
-                                 onChange={(e) => {
-                                  if (e.target.files) {
-                                    uploadFiles(
-                                      e.target.name,
-                                      e.target.files[0]
-                                    );
-                                  }
-                                }}
-                                />
-
+                               
                                 <Form.Control
                                   className="add_image_input"
                                   type="file"
