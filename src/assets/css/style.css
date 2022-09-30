@@ -714,7 +714,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 /*.vidcol .pic img{display:block;width:100%}*/
 .vidcol .pic img { display: block; height: 100%; position: absolute; object-fit: cover; width: 100%; z-index: 1; }
 .media-container { display: flex; flex-flow: wrap; }
-.file-container{flex:0 0 50%; max-width:50%;padding-right: 40px; display:flex;justify-content:flex-start;align-items:center;margin:10px 0;position: relative;}
+.file-container { flex: 0 0 48%; max-width: 48%; display: flex; justify-content: flex-start; align-items: center; margin: 5px; position: relative; background-color: #f8f8f8; padding: 8px 40px 8px 8px; border-radius: 8px; }
 .file-container .file-remove{position: absolute; top:50%; transform: translateY(-50%); right: 15px; z-index: 9; }
 .notificationpopup.marked-read .popover-body{height:calc(100% - 38px);}
 .notificationpopup .notiftxt .title-xxs{font-size:13px;font-weight: normal;}
