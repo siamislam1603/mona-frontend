@@ -371,7 +371,7 @@ const DynamicForm = () => {
           redirect: 'follow',
         };
 
-        fetch(`${BASE_URL}/form/form_data`, requestOptions)
+        fetch(`${BASE_URL}/form/form_data?role=${localStorage.getItem("user_role")}`, requestOptions)
           .then((response) => response.text())
           .then((result) => {
             result = JSON.parse(result);
