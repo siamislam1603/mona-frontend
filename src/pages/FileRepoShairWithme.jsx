@@ -22,7 +22,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
+          name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
           updatedAt: dt.updatedAt,
           createdAt: dt.createdAt,
           userID: dt.id,
@@ -39,11 +39,11 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
 
   useEffect(() => {
     GetData();
-  }, [setUserData]);
+  }, []);
 
   useEffect(() => {
     GetData();
-  }, [selectedFranchisee]);
+  }, [selectedFranchisee,setUserData]);
 
 
   const GetSaachhData = async () => {
@@ -61,7 +61,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryId},${dt.count},${dt.categoryName}`,
+          name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
           updatedAt: dt.updatedAt,
           createdAt: dt.createdAt,
           userID: dt.id,
@@ -94,13 +94,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
         return (
           <>
             <div className="user-list">
-              <Link to={`/file-repository-List/${cell[0]}`} className="FileResp">
+              <Link to={`/file-repository-List/${cell[2]}`} className="FileResp">
                 <span>
                   <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                 </span>
               </Link>
               <span className="user-name">
-                {cell[2]}
+                {cell[0]}
                 <small>
                   {cell[1] > 1 ? (<>
                     {cell[1]} Files

@@ -428,8 +428,9 @@ const FilerepoUploadFile = () => {
                                                     onChange={(e) => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
+                                                    disabled={true}
                                                 >
-                                                    <option value="8">Select</option>
+                                                    {/* <option value="8">Select</option> */}
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (
