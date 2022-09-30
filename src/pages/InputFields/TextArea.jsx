@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import { Col, Form } from "react-bootstrap";
 
 const TextArea = (props) => {
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[])
   const { ...controls } = props;
   return (
     <Col sm={6}>

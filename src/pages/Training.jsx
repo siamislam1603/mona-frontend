@@ -25,6 +25,7 @@ const Training = () => {
   const [tabLinkPath, setTabLinkPath] = useState("/available-training");
   const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
   const [trainingCategory, setTrainingCategory] = useState([]);
+  const [openFilter, setOpenFilter] = useState(false);
   const [filterData, setFilterData] = useState({
     category_id: null,
     search: "",
@@ -150,7 +151,9 @@ const Training = () => {
                         {
                           localStorage.getItem('user_role') === 'stanley' &&
                           <Dropdown className="filtercol me-3">
-                            <Dropdown.Toggle id="extrabtn" variant="btn-outline">
+                            <Dropdown.Toggle 
+                              id="extrabtn" 
+                              variant="btn-outline">
                               <i className="filter-ico"></i> Add Filters
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
@@ -174,7 +177,9 @@ const Training = () => {
                               </div>
                               <footer>
                                 <Button variant="transparent" type="submit">Cancel</Button>
-                                <Button variant="primary" type="submit">Apply</Button>
+                                <Button 
+                                  variant="primary" 
+                                  type="submit">Apply</Button>
                               </footer>
                             </Dropdown.Menu>
                           </Dropdown>
@@ -210,7 +215,7 @@ const Training = () => {
                     </ul>
 
                     <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                      <Form.Group className="d-flex align-items-center">
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
@@ -239,11 +244,15 @@ const Training = () => {
                         <Dropdown.Toggle
                           id="extrabtn"
                           variant="btn-outline"
-                          
+                          onClickCapture={() => {
+                            if(openFilter === false) {
+                              setOpenFilter(true)
+                            }
+                          }}
                         >
                           <i className="filter-ico"></i> Add Filters
                         </Dropdown.Toggle>
-                        <Dropdown.Menu>
+                        <Dropdown.Menu style={{ display: openFilter ? "block" : "none" }}>
                           <header>Filter by</header>
                           <div className="custom-radio btn-radio mb-2">
                             {/* <label style={{ marginBottom: '5px' }}>Role</label> */}
@@ -282,18 +291,8 @@ const Training = () => {
                             </Form.Group>
                           </div>
                           <footer>
-                            {/* <Button
-                              variant="transparent"
-                              type="submit"
-                              onClick={() => { setFilterData(prevState => ({
-                                ...prevState,
-                                filter: "alphabatical"
-                              })); }}
-                            >
-                              Reset
-                            </Button> */}
                             <Button
-                              variant="primary"
+                              variant="btn-outline"
                               type="submit"
                               onClick={() => { 
                                 setFilterData(prevState => ({
@@ -302,6 +301,17 @@ const Training = () => {
                                 })); 
                               }}>
                               Reset
+                            </Button>
+                            
+                            <Button
+                              variant="primary"
+                              type="submit"
+                              onClick={() => {
+                                if(openFilter === true) { 
+                                  setOpenFilter(false)
+                                } 
+                              }}>
+                              Close
                             </Button>
                           </footer>
                         </Dropdown.Menu>

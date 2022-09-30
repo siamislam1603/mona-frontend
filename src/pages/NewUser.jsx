@@ -851,6 +851,7 @@ const NewUser = () => {
                               <Select
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
+                                isClearable={false}
                                 components={animatedComponents}
                                 isMulti
                                 options={trainingCategoryData}
@@ -871,6 +872,7 @@ const NewUser = () => {
                               <Select
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
+                                isClearable={false}
                                 components={animatedComponents}
                                 isMulti
                                 options={pdcData}
@@ -1023,6 +1025,7 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 components={animatedComponents}
                                 isMulti
+                                isClearable={false}
                                 placeholder="Select"
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {
@@ -1070,15 +1073,13 @@ const NewUser = () => {
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 files, 5MB each)</small>
                             { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
                             {
                               fileError  &&
                               getUniqueErrors(fileError).map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
                                 )
                               })
                             }

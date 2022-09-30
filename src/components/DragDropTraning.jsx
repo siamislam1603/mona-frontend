@@ -2,9 +2,50 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Link } from 'react-router-dom';
 
+const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
+
+function fileSizeValidator(file) {
+  let fileType = file.type.split("/")[0];
+  console.log('FILE TYPE:', fileType);
+
+  if(fileType === 'video') {
+    console.log('FILE IS A VIDEO!');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 1024) {
+      return {
+        code: "file-too-large",
+        message: `File should be less than ${1}GB`
+      };
+    }
+  } else if(fileType === 'application') {
+    console.log('FILE IS A DOCUMENT!');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 10) {
+      return {
+        code: "file-too-large",
+        message: `File should be less than ${10}MB`
+      };
+    }
+  } else if(fileType === "image") {
+    console.log('FILE IS AN IMAGE');
+    let fileSize = bytesToMegaBytes(file.size);
+    console.log('FILE SIZE:', fileSize);
+    if(fileSize > 1) {
+      return {
+        code: "file-too-large",
+        message: `Image should be less than ${10}MB`
+      }
+    }
+  }
+
+  return null
+}
+
 const temp = () => { };
 
-export default function DragDropTraning({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp }) {
+export default function DragDropTraning({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp, setUploadError=() => {} }) {
 
     const [data, setData] = useState([]);
     const [currentURI, setCurrentURI] = useState();
@@ -16,16 +57,26 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
         });
     }, []);
 
-    const { getRootProps, getInputProps } = useDropzone({
+    const { getRootProps, getInputProps, fileRejections } = useDropzone({
         onDrop,
         maxFiles: 1,
         multiple: false,
         accept: {
             'image/*': ['.png', '.jpg', '.jpeg'],
         },
+        validator: fileSizeValidator
     });
 
-
+    const fileRejectionItems = fileRejections.map(({ file, errors }) => (
+        <li key={file.path}>
+            {file.path} - {file.size} bytes
+            <ul>
+            {errors.map(e => (
+                <li key={e.code}>{e.message}</li>
+            ))}
+            </ul>
+        </li>
+    ));
 
     const handleFileDelete = (file) => {
         let temp = [...data];
@@ -54,6 +105,14 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
         }
     }, [croppedImage]);
 
+    useEffect(() => {
+        let rejectionArray = fileRejections.map(d => ({
+          error: d.errors.map(e => e)
+        }));
+        console.log(rejectionArray);
+        setUploadError(rejectionArray);
+    }, [fileRejections]);
+
     return (
         <div className="file-upload-form">
             <div {...getRootProps({ className: 'dropzone' })}>
@@ -61,6 +120,8 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
                 <span className="text-center uploadfile cursor">
                     <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> Add Image
                 </span>
+                <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
+                <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB)</small>
             </div>
             <div className="">
                 {

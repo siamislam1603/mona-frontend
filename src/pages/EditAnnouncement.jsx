@@ -8,7 +8,7 @@ import MyEditor from './CkeditorAnnouncement';
 
 import { useParams } from 'react-router-dom';
 import * as ReactBootstrap from 'react-bootstrap';
-
+// import DropAllFile from '../components/DragDropMultiple';
 
 import moment from 'moment';
 
@@ -31,14 +31,15 @@ const EditAnnouncement = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+  const [docError, setDocError] = useState([]);
   
-  const [userRole, setUserRole] = useState([]);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
   const [theMessage,setTheMessage] = useState("")
 const [selectedFranchisee, setSelectedFranchisee] = useState();
 
+const [docFileError, setDocFileError] = useState(null);
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [fileDeleteResponse, setFileDeleteResponse] = useState(false);
@@ -48,11 +49,13 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [wordCount, setWordCount] = useState(0)
+  const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
   
   const [AnnouncementsSettings, setAnnouncementsSettings] = useState({ user_roles: [] });
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
+  const [videoError, setVideoError] = useState([]);
   
   //Copy Announcement Data
   const [announcementCopyData,setAnnouncementCopyData] = useState({
@@ -60,7 +63,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   })
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
-  const [theVideo,setTheVideo] = useState({})
+  const [theVideo,setTheVideo] = useState([])
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
@@ -154,7 +157,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   const onSubmit = (e) => {
     e.preventDefault();
  
-    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise,wordCount);
+    const newErrors = EditAnnouncementValidation(announcementCopyData,coverImage,announcementData,allFranchise,wordCount,relatedFiles);
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       setAutoFocus(newErrors)
@@ -321,6 +324,16 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
 
     }
  } 
+ const getUniqueErrors = (arr) => {
+  var result = [];
+  arr.forEach(function(item) {
+      if(result.indexOf(item) < 0) {
+          result.push(item);
+      }
+  });
+
+ return result;
+}
  const copyFetchedData = () =>{
   setAnnouncementCopyData(prevState =>({
     ...prevState,
@@ -376,6 +389,16 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
+useEffect(() => {
+  setDocError(docFileError?.map(errObj => (
+    errObj?.error[0]?.message
+  )));
+}, [docFileError])
+useEffect(() => {
+  setVideoError(videoFileErrorMessage?.map(errObj => (
+    errObj?.error[0]?.message
+  )));
+}, [videoFileErrorMessage])
 
 useEffect(() =>{
   let count = announcementData?.meta_description?.length-7;
@@ -693,10 +716,12 @@ useEffect(() =>{
                           
                           />
                             {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+                            <small className="fileinput">(png, jpg & jpeg)</small>
 
                            <span  className="error">
                             {errors.coverImage}
                            </span>
+
                            
 
                           {/* <p className="form-errors">{errors.cover_image}</p> */}
@@ -712,10 +737,25 @@ useEffect(() =>{
                           {/* <DropOneFile onSave={setVideoTutorialFiles}
 
                            /> */}
-                       <DropVideo onSave={setTheVideo}/>
+                       <DropAllFile 
+                        title="Videos"
+                        onSave={setTheVideo}
+                        type="video"
+                        setUploadError={setVideoFileErrorMessage}
+                        />
+
+
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
+                          {
+                              videoError  &&
+                              getUniqueErrors(videoError).map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
+                                )
+                              })
+                            }
                           <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -739,6 +779,7 @@ useEffect(() =>{
                                 ))
                               }
                             </div>
+                         
                         </Form.Group>
                       </Col>
                     </Row>
@@ -747,7 +788,19 @@ useEffect(() =>{
                      <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Files </Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}/>
+                          <DropAllFile 
+                              setUploadError={setDocFileError}
+                            
+                            onSave={setRelatedFiles}
+                            />
+                                                       {
+                              docError  &&
+                              getUniqueErrors(docError).map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                )
+                              })
+                            }
                           <div className="media-container">
 
                           {fetchedRelatedFiles &&fetchedRelatedFiles.map((file) => (
@@ -765,6 +818,10 @@ useEffect(() =>{
                               )
                               : null
                           ))}
+                          {/* {relatedFile} */}
+                        
+                          {!errors.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
+                          { errors.relatedFile && <span className="form-errors">{errors.relatedFile}</span> }
                         </div>
                         </Form.Group>
                       </Col>

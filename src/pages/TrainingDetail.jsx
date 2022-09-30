@@ -9,6 +9,8 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import { Modal } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { FullLoader } from "../components/Loader";
 
 const getRoleName = (role) => {
   const obj = {
@@ -19,14 +21,24 @@ const getRoleName = (role) => {
   return obj[role];
 }
 
-// function fetchVideoDuration(videoURL) {
-//   getVideoDurationInSeconds(videoURL).then((duration) => {
-//     console.log(duration)
-//   });
-// }
+function getDuration(duration) {
+  const sec = parseInt(duration, 10); // convert value to number if it's string
+  let hours   = Math.floor(sec / 3600); // get hours
+  let minutes = Math.floor((sec - (hours * 3600)) / 60); // get minutes
+  let seconds = sec - (hours * 3600) - (minutes * 60); //  get seconds
+  // add 0 if value < 10; Example: 2 => 02
+  if (hours   < 10) {hours   = "0"+hours;}
+  if (minutes < 10) {minutes = "0"+minutes;}
+  if (seconds < 10) {seconds = "0"+seconds;}
+  return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
+}
+
+const videoExtension = ['.mp4', '.flv', '.mkv'];
+const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt', '.pdf'];
 
 const TrainingDetail = () => {
   const { trainingId } = useParams();
+
   const [trainingDetails, setTrainingDetails] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
@@ -40,6 +52,14 @@ const TrainingDetail = () => {
   const [users, setUsers] = useState();
   const [relatedForms, setRelatedForms] = useState();
   const [showSurveyForm, setShowSurveyForm] = useState(false);
+  const [nonParticipants, setNonParticipants] = useState(null);
+  const [popupNotification, setPopupNotification] = useState(null);
+  const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
+  const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [videoFiles, setVideoFiles] = useState(null);
+  const [relatedFiles, setRelatedFiles] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -54,14 +74,32 @@ const TrainingDetail = () => {
     console.log("The response", response)
 
     if (response.status === 200 && response.data.status === "success") {
-      console.log('SUCCESS TRAINING DETAIL');
-      const { training } = response.data;
-      setTrainingDetails(training);
-    }// } else {
-    //   localStorage.setItem('success_msg', 'Training Created Successfully!');
-    //   // localStorage.setItem('active_tab', '/created-training');
-    //   window.location.href = "/training";
-    // }
+      const { all_trainings, user } = response.data.training;
+
+      // FETCHING DUE DATE
+      const { end_date, addedBy } = all_trainings;
+      let due_date = moment(end_date).format('YYYY-MM-DD');
+      let today = moment().format('YYYY-MM-DD');
+      let currentUserId = localStorage.getItem('user_id');
+      let currentUserRole = localStorage.getItem('user_role');
+
+      if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
+        setTrainingExpiredPopup(true);
+      } else {
+        setTrainingDetails(all_trainings);
+        setUserDetails(user);
+
+        setVideoFiles(all_trainings.training_files.filter(d => videoExtension.includes(d.fileType)));
+        setRelatedFiles(all_trainings.training_files.filter(d => fileExtension.includes(d.fileType)));
+        setfullLoaderStatus(false);
+      }
+    } else if(response.status === 200 && response.data.status === "fail") {
+      const { message } = response.data;
+      console.log('MESSAGE:', message);
+      setPopupNotification(message);
+      setTrainingDeletePopup(true);
+      setfullLoaderStatus(false);
+    }
   }
 
   const handleFinishTraining = (event) => {
@@ -120,6 +158,26 @@ const TrainingDetail = () => {
     }  
   };
 
+  const fetchNonParticipants = async () => {
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/training/trainingNotCompleted/${trainingId}/${localStorage.getItem('user_id')}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    console.log('RESPONSE NON PARTICIPANTS:', response);
+    if(response.status === 200 && response.data.status === "success") {
+      let { finalResponse } = response.data;
+
+      setNonParticipants(finalResponse.slice(0, 6));
+    }
+  }
+
+  const handleTrainingTransition = () => {
+    window.location.href = "/training";
+  }
+
   const fetchTrainingFormDetails = async (id) => {
     const response = await axios.get(`${BASE_URL}/training/form/training/${id}`);
 
@@ -168,11 +226,12 @@ const TrainingDetail = () => {
     }
   }, []);
 
-  users && console.log('USERS:', users);
-  
-  trainingDetails && console.log('TRAINING DETAILS:', trainingDetails);
-  console.log('IS BUTTON VISIBLE:', hideTrainingFinishButton);
-  // console.log('VIDEO URL:', fetchVideoDuration('https://www.youtube.com/watch?v=wi5h46V6NQM'));
+  useEffect(() => {
+    fetchNonParticipants();
+  }, []);
+
+  videoFiles && console.log('Video Files:', videoFiles);
+  relatedFiles && console.log('Related Files:', relatedFiles);
   return (
     <>
       <div id="main">
@@ -186,6 +245,7 @@ const TrainingDetail = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
+                <FullLoader loading={fullLoaderStatus} />
                 {trainingDetails &&
                   <div className="entry-container">
                     <header className="title-head">
@@ -193,20 +253,11 @@ const TrainingDetail = () => {
                         <h1 className="title-sm mb-2">{trainingDetails.title}</h1>
                         {
                           trainingDetails?.end_date &&
-
                           <small className="d-block">Due Date: {moment(trainingDetails.end_date).format('DD/MM/YYYY')}</small>
                         }
                       </div>
                       <div className="othpanel">
                         <div className="extra-btn">
-                          {/* <Dropdown>
-                          <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt="" />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item href="#">Delete All</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown> */}
                         </div>
                       </div>
                     </header>
@@ -219,9 +270,9 @@ const TrainingDetail = () => {
                       <div className="created-by">
                         <h4 className="title">Created by:</h4>
                         <div className="createrimg">
-                          <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                          <img src={userDetails?.profile_photo} alt="" />
                         </div>
-                        <p>{trainingDetails.user_data.fullname}, <span>{trainingDetails.user_data.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                        <p>{userDetails?.fullname}, <span>{userDetails?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
                       </div>
                       <div className="training-cont mt-3 mb-5">
                         <p>{trainingDetails.description}</p>
@@ -229,21 +280,19 @@ const TrainingDetail = () => {
 
                       <Row>
                         {
-                              trainingDetails?.training_files.map(d => d.fileType === ".mp4").includes(true) &&
+                          videoFiles.length > 0 &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
                               <>
                                 <h3 className="title-sm">Video Tutorials</h3>
                                 <div className="vid-col-sec">
-                                  {console.log(trainingDetails, "trainingDetails")}
                                   {
-                                    trainingDetails.training_files.map((data, index) =>
-                                      data.fileType === '.mp4' &&
+                                    videoFiles.map((data, index) =>
                                       (
                                         <VideoPop
                                           data={data}
                                           title={`Training Video ${index + 1}`}
-                                          duration={trainingDetails.completion_time}
+                                          duration={getDuration(data.duration)}
                                           fun={handleClose} />
                                       )
                                     )
@@ -256,19 +305,19 @@ const TrainingDetail = () => {
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {
-                              trainingDetails?.training_files.map(d => d.fileType !== ".mp4").includes(true) &&
+                              relatedFiles.length > 0 &&
                               <>
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
                                   {
-                                    trainingDetails.training_files.map((data, index) => data.fileType !== '.mp4' && (
+                                    relatedFiles.map((data, index) => (
                                       <div className="item">
-                                        <div className="pic"><a href="">
+                                        <div className="pic"><a>
                                           <img src="../img/book-ico.png" alt="" /></a>
                                         </div>
                                         <div className="name">
                                           <a href={data.file} target="_blank" rel="noreferrer">
-                                            {`document${index - 1}${data.fileType}`} <span className="time">{trainingDetails.completion_time}</span>
+                                            {`document ${index + 1}${data.fileType}`} <span className="time">{}</span>
                                           </a>
                                         </div>
                                         {/* <div className="cta-col">
@@ -289,16 +338,43 @@ const TrainingDetail = () => {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
-                              <h3 className="title-sm">Training Participants</h3>
+                              <h3 className="title-sm">Training Participants Attended</h3>
                               <div className="column-list files-list three-col">
                                 {
                                   users.map(user => {
                                     return (
                                       <div className="item">
-                                        <div className="userpic"><a href=""><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
-                                        <div className="name"><a href="">{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                        <div className="userpic"><a><img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg" alt="" /></a></div>
+                                        <div className="name"><a>{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                         <div className="completed-col">
                                           Completed on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
+                                        </div>
+                                      </div>
+                                    );
+                                  })
+                                }
+                              </div>
+                            </div>
+                          </Col>
+                        }
+
+                        {
+                          nonParticipants &&
+                          <Col md={12}>
+                            <div className="training-participants-sec mb-5">
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 className="title-sm">Training Participants Not Attended</h3>
+                                <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>
+                              </div>
+                              <div className="column-list files-list three-col">
+                                {
+                                  nonParticipants.map(user => {
+                                    return (
+                                      <div className="item">
+                                        <div className="userpic"><a><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
+                                        <div className="name"><a>{user.fullName} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                        <div className="completed-col">
+                                          Assigned on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                         </div>
                                       </div>
                                     );
@@ -325,7 +401,7 @@ const TrainingDetail = () => {
                               :
                               (
                                 (localStorage.getItem('user_role') === 'franchisor_admin') && localStorage.getItem('user_id') !== parseInt(trainingDetails?.addedBy)
-                                ? <>This training was created by a {getRoleName(trainingDetails?.user_data.role)} on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}</>
+                                ? <>This training was created by a {getRoleName(userDetails?.role)} on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}</>
                                 :<>
                                   {hideTrainingFinishButton === true
                                     ? <p> You've finished this training on {moment(trainingFinishedDate).format(
@@ -413,6 +489,48 @@ const TrainingDetail = () => {
             <button 
               className="modal-button"
               onClick={() => handleSurveyTransition()}>Next</button>
+          </Modal.Footer>
+        </Modal>
+      }
+
+      {
+        <Modal 
+          show={trainingDeletePopup}
+          onHide={() => setTrainingDeletePopup(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>{popupNotification}</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleTrainingTransition()}>Back To Training</button>
+          </Modal.Footer>
+        </Modal>
+      }
+
+      {
+        <Modal 
+          show={trainingExpiredPopup}
+          onHide={() => setTrainingExpiredPopup(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div>
+              <p>The training has been expired. You can no longer view or access the training material.</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={() => handleTrainingTransition()}>Back To Training</button>
           </Modal.Footer>
         </Modal>
       }

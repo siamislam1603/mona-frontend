@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom';
 let random = () => { }
 
 const fileSize = (file) =>{
-  console.log("THe file",file)
   if(file.type > 10 * 1048576){
     return {
       message: "Image shoudldn't be larger than 10 MB"
@@ -15,7 +14,7 @@ const fileSize = (file) =>{
   }
   return null
 }
-export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Image" , setUploadError=() => {} }) {
+export default function DropAllFile({ image, onSave, setTrainingData, setErrors, setFetchedCoverImage = random, title = "Image" , setUploadError = () => {} }) {
 
   const [data, setData] = useState([]);
   const [currentURI, setCurrentURI] = useState();
@@ -44,7 +43,6 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
     setData(temp);
   }
   const handleDelete = () => {
-    console.log("Handle Delete")
     setTheImage(null)
   }
 
@@ -52,9 +50,7 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
   // so that it could be used with <Img>:src tag.
   const getBase64 = (file) => {
     let reader = new FileReader();
-    // console.log("The reader",reader)
     reader.readAsDataURL(file);
-    // console.log(reader)
     reader.onload = function () {
       setCurrentURI(reader.result);
     };
@@ -90,7 +86,6 @@ export default function DropAllFile({ image, onSave, setTrainingData, setErrors,
     let rejectionArray = fileRejections.map(d => ({
       error: d.errors.map(e => e)
     }));
-    console.log(rejectionArray);
     setUploadError(rejectionArray);
   }, [fileRejections]);
   return (

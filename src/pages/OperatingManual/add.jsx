@@ -171,48 +171,24 @@ const AddOperatingManual = () => {
     }
   };
   const setOperatingManualField = (field, value) => {
-    
     setOperatingManualData({ ...operatingManualData, [field]: value });
-    // console.log(field,value)
-    
-    console.log("THE VALUE",value,field)
-     
+    console.log(field,value)
+    console.log("THE VALUE",value)
 
-    let  text = value
-    console.log("the text",text)
-
-    if (field=="description") {
-
-      if(text.includes("&nbsp")){
+    if (field == "description") {
+      const text = value;
+      if(value.includes("&nbsp")){
 
         setWordCount(text.length-12);
       }
-      else if(text.includes("</i>") && text.includes("<strong>") ){
-        console.log("Include <i> and <strong>")
-        if(text.includes("&nbsp")){
-          setWordCount(text.length-31-12);
-        }
-        setWordCount(text.length-31)
-      }
-
-      else if(text.includes("<strong>")){
-        console.log("Strong include")
-        setWordCount(text.length-17-7);
-
-      }
-      else if(text.includes("</i>")){
-        setWordCount(text.length-14)
-      }
-
-    
       else{
         setWordCount(text.length-7);
       }
+      console.log("WORD count",text.split(" ").length)
+      if(value === ""){
+        setWordCount(0)
+      }
     }
-    if(text === ""){
-      setWordCount(0)
-    }
-    
 
     if (!!errors[field]) {
       setErrors({
@@ -380,9 +356,9 @@ const AddOperatingManual = () => {
     let flag = false;
     console.log("file---->", file);
     if (name === 'cover_image') {
-      if (file.size > 10 * 1048576) {
+      if (file.size > 2048 * 1024) {
         let errorData = { ...errors };
-        errorData['cover_image'] = 'File is too large. File limit 10 MB.';
+        errorData['cover_image'] = 'File is too large. File limit 2 MB.';
         setErrors(errorData);
         flag = true;
       }
@@ -394,23 +370,21 @@ const AddOperatingManual = () => {
         )
       ) {
         let errorData = { ...errors };
-        errorData['cover_image'] = 'File must be JPG, PNG or JPEG.';
+        errorData['cover_image'] = 'File must be JPG or PNG.';
         setErrors(errorData);
         flag = true;
       }
 
     }
     if (name === 'reference_video') {
-      console.log("FIle inside",file.name.split(".").pop())
-
       if (file.size > 1024 * 1024 * 1024) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File is too large. File limit 1 GB.';
         setErrors(errorData);
         flag = true;
       }
-      
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')&& file.name.split(".").pop() !="flv" ) {
+      console.log("file type", file.type)
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
@@ -425,7 +399,6 @@ const AddOperatingManual = () => {
       }
       if (name === 'reference_video') {
         setVideoLoaderFlag(true);
-
       }
 
       const body = new FormData();
@@ -503,9 +476,8 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
- 
+  console.log("Operating manual",operatingManualData)
 // console.log("Oepratiing",errors)
-console.log("THe operating manual",operatingManualData)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>
@@ -669,7 +641,6 @@ console.log("THe operating manual",operatingManualData)
                               handleChange={(e, data) => {
                                 setOperatingManualField(e, data);
                               }}
-
                             />
                           ) : (
                             <MyEditor
@@ -680,8 +651,7 @@ console.log("THe operating manual",operatingManualData)
                               }}
                             />
                           )}
-                          <div className="text-left mb-4">Maximum character 1000</div>
-
+                          <div className="wordcount">Word Count : {wordCount}</div>
                         </Form.Group>
                       </Col>
                     </Row>
@@ -738,7 +708,7 @@ console.log("THe operating manual",operatingManualData)
 
                           <p className="form-errors">{errors.cover_image}</p>
                           <small className="fileinput">(png, jpg & jpeg)</small>
-                          <small className="fileinput">(File limit 10 MB)</small>
+                          <small className="fileinput">(File limit 2 MB)</small>
 
 
 
@@ -772,6 +742,7 @@ console.log("THe operating manual",operatingManualData)
                                   />
                                   Add Video
                                 </span>
+                               
                                 <Form.Control
                                   className="add_image_input"
                                   type="file"
@@ -801,11 +772,8 @@ console.log("THe operating manual",operatingManualData)
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
-                          <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">((mp4, flv & mkv))</small>
                           <small className="fileinput">(File limit 1 GB)</small>
-
-
-
                         </Form.Group>
                       </Col>
                     </Row>
@@ -827,18 +795,11 @@ console.log("THe operating manual",operatingManualData)
                                 operatingManualData.related_files
                               }
                             />
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
+                          <small className="fileinput">((pdf, doc, ppt & xslx))</small>
                           <small className="fileinput">(max 5 file,File limit 200 mb)</small>
                             <p className="form-errors">
                               {errors.related_files}
                             </p>
-                              {operatingManualData?.related_files?.length>5 && !errors.related_files
-                                && 
-                                <p className='form-errors'>
-                                Max limit is 5 files
-                               </p>
-                              }
-                
                           </Form.Group>
                         </div>
                       </Col>

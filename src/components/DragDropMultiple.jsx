@@ -5,12 +5,11 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
+  
   let fileType = file.type.split("/")[0];
 
   if(fileType === 'video') {
-    console.log('FILE IS A VIDEO!');
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
     if(fileSize > 1024) {
       return {
         code: "file-too-large",
@@ -18,21 +17,27 @@ function fileSizeValidator(file) {
       };
     }
   } else if(fileType === 'application') {
-    console.log('FILE IS A DOCUMENT!');
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
-    if(fileSize > 5) {
+    if(fileSize > 10) {
       return {
         code: "file-too-large",
-        message: `File should be less than ${5}MB`
+        message: `File should be less than ${10}MB`
       };
+    }
+  } else if(fileType === "image") {
+    let fileSize = bytesToMegaBytes(file.size);
+    if(fileSize > 10) {
+      return {
+        code: "file-too-large",
+        message: `Image should be less than ${10}MB`
+      }
     }
   }
 
   return null
 }
 
-export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} }) {
+export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} ,videoUrl,setVideoThumbnailUrl,setVideoUrl}) {
 
   let typeObj;
 
@@ -42,7 +47,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     }
   } else {
     typeObj = {
-      'text/*': ['.pdf', '.doc', '.xlsx', '.xlsm', '.docx', '.ppt', '.ods', '.pptx', '.xls', '.html', '.htm', '.txt']
+      'text/*': ['.pdf', '.doc', '.xlsx', '.xlsm', '.docx', '.ppt', '.ods', '.pptx', '.xls', '.html', '.htm', '.txt', '.csv']
     }
   }
   
@@ -64,7 +69,9 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   });
 
   const handleFileDelete = (file) => {
+    console.log('CLICKED FOR DELETE')
     let temp = [...data];
+
     temp.splice(temp.indexOf(file), 1);
     setData(temp);
   }
@@ -81,15 +88,12 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
   ));
 
   const handleDelete =(file) =>{
-    console.log("The file e4",file)
     let temp = [...theFiles];
     temp.splice(temp.indexOf(file), 1);
     setTheFiles(temp);
-    console.log("The",theFiles.length)
 
     if(theFiles.length<2){
       setTheFiles(null)
-      console.log("The new lenght",theFiles.length)
     }
   }
 
@@ -112,7 +116,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     let rejectionArray = fileRejections.map(d => ({
       error: d.errors.map(e => e)
     }));
-    console.log(rejectionArray);
+    console.log('REJECTIONaRRAY:', rejectionArray);
     setUploadError(rejectionArray);
   }, [fileRejections]);
 
@@ -130,7 +134,19 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
         <input {...getInputProps()} />
         <span className="text-center uploadfile cursor">
           <img src="../img/bi_cloud-upload.png" className="me-2" alt="" /> {module === "user-management" ? "Upload": "Add" } {title}
-        </span>
+        </span>        
+        {
+          type === "video" ?
+          <div style={{ marginTop: "5px" }}>
+            <small className="fileinput">(mp4, flv & mkv)</small>
+            <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
+          </div>
+          :
+          <div style={{ marginTop: "5px" }}>
+            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
+            <small className="fileinput">(max. 5 documents, less than 10MB each)</small>
+          </div>
+        }
       </div>
 
       {theFiles ? (
@@ -157,7 +173,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
         <ul>
           {
             data && data?.map((file, index) => (
-              <li className="mt-3" key={index}>
+              <li className="mt-1" key={index}>
                 {file.path}
                 {/* {file.path} - {file.size} bytes */}
                 <span className="ms-2">

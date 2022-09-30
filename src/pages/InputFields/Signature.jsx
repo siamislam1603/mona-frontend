@@ -1,10 +1,17 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Form } from "react-bootstrap";
 import SignaturePad from "react-signature-canvas";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Signature = (props) => {
+
+  useEffect(()=>{
+    if(props.errorFocus)
+    {
+      document.getElementById(props.errorFocus).focus();
+    }
+  },[]);
   const { ...controls } = props;
   console.log("props--->",props.signature_flag);
   const sigPad = useRef({});
@@ -22,7 +29,7 @@ const Signature = (props) => {
     props.signature_flag && <Col sm={6}>
       <ToastContainer/>
       <Form.Group className="form-input-section">
-        <Form.Label>{controls.field_label}</Form.Label>
+        <Form.Label id={controls.field_name}>{controls.field_label}</Form.Label>
         <p style={{fontSize:"12px"}}>(Kindly use the write pad for free hand signature)</p>
         <SignaturePad
           canvasProps={{
@@ -36,9 +43,9 @@ const Signature = (props) => {
           }}
           ref={sigPad}
         />
-        <div>
-          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
+        <div style={{marginTop:"5px"}}>
           <Button style={{minWidth:"70px !important"}} onClick={trim}>Save</Button>
+          <Button className="theme-light" style={{minWidth:"70px !important"}} onClick={clear}>Clear</Button>
         </div>
       </Form.Group>
       <p style={{color:"red"}}>{controls.error[controls.field_name]}</p>

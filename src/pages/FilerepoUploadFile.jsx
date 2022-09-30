@@ -175,6 +175,8 @@ const FilerepoUploadFile = () => {
             selectedFranchiseeId += item.id + ',';
         });
 
+        formSettingData.file_category = getUser_Role == "guardian" ? "8" : formSettingData.file_category
+
         if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
             setError(true);
             return false
@@ -426,8 +428,9 @@ const FilerepoUploadFile = () => {
                                                     onChange={(e) => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
+                                                    disabled={true}
                                                 >
-                                                    <option value="8">Select</option>
+                                                    {/* <option value="8">Select</option> */}
                                                     <option value="8" selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (

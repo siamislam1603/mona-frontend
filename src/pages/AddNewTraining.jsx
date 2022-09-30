@@ -105,13 +105,14 @@ const AddNewTraining = () => {
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [trainingFormData, setTrainingFormData] = useState([]);
   const [docErrorMessage, setDocErrorMessage] = useState(null);
+  const [imageFileErrorMessage, setImageFileErrorMessage] = useState(null);
+  const [imageFileError, setImageFileError] = useState(null);
 
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
-  console.log(errors, "errors")
 
   const [trainingSettingErrors, setTrainingSettingErrors] = useState({});
   const [topErrorMessage, setTopErrorMessage] = useState(null);
@@ -161,7 +162,6 @@ const AddNewTraining = () => {
 
   // FUNCTION TO SEND TRAINING DATA TO THE DB
   const createTraining = async (data) => {
-    console.log('CREATING THE TRAINING');
     const token = localStorage.getItem('token');
     const response = await axios.post(
       `${BASE_URL}/training/addTraining`, data, {
@@ -170,8 +170,6 @@ const AddNewTraining = () => {
       }
     }
     );
-
-    console.log('Training Details Response:', response);
 
     if (response.status === 201 && response.data.status === "success") {
       let { id } = response.data.training;
@@ -258,7 +256,6 @@ const AddNewTraining = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
-      console.log('CATEGORY:',)
       setTrainingCategory([
         ...categoryList.map((data) => ({
           id: data.id,
@@ -309,9 +306,7 @@ const AddNewTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
     // window.scrollTo(0, 0);
-    console.log(coverImage, "coverImage")
     let errorObj = TrainingFormValidation(trainingData, relatedFiles, videoTutorialFiles);
-    console.log(errorObj);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
       setAutoFocusOnTraining(errorObj);
@@ -437,9 +432,23 @@ const AddNewTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [docErrorMessage])
+  
+  useEffect(() => {
+    setImageFileError(docErrorMessage?.map(errObj => (
+      errObj?.error[0]?.message
+    )));
+  }, [imageFileErrorMessage])
 
-  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // useEffect(() => {
+  //   if(trainingSettings?.start_time && trainingSettings?.start_time < moment().format('HH:mm')) {
+  //     setTrainingSettingErrors(prevState => ({
+  //       ...prevState,
+  //       start_time: 'Choose valid time'
+  //     }));
+  //   }
+  // }, [trainingSettings?.start_time]);
 
+  
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -658,12 +667,12 @@ const AddNewTraining = () => {
                           // setTrainingData={setTraining}
                           /> */}
 
-                          {console.log(croppedImage, "croppedImage", coverImage)}
                           <DragDropTraning
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
                             setPopupVisible={setPopupVisible}
+                            setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
                           />
 
@@ -674,14 +683,21 @@ const AddNewTraining = () => {
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
-                          <small className="fileinput mt-1">(png, jpg & jpeg)</small>
+                          {
+                            imageFileError  &&
+                            getUniqueErrors(imageFileError).map(errorObj => {
+                              return (
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only one image file allowed" : errorObj}</p>
+                              )
+                            })
+                          }
                           {error && !croppedImage && < span className="error"> Cover image is required</span>}
                           {/* {errors.croppedImage !== null && <span className="error">{errors.croppedImage}</span>} */}
 
                         </Form.Group>
                       </Col>
 
-                      <Col md={6} className="mb-3 relative">
+                      <Col md={6} className="mb-3 relative vidcol">
                         <Form.Group>
                           <Form.Label>Upload Videos</Form.Label>
                           <DropAllFile
@@ -690,8 +706,6 @@ const AddNewTraining = () => {
                             setUploadError={setVideoFileErrorMessage}
                             onSave={setVideoTutorialFiles}
                           />
-                          <small className="fileinput">(mp4, flv & mkv)</small>
-                          <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                           {
                             videoFileError  &&
                             getUniqueErrors(videoFileError).map(errorObj => {
@@ -711,13 +725,11 @@ const AddNewTraining = () => {
                             setUploadError={setDocErrorMessage}
                             onSave={setRelatedFiles}
                           />
-                          <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                          <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                           {
                             docFileError  &&
                             getUniqueErrors(docFileError).map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
                               )
                             })
                           }
@@ -778,7 +790,7 @@ const AddNewTraining = () => {
                         placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         name="start_date"
                         value={trainingSettings?.start_date}
-                        min={new Date().toISOString().slice(0, 10)}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
 
@@ -797,6 +809,9 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
+                        // min={moment().format(pickTime: false )}
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -819,6 +834,7 @@ const AddNewTraining = () => {
                         className="datepicker"
                         placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                         value={trainingSettings?.end_date}
+                        min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
                           setTrainingSettingErrors(prevState => ({
@@ -826,7 +842,6 @@ const AddNewTraining = () => {
                             start_time: null
                           }));
                         }}
-                        min={trainingSettings?.start_date}
                       />
                     </Form.Group>
                   </Col>
@@ -1124,7 +1139,6 @@ const AddNewTraining = () => {
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  console.log('CLOSING POPUP');
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);
@@ -1176,8 +1190,9 @@ const AddNewTraining = () => {
                       <Form.Control
                         type="time"
                         name="start_time"
-                        className="datepicker"
-                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
+                        className="timepicker"
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
+                        min={moment().format('HH:mm')}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -1464,7 +1479,6 @@ const AddNewTraining = () => {
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  console.log('CLOSING POPUP');
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);

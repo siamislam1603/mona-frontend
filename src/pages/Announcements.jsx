@@ -9,6 +9,7 @@ import MyAnnouncements from "./MyAnnouncements";
 import AllEvent from "./AllEvent";
 import { verifyPermission } from '../helpers/roleBasedAccess';
 import { useParams } from "react-router-dom";
+import { useHistory ,useLocation } from 'react-router-dom';
 
 
 
@@ -17,10 +18,11 @@ import { useParams } from "react-router-dom";
 const Announcements = () => {
   const Params = useParams();
 
-  // console.log("index", Params.key)
 
-  let ActiveLink = Params.key
 
+  let ActiveLink = Params
+
+  console.log("Params id",Params)
   const [allAnnouncement, setAllAnnouncement] = useState([])
   const [theMyAnnouncement, setTheMyAnnoucemenet] = useState([])
 
@@ -49,6 +51,8 @@ const Announcements = () => {
   const [loadMy, setLoadMy] = useState(true);
   const [loadEvent, setLoadEvent] = useState(true)
   const [loadAllAnnouncement, setLoadAllAnnouncement] = useState(true)
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -118,18 +122,36 @@ const Announcements = () => {
   const removeitem = async(id) =>{
     // let newData = myLoadData.filter(d => d.id !==id)
     // console.log("THE NEW DATA",newData)
-    let usedId = localStorage.getItem("user_id")
+    try{
+      console.log("Inside try block remove item")
+      console.log("My page delte",mypage)
+  
+      let usedId = localStorage.getItem("user_id")
+  
+      let api_url = '';
+      api_url = `${BASE_URL}/announcement/created-announcement-events/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "" : searchvalue}&limit=${myDataLength}`
+  
+      const response = await  axios.get(api_url, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log("The response delete",response)
+      let myData = response.data.result.searchedData
+      console.log("My page delte",myData)
+      setMyLoadData(myData)
+      setMyDataLength(myData?.length)
+      myDataCount()
+    }
+    catch(error ){
+      console.log("Delete error",error,myLoadData)
+      if(error.response.status === 404){
+        myDataCount()
+        onLoadMyAnnouncement()
+      console.log("Delete error",error,myLoadData)
 
-    let api_url = '';
-    api_url = `${BASE_URL}/announcement/created-announcement-events/${usedId}/?franchiseeAlias=${selectedFranchisee}&search=${searchvalue === " " ? "" : searchvalue}&limit=${mypage}`
-
-    const response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-    let myData = response.data.result.searchedData
-    setMyLoadData(myData)
+      }
+    }
     // setMyLoadData(newData)
     // LoadMoreMyData(id);
 
@@ -192,6 +214,7 @@ const Announcements = () => {
       setMyCount(0)
       setMyDataLength(0)
       setLoadMy(false)
+      setMyLoadData([])
     }
 
   }
@@ -467,7 +490,7 @@ const Announcements = () => {
         setLoadMy(true)
         console.log("THE SEARCH LENGHT", response.data.result.searchedData.length)
         // setMyCount(0)
-        setMyDataLength(myCount)
+        // setMyDataLength(myCount)
 
         if (response.data.result.searchedData.length === 0) {
           setLoadMy(false)
@@ -612,6 +635,36 @@ const Announcements = () => {
 
     }
   }
+
+
+  //delete
+  const checkDelete = async () =>{
+    const query = new URL(window.location);
+    const id = query.searchParams.get('id')
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get(`${BASE_URL}/announcement/check-announcement?id=${id}`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    console.log("check response",response)
+    if(response.status === 200 && response.data.status === "success"){
+      // console.log(" 123 Announcement exit")
+    }
+    else{
+      console.log("123 ANnouncement dont exit ")
+      setTopErrorMessage("Announcement either deleted or no longer available!")
+
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 3000)
+    }
+  }
+
+  useEffect(() =>{ 
+    checkDelete()
+  },[])
   useEffect(() => {
 
     if (tabLinkPath === "/all-announcements") {
@@ -670,12 +723,15 @@ const Announcements = () => {
   }, [selectedFranchisee])
   useEffect(() => {
     LoadMoreALl()
-    TheCount()
+    // TheCount()
+
     LoadMoreMyData()
-    myDataCount()
+    // myDataCount()
+
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
-    EventCount()
+
+    // EventCount()
     LoadMoreEvent()
   }, [])
 
@@ -685,7 +741,7 @@ const Announcements = () => {
   }, [loadMoreData])
 
   useEffect(() => {
-    myDataCount()
+    // myDataCount()
     setMyDataLength(myLoadData.length)
   }, [myLoadData])
 
@@ -753,6 +809,7 @@ const Announcements = () => {
   return (
     <>
       {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>}
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
 
       <div id="main">
         <section className="mainsection">

@@ -20,6 +20,7 @@ import { BASE_URL } from "../../components/App";
 import LeftNavbar from "../../components/LeftNavbar";
 import { Link } from "react-router-dom";
 import { FullLoader } from "../../components/Loader";
+import moment from "moment";
 
 // const animatedComponents = makeAnimated();
 const styles = {
@@ -171,6 +172,8 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
+      let tempData = otherTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
+      setOtherTrainingData(tempData);
       setTrainingDeleteMessage(response.data.message);
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
@@ -365,7 +368,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
                     <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                      <Form.Group className="d-flex align-items-center">
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
@@ -415,7 +418,15 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                     </div>
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a> <span className="time">{training.completion_time} Hours</span></div>
+                      <div className="iconame"><a href="/training-detail">{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
+                      <div className="datecol">
+                        {
+                          training.end_date !== null &&
+                          <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                        }
+                        <span className="time">{training.completion_time} {training.completion_in}</span>
+                      </div>
+                      </div>
                       <div className="cta-col">
                         <Dropdown>
                           <Dropdown.Toggle variant="transparent" id="ctacol">
