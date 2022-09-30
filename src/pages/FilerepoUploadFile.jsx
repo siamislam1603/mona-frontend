@@ -185,7 +185,7 @@ const FilerepoUploadFile = () => {
             selectedFranchiseeId += item.id + ',';
         });
 
-        formSettingData.file_category = getUser_Role == "guardian" ? "8" : formSettingData.file_category
+        formSettingData.file_category = getUser_Role == "guardian" ? generalCategory : formSettingData.file_category
 
         if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
             setError(true);
