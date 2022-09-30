@@ -178,6 +178,8 @@ export const createOperatingManualValidation = (form,wordCount) => {
 export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount,relatedFiles) => {
   console.log('The form validation', titleError,titleChecking);
   let newErrors = {};
+  const role = localStorage.getItem("user_role")
+
   console.log('The form validat', form);
   let { title, meta_description, start_date, start_time, franchise } = form;
   console.log('The tile valdiation', start_date);
@@ -214,7 +216,10 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   // }
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      newErrors.franchise = "Please Select Franchise"
+      if(role == "franchisor_admin"){
+        newErrors.franchise = "Please Select Franchise"
+
+      }
 
     }
 
@@ -225,6 +230,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 };
 export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount,relatedFiles) => {
   let newErrors = {};
+  const role = localStorage.getItem("user_role")
   console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
   let { title, meta_description, start_date, start_time, franchise } = form;
@@ -257,7 +263,10 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,
     newErrors.start_time = 'Start Time Required';
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      newErrors.franchise = "Please Select Franchise"
+      if(role == "franchisor_admin"){
+        newErrors.franchise = "Please Select Franchise"
+
+      }
 
     }
     if(relatedFiles?.length>5){
