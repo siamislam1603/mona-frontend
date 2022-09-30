@@ -617,7 +617,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
                       {searchTraining?.map((trainingData) => (
                         <li>
-                          <a href={`/training-detail/${trainingData?.training?.id}`} className="d-flex">
+                          <a href={`/training-detail/${trainingData?.trainingId}`} className="d-flex">
                             {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
                             <span className="sec-cont"><strong className="text-capitalize">{trainingData?.training?.title}</strong></span>
                           </a>

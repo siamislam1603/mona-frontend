@@ -187,7 +187,11 @@ const SearchResult = (props) => {
                             
                             <div className="search-user-detail">
   
+<<<<<<< HEAD
                               <h2 className="title-md text-capitalize"><a href={`${BASE_URL}/training-detail/${data.trainingId}`}>{data?.training?.title}</a></h2>
+=======
+                              <h2 className="title-md text-capitalize"><a href={`/training-detail/${data.trainingId}`}>{data?.training?.title}</a></h2>
+>>>>>>> b7784aae64e8945dfaf8f92c3b2e48f5cb9e6832
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -199,7 +203,11 @@ const SearchResult = (props) => {
                                 </time>
                               </span>
                             </div>
+<<<<<<< HEAD
                               <div className="user-link mt-4"><a href={`${BASE_URL}/training-detail/${data.trainingId}`}>View Details</a></div>
+=======
+                              <div className="user-link mt-4"><a href={`/training-detail/${data.trainingId}`}>View Details</a></div>
+>>>>>>> b7784aae64e8945dfaf8f92c3b2e48f5cb9e6832
                             </div>
                             
                           </div>
