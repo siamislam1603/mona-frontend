@@ -179,7 +179,7 @@ const SearchResult = (props) => {
                             <div className="search-user-pic">
                            
  
-                              <a href={`${BASE_URL}/training-detail/${data.id}`}>
+                              <a href={`${BASE_URL}/training-detail/${data.trainingId}`}>
                                 
                               <figure className="figure"><img alt="" src={data?.coverImage ? data?.coverImage : "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                               </a>
@@ -187,7 +187,7 @@ const SearchResult = (props) => {
                             
                             <div className="search-user-detail">
   
-                              <h2 className="title-md text-capitalize"><a href={`${BASE_URL}/training-detail/${data.id}`}>{data?.training?.title}</a></h2>
+                              <h2 className="title-md text-capitalize"><a href={`/training-detail/${data.trainingId}`}>{data?.training?.title}</a></h2>
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -199,7 +199,7 @@ const SearchResult = (props) => {
                                 </time>
                               </span>
                             </div>
-                              <div className="user-link mt-4"><a href={`${BASE_URL}/training-detail/${data.id}`}>View Details</a></div>
+                              <div className="user-link mt-4"><a href={`/training-detail/${data.trainingId}`}>View Details</a></div>
                             </div>
                             
                           </div>
