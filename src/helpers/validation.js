@@ -632,7 +632,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
   if(postalCode.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+  if(postalCode?.length === 4 && isNaN(postalCode))
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
@@ -681,7 +681,7 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
   if(postalCode?.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode?.length === 4 && isNaN(parseInt(postalCode)))
+  if(postalCode?.length === 4 && isNaN(postalCode))
     errors.postalCode = 'Post code must only consist digits';
   
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";

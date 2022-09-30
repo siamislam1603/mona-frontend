@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
+  
   let fileType = file.type.split("/")[0];
 
   if(fileType === 'video') {
@@ -37,7 +38,7 @@ function fileSizeValidator(file) {
 }
 
 export default function DropAllFile({ onSave, Files, setErrors, title="Files", type="file",  module="usual", fileLimit=5, supportFormDetails=null, setUploadError=() => {} ,videoUrl,setVideoThumbnailUrl,setVideoUrl}) {
-  
+
   let typeObj;
 
   if(type === "video") {
@@ -115,6 +116,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     let rejectionArray = fileRejections.map(d => ({
       error: d.errors.map(e => e)
     }));
+    console.log('REJECTIONaRRAY:', rejectionArray);
     setUploadError(rejectionArray);
   }, [fileRejections]);
 
