@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Col, Form } from 'react-bootstrap';
-let value="";
+let value={};
 const Checkbox = (props) => {
   const { ...controls } = props;
   useEffect(()=>{
@@ -8,6 +8,9 @@ const Checkbox = (props) => {
     {
       document.getElementById(props.errorFocus).focus();
     }
+    eval(controls.option)?.map((item2) => {
+      value[controls.field_name]="";
+    })
   },[])
   return (
     <Col sm={6}>
@@ -17,6 +20,7 @@ const Checkbox = (props) => {
         <div className="btn-radio d-flex align-items-center modal-two-check dynamic-form-check">
           {console.log('eval(controls.option)', eval(controls.option))}
           {eval(controls.option)?.map((item2) => {
+            
             return (
               <>
                 <label className="container">
@@ -27,17 +31,17 @@ const Checkbox = (props) => {
                     id={Object.keys(item2)[0]}
                     value={Object.keys(item2)[0]}
                     onClick={(e) => {
-                      console.log("e.target.checked--->",e.target.checked);
+                      console.log("set---e.target.checked--->",e.target.checked);
                       if(e.target.checked===true)
                       {
-                        value=value+e.target.value+","
+                        value[controls.field_name]=value[controls.field_name]+e.target.value+","
                       }
                       else
                       {
-                        value=value.replace(e.target.value+",","")
+                        value[controls.field_name]=value[controls.field_name].replace(e.target.value+",","")
                       }
                       
-                      props.onChange(e.target.name, value,"checkbox");
+                      props.onChange(e.target.name, value[controls.field_name],"checkbox");
                     }}
                     checked={props.field_data && props.field_data.fields[`${controls.field_name}`].includes(Object.keys(item2)[0])}
                   />
