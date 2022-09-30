@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dropdown, Form, Button, Popover, OverlayTrigger, Image } from 'react-bootstrap';
 import { BASE_URL } from './App';
 import { Link } from "react-router-dom";
-import $ from "jquery";
+import $, { data } from "jquery";
 import moment from "moment";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { logoutUser } from '../helpers/logout';
@@ -506,7 +506,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-
+  console.log("training search data", searchTraining) 
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -617,7 +617,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
                       {searchTraining?.map((trainingData) => (
                         <li>
-                          <a href={`/training-detail/${trainingData.id}`} className="d-flex">
+                          <a href={`/training-detail/${trainingData?.training?.id}`} className="d-flex">
                             {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
                             <span className="sec-cont"><strong className="text-capitalize">{trainingData?.training?.title}</strong></span>
                           </a>

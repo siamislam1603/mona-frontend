@@ -37,12 +37,14 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
     }
   }
 
-  useEffect(() => {
-    GetData();
-  }, []);
+  // useEffect(() => {
+  //   GetData();
+  // }, []);
 
   useEffect(() => {
-    GetData();
+    if(selectedFranchisee != null){
+      GetData();
+    }
   }, [selectedFranchisee,setUserData]);
 
 
@@ -79,8 +81,15 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
 
 
   useEffect(() => {
-    GetSaachhData();
+    if(selectedFranchisee != null){
+      GetSaachhData();
+    }
   }, [SearchValue])
+
+  const defaultSortedBy = [{
+    dataField: "name",
+    order: "asc"  // or desc
+  }];
 
 
   const [columns, setColumns] = useState([
@@ -184,11 +193,13 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
           data={userData}
           columns={columns}
           search
+          defaultSorted={defaultSortedBy}
         >
           {(props) => (
             <>
               <BootstrapTable
                 {...props.baseProps}
+                defaultSorted={defaultSortedBy}
                 pagination={paginationFactory()}
               />
             </>
