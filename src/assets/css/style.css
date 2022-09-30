@@ -806,6 +806,7 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .btn,body{font-size:var(--fontsm)}
 .column-list.access-list .item .pic{flex:0 0 40px}
 .column-list.access-list .item .name{font-size:var(--fontlg)}
+.file-container { flex: 0 0 99%; max-width: 99%; margin: 5px 0; }
 }
 @media screen and (min-width:1141px) and (max-width:1300px){
 .sec-column{padding:20px 0 20px 20px}
