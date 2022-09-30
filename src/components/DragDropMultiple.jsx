@@ -46,7 +46,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
     }
   } else {
     typeObj = {
-      'text/*': ['.pdf', '.doc', '.xlsx', '.xlsm', '.docx', '.ppt', '.ods', '.pptx', '.xls', '.html', '.htm', '.txt']
+      'text/*': ['.pdf', '.doc', '.xlsx', '.xlsm', '.docx', '.ppt', '.ods', '.pptx', '.xls', '.html', '.htm', '.txt', '.csv']
     }
   }
   
