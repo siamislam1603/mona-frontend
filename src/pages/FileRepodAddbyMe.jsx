@@ -25,7 +25,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                 if (response.status === 200 && response.data.status === "success") {
                     const users = response.data.dataDetails;
                     let tempData = users.map((dt) => ({
-                        name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                        name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
                         updatedAt: dt.updatedAt,
                         createdAt: dt.createdAt,
                         userID: dt.id,
@@ -54,7 +54,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                    name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
                     updatedAt: dt.updatedAt,
                     createdAt: dt.createdAt,
                     userID: dt.id,
@@ -96,13 +96,13 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                 return (
                     <>
                         <div className="user-list">
-                            <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
+                            <Link to={`/file-repository-List-me/${cell[2]}`} className="FileResp">
                                 <span>
                                     <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                 </span>
                             </Link>
                             <span className="user-name">
-                                {cell[2]}
+                                {cell[0]}
                                 <small>
                                     {cell[1] > 1 ? (<>
                                         {cell[1]} Files
