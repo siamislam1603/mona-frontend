@@ -638,7 +638,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .cus-scr::-webkit-scrollbar-thumb{background-color:var(--primary);border-radius:20px;border:3px solid var(--white)}
 .search-bar{position:absolute;top:-90px;right:255px;z-index:9;transition-duration:.3s}
 .search-bar.show{top:7px}
-.notificationpopup{width:100%;max-width:400px;height:400px}
+.notificationpopup{width:100%;max-width:400px;height:400px;overflow: hidden;}
 .notificationpopup.no-notification{width:100%;max-width:400px;height:auto}
 .notificationpopup .popover-body{position:relative;height:calc(100% - 110px);overflow:auto;padding:0}
 .notificationpopup .totalmsg{text-align:center;padding:5px 10px}
