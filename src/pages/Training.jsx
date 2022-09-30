@@ -215,7 +215,7 @@ const Training = () => {
                     </ul>
 
                     <div className="selectdropdown ms-auto d-flex align-items-center">
-                      <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                      <Form.Group className="d-flex align-items-center">
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
