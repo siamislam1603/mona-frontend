@@ -114,11 +114,12 @@ const Preview = (props) => {
                 </Row>
                 <Form>
                   <Row>
-                    {formData?.map((item) => {
+                    {formData?.map((item,index) => {
                       return (
                         <InputFields
                           {...item}
                           signature_flag={true}
+                          diff_index={index}
                           error={errors}
                           onChange={setField}
                         />
