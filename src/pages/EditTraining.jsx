@@ -744,7 +744,7 @@ const EditTraining = () => {
                                 fetchedRelatedFiles.map((file, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
+                                      <img className="file-thumbnail-vector" style={{ marginRight: '.5rem' }} src={`../img/book-ico.png`} alt={`${file.videoId}`} />
                                       <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
                                         onClick={() => {
