@@ -729,7 +729,7 @@ const AddNewTraining = () => {
                             docFileError  &&
                             getUniqueErrors(docFileError).map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
                               )
                             })
                           }

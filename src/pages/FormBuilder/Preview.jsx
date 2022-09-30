@@ -127,7 +127,7 @@ const Preview = (props) => {
                     })}
                   </Row>
                 </Form>
-                <Button 
+                {/* <Button 
                   variant="transparent" 
                   className="me-3"
                   onClick={() => {
@@ -147,7 +147,7 @@ const Preview = (props) => {
                       form_template: true,
                     },
                   });
-                }}>Save</Button>
+                }}>Save</Button> */}
               </div>
             </div>
           </Container>

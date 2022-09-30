@@ -16,7 +16,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
     const GetData = async () => {
         try {
             if (selectedFranchisee) {
-                let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
+                let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee ? selectedFranchisee: "" }`, {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -35,6 +35,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                     setfullLoaderStatus(false)
                 } else if (response.status === 404) {
                     setUserData([])
+                    setfullLoaderStatus(false)
                 }
             }
         } catch (err) {
@@ -45,7 +46,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
 
     const GetSaachhData = async () => {
         try {
-            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}&search=${SearchValue}`, {
+            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee ? selectedFranchisee: "" }&search=${SearchValue}`, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -61,13 +62,16 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                     creatorName: dt.ModifierName + "," + dt.updatedBy,
                 }));
                 setUserData(tempData);
+                setfullLoaderStatus(false)
                 console.log(tempData, "tempData")
             }
             else if (response.status === 404) {
                 setUserData([])
+                setfullLoaderStatus(false)
             }
         } catch (err) {
             setUserData([])
+            setfullLoaderStatus(false)
         }
     }
     useEffect(() => {
