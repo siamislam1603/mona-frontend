@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 import VideoPop from "../components/VideoPop";
 import { Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { FullLoader } from "../components/Loader";
 
 const getRoleName = (role) => {
   const obj = {
@@ -58,6 +59,7 @@ const TrainingDetail = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [videoFiles, setVideoFiles] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState(null);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   // GETTING THE TRAINING DETAILS
   const getTrainingDetails = async () => {
@@ -89,12 +91,14 @@ const TrainingDetail = () => {
 
         setVideoFiles(all_trainings.training_files.filter(d => videoExtension.includes(d.fileType)));
         setRelatedFiles(all_trainings.training_files.filter(d => fileExtension.includes(d.fileType)));
+        setfullLoaderStatus(false);
       }
     } else if(response.status === 200 && response.data.status === "fail") {
       const { message } = response.data;
       console.log('MESSAGE:', message);
       setPopupNotification(message);
       setTrainingDeletePopup(true);
+      setfullLoaderStatus(false);
     }
   }
 
@@ -241,6 +245,7 @@ const TrainingDetail = () => {
                 <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee} />
+                <FullLoader loading={fullLoaderStatus} />
                 {trainingDetails &&
                   <div className="entry-container">
                     <header className="title-head">
@@ -275,7 +280,7 @@ const TrainingDetail = () => {
 
                       <Row>
                         {
-                          videoFiles &&
+                          videoFiles.length > 0 &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
                               <>
@@ -300,7 +305,7 @@ const TrainingDetail = () => {
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {
-                              relatedFiles &&
+                              relatedFiles.length > 0 &&
                               <>
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
@@ -312,7 +317,7 @@ const TrainingDetail = () => {
                                         </div>
                                         <div className="name">
                                           <a href={data.file} target="_blank" rel="noreferrer">
-                                            {`document${index - 1}${data.fileType}`} <span className="time">{}</span>
+                                            {`document ${index + 1}${data.fileType}`} <span className="time">{}</span>
                                           </a>
                                         </div>
                                         {/* <div className="cta-col">
@@ -396,7 +401,7 @@ const TrainingDetail = () => {
                               :
                               (
                                 (localStorage.getItem('user_role') === 'franchisor_admin') && localStorage.getItem('user_id') !== parseInt(trainingDetails?.addedBy)
-                                ? <>This training was created by a {getRoleName(trainingDetails?.user_data.role)} on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}</>
+                                ? <>This training was created by a {getRoleName(userDetails?.role)} on {moment(trainingDetails.createdAt).format('DD/MM/YYYY')}</>
                                 :<>
                                   {hideTrainingFinishButton === true
                                     ? <p> You've finished this training on {moment(trainingFinishedDate).format(
