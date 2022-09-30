@@ -88,6 +88,11 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
         }
     }, [selectedFranchisee]);
 
+    const defaultSortedBy = [{
+        dataField: "name",
+        order: "asc"  // or desc
+      }];
+
 
     const columns = [
         {
@@ -193,6 +198,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                         {userData.length > 0 ? (
                             <BootstrapTable
                                 {...props.baseProps}
+                                defaultSorted={defaultSortedBy}
                                 pagination={paginationFactory()}
                             />
                         ) :
