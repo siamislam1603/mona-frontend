@@ -59,9 +59,10 @@ function getTimeUnit(unit) {
 function fetchRealatedFileName(fileURLString) {
   let name = fileURLString.split("/");
   name = name[name.length - 1];
-  name = name.split("_");
-  let extension = name[2].split(".")[1];
+  name = name.split(".");
+  let extension = name[1];
   name = name[0].split("-").join(" ");
+  name = name.split("_")[0];
   return name + "." + extension;
 }
 
@@ -186,6 +187,7 @@ const EditTraining = () => {
     });
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
+      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
@@ -216,7 +218,7 @@ const EditTraining = () => {
       send_to_all_franchisee: training?.shares[0]?.franchisee[0] === 'all' ? true : false,
       assigned_franchisee: training?.shares[0]?.franchisee,
       assigned_roles: training?.shares[0]?.assigned_roles,
-      assigned_users: training?.shares[0]?.assigned_users
+      assigned_users: training?.shares[0]?.assigned_users.includes('undefined') ? [] : training?.shares[0]?.assigned_users
     }));
 
     // COPYING FETCHED MEDIA FILES
@@ -352,7 +354,10 @@ const EditTraining = () => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    window.scrollTo(0, 0);
+
+    if(errors.doc === null) {
+      window.scrollTo(0, 0);
+    }
 
     let errorObj = EditTrainingFormValidation(trainingData, relatedFiles, fetchedRelatedFiles, fetchedVideoTutorialFiles, videoTutorialFiles);
     if (Object.keys(errorObj).length > 0) {
@@ -485,6 +490,8 @@ const EditTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [docFileError])
+
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
@@ -675,13 +682,11 @@ const EditTraining = () => {
                             </>) :
                               (<></>)
                             }
-                            <small className="fileinput mt-0">(png, jpg & jpeg)</small>
-                            <small className="fileinput mt-1">(1162 x 402 resolution)</small>
                             {errors && errors.coverImage && <span className="error mt-2">{errors.coverImage}</span>}
                           </Form.Group>
                         </Col>
 
-                        <Col md={6} className="mb-3">
+                        <Col md={6} className="mb-3 vidcol">
                           <Form.Group>
                             <Form.Label>Upload Videos</Form.Label>
                             <DropAllFile
@@ -690,8 +695,6 @@ const EditTraining = () => {
                               setUploadError={setVideoFileErrorMessage}
                               onSave={setVideoTutorialFiles}
                             />
-                            <small className="fileinput">(mp4, flv & mkv)</small>
-                            <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
                             {
                               videoError  &&
                               getUniqueErrors(videoError).map(errorObj => {
@@ -706,8 +709,8 @@ const EditTraining = () => {
                                 fetchedVideoTutorialFiles.map((video, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
-                                      <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
+                                      <div className="pic" style={{ cursor: 'default' }}><img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} /></div>
+                                      <p className="file-text" style={{ cursor: 'default' }}><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
                                       <img
                                         onClick={() => {
                                           if (window.confirm('Are you sure you want to delete this video?')) {
@@ -734,13 +737,11 @@ const EditTraining = () => {
                               setUploadError={setDocFileError}
                               onSave={setRelatedFiles}
                             />
-                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 documents, less than 5MB each)</small>
                             {
                               docError  &&
                               getUniqueErrors(docError).map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
                                 )
                               })
                             }
@@ -750,7 +751,7 @@ const EditTraining = () => {
                                 fetchedRelatedFiles.map((file, index) => {
                                   return (
                                     <div className="file-container">
-                                      <img className="file-thumbnail-vector" src={`../img/file.png`} alt={`${file.videoId}`} />
+                                      <img className="file-thumbnail-vector" style={{ marginRight: '10px' }} src={`../img/book-ico.png`} alt={`${file.videoId}`} />
                                       <a href={file.file}><p className="file-text">{`${fetchRealatedFileName(file.file)}`}</p></a>
                                       <img
                                         onClick={() => {
@@ -826,11 +827,11 @@ const EditTraining = () => {
                           className="datepicker"
                           placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
+                          min={moment().format('YYYY-MM-DD')}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
                             start_date: e.target.value
                           }))}
-                          max={trainingSettings?.end_date}
                         />
                       </Form.Group>
                     </Col>
@@ -857,11 +858,11 @@ const EditTraining = () => {
                           className="datepicker"
                           placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.end_date}
+                          min={moment().format('YYYY-MM-DD')}
                           onChange={(e) => setTrainingSettings(prevState => ({
                             ...prevState,
                             end_date: e.target.value
                           }))}
-                          min={trainingSettings?.start_date}
                         />
                       </Form.Group>
                     </Col>
@@ -1118,7 +1119,7 @@ const EditTraining = () => {
                             <Multiselect
                               placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
                               displayValue="key"
-                              selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ''))}
+                              selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users?.includes(d.id + ''))}
                               className="multiselect-box default-arrow-select"
                               onKeyPressFn={function noRefCheck() { }}
                               onRemove={function noRefCheck(data) {

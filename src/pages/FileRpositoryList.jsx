@@ -76,7 +76,7 @@ const FileRpositoryList = () => {
                 const users = response.result.files;
 
                 let tempData = users.map((dt) => ({
-                    name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
+                    name: `${dt.repository.repository_files[0].fileName},${dt.repository.repository_files[0].fileType} ,${dt.repository.repository_files[0].filesPath}`,
                     createdAt: dt.createdAt,
                     userID: dt.id,
                     creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
@@ -115,7 +115,7 @@ const FileRpositoryList = () => {
                     if (response) {
                         const users = response.result.files;
                         let tempData = users.map((dt) => ({
-                            name: `${dt.repository.repository_files[0].fileType},${dt.repository.repository_files[0].fileName} ,${dt.repository.repository_files[0].filesPath}`,
+                            name: `${dt.repository.repository_files[0].fileName},${dt.repository.repository_files[0].fileType} ,${dt.repository.repository_files[0].filesPath}`,
                             createdAt: dt.createdAt,
                             userID: dt.id,
                             creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
@@ -138,6 +138,11 @@ const FileRpositoryList = () => {
         GetFile();
     }, [selectedFranchisee])
 
+    const defaultSortedBy = [{
+        dataField: "name",
+        order: "asc"  // or desc
+      }];
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
@@ -148,7 +153,7 @@ const FileRpositoryList = () => {
                 return (
                     <>
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" || cell[0] === "image" ?
+                            {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" || cell[1] === "image" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -156,11 +161,11 @@ const FileRpositoryList = () => {
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[1]}.img
+                                        {cell[0]}.img
                                     </span>
                                 </>
                                 :
-                                cell[0] === "audio/mpeg" ?
+                                cell[1] === "audio/mpeg" ?
                                     <>
                                         <span className="user-pic-tow">
                                             <a href={cell[2]} download>
@@ -168,23 +173,23 @@ const FileRpositoryList = () => {
                                             </a>
                                         </span>
                                         <span className="user-name">
-                                            {cell[1]}.mp3
+                                            {cell[0]}.mp3
                                         </span>
                                     </>
-                                    : cell[0] === "video/mp4" ?
+                                    : cell[1] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
-                                                    title={cell[0]}
-                                                    name={cell[1]}
+                                                    title={cell[1]}
+                                                    name={cell[0]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
                                             </div>
 
                                         </> :
-                                        cell[0] === "application/octet-stream" || cell[0] === "application/pdf" || cell[0] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[0] === "text/csv" || cell[0] === "text/html" || cell[0] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
+                                        cell[1] === "application/octet-stream" || cell[1] === "application/pdf" || cell[1] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[1] === "text/csv" || cell[1] === "text/html" || cell[1] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
                                             <>
                                                 <span className="user-pic-tow">
                                                     <a href={cell[2]} download >
@@ -192,7 +197,7 @@ const FileRpositoryList = () => {
                                                     </a>
                                                 </span>
                                                 <span className="user-name">
-                                                    {cell[1]}.Doc
+                                                    {cell[0]}.Doc
                                                 </span>
                                             </> : <>
                                                 <span className="user-pic-tow">
@@ -347,6 +352,7 @@ const FileRpositoryList = () => {
                                                         <BootstrapTable
                                                             {...props.baseProps}
                                                             // selectRow={selectRow}
+                                                            defaultSorted={defaultSortedBy}
                                                             pagination={paginationFactory()}
 
                                                         /> : (!fullLoaderStatus && <>

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 import moment from 'moment'
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import { FullLoader } from "../components/Loader";
 
 
 const FranchiseeDashboard = () => {
@@ -20,7 +21,7 @@ const FranchiseeDashboard = () => {
   const [latest_announcement, setlatest_announcement] = useState([{}]);
   const [enrollments, setEnrollments] = useState([])
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
-
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const announcement = () => {
     let token = localStorage.getItem('token');
@@ -94,8 +95,10 @@ const FranchiseeDashboard = () => {
       }
     }).then((response) => {
       setcountUser(response.data);
+      setfullLoaderStatus(false)
     }).catch((e) => {
       console.log("Error", e);
+      setfullLoaderStatus(false)
     })
   }
 
@@ -285,7 +288,7 @@ const FranchiseeDashboard = () => {
       {
         topSuccessMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>
       }
-
+      <FullLoader loading={fullLoaderStatus} />
       <div id="main">
         <section className="mainsection">
           <Container>

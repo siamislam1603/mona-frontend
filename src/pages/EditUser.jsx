@@ -1136,14 +1136,12 @@ const EditUser = () => {
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
-                            <small className="fileinput">(max. 5 files, 5MB each)</small>
                             {
                               fileError  &&
                               getUniqueErrors(fileError).map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
                                 )
                               })
                             }

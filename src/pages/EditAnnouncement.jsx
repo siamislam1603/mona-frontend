@@ -31,14 +31,15 @@ const EditAnnouncement = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   
   const [fetchedVideoTutorialFiles, setFetchedVideoTutorialFiles] = useState([]);
+  const [docError, setDocError] = useState([]);
   
-  const [userRole, setUserRole] = useState([]);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
 
   const [theMessage,setTheMessage] = useState("")
 const [selectedFranchisee, setSelectedFranchisee] = useState();
 
+const [docFileError, setDocFileError] = useState(null);
  
   const [fetchedCoverImage, setFetchedCoverImage] = useState();
   const [fileDeleteResponse, setFileDeleteResponse] = useState(false);
@@ -54,6 +55,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
 
   const [theRelatedFiles,setTheRelatedFiles] = useState([])
   const [fetchedRelatedFiles, setFetchedRelatedFiles] = useState([]);
+  const [videoError, setVideoError] = useState([]);
   
   //Copy Announcement Data
   const [announcementCopyData,setAnnouncementCopyData] = useState({
@@ -61,7 +63,7 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
   })
   const [announcementData,setAnnouncementData] = useState("")
   const [coverImage, setCoverImage] = useState({});
-  const [theVideo,setTheVideo] = useState({})
+  const [theVideo,setTheVideo] = useState([])
   const [loader, setLoader] = useState(false);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [franchiseeData, setFranchiseeData] = useState();
@@ -322,6 +324,16 @@ const [selectedFranchisee, setSelectedFranchisee] = useState();
 
     }
  } 
+ const getUniqueErrors = (arr) => {
+  var result = [];
+  arr.forEach(function(item) {
+      if(result.indexOf(item) < 0) {
+          result.push(item);
+      }
+  });
+
+ return result;
+}
  const copyFetchedData = () =>{
   setAnnouncementCopyData(prevState =>({
     ...prevState,
@@ -377,6 +389,16 @@ const selectFranhise = () =>{
     copyFetchedData();
     AnnouncementDetails()
 },[fileDeleteResponse])
+useEffect(() => {
+  setDocError(docFileError?.map(errObj => (
+    errObj?.error[0]?.message
+  )));
+}, [docFileError])
+useEffect(() => {
+  setVideoError(videoFileErrorMessage?.map(errObj => (
+    errObj?.error[0]?.message
+  )));
+}, [videoFileErrorMessage])
 
 useEffect(() =>{
   let count = announcementData?.meta_description?.length-7;
@@ -716,6 +738,7 @@ useEffect(() =>{
 
                            /> */}
                        <DropAllFile 
+                        title="Videos"
                         onSave={setTheVideo}
                         type="video"
                         setUploadError={setVideoFileErrorMessage}
@@ -726,13 +749,13 @@ useEffect(() =>{
                             {errors.reference_video}
                           </p>
                           {
-                            videoFileErrorMessage  &&
-                            videoFileErrorMessage.map(errorObj => {
-                              return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj?.error[0].message}</p>
-                              )
-                            })
-                          }
+                              videoError  &&
+                              getUniqueErrors(videoError).map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
+                                )
+                              })
+                            }
                           <div className="media-container">
                               {
                                 fetchedVideoTutorialFiles &&
@@ -756,8 +779,7 @@ useEffect(() =>{
                                 ))
                               }
                             </div>
-                            <small className="fileinput">(mp4, flv & mkv)</small>
-                          <small className="fileinput">(File limit 1 GB)</small>
+                         
                         </Form.Group>
                       </Col>
                     </Row>
@@ -766,7 +788,19 @@ useEffect(() =>{
                      <Col md={6} className="mb-3">
                         <Form.Group>
                           <Form.Label>Upload Files </Form.Label>
-                          <DropAllFile onSave={setRelatedFiles}/>
+                          <DropAllFile 
+                              setUploadError={setDocFileError}
+                            
+                            onSave={setRelatedFiles}
+                            />
+                                                       {
+                              docError  &&
+                              getUniqueErrors(docError).map(errorObj => {
+                                return (
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
+                                )
+                              })
+                            }
                           <div className="media-container">
 
                           {fetchedRelatedFiles &&fetchedRelatedFiles.map((file) => (
@@ -785,8 +819,7 @@ useEffect(() =>{
                               : null
                           ))}
                           {/* {relatedFile} */}
-                          <small className="fileinput">(pdf, doc, ppt & xslx)</small>
-                          <small className="fileinput">(max 5 file,File limit 200 mb)</small>
+                        
                           {!errors.relatedFile && relatedFiles?.length>5 &&<span className="form-errors">Max limit of files is 5</span> }
                           { errors.relatedFile && <span className="form-errors">{errors.relatedFile}</span> }
                         </div>

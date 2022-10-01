@@ -5,7 +5,7 @@ import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
-import { createFormFieldValidation } from '../../../helpers/validation';
+import {  createFormFieldValidation } from '../../../helpers/validation';
 import { BASE_URL } from '../../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
@@ -432,12 +432,16 @@ const AddFormField = (props) => {
       if (flag === false) {
         form.map((inner_item, inner_index) => {
           if (index !== inner_index) {
-            if (
-              item.field_label.toLowerCase() ===
-              inner_item.field_label.toLowerCase()
-            ) {
-              flag = true;
+            if(item.field_label && inner_item.field_label)
+            {
+              if (
+                item.field_label.toLowerCase() ===
+                inner_item.field_label.toLowerCase()
+              ) {
+                flag = true;
+              }
             }
+            
           }
         });
       }
@@ -463,6 +467,37 @@ const AddFormField = (props) => {
       });
       if (error_flag) {
         setErrors(newErrors);
+        if(newErrors.length>0)
+        {
+          let flag=false;
+          newErrors.map((item,index)=>{
+            console.log("Object.keys(item).length---->",Object.keys(item).length);
+            if(Object.keys(item).length>0 && !flag)
+            {
+              console.log("Object.keys(item)[0]--->",Object.keys(item)[0]);
+              if(Object.keys(item)[0]==="option")
+              {
+                Object.values(item)[0].map((inner_item,inner_index)=>{
+                  if(Object.keys(inner_item).length>0 && !flag)
+                  {
+                    console.log("inner_item--->",Object.keys(inner_item).length,"---",inner_index);
+                    document.getElementById("option"+index+inner_index).focus();
+                    flag=true;
+                  }
+                  
+                })
+
+              }
+              else
+              {
+                document.getElementById(Object.keys(item)[0]+index).focus();
+                flag=true;
+              }
+              
+            }
+              
+          })
+        }
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -686,6 +721,7 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
+                                    id={"field_label"+index}
                                     maxLength={255}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
@@ -719,6 +755,14 @@ const AddFormField = (props) => {
                                     }}
                                   >
                                     <option
+                                      value="text_headings"
+                                      selected={
+                                        form[index]?.field_type === 'text_headings'
+                                      }
+                                    >
+                                      Text
+                                    </option>
+                                    <option
                                       value="text"
                                       selected={
                                         form[index]?.field_type === 'text'
@@ -749,6 +793,14 @@ const AddFormField = (props) => {
                                       }
                                     >
                                       Date
+                                    </option>
+                                    <option
+                                      value="time"
+                                      selected={
+                                        form[index]?.field_type === 'time'
+                                      }
+                                    >
+                                      Time
                                     </option>
                                     <option
                                       value="image_upload"
@@ -836,6 +888,7 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
+                                              id={"option"+index+inner_index}
                                               value={Object.keys(item)[0]}
                                               onChange={(e) => {
                                                 setField(
@@ -871,7 +924,7 @@ const AddFormField = (props) => {
                                                   const tempObj =
                                                     tempArr[index];
                                                   if (
-                                                    tempObj['option'].length > 2
+                                                    tempObj['option'].length > 1
                                                   ) {
                                                     counter++;
                                                     setCount(counter);
@@ -1100,6 +1153,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
+                                      id={"field_label"+index}
                                       name="field_label"
                                       value={
                                         Object.values(item)[0]['field_label']
@@ -1132,6 +1186,16 @@ const AddFormField = (props) => {
                                           );
                                         }}
                                       >
+                                        <option
+                                          value="text_headings"
+                                          selected={
+                                            Object.values(item)[0][
+                                              'field_type'
+                                            ] === 'text_headings'
+                                          }
+                                        >
+                                          Text
+                                        </option>
                                         <option
                                           value="text"
                                           selected={
@@ -1171,6 +1235,16 @@ const AddFormField = (props) => {
                                           }
                                         >
                                           Date
+                                        </option>
+                                        <option
+                                          value="time"
+                                          selected={
+                                            Object.values(item)[0][
+                                              'field_type'
+                                            ] === 'time'
+                                          }
+                                        >
+                                          Time
                                         </option>
                                         <option
                                           value="image_upload"
@@ -1291,7 +1365,7 @@ const AddFormField = (props) => {
                                                     if (
                                                       keyOfOption[
                                                         Object.keys(item)[0]
-                                                      ].option.length > 2
+                                                      ].option.length > 1
                                                     ) {
                                                       keyOfOption[
                                                         Object.keys(item)[0]

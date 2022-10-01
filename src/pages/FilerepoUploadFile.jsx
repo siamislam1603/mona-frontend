@@ -33,6 +33,7 @@ const FilerepoUploadFile = () => {
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [user, setUser] = useState([]);
     const [selectedAll, setSelectedAll] = useState(false);
+    const [generalCategory, setGeneralCategory] = useState("")
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
     const [formSettingData, setFormSettingData] = useState({ shared_role: '', accessible_to_role: 1 });
@@ -50,6 +51,15 @@ const FilerepoUploadFile = () => {
         })
             .then((res) => {
                 setCategory(res.data.category)
+
+                let general = res.data.category.filter((item)=>{
+                    if(item.category_name == "General"){
+                        return item.id
+                    }
+                })
+                console.log(general[0].id,"General")
+                setGeneralCategory(general[0].id)
+
             })
             .catch((error) => {
                 console.error(error)
@@ -174,6 +184,8 @@ const FilerepoUploadFile = () => {
         selectedUser?.map((item) => {
             selectedFranchiseeId += item.id + ',';
         });
+
+        formSettingData.file_category = getUser_Role == "guardian" ? generalCategory : formSettingData.file_category
 
         if (!formSettingData.setting_files || !formSettingData.meta_description || !formSettingData.file_category) {
             setError(true);
@@ -426,9 +438,10 @@ const FilerepoUploadFile = () => {
                                                     onChange={(e) => {
                                                         setField(e.target.name, e.target.value);
                                                     }}
+                                                    disabled={true}
                                                 >
-                                                    <option value="8">Select</option>
-                                                    <option value="8" selected={true}>General</option>
+                                                    {/* <option value="8">Select</option> */}
+                                                    <option value={generalCategory} selected={true}>General</option>
                                                 </Form.Select>
                                             </>) : (
                                             <>

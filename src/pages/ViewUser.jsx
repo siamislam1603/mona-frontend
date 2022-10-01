@@ -547,9 +547,6 @@ const ViewUser = () => {
     copyDataToState();
   }, [editUserData]);
 
-  // useEffect(() => {
-  //   fetchCoordinatorData();
-  // }, [selectedFranchisee]);
 
   useEffect(() => {
     fetchCoordinatorData(formData.franchisee_id);
@@ -560,13 +557,6 @@ const ViewUser = () => {
     trimRoleList();
   }, [currentRole]);
 
-  editUserData && console.log('EDIT USER DATA:', editUserData);
-  // formData && console.log('FORM DATA:', formData);
-  // coordinatorData && console.log('COORDINATOR DATA:', coordinatorData);
-  // formData && console.log('FORM DATA:', formData);
-  // signatureImage && console.log('Signature Image:', signatureImage);
-  userRoleData && console.log('USER ROLE DATA:', userRoleData);
-  // currentRole && console.log('Current Role:', currentRole);
   return (
     <>
       <div id="main">

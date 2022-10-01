@@ -45,6 +45,7 @@ const [topMessage, setTopMessage] = useState(null);
 const [searchParams, setSearchParams] = useSearchParams();
 const [theToken, setTheToken] = useState(null)
 const [checkResetPassword,setCheckResetPassword]= useState(true);
+
 let token = searchParams.get("token")
 let userID = searchParams.get("user")
 let resetType = searchParams.get("resetType")
@@ -113,7 +114,6 @@ const setField = (field, value) => {
   }
 }
 
-
 const getUser =  async() =>{
  try {
   let response = await axios.get(`${BASE_URL}/auth/${userID}`)
@@ -136,6 +136,7 @@ useEffect(() =>{
     getUser()
     setTheToken(token)
 },[])
+
 console.log("checkPassword", checkResetPassword)
 
   return (

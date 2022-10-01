@@ -34,7 +34,13 @@ function OwnFormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
+  const [dateFilter, setDateFilter] = useState({
+    from_date: "",
+    to_date: ""
+  });
+
   let hideFlag = false;
+  let count = 0;
 
   useEffect(() => {
     if (location?.state?.message) {
@@ -102,7 +108,7 @@ function OwnFormResponse(props) {
 
     const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem(
       'user_id'
-    )}&user_role=${localStorage.getItem('user_role')}`;
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -162,29 +168,83 @@ function OwnFormResponse(props) {
                     </div>
                   </Col>
                 </Row>
-                <div className="responses-forms-header-section forms-header-section">
-                  <div className="forms-managment-section">
+                <div className="responses-forms-header-section mb-5 forms-header-section">
+                  <div className="d-md-flex align-items-end mt-4">
+
+              
+                  <div className="forms-managmentsection">
                     <div className="forms-managment-left">
                       <p>{responseData.length} Responses</p>
                     </div>
-                    <div className="forms-managment-right">
-                      <div className="forms-search">
-                        <Form.Group>
-                          <div className="forms-icon">
-                            <img src="../img/search-icon-light.svg" alt="" />
-                          </div>
+
+                    <div className="d-sm-flex align-items-center">
+                        <Form.Group className="me-3">
+                          <Form.Label>From Date</Form.Label>
                           <Form.Control
-                            type="text"
-                            placeholder="Search..."
-                            name="search"
+                            type="date"
+                            name="from_date"
+                            value={dateFilter?.from_date}
+                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              getResponse(e.target.value);
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                from_date: e.target.value
+                              }))
                             }}
                           />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
+                        <Form.Group className="me-3">
+                          <Form.Label>To Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="to_date"
+                            value={dateFilter?.to_date}
+                            // min={new Date().toISOString().slice(0, 10)}
+                            onChange={(e) => {
+                              setDateFilter(prevState => ({
+                                ...prevState,
+                                to_date: e.target.value
+                              }))
+                            }}
+                          />
+                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
+                        </Form.Group>
+                        <Button
+                          variant="primary"
+                          type="submit" className="mt-4"
+                          onClick={() => { 
+                            console.log('GETTING FILTERED RESPONSE FROM SERVER!');
+                            getResponse('') 
+                          }}>
+                          Apply
+                        </Button>
                       </div>
-                    </div>
+
                   </div>
+
+
+                <div className="forms-search me-0 ms-auto mt-3">
+                      <Form.Group>
+                        <div className="forms-icon">
+                          <img src="../img/search-icon-light.svg" alt="" />
+                        </div>
+                        <Form.Control
+                          type="text"
+                          placeholder="Search..."
+                          name="search"
+                          onChange={(e) => {
+                            getResponse(e.target.value);
+                          }}
+                        />
+                      </Form.Group>
+                    </div>
+
+                    </div>
+
+
+
+
                 </div>
                 <div className="responses-collapse">
                   {
@@ -247,14 +307,18 @@ function OwnFormResponse(props) {
                                                 'editable' ||
                                                 formData?.form_type ===
                                                   'multi_submission') && (
-                                                <Link style={{marginLeft:"5px"}}
+                                                <Link
+                                                  style={{ marginLeft: '5px' }}
                                                   to={`/form/dynamic/${formData.form_name}`}
                                                   state={{
                                                     id: item[inner_index]?.id,
                                                     form_id: id ? id : null,
                                                   }}
                                                 >
-                                                  {console.log("item[index]?.id--->",item[inner_index])}
+                                                  {console.log(
+                                                    'item[index]?.id--->',
+                                                    item[inner_index]
+                                                  )}
                                                   {/* <div
                                                     className="edit-icon-form"
                                                     onClick={() => {
@@ -273,9 +337,9 @@ function OwnFormResponse(props) {
                                                       );
                                                     }}
                                                   > */}
-                                                    <FontAwesomeIcon
-                                                      icon={faPen}
-                                                    />
+                                                  <FontAwesomeIcon
+                                                    icon={faPen}
+                                                  />
                                                   {/* </div> */}
                                                 </Link>
                                               )}
@@ -358,21 +422,94 @@ function OwnFormResponse(props) {
 
                                     {Object.keys(JSON.parse(item.fields)).map(
                                       (inner_item, inner_index) => {
+                                        {
+                                          {
+                                            (Object.keys(
+                                              JSON.parse(item.fields)
+                                            )[inner_index] === 'headings' ||
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] ===
+                                                'text_headings') &&
+                                              count++;
+                                          }
+                                        }
                                         return (
-                                          <div className="responses-content-box">
+                                          <div
+                                            className="responses-content-box"
+                                            style={{ marginTop: '12px' }}
+                                          >
                                             <div className="responses-content-question">
-                                              <span>{inner_index + 1}</span>
-                                              <h6 className="text-capitalize">
-                                                {inner_item
-                                                  .split('_')
-                                                  .join(' ')}
-                                              </h6>
+                                              {!(
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings' ||
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings'
+                                              ) && (
+                                                <span>
+                                                  {inner_index + 1 - count}
+                                                </span>
+                                              )}
+                                              {Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] === 'headings' ? (
+                                                <h6
+                                                  className="text-capitalize"
+                                                  style={{
+                                                    fontSize: '20px',
+                                                    color: '#AA0061',
+                                                  }}
+                                                >
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                </h6>
+                                              ) : Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                'text_headings' ? (
+                                                <h6
+                                                  className="text-capitalize"
+                                                  style={{
+                                                    fontSize: '16px',
+                                                    color: '#455c58',
+                                                  }}
+                                                >
+                                                  {
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                  }
+                                                </h6>
+                                              ) : (
+                                                <h6 className="text-capitalize">
+                                                  {inner_item
+                                                    .split('_')
+                                                    .join(' ')}
+                                                </h6>
+                                              )}
                                             </div>
                                             <div className="responses-content-answer">
-                                              <img
-                                                src="../img/bx_right-arrow-alt.svg"
+                                              {!(
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] === 'headings' ||
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings'
+                                              ) && (
+                                                <img
+                                                src="/img/bx_right-arrow-alt.svg"
                                                 alt=""
                                               />
+                                              )}
+                                              
 
                                               {Object.values(
                                                 JSON.parse(item.fields)
@@ -493,13 +630,24 @@ function OwnFormResponse(props) {
                                                   </p>
                                                 </a>
                                               ) : (
-                                                <p>
-                                                  {
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                  }
-                                                </p>
+                                                !(
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'headings' ||
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'text_headings'
+                                                ) && (
+                                                  <p>
+                                                    {
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }
+                                                  </p>
+                                                )
                                               )}
                                             </div>
                                           </div>
