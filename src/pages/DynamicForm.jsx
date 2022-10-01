@@ -52,7 +52,7 @@ const DynamicForm = () => {
         setErrors(errorsData);
         flag=true;
       }
-      
+
     }
     if(type==='textarea')
     {
@@ -66,35 +66,32 @@ const DynamicForm = () => {
         setErrors(errorsData);
         flag=true;
       }
-      
     }
     if(location?.state?.id)
-    { 
+    {
       console.log("field---->",field);
       console.log("value---->",value);
-      
+
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
           ...fieldData,
-          ["fields"]: { ...fieldData[`fields`], [field]: value },
+          ['fields']: { ...fieldData[`fields`], [field]: value },
         });
       }
       if (type === 'checkbox') {
         value = value.slice(0, -1);
         setFieldData({
           ...fieldData,
-          ["fields"]: { ...fieldData[`fields`], [field]: value },
+          ['fields']: { ...fieldData[`fields`], [field]: value },
         });
       } else {
         setFieldData({
           ...fieldData,
-          ["fields"]: { ...fieldData[`fields`], [field]: value },
+          ['fields']: { ...fieldData[`fields`], [field]: value },
         });
       }
-    }
-    else
-    {
+    } else {
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setForm({
@@ -115,9 +112,8 @@ const DynamicForm = () => {
         });
       }
     }
-    
-    if(!flag)
-    {
+
+    if (!flag) {
       if (!!errors[field]) {
         setErrors({
           ...errors,
@@ -125,7 +121,6 @@ const DynamicForm = () => {
         });
       }
     }
-   
 
     // if (field === 'hobby') {
     //   values.includes(value) ? values.pop(value) : values.push(value);
@@ -286,29 +281,29 @@ const DynamicForm = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    if(location?.state?.id)
-    {
+    if (location?.state?.id) {
       var myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/json');
-        myHeaders.append('authorization', 'Bearer ' + token);
-        var requestOptions = {
-          method: 'POST',
-          headers: myHeaders,
-          body: JSON.stringify({
-            id: location?.state?.id,
-            data: fieldData,
-            status: "update"
-          }),
-          redirect: 'follow',
-        };
-  
-        fetch(`${BASE_URL}/form/form_data`, requestOptions)
-          .then((response) => response.json())
-          .then((result) => {
-            navigate(`/form/response/${location.state.form_id}`, { state: { message: result.message } });
+      myHeaders.append('Content-Type', 'application/json');
+      myHeaders.append('authorization', 'Bearer ' + token);
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({
+          id: location?.state?.id,
+          data: fieldData,
+          status: 'update',
+        }),
+        redirect: 'follow',
+      };
+
+      fetch(`${BASE_URL}/form/form_data`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          navigate(`/form/response/${location.state.form_id}`, {
+            state: { message: result.message },
           });
-    }
-    else{
+        });
+    } else {
       const newErrors = DynamicFormValidation(
         form,
         formData,
@@ -330,7 +325,7 @@ const DynamicForm = () => {
             user_id: localStorage.getItem('user_id'),
             behalf_of:
               localStorage.getItem('user_role') === 'guardian'
-                ? behalfOfFlag
+                ? !behalfOfFlag
                   ? childId
                   : behalfOf
                   ? behalfOf
@@ -342,7 +337,7 @@ const DynamicForm = () => {
           }),
           redirect: 'follow',
         };
-  
+
         fetch(`${BASE_URL}/form/form_data`, requestOptions)
           .then((response) => response.text())
           .then((result) => {
@@ -364,7 +359,8 @@ const DynamicForm = () => {
                 .then((res) => {
                   if (res) {
                     if (
-                      result?.message === 'You can add only one time form data!!'
+                      result?.message ===
+                      'You can add only one time form data!!'
                     ) {
                       toast.error(result?.message);
                     } else {
@@ -560,34 +556,55 @@ const DynamicForm = () => {
                           {formData[item]?.map((inner_item, index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
-                                (inner_item.form_field_permissions[0].fill_access_users || []).includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")) && location?.state?.id ? (
-                                  <InputFields
-                                    {...inner_item}
-                                    signature_flag={signatureAccessFlag}
-                                    field_data={fieldData}
-                                    error={errors}
-                                    onChange={(key, value, type) => {
-                                      setField("",key, value, type);
-                                    }}
-                                  />
-                                ) :
-                                (inner_item.form_field_permissions[0].fill_access_users || []).includes(localStorage.getItem("user_role")==="guardian" ? "parent" : localStorage.getItem("user_role")) &&
-                              <>
-                              {console.log("inner_item111111",inner_item.form_field_permissions[0].fill_access_users)}
-                                {index === 0 && (
-                                  <h6 className="text-capitalize">
-                                    {item.split('_').join(' ')}
-                                  </h6>
-                                )}
+                              (
+                                inner_item.form_field_permissions[0]
+                                  .fill_access_users || []
+                              ).includes(
+                                localStorage.getItem('user_role') === 'guardian'
+                                  ? 'parent'
+                                  : localStorage.getItem('user_role')
+                              ) && location?.state?.id ? (
                                 <InputFields
                                   {...inner_item}
                                   signature_flag={signatureAccessFlag}
+                                  field_data={fieldData}
                                   error={errors}
                                   onChange={(key, value, type) => {
-                                    setField(item, key, value, type);
+                                    setField('', key, value, type);
                                   }}
                                 />
-                              </>
+                              ) : (
+                                (
+                                  inner_item.form_field_permissions[0]
+                                    .fill_access_users || []
+                                ).includes(
+                                  localStorage.getItem('user_role') ===
+                                    'guardian'
+                                    ? 'parent'
+                                    : localStorage.getItem('user_role')
+                                ) && (
+                                  <>
+                                    {console.log(
+                                      'inner_item111111',
+                                      inner_item.form_field_permissions[0]
+                                        .fill_access_users
+                                    )}
+                                    {index === 0 && (
+                                      <h6 className="text-capitalize">
+                                        {item.split('_').join(' ')}
+                                      </h6>
+                                    )}
+                                    <InputFields
+                                      {...inner_item}
+                                      signature_flag={signatureAccessFlag}
+                                      error={errors}
+                                      onChange={(key, value, type) => {
+                                        setField(item, key, value, type);
+                                      }}
+                                    />
+                                  </>
+                                )
+                              )
                             ) : location?.state?.id ? (
                               <InputFields
                                 {...inner_item}
@@ -595,7 +612,7 @@ const DynamicForm = () => {
                                 field_data={fieldData}
                                 error={errors}
                                 onChange={(key, value, type) => {
-                                  setField("",key, value, type);
+                                  setField('', key, value, type);
                                 }}
                               />
                             ) : (
@@ -604,7 +621,7 @@ const DynamicForm = () => {
                                 signature_flag={signatureAccessFlag}
                                 error={errors}
                                 onChange={(key, value, type) => {
-                                  setField("",key, value, type);
+                                  setField('', key, value, type);
                                 }}
                               />
                             );
@@ -612,18 +629,17 @@ const DynamicForm = () => {
                         </>
                       ) : (
                         formData[item]?.map((inner_item) => {
-                          return (
-                            location?.state?.id ? (
-                              <InputFields
-                                {...inner_item}
-                                signature_flag={signatureAccessFlag}
-                                field_data={fieldData}
-                                error={errors}
-                                onChange={(key, value, type) => {
-                                  setField("",key, value, type);
-                                }}
-                              />
-                            ):
+                          return location?.state?.id ? (
+                            <InputFields
+                              {...inner_item}
+                              signature_flag={signatureAccessFlag}
+                              field_data={fieldData}
+                              error={errors}
+                              onChange={(key, value, type) => {
+                                setField('', key, value, type);
+                              }}
+                            />
+                          ) : (
                             <InputFields
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
