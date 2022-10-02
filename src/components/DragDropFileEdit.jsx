@@ -107,7 +107,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                     <span>Please Select a file to share : <br />
                         <span className="btn btn-primary" >
                             Choose File</span> <br />
-                        <small>Accepted file types : doc, pdf, mp3, png, jpg,video</small>
+                        <small>Accepted file types : doc, pdf, mp3, png, jpg, video</small>
                         <small className="fileinput">(less than 1GB)</small>
                     </span>
                 </div>

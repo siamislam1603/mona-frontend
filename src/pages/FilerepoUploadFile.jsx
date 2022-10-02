@@ -17,9 +17,6 @@ const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-
-
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
     const [errors, setErrors] = useState({});

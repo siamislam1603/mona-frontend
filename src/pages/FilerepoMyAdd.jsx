@@ -336,7 +336,7 @@ const FilerepoMyAdd = ({ filter }) => {
                             {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
-                                        <a href={cell[2]} download>
+                                        <a href={cell[2]} download >
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
                                     </span>
