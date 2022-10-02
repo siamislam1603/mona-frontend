@@ -35,10 +35,11 @@ const DynamicForm = () => {
     ? location.search.split('?')[1].split('=')[1]
     : null;
   const setField = (section, field, value, type) => {
-    console.log('section', section);
-    console.log('field', field);
-    console.log('value', value);
-    console.log('type', type);
+    console.log('set---section', section);
+    console.log('set---field', field);
+    console.log('set---value', value);
+    console.log('set---type', type);
+    
     let flag = false;
     if (type === 'text') {
       value = value.trimEnd();
@@ -370,7 +371,7 @@ const DynamicForm = () => {
           redirect: 'follow',
         };
 
-        fetch(`${BASE_URL}/form/form_data`, requestOptions)
+        fetch(`${BASE_URL}/form/form_data?role=${localStorage.getItem("user_role")}`, requestOptions)
           .then((response) => response.text())
           .then((result) => {
             result = JSON.parse(result);
@@ -586,10 +587,10 @@ const DynamicForm = () => {
                           </div>
                         </Col>
                       )}
-                    {Object.keys(formData)?.map((item) => {
+                    {Object.keys(formData)?.map((item,index) => {
                       return item ? (
                         <>
-                          {formData[item]?.map((inner_item, index) => {
+                          {formData[item]?.map((inner_item, inner_index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
                               (
@@ -603,6 +604,7 @@ const DynamicForm = () => {
                                 <InputFields
                                   {...inner_item}
                                   signature_flag={signatureAccessFlag}
+                                  diff_index={inner_index}
                                   field_data={fieldData}
                                   error={errors}
                                   errorFocus={errorFocus}
@@ -634,6 +636,7 @@ const DynamicForm = () => {
                                     <InputFields
                                       {...inner_item}
                                       signature_flag={signatureAccessFlag}
+                                      diff_index={inner_index}
                                       error={errors}
                                       errorFocus={errorFocus}
                                       onChange={(key, value, type) => {
@@ -647,6 +650,7 @@ const DynamicForm = () => {
                               <InputFields
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
+                                diff_index={inner_index}
                                 field_data={fieldData}
                                 error={errors}
                                 errorFocus={errorFocus}
@@ -659,6 +663,7 @@ const DynamicForm = () => {
                                 {...inner_item}
                                 signature_flag={signatureAccessFlag}
                                 error={errors}
+                                diff_index={inner_index}
                                 errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
                                   setField('', key, value, type);
@@ -668,12 +673,13 @@ const DynamicForm = () => {
                           })}
                         </>
                       ) : (
-                        formData[item]?.map((inner_item) => {
+                        formData[item]?.map((inner_item,inner_index) => {
                           return location?.state?.id ? (
                             <InputFields
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
                               field_data={fieldData}
+                              diff_index={inner_index}
                               error={errors}
                               errorFocus={errorFocus}
                               onChange={(key, value, type) => {
@@ -684,6 +690,7 @@ const DynamicForm = () => {
                             <InputFields
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
+                              diff_index={inner_index}
                               error={errors}
                               errorFocus={errorFocus}
                               onChange={(key, value, type) => {

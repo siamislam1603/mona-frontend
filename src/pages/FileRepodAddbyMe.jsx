@@ -16,7 +16,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
     const GetData = async () => {
         try {
             if (selectedFranchisee) {
-                let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}`, {
+                let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee ? selectedFranchisee: "" }`, {
                     headers: {
                         authorization: `Bearer ${localStorage.getItem('token')}`,
                     },
@@ -25,7 +25,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                 if (response.status === 200 && response.data.status === "success") {
                     const users = response.data.dataDetails;
                     let tempData = users.map((dt) => ({
-                        name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                        name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
                         updatedAt: dt.updatedAt,
                         createdAt: dt.createdAt,
                         userID: dt.id,
@@ -35,6 +35,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                     setfullLoaderStatus(false)
                 } else if (response.status === 404) {
                     setUserData([])
+                    setfullLoaderStatus(false)
                 }
             }
         } catch (err) {
@@ -45,7 +46,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
 
     const GetSaachhData = async () => {
         try {
-            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee}&search=${SearchValue}`, {
+            let response = await axios.get(`${BASE_URL}/fileRepo/created-filesBy-category/${localStorage.getItem('user_id')}?franchiseAlias=${selectedFranchisee ? selectedFranchisee: "" }&search=${SearchValue}`, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -54,20 +55,23 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
             if (response.status === 200) {
                 const users = response.data.dataDetails;
                 let tempData = users.map((dt) => ({
-                    name: `${dt.categoryId}, ${dt.count} , ${dt.categoryName}`,
+                    name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
                     updatedAt: dt.updatedAt,
                     createdAt: dt.createdAt,
                     userID: dt.id,
                     creatorName: dt.ModifierName + "," + dt.updatedBy,
                 }));
                 setUserData(tempData);
+                setfullLoaderStatus(false)
                 console.log(tempData, "tempData")
             }
             else if (response.status === 404) {
                 setUserData([])
+                setfullLoaderStatus(false)
             }
         } catch (err) {
             setUserData([])
+            setfullLoaderStatus(false)
         }
     }
     useEffect(() => {
@@ -84,6 +88,11 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
         }
     }, [selectedFranchisee]);
 
+    const defaultSortedBy = [{
+        dataField: "name",
+        order: "asc"  // or desc
+      }];
+
 
     const columns = [
         {
@@ -96,13 +105,13 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                 return (
                     <>
                         <div className="user-list">
-                            <Link to={`/file-repository-List-me/${cell[0]}`} className="FileResp">
+                            <Link to={`/file-repository-List-me/${cell[2]}`} className="FileResp">
                                 <span>
                                     <img src="../img/gfolder-ico.png" className="me-2" alt="" />
                                 </span>
                             </Link>
                             <span className="user-name">
-                                {cell[2]}
+                                {cell[0]}
                                 <small>
                                     {cell[1] > 1 ? (<>
                                         {cell[1]} Files
@@ -189,6 +198,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                         {userData.length > 0 ? (
                             <BootstrapTable
                                 {...props.baseProps}
+                                defaultSorted={defaultSortedBy}
                                 pagination={paginationFactory()}
                             />
                         ) :

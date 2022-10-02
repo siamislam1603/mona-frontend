@@ -178,6 +178,8 @@ export const createOperatingManualValidation = (form,wordCount) => {
 export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount,relatedFiles) => {
   console.log('The form validation', titleError,titleChecking);
   let newErrors = {};
+  const role = localStorage.getItem("user_role")
+
   console.log('The form validat', form);
   let { title, meta_description, start_date, start_time, franchise } = form;
   console.log('The tile valdiation', start_date);
@@ -214,7 +216,10 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   // }
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      newErrors.franchise = "Please Select Franchise"
+      if(role == "franchisor_admin"){
+        newErrors.franchise = "Please Select Franchise"
+
+      }
 
     }
 
@@ -225,6 +230,7 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
 };
 export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount,relatedFiles) => {
   let newErrors = {};
+  const role = localStorage.getItem("user_role")
   console.log('The form validat', form,allFranchise);
   // console.log("The DATA VALIDATION",newData)
   let { title, meta_description, start_date, start_time, franchise } = form;
@@ -257,7 +263,10 @@ export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,
     newErrors.start_time = 'Start Time Required';
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      newErrors.franchise = "Please Select Franchise"
+      if(role == "franchisor_admin"){
+        newErrors.franchise = "Please Select Franchise"
+
+      }
 
     }
     if(relatedFiles?.length>5){
@@ -623,11 +632,11 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
   if(postalCode.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode.length === 4 && isNaN(parseInt(postalCode)))
+  if(postalCode?.length === 4 && isNaN(postalCode))
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";
-  if(role === "guardian" && crn.length > 0 && !(/^[0-9]+$/i.test(crn)))
+  if(role === "guardian" && crn?.length > 0 && !(/^[0-9]+$/i.test(crn)))
     errors.crn = "Field should only contain digits";
   
   if (!phone) errors.phone = 'Phone number is required';
@@ -672,7 +681,7 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
   if(postalCode?.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode?.length === 4 && isNaN(parseInt(postalCode)))
+  if(postalCode?.length === 4 && isNaN(postalCode))
     errors.postalCode = 'Post code must only consist digits';
   
   if (role === "guardian" && !crn) errors.crn = "CRN number is required";

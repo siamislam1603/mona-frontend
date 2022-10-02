@@ -301,7 +301,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
               <h3 className="title-sm mb-3 mt-3"><strong>Training with due date</strong></h3>
 
               {/* <div className="selectdropdown ms-auto d-flex align-items-center">
-                <Form.Group className="d-flex align-items-center" style={{ zIndex: "99" }}>
+                <Form.Group className="d-flex align-items-center">
                   <Form.Label className="d-block me-2">Filter by</Form.Label>
                   <Select
                     closeMenuOnSelect={true}
