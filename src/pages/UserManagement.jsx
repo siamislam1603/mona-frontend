@@ -632,18 +632,13 @@ const UserManagement = () => {
   }, [parentConnectedToEducator, tempEduData]);
 
   const csvLink = useRef();
-  // openFilter && console.log('OPEN FILTER:', openFilter);
-  // tempEduData && console.log('USER DATA:>>>>>>>>>>>>>>>', tempEduData);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+  // const container = useRef();
+  openFilter && console.log('OPEN FILTER:', openFilter);
   return (
     <>
       <div 
-        id="main" 
-        onClickCapture={
-          () => {
-          if (openFilter === true)
-            setOpenFilter(false)
-        }}>
+        id="main"
+        className="main-class">
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -711,7 +706,7 @@ const UserManagement = () => {
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
-                                  <Form.Group>
+                                  <Form.Group className="filter_radio">
                                     {
                                       displayRoles &&
                                       displayRoles.map((role, index) => {
@@ -722,10 +717,10 @@ const UserManagement = () => {
                                             value={role.value}
                                             name="users"
                                             type="radio"
+                                            className="filter_radio"
                                             id={`${role.value}-${index}`}
                                             checked={filter === `${role.value}`}
                                             onChange={(event) => {
-                                              console.log(event.target.value);
                                               setFilter(event.target.value)
                                             }}
                                           />
@@ -734,27 +729,6 @@ const UserManagement = () => {
                                     }
                                   </Form.Group>
                                 </div>
-                                {/* <div className="custom-radio">
-                                      <label className="mb-2">Location:</label>
-                                      <Form.Group>
-                                        <Select
-                                          closeMenuOnSelect={false}
-                                          components={animatedComponents}
-                                          isMulti
-                                          options={training}
-                                          onChange={(event) =>
-                                            setFilter((prevState) => ({
-                                              ...prevState,
-                                              location: [
-                                                ...event.map(
-                                                  (data) => data.label
-                                                ),
-                                              ],
-                                            }))
-                                          }
-                                        />
-                                      </Form.Group>
-                                    </div> */}
                                 <footer>
                                   <Button
                                     variant="transparent"
