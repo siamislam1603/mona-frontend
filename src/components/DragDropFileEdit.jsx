@@ -53,22 +53,10 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
     const Filess = myFiles.map((file, index) => {
         if (index != 0)
             return <>
-                {file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
-                    <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
-                </>)
-                    : file.type === "application/pdf" || file.type === "text/html" || file.type === "text/htm" || file.type === "text/doc" || file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ? (
-                        <>
-                            <span className="user-pic-tow">
-                                {/* <a href={getBase64(file) || currentURI || acceptedFiles} download > */}
-                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                {/* </a> */}
-                            </span>
-                            <span className="user-name">
-                                {file.name}
-                                {getBase64(file)}.Doc
-                            </span>
-                        </>
-                    )
+                {
+                    file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpe" ? (<>
+                        <img src={getBase64(file) || currentURI || acceptedFiles} style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} alt="cover_file" />
+                    </>)
                         : file.type === "video/mp4" ?
                             (<>
                                 <div style={{ display: "flex", justifyContent: " center" }}>
@@ -87,10 +75,20 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                                         </span>
                                         <span className="user-name">
                                             {file.name}
-                                            {getBase64(file)}.Doc
+                                            {getBase64(file)}
                                         </span>
                                     </>
-                                ) : (<></>)
+                                ) : (
+                                    <>
+                                        <span className="user-pic-tow">
+                                            <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                        </span>
+                                        <span className="user-name">
+                                            {file.name}
+                                            {getBase64(file)}
+                                        </span>
+                                    </>
+                                )
                             )
                 }
                 <Link to="#" onClick={removeFile(file)} style={{ margin: "20px" }}>

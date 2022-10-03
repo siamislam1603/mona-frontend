@@ -322,6 +322,7 @@ const RepoEdit = () => {
                                                             <div className="showfiles mt-3 text-center" >
                                                                 {typeof data.image === "string" ?
                                                                     (<>
+
                                                                         {data.file_type === "image/jpeg" || data.file_type === "image/png" || data.file_type === "image/jpe" ? (< img src={data.image} alt="smkdjh" style={{ maxWidth: "150px", height: "auto", borderRadius: "10px" }} />) :
                                                                             data.file_type === "application/pdf" || data.file_type === "text/html" || data.file_type === "text/pdf" || data.file_type === "text/csv" || data.file_type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || data.file_type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ? (<>
                                                                                 <span className="user-pic-tow">
@@ -330,7 +331,7 @@ const RepoEdit = () => {
                                                                                     </a>
                                                                                 </span>
                                                                                 <span className="user-name">
-                                                                                    {data.fileName}.Doc
+                                                                                    {data.fileName}.{data.file_type.replace('application/', '')}
                                                                                 </span>
                                                                             </>) :
                                                                                 data.file_type === "video/mp4" ? (
@@ -352,7 +353,7 @@ const RepoEdit = () => {
                                                                                             </a>
                                                                                         </span>
                                                                                         <span className="user-name">
-                                                                                            data={data.fileName}
+                                                                                            {data.fileName}.{data.file_type}
                                                                                         </span>
                                                                                     </>
                                                                                 )}
