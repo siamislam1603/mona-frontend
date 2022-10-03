@@ -678,7 +678,10 @@ const FilerepoMyAdd = ({ filter }) => {
                                 </Col>
                             </Row>)}
 
-                            <Row className="mt-4">
+                            {
+
+                                sendToAllFranchisee == "none" && formSettings?.franchisee.length < 1 ? "" :
+                                (<Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
                                         <Form.Label>Accessible to:</Form.Label>
@@ -957,7 +960,11 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </>) : null
                                     }
                                 </Col>
-                            </Row>
+                                </Row>)
+
+                            }
+
+                            
                         </div>
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">
