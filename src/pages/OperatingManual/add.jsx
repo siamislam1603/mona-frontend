@@ -651,8 +651,10 @@ const AddOperatingManual = () => {
                               }}
                             />
                           )}
-                          <div className="wordcount">Word Count : {wordCount}</div>
+                           <div className="text-left mb-4">Maximum character 1000</div>
+                        
                         </Form.Group>
+
                       </Col>
                     </Row>
                     <Row>
