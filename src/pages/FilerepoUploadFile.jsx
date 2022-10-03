@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import DragDropFileEdit from '../components/DragDropFileEdit';
-import DragDropRepository from '../components/DragDropRepository';
 
 
 let selectedUserId = '';
