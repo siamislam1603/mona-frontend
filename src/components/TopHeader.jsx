@@ -34,6 +34,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const [searchTraining, setSearchTraining] = useState([]);
   const [searchUser, setSearchUser] = useState([]);
   const [searchLoaderFlag, setSearchLoaderFlag] = useState(false);
+  const [userTyping,setuserTyping] = useState('')
   const [topHeaderNotificationMarkAllRead, setTopHeaderNotificationMarkAllRead] = useState(null);
 
   // const savePermissionInState = async () => {
@@ -220,6 +221,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     e.preventDefault();
     try {
       let searchKey = e.target.value;
+      setuserTyping(searchKey)
       if (searchKey) {
 
         setSearchLoaderFlag(true)
@@ -609,82 +611,84 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                   onChange={handelSearch}
 
                 />
-                <div className="tipsearch">
-                  <div className="searchlisting cus-scr">
-
-                    {searchLoaderFlag == true ? (
-                      <div className="text-center">
-                        <CircularProgress />
-                      </div>
-                    ) : ''
-                    }
-
-
-                    <ul>
-
-                      {searchAnnouncement?.map((announceData) => (
-                        <li>
-                          <a href="/announcements" className="d-flex">
-                            {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{announceData?.title}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-
-
-                      {searchTraining?.map((trainingData) => (
-                        <li>
-                          <a href={`/training-detail/${trainingData?.trainingId}`} className="d-flex">
-                            {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{trainingData?.training?.title}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-                       {searchUser?.map((user) => (
-                        <li>
-                          <a href={`/user-management`} className="d-flex">
-                            {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{user?.fullname}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-
-
-                      {searchOperatingMannual?.map((operatingData) => (
-                        <li>
-                          <a href={`/operatingmanual/?selected=${operatingData.id}`} className="d-flex">
-                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{operatingData?.operating_manual?.title}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-
-                      {searchFranchise?.map((franchiseeData) => (
-                        <li>
-                          <a href={`/all-franchisees/`} className="d-flex">
-                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-
-
-                      {searchFileRepository?.map((fileRepoData) => (
-                        <li>
-                          <a href={`/file-repository-List/${fileRepoData?.repository?.repository_files[0]?.categoryId}`} className="d-flex">
-                            {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                            <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.repository?.title}</strong></span>
-                          </a>
-                        </li>
-                      ))}
-
-
-
-
-
-                    </ul>
-                  </div>
-                </div>
+              { userTyping &&
+                                <div className="tipsearch">
+                                <div className="searchlisting cus-scr">
+              
+                                  {searchLoaderFlag == true ? (
+                                    <div className="text-center">
+                                      <CircularProgress />
+                                    </div>
+                                  ) : ''
+                                  }
+              
+              
+                                  <ul>
+              
+                                    {searchAnnouncement?.map((announceData) => (
+                                      <li>
+                                        <a href="/announcements" className="d-flex">
+                                          {/* <img alt="" src={announceData?.coverImage?announceData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{announceData?.title}</strong></span>
+                                        </a>
+                                      </li>
+                                    ))}
+              
+              
+                                    {searchTraining?.map((trainingData) => (
+                                      <li>
+                                        <a href={`/training-detail/${trainingData?.trainingId}`} className="d-flex">
+                                          {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{trainingData?.training?.title}</strong></span>
+                                        </a>
+                                      </li>
+                                    ))}
+                                     {searchUser?.map((user) => (
+                                      <li>
+                                        <Link to={`/view-user/${user.id}`} className="d-flex">
+                                          {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{user?.fullname}</strong></span>
+                                        </Link>
+                                      </li>
+                                    ))}
+              
+              
+                                    {searchOperatingMannual?.map((operatingData) => (
+                                      <li>
+                                        <a href={`/operatingmanual/?selected=${operatingData.id}`} className="d-flex">
+                                          {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{operatingData?.operating_manual?.title}</strong></span>
+                                        </a>
+                                      </li>
+                                    ))}
+              
+                                    {searchFranchise?.map((franchiseeData) => (
+                                      <li>
+                                        <a href={`/all-franchisees/`} className="d-flex">
+                                          {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{franchiseeData?.franchisee_name}</strong></span>
+                                        </a>
+                                      </li>
+                                    ))}
+              
+              
+                                    {searchFileRepository?.map((fileRepoData) => (
+                                      <li>
+                                        <a href={`/file-repository-List/${fileRepoData?.repository?.repository_files[0]?.categoryId}`} className="d-flex">
+                                          {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
+                                          <span className="sec-cont"><strong className="text-capitalize">{fileRepoData?.repository?.title}</strong></span>
+                                        </a>
+                                      </li>
+                                    ))}
+              
+              
+              
+              
+              
+                                  </ul>
+                                </div>
+                              </div>
+              }
                 <Link className="search-close" to="#">
                   <img alt="" src="/img/cross.png" />
                 </Link>

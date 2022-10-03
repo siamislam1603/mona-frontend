@@ -115,12 +115,7 @@ const Training = () => {
   return (
     <>
       <div 
-        id="main"
-        onClickCapture={() => {
-          if(openFilter === true) {
-            setOpenFilter(false)
-          }
-        }}>
+        id="main">
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
@@ -182,17 +177,98 @@ const Training = () => {
                                 </Form.Group>
                               </div>
                               <footer>
-                                <Button variant="transparent" type="submit">Cancel</Button>
-                                <Button 
-                                  variant="primary" 
-                                  type="submit">Apply</Button>
+                                <Dropdown.Item as="button" className="btn btn-transparent w-auto d-inline-block" type="submit">
+                                  Cancel
+                                </Dropdown.Item>
+                                <Dropdown.Item as="button" className="btn btn-primary w-auto d-inline-block" type="submit">
+                                  Apply
+                                </Dropdown.Item>
                               </footer>
                             </Dropdown.Menu>
                           </Dropdown>
                         }
                         {
+                      tabName === "assigned_training" &&
+                      <Dropdown className="filtercol me-3">
+                        <Dropdown.Toggle
+                          id="extrabtn"
+                          variant="btn-outline"
+                          onClickCapture={() => {
+                            if(openFilter === false) {
+                              setOpenFilter(true)
+                            }
+                          }}
+                        >
+                          <i className="filter-ico"></i> Add Filters
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <header>Filter by</header>
+                          <div className="custom-radio btn-radio mb-2">
+                            {/* <label style={{ marginBottom: '5px' }}>Role</label> */}
+                            <Form.Group>
+                              <Form.Check
+                                inline
+                                label="Alphabatical"
+                                value={filterData.filter}
+                                name="filter"
+                                type="radio"
+                                id={`alphabatical`}
+                                checked={filterData.filter === `alphabatical`}
+                                onChange={(event) => {
+                                  setFilterData(prevState => ({
+                                    ...prevState,
+                                    filter: "alphabatical"
+                                  }))
+                                }}
+                              />
+
+                            <Form.Check
+                                inline
+                                label="Due Date"
+                                value={filterData.filter}
+                                name="name"
+                                type="radio"
+                                id={`due_date`}
+                                checked={filterData.filter === `due_date`}
+                                onChange={() => {
+                                  setFilterData(prevState => ({
+                                    ...prevState,
+                                    filter: "due_date"
+                                  }))
+                                }}
+                              />
+                            </Form.Group>
+                          </div>
+                          <footer>
+                            <Dropdown.Item as="button"
+                                    className="btn btn-transparent w-auto d-inline-block"
+                              type="submit"
+                              onClick={() => { 
+                                setFilterData(prevState => ({
+                                  ...prevState,
+                                  filter: "alphabatical"
+                                })); 
+                              }}>
+                              Reset
+                            </Dropdown.Item>
+                            
+                            <Dropdown.Item as="button"
+                                    className="btn btn-primary w-auto d-inline-block"
+                              type="submit"
+                              onClick={() => {
+                                if(openFilter === true) { 
+                                  setOpenFilter(false)
+                                } 
+                              }}>
+                              Close
+                            </Dropdown.Item>
+                          </footer>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    }
+                        {
                           verifyPermission("training_files", "add") &&
-                          <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
+                          <a href="/new-training" className="btn btn-primary">+ Add New Training</a>
                         }
 
                         {
@@ -243,86 +319,6 @@ const Training = () => {
                         />
                       </Form.Group>
                     </div>
-                    
-                    {
-                      tabName === "assigned_training" &&
-                      <Dropdown className="filtercol me-" style={{ marginLeft: "10px" }}>
-                        <Dropdown.Toggle
-                          id="extrabtn"
-                          variant="btn-outline"
-                          onClickCapture={() => {
-                            if(openFilter === false) {
-                              setOpenFilter(true)
-                            }
-                          }}
-                        >
-                          <i className="filter-ico"></i> Add Filters
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu style={{ display: openFilter ? "block" : "none" }}>
-                          <header>Filter by</header>
-                          <div className="custom-radio btn-radio mb-2">
-                            {/* <label style={{ marginBottom: '5px' }}>Role</label> */}
-                            <Form.Group>
-                              <Form.Check
-                                inline
-                                label="Alphabatical"
-                                value={filterData.filter}
-                                name="filter"
-                                type="radio"
-                                id={`alphabatical`}
-                                checked={filterData.filter === `alphabatical`}
-                                onChange={(event) => {
-                                  setFilterData(prevState => ({
-                                    ...prevState,
-                                    filter: "alphabatical"
-                                  }))
-                                }}
-                              />
-
-                            <Form.Check
-                                inline
-                                label="Due Date"
-                                value={filterData.filter}
-                                name="name"
-                                type="radio"
-                                id={`due_date`}
-                                checked={filterData.filter === `due_date`}
-                                onChange={() => {
-                                  setFilterData(prevState => ({
-                                    ...prevState,
-                                    filter: "due_date"
-                                  }))
-                                }}
-                              />
-                            </Form.Group>
-                          </div>
-                          <footer>
-                            <Button
-                              variant="btn-outline"
-                              type="submit"
-                              onClick={() => { 
-                                setFilterData(prevState => ({
-                                  ...prevState,
-                                  filter: "alphabatical"
-                                })); 
-                              }}>
-                              Reset
-                            </Button>
-                            
-                            <Button
-                              variant="primary"
-                              type="submit"
-                              onClick={() => {
-                                if(openFilter === true) { 
-                                  setOpenFilter(false)
-                                } 
-                              }}>
-                              Close
-                            </Button>
-                          </footer>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    }
                   </div>
                   {
                     topSuccessMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topSuccessMessage}</p>

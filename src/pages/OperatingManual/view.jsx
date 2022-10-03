@@ -19,6 +19,8 @@ let upperRoleUser = '';
 let selectedUserId = '';
 let count = 0;
 const OperatingManual = () => {
+  const [topErrorMessage, setTopErrorMessage] = useState(null);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [Index, setIndex] = useState(0);
@@ -166,7 +168,33 @@ const OperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
 
-  useEffect(() => {
+  const checkDelete = async()=>{
+    const query = new URL(window.location);
+    const id = query.searchParams.get('selected')
+    console.log("The id",id)
+    const token = localStorage.getItem('token');
+
+    const response = await axios.get(`${BASE_URL}/operating_manual/checkExist/${id}`,{
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    })
+    if(response.status === 200 && response.data.status === "success"){
+
+    }
+    else{
+        setTopErrorMessage("Operating mannual either deleted or no longer exist!")
+        setTimeout(() => {
+          setTopErrorMessage(null);
+        }, 6000)
+    }
+    console.log(" the id The response check",response)
+
+  }
+  useEffect(() =>{
+    checkDelete()
+  },[])
+  const manageCollpase=()=>{
     var tree = document.getElementById('tree1');
     if (tree) {
       tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
@@ -213,6 +241,12 @@ const OperatingManual = () => {
         );
       });
     }
+  }
+  useEffect(() => {
+    manageCollpase();
+  });
+  useEffect(() => {
+    manageCollpase();
   }, [operatingManualdata]);
   const getOneOperatingManual = async (id, category_name) => {
     var myHeaders = new Headers();
@@ -463,6 +497,8 @@ const OperatingManual = () => {
 
   return (
     <>
+    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+
       <div id="main">
         <ToastContainer />
         <section className="mainsection">
@@ -510,6 +546,7 @@ const OperatingManual = () => {
                             placeholder="Search..."
                             onChange={(e) => {
                               getOperatingManual('search', e.target.value);
+                              manageCollpase();
                             }}
                           />
                         </div>
