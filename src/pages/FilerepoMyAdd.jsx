@@ -91,7 +91,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-
+                    console.log('FILE RESPONSE:', files);
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -103,6 +103,7 @@ const FilerepoMyAdd = ({ filter }) => {
                         filesId: dt.filesId,
 
                     }));
+                    console.log('FILE DATA:', tempData);
                     setUserData(tempData);
                 }
             }
