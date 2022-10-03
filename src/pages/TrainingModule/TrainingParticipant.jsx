@@ -25,18 +25,11 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   const [isCompleted, setIsCompleted] = useState(false)
   const [index, setIndex] = useState(9)
   let initialUsers = slice(participants, 0, index)
-  const [paginationProps, setPaginationProps] = useState({
-    // limit: 9,
-    // offset: 0,
-    search: ""
-  })
+  const [search, setSearch] = useState("");
 
-  const fetchNonParticipants = async () => {
+  const fetchParticipants = async () => {
     try {
-      let { search } = paginationProps;
       let token = localStorage.getItem('token');
-      // let userId = localStorage.getItem('user_id');
-
       const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -67,12 +60,17 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   }
 
   useEffect(() => {
-    fetchNonParticipants();
+    fetchParticipants();
   }, []);
 
   useEffect(() => {
-    fetchNonParticipants();
-  }, [paginationProps.search]);
+    if(search) {
+      let searchedParticipants = participants.filter(d => d.name.includes(search));
+      setParticipants(searchedParticipants);
+    } else {
+      fetchParticipants();
+    }
+  }, [search]);
   
   return (
     <>
@@ -116,10 +114,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                           type="text"
                           placeholder="Search"
                           onChange={(e) => {
-                            setPaginationProps(prevState => ({
-                              ...prevState,
-                              search: e.target.value
-                            }))
+                            setSearch(e.target.value);
                           }}
                         />
                       </Form.Group>
@@ -149,7 +144,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                   }  
 
                   {
-                    paginationProps.search === "" &&
+                    search === "" &&
                     <div style={{ justifyContent: 'center', display: initialUsers.length > 0 ? "flex": "none" }}>
                       {isCompleted ? (
                         <button 
