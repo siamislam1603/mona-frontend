@@ -151,7 +151,14 @@ function Setting(props) {
                   item.id.toString()
                 )
               ) {
-                selectedFillAccessUser.push({ id: item.id, email: item.email, namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}` });
+                selectedFillAccessUser.push({
+                  id: item.id,
+                  email: item.email,
+                  namemail: `(${item.fullname
+                    .split(' ')
+                    .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+                    .join(' ')}) ${item.email}`,
+                });
                 selectedFillAccessUserId += item.id + ',';
               }
             }
@@ -179,7 +186,10 @@ function Setting(props) {
                 selectedResponseVisibilityUser.push({
                   id: item.id,
                   email: item.email,
-                  namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}`
+                  namemail: `(${item.fullname
+                    .split(' ')
+                    .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+                    .join(' ')}) ${item.email}`,
                 });
                 selectedResponseVisibilityUserId += item.id + ',';
               }
@@ -189,7 +199,14 @@ function Setting(props) {
               if (
                 oldResult?.permission?.target_user.includes(item.id.toString())
               ) {
-                selectedTargetUser.push({ id: item.id, email: item.email, namemail: `(${item.fullname.split(" ").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}) ${item.email}` });
+                selectedTargetUser.push({
+                  id: item.id,
+                  email: item.email,
+                  namemail: `(${item.fullname
+                    .split(' ')
+                    .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+                    .join(' ')}) ${item.email}`,
+                });
                 selectedTargetUserId += item.id + ',';
               }
             }
@@ -351,11 +368,11 @@ function Setting(props) {
           item['status'] = false;
         });
 
-        let formattedUserData = result?.data?.map(d => ({
+        let formattedUserData = result?.data?.map((d) => ({
           id: d.id,
           fullname: d.fullname,
           email: d.email,
-          namemail: `(${d.fullname}) ${d.email}`
+          namemail: `(${d.fullname}) ${d.email}`,
         }));
 
         if (localStorage.getItem('f_id')) {
@@ -363,7 +380,6 @@ function Setting(props) {
             localStorage.getItem('f_id') === 'all' ||
             localStorage.getItem('f_id') === 'All'
           ) {
-            
             setUser(formattedUserData);
 
             childList(result?.data);
@@ -491,7 +507,11 @@ function Setting(props) {
                         type="date"
                         name="start_date"
                         className="datepicker"
-                        placeholder={form?.start_date ? moment(form?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
+                        placeholder={
+                          form?.start_date
+                            ? moment(form?.start_date).format('DD/MM/YYYY')
+                            : 'dd/mm/yyyy'
+                        }
                         value={form?.start_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
@@ -527,7 +547,11 @@ function Setting(props) {
                         type="date"
                         name="end_date"
                         className="datepicker"
-                        placeholder={form?.end_date ? moment(form?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
+                        placeholder={
+                          form?.end_date
+                            ? moment(form?.end_date).format('DD/MM/YYYY')
+                            : 'dd/mm/yyyy'
+                        }
                         value={form?.end_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);

@@ -422,12 +422,12 @@ const SearchResult = (props) => {
                           {user?.map((data) => (
                             <div className="search-item">
                             <div className="search-user-pic">
-                              <a href="/user-management">
+                              <a href={`/view-user/${data.id}`}>
                                 <figure className="figure"><img alt="" src={data?.profile_photo ? data?.profile_photo: "/img/related-pic3.png"} className="figure-img img-fluid" /></figure>
                               </a>
                             </div>
                             <div className="search-user-detail">
-                              <h2 className="title-md text-capitalize"><a href="/user-management">{data?.fullname}</a></h2>
+                              <h2 className="title-md text-capitalize"><a href={`/view-user/${data.id}`}>{data?.fullname}</a></h2>
                               <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
@@ -437,7 +437,7 @@ const SearchResult = (props) => {
                                 </time>
                               </span>
                             </div>
-                              <div className="user-link mt-4"><a href="/user-management">View Details</a></div>
+                              <div className="user-link mt-4"><a href={`/view-user/${data.id}`}>View Details</a></div>
                             </div>
                           </div>
               

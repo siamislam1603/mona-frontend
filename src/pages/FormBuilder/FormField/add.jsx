@@ -54,6 +54,7 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
+  const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
     : null;
@@ -235,7 +236,9 @@ const AddFormField = (props) => {
         location?.state?.form_name
       }&id=${localStorage.getItem('user_id')}&role=${localStorage.getItem(
         'user_role'
-      )}&franchisee_id=${localStorage.getItem('franchisee_id')}`,
+      )}&franchisee_id=${localStorage.getItem('franchisee_id')}&formId=${
+        location?.state?.form_id
+      }`,
       requestOptions
     )
       .then((response) => response.json())
@@ -259,7 +262,10 @@ const AddFormField = (props) => {
       headers: myHeaders,
     };
 
-    fetch(`${BASE_URL}/field?form_name=${form_name}`, requestOptions)
+    fetch(
+      `${BASE_URL}/field?form_name=${form_name}&formId=${formId}`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((res) => {
         if (res?.result.length > 0) {
@@ -330,7 +336,7 @@ const AddFormField = (props) => {
         } else {
           if (res?.form[0]?.previous_form !== '') {
             fetch(
-              `${BASE_URL}/field?form_name=${res?.form[0]?.previous_form}`,
+              `${BASE_URL}/field?form_name=${res?.form[0]?.previous_form}&formId=${formId}`,
               requestOptions
             )
               .then((response) => response.json())
@@ -532,11 +538,14 @@ const AddFormField = (props) => {
           }
         });
 
-        fetch(`${BASE_URL}/field/add?form_name=${location?.state?.form_name}`, {
-          method: 'post',
-          body: JSON.stringify(data),
-          headers: myHeaders,
-        })
+        fetch(
+          `${BASE_URL}/field/add?form_name=${location?.state?.form_name}&formId=${location?.state?.id}`,
+          {
+            method: 'post',
+            body: JSON.stringify(data),
+            headers: myHeaders,
+          }
+        )
           .then((res) => res.json())
           .then((res) => {
             if (form_submit_status === true) {
@@ -609,6 +618,7 @@ const AddFormField = (props) => {
       }
     }
   };
+
   return (
     <>
       {console.log('form----->111122222', form)}

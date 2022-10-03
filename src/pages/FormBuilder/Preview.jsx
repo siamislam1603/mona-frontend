@@ -14,7 +14,7 @@ const Preview = (props) => {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [errors, setErrors] = useState({});
-  const [fullLoaderStatus,setfullLoaderStatus]=useState(true);
+  const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [form, setForm] = useState({});
   const token = localStorage.getItem('token');
   const setField = (field, value) => {
@@ -49,7 +49,11 @@ const Preview = (props) => {
         location.pathname
           .split('/')
           [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
-      )}`,
+      )
+        .toString()
+        .trim()}`,
+
+      // )}&formId=${formId}`, need form id here
       requestOptions
     )
       .then((response) => response.text())
@@ -127,8 +131,8 @@ const Preview = (props) => {
                     })}
                   </Row>
                 </Form>
-                {/* <Button 
-                  variant="transparent" 
+                {/* <Button
+                  variant="transparent"
                   className="me-3"
                   onClick={() => {
                     navigate('/form/field/add', {
