@@ -32,7 +32,10 @@ const FilerepoUploadFile = () => {
     const [generalCategory, setGeneralCategory] = useState("")
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '', accessible_to_role: 1 });
+    const [formSettingData, setFormSettingData] = useState({
+        shared_role: '',
+        accessible_to_role: 1
+    });
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
@@ -465,7 +468,7 @@ const FilerepoUploadFile = () => {
                             {getUser_Role === "guardian" ? (<></>) : (
 
                                 <>
-                                    {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
+                                    {getUser_Role !== "franchisor_admin" ? "" : (<Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
                                                 <Form.Label>Give access to all Franchises</Form.Label>

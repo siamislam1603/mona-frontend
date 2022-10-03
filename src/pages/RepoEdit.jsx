@@ -26,7 +26,7 @@ const RepoEdit = () => {
     const [user, setUser] = useState([]);
     const [data, setData] = useState([])
     const [franchiseeList, setFranchiseeList] = useState();
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("");
     console.log(sendToAllFranchisee, "sendToAllFranchisee")
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
