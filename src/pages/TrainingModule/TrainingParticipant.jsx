@@ -38,6 +38,10 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
 
       if (response.status === 200 && response.data.status === "success") {
         let { userObj } = response.data;
+        
+        console.log('USER OBJECT:', userObj);
+        console.log('USER OBJ COUNT:', userObj.length);
+
         setParticipants(userObj.map(user => ({
           id: user.id,
           name: user.fullname,
@@ -60,6 +64,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   }
 
   useEffect(() => {
+    console.log('FETCHING PARTICIPANTS');
     fetchParticipants();
   }, []);
 

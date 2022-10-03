@@ -54,6 +54,29 @@ function getTimeUnit(unit) {
   return obj[unit];
 }
 
+// HELPER FUNCTION FOR TRAINING SETTINGS VALIDATION
+const validateTrainingSettings = (trainingSettings) => {
+  let errors = {};
+  let {
+    start_date,
+    start_time,
+    end_date,
+    end_time
+  } = trainingSettings;
+
+  if (!start_date)
+    errors.start_date = "Choose a start date";
+
+  if (!start_time)
+    errors.start_time = "Choose a start time";
+
+  if(start_time && end_date && end_time && start_time > end_time) 
+    errors.end_time = "End time must be greater than start time"
+
+  return errors;
+}
+
+
 // HELPER FUNCTIONS
 /* FETCHES RELATED FILE NAME*/
 function fetchRealatedFileName(fileURLString) {
@@ -114,6 +137,7 @@ const EditTraining = () => {
   const [videoFileErrorMessage, setVideoFileErrorMessage] = useState(null);
   const [docError, setDocError] = useState([]);
   const [videoError, setVideoError] = useState([]);
+  const [trainingSettingErrors, setTrainingSettingErrors] = useState(null);
 
   // IMAGECROPER
   const [coverImage, setCoverImage] = useState({});
@@ -828,11 +852,18 @@ const EditTraining = () => {
                           placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
                           min={moment().format('YYYY-MM-DD')}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            start_date: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              start_date: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              start_date: null
+                            }))
+                        }}
                         />
+                        {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
                       </Form.Group>
                     </Col>
                     <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -842,11 +873,18 @@ const EditTraining = () => {
                           type="time"
                           name="start_time"
                           value={trainingSettings?.start_time}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            start_time: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              start_time: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              start_time: null
+                            }))
+                          }}
                         />
+                        {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
                       </Form.Group>
                     </Col>
                     <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -873,11 +911,18 @@ const EditTraining = () => {
                           type="time"
                           name="end_time"
                           value={trainingSettings?.end_time}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            end_time: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              end_time: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              end_time: null
+                            }))
+                          }}
                         />
+                        {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
                       </Form.Group>
                     </Col>
                   </Row>
@@ -1151,8 +1196,13 @@ const EditTraining = () => {
                 Cancel
               </Button>
               <Button variant="primary" onClick={() => {
-                setSettingsModalPopup(false)
-                setAllowSubmit(true);
+                let settingErrors = validateTrainingSettings(trainingSettings);
+                if (Object.keys(settingErrors).length > 0) {
+                  setTrainingSettingErrors(settingErrors);
+                } else {
+                  setSettingsModalPopup(false)
+                  setAllowSubmit(true);
+                }
               }}>
                 Save Settings
               </Button>
@@ -1185,12 +1235,19 @@ const EditTraining = () => {
                           className="datepicker"
                           placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
                           value={trainingSettings?.start_date}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            start_date: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              start_date: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              start_date: null
+                            }))
+                          }}
                           max={trainingSettings?.end_date}
                         />
+                        {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
                       </Form.Group>
                     </Col>
                     <Col lg={3} sm={6} className="mt-3 mt-sm-0">
@@ -1202,11 +1259,18 @@ const EditTraining = () => {
                           // className="timepicker"
                           // placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
                           value={trainingSettings?.start_time}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            start_time: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              start_time: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              start_time: null
+                            }))
+                          }}
                         />
+                        {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
                       </Form.Group>
                     </Col>
                     <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -1233,11 +1297,18 @@ const EditTraining = () => {
                           type="time"
                           name="end_time"
                           value={trainingSettings?.end_time}
-                          onChange={(e) => setTrainingSettings(prevState => ({
-                            ...prevState,
-                            end_time: e.target.value
-                          }))}
+                          onChange={(e) => {
+                            setTrainingSettings(prevState => ({
+                              ...prevState,
+                              end_time: e.target.value
+                            }));
+                            setTrainingSettingErrors(prevState => ({
+                              ...prevState,
+                              end_time: null
+                            }))
+                          }}
                         />
+                        {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
                       </Form.Group>
                     </Col>
                   </Row>
@@ -1516,8 +1587,13 @@ const EditTraining = () => {
                 Cancel
               </Button>
               <Button variant="primary" onClick={() => {
-                setSettingsModalPopup(false)
-                setAllowSubmit(true);
+                let settingErrors = validateTrainingSettings(trainingSettings);
+                if (Object.keys(settingErrors).length > 0) {
+                  setTrainingSettingErrors(settingErrors);
+                } else {
+                  setSettingsModalPopup(false)
+                  setAllowSubmit(true);
+                }
               }}>
                 Save Settings
               </Button>

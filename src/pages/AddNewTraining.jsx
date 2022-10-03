@@ -47,14 +47,19 @@ const validateTrainingSettings = (trainingSettings) => {
   let errors = {};
   let {
     start_date,
-    start_time
+    start_time,
+    end_date,
+    end_time
   } = trainingSettings;
 
   if (!start_date)
-    errors.start_date = "Choose a start date!";
+    errors.start_date = "Choose a start date";
 
   if (!start_time)
-    errors.start_time = "Choose a start time!";
+    errors.start_time = "Choose a start time";
+
+  if(start_time && end_date && end_time && start_time > end_time) 
+    errors.end_time = "End time must be greater than start time"
 
   return errors;
 }
@@ -448,7 +453,7 @@ const AddNewTraining = () => {
   //   }
   // }, [trainingSettings?.start_time]);
 
-  
+  trainingSettings?.end_time && console.log('IS TIME GREATER?', trainingSettings?.start_time > trainingSettings?.end_time);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -837,10 +842,6 @@ const AddNewTraining = () => {
                         min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
                           handleTrainingSettings(e);
-                          setTrainingSettingErrors(prevState => ({
-                            ...prevState,
-                            start_time: null
-                          }));
                         }}
                       />
                     </Form.Group>
@@ -852,8 +853,15 @@ const AddNewTraining = () => {
                         type="time"
                         name="end_time"
                         value={trainingSettings?.end_time}
-                        onChange={handleTrainingSettings}
+                        onChange={(e) => {
+                          handleTrainingSettings(e);
+                          setTrainingSettingErrors(prevState => ({
+                            ...prevState,
+                            end_time: null
+                          }));
+                        }}
                       />
+                      {trainingSettingErrors.end_time !== null && <span className="error">{trainingSettingErrors.end_time}</span>}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -1215,10 +1223,6 @@ const AddNewTraining = () => {
                         value={trainingSettings?.end_date}
                         onChange={(e) => {
                           handleTrainingSettings(e);
-                          setTrainingSettingErrors(prevState => ({
-                            ...prevState,
-                            start_time: null
-                          }));
                         }}
                         min={trainingSettings?.start_date}
                       />
@@ -1231,8 +1235,15 @@ const AddNewTraining = () => {
                         type="time"
                         name="end_time"
                         value={trainingSettings?.end_time}
-                        onChange={handleTrainingSettings}
+                        onChange={(e) => {
+                          handleTrainingSettings(e);
+                          setTrainingSettingErrors(prevState => ({
+                            ...prevState,
+                            end_time: null
+                          }));
+                        }}
                       />
+                      {trainingSettingErrors.end_time !== null && <span className="error">{trainingSettingErrors.end_time}</span>}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -1475,6 +1486,9 @@ const AddNewTraining = () => {
                 Cancel
               </Button>
               <Button variant="primary" onClick={() => {
+                // if(trainingSettings?.end_time && trainingSettings?.end_date) {
+                //   if(moment.)
+                // }
                 let settingErrors = validateTrainingSettings(trainingSettings);
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
