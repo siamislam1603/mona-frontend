@@ -335,9 +335,9 @@ const FilerepoMyAdd = ({ filter }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                var ret = cell[0].replace('application/', '')
-                var Text = cell[0].replace('text/', '')
-                var image = cell[0].replace('image/', '')
+                var ret = cell[1].replace('application/', '')
+                var Text = cell[1].replace('text/', '')
+                var image = cell[1].replace('image/', '')
                 var tet2 = ""
                 if (ret === 'text/html' || ret === 'text/xml') {
                     tet2 = Text
