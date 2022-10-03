@@ -1,5 +1,5 @@
 import React from 'react';
-import Main from "./Main";
+import Main from './Main';
 
 // const BASE_URL = "http://13.237.14.155:4000";
 const BASE_URL = "http://54.206.190.120:4000";

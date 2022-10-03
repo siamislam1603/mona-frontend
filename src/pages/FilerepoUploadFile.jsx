@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import DragDropFileEdit from '../components/DragDropFileEdit';
-import DragDropRepository from '../components/DragDropRepository';
 
 
 let selectedUserId = '';
@@ -17,9 +16,6 @@ const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
-
-
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
     const [errors, setErrors] = useState({});

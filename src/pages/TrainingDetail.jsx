@@ -33,7 +33,7 @@ function getDuration(duration) {
   return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
 }
 
-const videoExtension = ['.mp4', '.flv', '.mkv'];
+const videoExtension = ['.mp4', '.flv', '.mkv', '.qt'];
 const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt', '.pdf'];
 
 const TrainingDetail = () => {
@@ -78,10 +78,13 @@ const TrainingDetail = () => {
 
       // FETCHING DUE DATE
       const { end_date, addedBy } = all_trainings;
-      let due_date = moment(end_date).format('YYYY-MM-DD');
-      let today = moment().format('YYYY-MM-DD');
+      let due_date = moment(end_date).format();
+      let today = moment().format();
       let currentUserId = localStorage.getItem('user_id');
       let currentUserRole = localStorage.getItem('user_role');
+
+      console.log('DUE TIME:', due_date);
+      console.log('CURRENT TIME:', today);
 
       if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
@@ -130,7 +133,8 @@ const TrainingDetail = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { userObj } = response.data;
-      setUsers(userObj.map(user => ({
+      let participants = userObj.slice(0, 6);
+      setUsers(participants.map(user => ({
         id: user.id,
         name: user.fullname,
         role: user.role,
@@ -338,7 +342,10 @@ const TrainingDetail = () => {
                           users &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
-                              <h3 className="title-sm">Training Participants Attended</h3>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <h3 className="title-sm">Training Participants Attended</h3>
+                                {users.length > 4 && <Link to={`/training-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
+                              </div>
                               <div className="column-list files-list three-col">
                                 {
                                   users.map(user => {

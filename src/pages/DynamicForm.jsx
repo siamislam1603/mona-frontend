@@ -39,7 +39,7 @@ const DynamicForm = () => {
     console.log('set---field', field);
     console.log('set---value', value);
     console.log('set---type', type);
-    
+
     let flag = false;
     if (type === 'text') {
       value = value.trimEnd();
@@ -52,6 +52,7 @@ const DynamicForm = () => {
         setErrors(errorsData);
         flag = true;
       }
+
     }
     if (type === 'textarea') {
       value = value.trimEnd();
@@ -248,13 +249,13 @@ const DynamicForm = () => {
                     localStorage.getItem('user_id')
                   )
                 ) {
-                  
+
                   if (
                     inner_item.field_type === 'headings' ||
                     inner_item.field_type === 'text_headings'
                   ) {
                     formsData[item][`${inner_item.field_type}`] = inner_item.field_label;
-                    
+
                   } else {
                     formsData[item][`${inner_item.field_name}`] = null;
                   }
@@ -270,7 +271,7 @@ const DynamicForm = () => {
                 inner_item.field_type === 'text_headings'
               ) {
                 formsData[item][`${inner_item.field_type}`] = inner_item.field_label;
-                
+
               } else {
                 formsData[item][`${inner_item.field_name}`] = null;
               }
@@ -358,7 +359,7 @@ const DynamicForm = () => {
             user_id: localStorage.getItem('user_id'),
             behalf_of:
               localStorage.getItem('user_role') === 'guardian'
-                ? behalfOfFlag
+                ? !behalfOfFlag
                   ? childId
                   : behalfOf
                   ? behalfOf
