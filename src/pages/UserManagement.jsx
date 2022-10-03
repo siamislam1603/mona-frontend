@@ -636,7 +636,13 @@ const UserManagement = () => {
   // tempEduData && console.log('USER DATA:>>>>>>>>>>>>>>>', tempEduData);
   return (
     <>
-      <div id="main">
+      <div 
+        id="main" 
+        onClickCapture={
+          () => {
+          if (openFilter === true)
+            setOpenFilter(false)
+        }}>
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
