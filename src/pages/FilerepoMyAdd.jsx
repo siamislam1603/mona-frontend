@@ -326,7 +326,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const defaultSortedBy = [{
         dataField: "name",
         order: "asc"  // or desc
-      }];
+    }];
 
     const [columns, setColumns] = useState([
         {
@@ -385,15 +385,15 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </div>
                                         </> :
                                         <>
-                                        <span className="user-pic-tow">
-                                            <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
-                                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                            </a>
-                                        </span>
-                                        <span className="user-name">
-                                            {cell[0]}.{tet2}
-                                        </span>
-                                    </>
+                                            <span className="user-pic-tow">
+                                                <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
+                                                    <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                </a>
+                                            </span>
+                                            <span className="user-name">
+                                                {cell[0]}.{tet2}
+                                            </span>
+                                        </>
                             }
                         </div>
                     </>
