@@ -191,6 +191,9 @@ const OperatingManual = () => {
     console.log(" the id The response check",response)
 
   }
+  useEffect(() => {
+    manageCollpase();
+  });
   useEffect(() =>{
     checkDelete()
   },[])
@@ -242,9 +245,7 @@ const OperatingManual = () => {
       });
     }
   }
-  useEffect(() => {
-    manageCollpase();
-  });
+  
   useEffect(() => {
     manageCollpase();
   }, [operatingManualdata]);

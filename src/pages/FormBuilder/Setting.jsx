@@ -506,6 +506,12 @@ function Setting(props) {
                       <Form.Control
                         type="date"
                         name="start_date"
+                        className="datepicker"
+                        placeholder={
+                          form?.start_date
+                            ? moment(form?.start_date).format('DD/MM/YYYY')
+                            : 'dd/mm/yyyy'
+                        }
                         value={form?.start_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
@@ -540,6 +546,12 @@ function Setting(props) {
                       <Form.Control
                         type="date"
                         name="end_date"
+                        className="datepicker"
+                        placeholder={
+                          form?.end_date
+                            ? moment(form?.end_date).format('DD/MM/YYYY')
+                            : 'dd/mm/yyyy'
+                        }
                         value={form?.end_date}
                         onChange={(e) => {
                           setFields(e.target.name, e.target.value);
