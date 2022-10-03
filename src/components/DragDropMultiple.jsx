@@ -43,7 +43,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
 
   if(type === "video") {
     typeObj = {
-      'video/*': ['.mp4', '.flv', '.mkv']
+      'video/*': ['.mp4', '.mkv', '.qt']
     }
   } else {
     typeObj = {
@@ -138,7 +138,7 @@ export default function DropAllFile({ onSave, Files, setErrors, title="Files", t
         {
           type === "video" ?
           <div style={{ marginTop: "5px" }}>
-            <small className="fileinput">(mp4, flv & mkv)</small>
+            <small className="fileinput">(mp4, mkv & qt)</small>
             <small className="fileinput">(max. 5 video files, less than 1GB each)</small>
           </div>
           :
