@@ -149,7 +149,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                   }  
 
                   {
-                    paginationProps.search === "" &&
+                    paginationProps.search === "" && nonParticipants?.length > 9 &&
                     <div style={{ justifyContent: 'center', display: initialUsers.length > 0 ? "flex": "none" }}>
                       {isCompleted ? (
                         <button 
