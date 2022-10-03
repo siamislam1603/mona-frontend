@@ -73,16 +73,15 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const trainingCreatedByMe = async () => {
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : parseInt(selectedFranchisee)}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "All" || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
     });
     if (response.status === 200 && response.data.status === "success") {
-      const { searchedData } = response.data
-      console.log('SEARCHED DATA:', searchedData);
-      setMyTrainingData(searchedData.slice(0, 6))
-      setfullLoaderStatus(false)
+      const { searchedData } = response.data;
+      setMyTrainingData(searchedData);
+      setfullLoaderStatus(false);
     }
   }
   
@@ -224,15 +223,25 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [formSettings?.assigned_franchisee])
 
   useEffect(() => {
+    console.log('TRACED CHANGES');
     trainingCreatedByMe()
-  }, [filter.search, filter.category_id, page, selectedFranchisee])
+  }, [filter.search, filter.category_id]);
+  
+  useEffect(() => {
+    console.log('SELECTED FRANCHISE:', selectedFranchisee);
+    if(selectedFranchisee) {
+      trainingCreatedByMe();
+    }
+  }, [selectedFranchisee])
 
   useEffect(() => {
     trainingCreatedByOther()
-  }, [filter, page, trainingDeleteMessage])
+  }, [filter.search, filter.category, page, trainingDeleteMessage])
 
   useEffect(() => {
     fetchFranchiseeList();
+    trainingCreatedByMe();
+    trainingCreatedByOther();
   }, [])
 
   useEffect(() => {
