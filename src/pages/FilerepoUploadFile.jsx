@@ -48,12 +48,12 @@ const FilerepoUploadFile = () => {
             .then((res) => {
                 setCategory(res.data.category)
 
-                let general = res.data.category.filter((item)=>{
-                    if(item.category_name == "General"){
+                let general = res.data.category.filter((item) => {
+                    if (item.category_name == "General") {
                         return item.id
                     }
                 })
-                console.log(general[0].id,"General")
+                console.log(general[0].id, "General")
                 setGeneralCategory(general[0].id)
 
             })
@@ -202,7 +202,7 @@ const FilerepoUploadFile = () => {
         var formdata = new FormData();
         formdata.append('image', blob, file.name);
         formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', 'abc');
+        formdata.append('title', formSettingData.meta_description);
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
@@ -285,7 +285,7 @@ const FilerepoUploadFile = () => {
                     setLoaderFlag(false);
                     setShow(false);
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
-                   
+
                 }
             })
             .catch((error) => console.error('error', error));
@@ -442,9 +442,9 @@ const FilerepoUploadFile = () => {
                                             </>) : (
                                             <>
                                                 <Form.Select
-                                                    name="file_category"    
+                                                    name="file_category"
                                                     onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);  
+                                                        setField(e.target.name, e.target.value);
                                                     }}
                                                 >
                                                     <option value="">Select</option>
