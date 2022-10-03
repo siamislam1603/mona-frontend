@@ -384,7 +384,7 @@ const AddOperatingManual = () => {
         flag = true;
       }
       console.log("file type", file.type)
-      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') && !file.type.includes('video/x-flv')) {
+      if (!file.type.includes('mp4') && !file.type.includes('mkv')) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
@@ -651,8 +651,10 @@ const AddOperatingManual = () => {
                               }}
                             />
                           )}
-                          <div className="wordcount">Word Count : {wordCount}</div>
+                           <div className="text-left mb-4">Maximum character 1000</div>
+                        
                         </Form.Group>
+
                       </Col>
                     </Row>
                     <Row>
@@ -772,7 +774,7 @@ const AddOperatingManual = () => {
                           <p className="form-errors">
                             {errors.reference_video}
                           </p>
-                          <small className="fileinput">((mp4, flv & mkv))</small>
+                          <small className="fileinput">(mp4 & mkv)</small>
                           <small className="fileinput">(File limit 1 GB)</small>
                         </Form.Group>
                       </Col>

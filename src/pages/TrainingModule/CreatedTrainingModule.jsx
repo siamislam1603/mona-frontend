@@ -85,7 +85,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
         setfullLoaderStatus(false)
       }
     } catch (error) {
-      setMyTrainingData([])
+      // setMyTrainingData([])
     }
 
   }
@@ -107,7 +107,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       }
     } catch (error) {
       setfullLoaderStatus(false)
-      setOtherTrainingData([])
+      // setOtherTrainingData([])
 
     }
 

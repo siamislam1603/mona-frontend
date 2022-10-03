@@ -273,7 +273,7 @@ const EducatorDashboard = () => {
                                       <div className="iconame">
                                         <a href={`/training-detail/${first?.id}`} className="nowrap">{first?.title}</a>
                                         <div className="datecol">
-                                          <span className="red-date">Due Date:{' '}{moment(first?.createdAt).format('DD/MM/YYYY')}</span>
+                                          <span className="red-date">Due Date:{' '}{moment(first?.end_date).format('DD/MM/YYYY')}</span>
                                           <span className="time">{first?.completion_time}</span>
                                         </div>
                                       </div>
