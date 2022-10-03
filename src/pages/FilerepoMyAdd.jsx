@@ -327,7 +327,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const defaultSortedBy = [{
         dataField: "name",
         order: "asc"  // or desc
-      }];
+    }];
 
     const [columns, setColumns] = useState([
         {
@@ -336,9 +336,9 @@ const FilerepoMyAdd = ({ filter }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                var ret = cell[0].replace('application/', '')
-                var Text = cell[0].replace('text/', '')
-                var image = cell[0].replace('image/', '')
+                var ret = cell[1].replace('application/', '')
+                var Text = cell[1].replace('text/', '')
+                var image = cell[1].replace('image/', '')
                 var tet2 = ""
                 if (ret === 'text/html' || ret === 'text/xml') {
                     tet2 = Text
@@ -386,15 +386,15 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </div>
                                         </> :
                                         <>
-                                        <span className="user-pic-tow">
-                                            <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
-                                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                            </a>
-                                        </span>
-                                        <span className="user-name">
-                                            {cell[0]}.{tet2}
-                                        </span>
-                                    </>
+                                            <span className="user-pic-tow">
+                                                <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
+                                                    <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                </a>
+                                            </span>
+                                            <span className="user-name">
+                                                {cell[0]}.{tet2}
+                                            </span>
+                                        </>
                             }
                         </div>
                     </>

@@ -116,11 +116,14 @@ const AllEvent = (props) => {
   useEffect(() => {
     if (props.allEvent) {
       setAllEventData(props.allEvent)
+      setIsLoading(false)
     }
   }, [props.allEvent])
   useEffect(() => {
     if (props?.loadEvent?.length > 0) {
       setAllEventData(props.loadEvent)
+      setIsLoading(false)
+
     }
     else {
 
@@ -131,6 +134,7 @@ const AllEvent = (props) => {
       setTopErrorMessage(null);
     }, 3000)
   }, [topErrorMessage])
+  console.log("Event data",allEventData)
 
   return (
     <div className="announcement-accordion">
