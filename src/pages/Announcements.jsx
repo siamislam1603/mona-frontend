@@ -227,12 +227,12 @@ const Announcements = () => {
 
     try {
       if (tabLinkPath === "/all-announcements") {
-        // if(page>5){
-        //    setPage(5);
-        // }
-        // else{
-        //   setPage(page+5)
-        // }
+        if(page>5){
+           setPage(5);
+        }
+        else{
+          setPage(page+5)
+        }
         setPage(page + 5)
 
         console.log("THE LOAD MORE DATA ", loadMoreData)
@@ -331,12 +331,12 @@ const Announcements = () => {
   const onLoadAnnouncement = async () => {
     try {
       console.log("PAGE BERFORE LOAD ANNOUNCEMNT", page)
-      if (page > 5) {
-        setPage(5)
-      }
-      else {
-        setPage(page + 5)
-      }
+      // if (page > 5) {
+      //   setPage(5)
+      // }
+      // else {
+      //   setPage(page + 5)
+      // }
 
       let api_url = " "
 
@@ -488,6 +488,7 @@ const Announcements = () => {
         console.log("THE MY ANNOUCOUNCEMENT in SEARCH", response, api_url)
         setTheMyAnnoucemenet(response.data.result.searchedData)
         setLoadMy(true)
+        setMyDataLength(myCount)
         console.log("THE SEARCH LENGHT", response.data.result.searchedData.length)
         // setMyCount(0)
         // setMyDataLength(myCount)
@@ -801,8 +802,9 @@ const Announcements = () => {
   // console.log("USER ROLE",userRole)
   console.log("THE COUNT AND COMMON",theCount,theCommon)
   console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
-
-  console.log("tablink path", tabLinkPath)
+  console.log("Event count and event lenght",eventCount,eventLength)
+  // console.log("tablink path", tabLinkPath)
+  console.log("All Annoucnement",allAnnouncement)
 
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)

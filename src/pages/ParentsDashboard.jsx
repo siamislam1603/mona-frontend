@@ -14,7 +14,7 @@ const ParentsDashboard = () => {
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [logUserOutDialog, setLogUserOutDialog] = useState(true);
+  const [logUserOutDialog, setLogUserOutDialog] = useState(false);
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
 
   const events = async () => {

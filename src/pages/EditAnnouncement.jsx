@@ -353,8 +353,8 @@ const [docFileError, setDocFileError] = useState(null);
   }))
   setCoverImage(announcementData?.coverImage)
   setFetchedCoverImage(announcementData?.coverImage)
-  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4"));
-  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4'));
+  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4" || ".mkv"));
+  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && ".mkv"));
    
  }
  const getRelatedFileName = (str) => {
