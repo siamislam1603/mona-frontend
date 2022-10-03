@@ -634,6 +634,7 @@ const UserManagement = () => {
   const csvLink = useRef();
   // openFilter && console.log('OPEN FILTER:', openFilter);
   // tempEduData && console.log('USER DATA:>>>>>>>>>>>>>>>', tempEduData);
+  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
     <>
       <div 
