@@ -25,29 +25,33 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   const [isCompleted, setIsCompleted] = useState(false)
   const [index, setIndex] = useState(9)
   let initialUsers = slice(participants, 0, index)
-  const [search, setSearch] = useState("");
+  const [paginationProps, setPaginationProps] = useState({
+    // limit: 9,
+    // offset: 0,
+    search: ""
+  })
 
   const fetchParticipants = async () => {
     try {
+      let { search } = paginationProps;
+      // if(search) {
+      //   setIndex(0);
+      //   initialUsers = slice(nonParticipants, 0, index);
+      // }
+
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}`, {
+      let userId = localStorage.getItem('user_id');
+
+      const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}?search=${paginationProps?.search}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
 
-      if (response.status === 200 && response.data.status === "success") {
+      if(response.status === 200 && response.data.status === "success") {
         let { userObj } = response.data;
-        
-        console.log('USER OBJECT:', userObj);
-        console.log('USER OBJ COUNT:', userObj.length);
-
-        setParticipants(userObj.map(user => ({
-          id: user.id,
-          name: user.fullname,
-          role: user.role,
-          finish_date: user.finish_date
-        })))
+        console.log('USER OBJ:', userObj);
+        setParticipants(userObj);  
       }
     } catch(error) {
     }
@@ -64,19 +68,14 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
   }
 
   useEffect(() => {
-    console.log('FETCHING PARTICIPANTS');
     fetchParticipants();
   }, []);
 
   useEffect(() => {
-    if(search) {
-      let searchedParticipants = participants.filter(d => d.name.includes(search));
-      setParticipants(searchedParticipants);
-    } else {
-      fetchParticipants();
-    }
-  }, [search]);
+    fetchParticipants();
+  }, [paginationProps.search]);
   
+  initialUsers && console.log('INITIAL USERS:', initialUsers);
   return (
     <>
       <ToastContainer />
@@ -119,7 +118,10 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                           type="text"
                           placeholder="Search"
                           onChange={(e) => {
-                            setSearch(e.target.value);
+                            setPaginationProps(prevState => ({
+                              ...prevState,
+                              search: e.target.value
+                            }))
                           }}
                         />
                       </Form.Group>
@@ -135,7 +137,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                               return (
                                 <div className="item">
                                   <div className="userpic"><a><img src={user.profilePic || "https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg"} alt="" /></a></div>
-                                  <div className="name"><a>{user.name} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
+                                  <div className="name"><a>{user.fullname} <span className="time">{user.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></a></div>
                                   <div className="completed-col">
                                     Assigned on <span className="date">{moment(user.finish_date).format('DD/MM/YYYY')}</span>
                                   </div>
@@ -149,7 +151,7 @@ const TrainingNonParticipant = ({filter, selectedFranchisee}) => {
                   }  
 
                   {
-                    search === "" &&
+                    paginationProps.search === "" && participants?.length > 9 &&
                     <div style={{ justifyContent: 'center', display: initialUsers.length > 0 ? "flex": "none" }}>
                       {isCompleted ? (
                         <button 

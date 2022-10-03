@@ -125,7 +125,7 @@ const TrainingDetail = () => {
   // FETCHING THE LIST OF USERS WHO FINISHED THIS TRAINING
   const fetchUsersWithFinishTraining = async () => {
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}`, {
+    const response = await axios.get(`${BASE_URL}/training/completed-training-user-list/${trainingId}?search=`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -234,8 +234,7 @@ const TrainingDetail = () => {
     fetchNonParticipants();
   }, []);
 
-  videoFiles && console.log('Video Files:', videoFiles);
-  relatedFiles && console.log('Related Files:', relatedFiles);
+  users && console.log('USERS:', users);
   return (
     <>
       <div id="main">
@@ -339,7 +338,7 @@ const TrainingDetail = () => {
                         </Col>
 
                         {
-                          users &&
+                          users.length > 0 &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -366,7 +365,7 @@ const TrainingDetail = () => {
                         }
 
                         {
-                          nonParticipants &&
+                          nonParticipants.length > 0 &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
