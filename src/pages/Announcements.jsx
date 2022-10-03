@@ -659,7 +659,7 @@ const Announcements = () => {
 
       setTimeout(() => {
         setTopErrorMessage(null);
-      }, 5000)
+      }, 6000)
     }
   }
 

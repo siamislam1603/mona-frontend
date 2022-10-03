@@ -115,12 +115,7 @@ const Training = () => {
   return (
     <>
       <div 
-        id="main"
-        onClickCapture={() => {
-          if(openFilter === true) {
-            setOpenFilter(false)
-          }
-        }}>
+        id="main">
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
