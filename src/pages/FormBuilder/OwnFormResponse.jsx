@@ -35,8 +35,8 @@ function OwnFormResponse(props) {
   const [signatureModel, setSignatureModel] = useState(false);
   const [Index, setIndex] = useState(0);
   const [dateFilter, setDateFilter] = useState({
-    from_date: "",
-    to_date: ""
+    from_date: '',
+    to_date: '',
   });
 
   let hideFlag = false;
@@ -108,33 +108,40 @@ function OwnFormResponse(props) {
 
     const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem(
       'user_id'
-    )}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date}&to_date=${dateFilter.to_date}`;
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=${
+      dateFilter.from_date
+    }&to_date=${dateFilter.to_date}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (result) {
           setfullLoaderStatus(false);
         }
-        result?.result.map((item, index) => {
-          item['signature_button'] = true;
-          console.log('item--->', item);
+        if (result?.result.length > 0) {
+          result?.result.map((item, index) => {
+            item['signature_button'] = true;
+            console.log('item--->', item);
 
-          result?.result[index]?.map((inner_item, inner_index) => {
-            // if(inner_item.fields)
+            result?.result[index]?.map((inner_item, inner_index) => {
+              // if(inner_item.fields)
 
-            console.log('inner_item--->first', inner_item);
-            Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              console.log('inner_item--->', field_item);
-              if (field_item === 'signature') {
-                item['signature_button'] = false;
-              }
+              console.log('inner_item--->first', inner_item);
+              Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+                console.log('inner_item--->', field_item);
+                if (field_item === 'signature') {
+                  item['signature_button'] = false;
+                }
+              });
             });
+            if (result?.result?.length - 1 === index) {
+              setResponseData(result?.result);
+              setFormData(result?.form);
+            }
           });
-          if (result?.result?.length - 1 === index) {
-            setResponseData(result?.result);
-            setFormData(result?.form);
-          }
-        });
+        } else {
+          setResponseData(result?.result);
+          setFormData(result?.form);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -170,14 +177,12 @@ function OwnFormResponse(props) {
                 </Row>
                 <div className="responses-forms-header-section mb-5 forms-header-section">
                   <div className="d-md-flex align-items-end mt-4">
+                    <div className="forms-managmentsection">
+                      <div className="forms-managment-left">
+                        <p>{responseData.length} Responses</p>
+                      </div>
 
-              
-                  <div className="forms-managmentsection">
-                    <div className="forms-managment-left">
-                      <p>{responseData.length} Responses</p>
-                    </div>
-
-                    <div className="d-sm-flex align-items-center">
+                      <div className="d-sm-flex align-items-center">
                         <Form.Group className="me-3">
                           <Form.Label>From Date</Form.Label>
                           <Form.Control
@@ -186,10 +191,10 @@ function OwnFormResponse(props) {
                             value={dateFilter?.from_date}
                             // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              setDateFilter(prevState => ({
+                              setDateFilter((prevState) => ({
                                 ...prevState,
-                                from_date: e.target.value
-                              }))
+                                from_date: e.target.value,
+                              }));
                             }}
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
@@ -202,29 +207,31 @@ function OwnFormResponse(props) {
                             value={dateFilter?.to_date}
                             // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
-                              setDateFilter(prevState => ({
+                              setDateFilter((prevState) => ({
                                 ...prevState,
-                                to_date: e.target.value
-                              }))
+                                to_date: e.target.value,
+                              }));
                             }}
                           />
                           {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
-                          type="submit" className="mt-4"
-                          onClick={() => { 
-                            console.log('GETTING FILTERED RESPONSE FROM SERVER!');
-                            getResponse('') 
-                          }}>
+                          type="submit"
+                          className="mt-4"
+                          onClick={() => {
+                            console.log(
+                              'GETTING FILTERED RESPONSE FROM SERVER!'
+                            );
+                            getResponse('');
+                          }}
+                        >
                           Apply
                         </Button>
                       </div>
+                    </div>
 
-                  </div>
-
-
-                <div className="forms-search me-0 ms-auto mt-3">
+                    <div className="forms-search me-0 ms-auto mt-3">
                       <Form.Group>
                         <div className="forms-icon">
                           <img src="../img/search-icon-light.svg" alt="" />
@@ -239,15 +246,10 @@ function OwnFormResponse(props) {
                         />
                       </Form.Group>
                     </div>
-
-                    </div>
-
-
-
-
+                  </div>
                 </div>
                 <div className="responses-collapse">
-                  {
+                  {responseData.length > 0 ? (
                     <Accordion defaultActiveKey="0">
                       {responseData.map((item, index) => {
                         return (
@@ -505,11 +507,10 @@ function OwnFormResponse(props) {
                                                   'text_headings'
                                               ) && (
                                                 <img
-                                                src="/img/bx_right-arrow-alt.svg"
-                                                alt=""
-                                              />
+                                                  src="/img/bx_right-arrow-alt.svg"
+                                                  alt=""
+                                                />
                                               )}
-                                              
 
                                               {Object.values(
                                                 JSON.parse(item.fields)
@@ -673,7 +674,11 @@ function OwnFormResponse(props) {
                         );
                       })}
                     </Accordion>
-                  }
+                  ) : (
+                    <h4 style={{ fontWeight: '200', textAlign: 'center' }}>
+                      No Response found
+                    </h4>
+                  )}
                 </div>
                 <Modal
                   className="responses_model"
