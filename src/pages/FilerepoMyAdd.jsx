@@ -384,27 +384,16 @@ const FilerepoMyAdd = ({ filter }) => {
                                                 />
                                             </div>
                                         </> :
-                                        cell[1] === "application/octet-stream" || cell[1] === "application/pdf" || cell[1] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[1] === "text/csv" || cell[1] === "text/html" || cell[1] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
-                                            <>
-                                                <span className="user-pic-tow">
-                                                    <a href={cell[2]} download >
-                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                                    </a>
-                                                </span>
-                                                <span className="user-name">
-                                                    {cell[0]}.Doc
-                                                </span>
-                                            </>
-                                            : <>
-                                                <span className="user-pic-tow">
-                                                    <a href={cell[2]} download >
-                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                                    </a>
-                                                </span>
-                                                <span className="user-name">
-                                                    {cell[0]}.Doc
-                                                </span>
-                                            </>
+                                        <>
+                                        <span className="user-pic-tow">
+                                            <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
+                                                <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                            </a>
+                                        </span>
+                                        <span className="user-name">
+                                            {cell[1]}.{tet2}
+                                        </span>
+                                    </>
                             }
                         </div>
                     </>
