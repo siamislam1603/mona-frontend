@@ -71,24 +71,20 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }
 
   const trainingCreatedByMe = async () => {
-    try {
-      let user_id = localStorage.getItem('user_id');
-      let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      if (response.status === 200 && response.data.status === "success") {
-        const { searchedData } = response.data
-        setMyTrainingData(searchedData)
-        setfullLoaderStatus(false)
+    let user_id = localStorage.getItem('user_id');
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "All" || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
+      headers: {
+        "Authorization": "Bearer " + token
       }
-    } catch (error) {
-      // setMyTrainingData([])
+    });
+    if (response.status === 200 && response.data.status === "success") {
+      const { searchedData } = response.data;
+      setMyTrainingData(searchedData);
+      setfullLoaderStatus(false);
     }
-
   }
+  
   const trainingCreatedByOther = async () => {
     try {
       let user_id = localStorage.getItem('user_id');
@@ -102,13 +98,10 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
         const { searchedData } = response.data
         setOtherTrainingData(searchedData)
         setfullLoaderStatus(false)
-
-
       }
     } catch (error) {
       setfullLoaderStatus(false)
       // setOtherTrainingData([])
-
     }
 
   }
@@ -230,16 +223,25 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [formSettings?.assigned_franchisee])
 
   useEffect(() => {
+    console.log('TRACED CHANGES');
     trainingCreatedByMe()
-
-  }, [filter, page, trainingDeleteMessage, selectedFranchisee])
+  }, [filter.search, filter.category_id]);
+  
+  useEffect(() => {
+    console.log('SELECTED FRANCHISE:', selectedFranchisee);
+    if(selectedFranchisee) {
+      trainingCreatedByMe();
+    }
+  }, [selectedFranchisee])
 
   useEffect(() => {
     trainingCreatedByOther()
-  }, [filter, page, trainingDeleteMessage])
+  }, [filter.search, filter.category, page, trainingDeleteMessage])
 
   useEffect(() => {
     fetchFranchiseeList();
+    trainingCreatedByMe();
+    trainingCreatedByOther();
   }, [])
 
   useEffect(() => {
@@ -251,6 +253,8 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, []);
 
   myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
+  filter && console.log('FILTER:', filter);
+  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
     <>
       <div id="main">
