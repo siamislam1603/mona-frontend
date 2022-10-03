@@ -232,7 +232,8 @@ const ChangePassword = () => {
   }, []);
 
   useEffect(() => {
-    checkIfChildExist();
+    if(localStorage.getItem('user_role') === 'guardian')
+      checkIfChildExist();
   }, []);
   // Get the previous value (was passed into hook on last render)
   
