@@ -80,6 +80,7 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
+        console.log(selected_Franchisee, "selected_Franchisee")
     }, [])
 
 
@@ -92,7 +93,7 @@ const FilerepoMyAdd = ({ filter }) => {
                     const { files } = response.data;
 
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
                         userID: dt.id,
                         creatorName: dt.creatorName + "," + dt.creatorRole,
@@ -203,7 +204,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
                         userID: dt.id,
                         creatorName: dt.creatorName + "," + dt.creatorRole,
@@ -322,6 +323,11 @@ const FilerepoMyAdd = ({ filter }) => {
         return bool;
     }
 
+    const defaultSortedBy = [{
+        dataField: "name",
+        order: "asc"  // or desc
+      }];
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
@@ -329,33 +335,22 @@ const FilerepoMyAdd = ({ filter }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                var ret = cell[0].replace('application/', '')
-                var Text = cell[0].replace('text/', '')
-                var image = cell[0].replace('image/', '')
-                var tet2 = ""
-                if (ret === 'text/html' || ret === 'text/xml') {
-                    tet2 = Text
-                }
-                else {
-                    tet2 = ret
-                }
-
                 return (
                     <>
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
+                            {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
-                                        <a href={cell[2]} download target='_blank' rel='noopener noreferrer'>
+                                        <a href={cell[2]} download>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[1]}.{image}
+                                        {cell[0]}.img
                                     </span>
                                 </>
                                 :
-                                cell[0] === "audio/mpeg" ?
+                                cell[1] === "audio/mpeg" ?
                                     <>
                                         <span className="user-pic-tow">
                                             <a href={cell[2]} download>
@@ -363,32 +358,43 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </a>
                                         </span>
                                         <span className="user-name">
-                                            {cell[1]}.mp3
+                                            {cell[0]}.mp3
                                         </span>
                                     </>
 
-                                    : cell[0] === "video/mp4" ?
+                                    : cell[1] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
-                                                    title={cell[0]}
-                                                    name={cell[1]}
+                                                    title={cell[1]}
+                                                    name={cell[0]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
                                             </div>
                                         </> :
-                                        <>
-                                            <span className="user-pic-tow">
-                                                <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
-                                                    <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                                </a>
-                                            </span>
-                                            <span className="user-name">
-                                                {cell[1]}.{tet2}
-                                            </span>
-                                        </>
+                                        cell[1] === "application/octet-stream" || cell[1] === "application/pdf" || cell[1] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[1] === "text/csv" || cell[1] === "text/html" || cell[1] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
+                                            <>
+                                                <span className="user-pic-tow">
+                                                    <a href={cell[2]} download >
+                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                    </a>
+                                                </span>
+                                                <span className="user-name">
+                                                    {cell[0]}.Doc
+                                                </span>
+                                            </>
+                                            : <>
+                                                <span className="user-pic-tow">
+                                                    <a href={cell[2]} download >
+                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                    </a>
+                                                </span>
+                                                <span className="user-name">
+                                                    {cell[0]}.Doc
+                                                </span>
+                                            </>
                             }
                         </div>
                     </>
@@ -553,6 +559,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                     {userData.length > 0 ?
                                                         <BootstrapTable
                                                             {...props.baseProps}
+                                                            defaultSorted={defaultSortedBy}
                                                             pagination={paginationFactory()}
                                                         /> : (!fullLoaderStatus && <>
                                                             <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
