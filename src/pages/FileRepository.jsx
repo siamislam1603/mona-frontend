@@ -37,12 +37,11 @@ const FileRepository = () => {
     category_name: "",
     id: ""
   })
-  const HideButton = () => {
-    if (Updatecategory_name.category_name.length > 0) {
-      setDisablese(false)
-    }
-
-  }
+  // const HideButton = () => {
+  //   if (Updatecategory_name.category_name.length > 0) {
+  //     setDisablese(false)
+  //   }
+  // }
   // const DisableButton = () => {
   //   let category_name = localStorage.getItem("category_Update_Names");
   //   console.log(category_name, Updatecategory_name.category_name, "Updatecategory_name.category_name")
@@ -114,7 +113,7 @@ const FileRepository = () => {
       id: localStorage.getItem('category_id')
     });
     setDisablese(true)
-    HideButton();
+
   }
 
   const EditCategory = async () => {
