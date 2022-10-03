@@ -218,7 +218,7 @@ const FranchiseeDashboard = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[10]} />
+                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
               </span>
               <span className="user-name">
                 {cell[0]}
