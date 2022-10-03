@@ -37,7 +37,7 @@ function FormResponse(props) {
     to_date: '',
   });
   let hideFlag = false;
-  let count=0;
+  let count = 0;
 
   useEffect(() => {
     if (location?.state?.id) {
@@ -141,24 +141,31 @@ function FormResponse(props) {
         if (result) {
           setfullLoaderStatus(false);
         }
-        result?.result.map((item, index) => {
-          item['signature_button'] = true;
 
-          result?.result[index]?.map((inner_item, inner_index) => {
-            // if(inner_item.fields)
-            Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              if (field_item === 'signature') {
-                item['signature_button'] = false;
-              }
+        if (result?.result?.length > 0) {
+          result?.result.map((item, index) => {
+            item['signature_button'] = true;
+
+            result?.result[index]?.map((inner_item, inner_index) => {
+              // if(inner_item.fields)
+              Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+                if (field_item === 'signature') {
+                  item['signature_button'] = false;
+                }
+              });
             });
-          });
 
-          if (result?.result?.length - 1 === index) {
-            setResponseData(result?.result);
-            seenFormResponse(result?.result);
-            setFormData(result?.form);
-          }
-        });
+            if (result?.result?.length - 1 === index) {
+              setResponseData(result?.result);
+              seenFormResponse(result?.result);
+              setFormData(result?.form);
+            }
+          });
+        } else {
+          setResponseData(result?.result);
+          seenFormResponse(result?.result);
+          setFormData(result?.form);
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -324,366 +331,420 @@ function FormResponse(props) {
                     </div>
                   </div>
                 </div>
-                <div className="responses-collapse">
-                  {
-                    <Accordion defaultActiveKey={Index_id}>
-                      {responseData.map((item, index) => {
-                        return (
-                          <Accordion.Item eventKey={index}>
-                            <Accordion.Header>
-                              <div className="responses-header-row">
-                                <div className="responses-header-left">
-                                  <div className="responses-header-image">
-                                    <img
-                                      src={
-                                        item[0]?.filled_user?.profile_photo
-                                          ? item[0]?.filled_user?.profile_photo
-                                          : '../img/small-user.png'
-                                      }
-                                      alt=""
-                                    />
-                                  </div>
-                                  {responseData[index]?.map(
-                                    (inner_item, inner_index) => {
-                                      return (
-                                        <div
-                                          className={
-                                            responseData[index].length - 1 ===
-                                              inner_index ||
-                                            (inner_index > 0 &&
-                                              responseData[index][
-                                                inner_index - 1
-                                              ]?.filled_user?.fullname?.includes(
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              ))
-                                              ? 'responses-header-detail'
-                                              : 'responses-header-detail response-header-left-line'
-                                          }
-                                        >
-                                          {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                          {/* {console.log(
+                {responseData.length > 0 ? (
+                  <div className="responses-collapse">
+                    {
+                      <Accordion defaultActiveKey={Index_id}>
+                        {responseData.map((item, index) => {
+                          return (
+                            <Accordion.Item eventKey={index}>
+                              <Accordion.Header>
+                                <div className="responses-header-row">
+                                  <div className="responses-header-left">
+                                    <div className="responses-header-image">
+                                      <img
+                                        src={
+                                          item[0]?.filled_user?.profile_photo
+                                            ? item[0]?.filled_user
+                                                ?.profile_photo
+                                            : '../img/small-user.png'
+                                        }
+                                        alt=""
+                                      />
+                                    </div>
+                                    {responseData[index]?.map(
+                                      (inner_item, inner_index) => {
+                                        return (
+                                          <div
+                                            className={
+                                              responseData[index].length - 1 ===
+                                                inner_index ||
+                                              (inner_index > 0 &&
+                                                responseData[index][
+                                                  inner_index - 1
+                                                ]?.filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                ))
+                                                ? 'responses-header-detail'
+                                                : 'responses-header-detail response-header-left-line'
+                                            }
+                                          >
+                                            {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
+                                            {/* {console.log(
                                             'iner_itemwdasdasddassd---->',
                                             inner_item
                                           )} */}
-                                          <h5>
-                                            {inner_index > 0
-                                              ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user
-                                                    ?.fullname
-                                                ) &&
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              : inner_item?.filled_user
-                                                  ?.fullname}
-                                          </h5>
-                                          <h6>
-                                            <span className="text-capitalize">
+                                            <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
                                                     inner_index - 1
-                                                  ]?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ')
-                                                    .includes(
-                                                      inner_item?.filled_user?.role
-                                                        .split('_')
-                                                        .join(' ')
-                                                    ) &&
-                                                  inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','
-                                                : inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','}
-                                            </span>{' '}
-                                            {inner_index > 0
-                                              ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  ].filled_user?.fullname?.includes(
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  ) &&
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                : inner_item?.filled_user
+                                                    ?.fullname}
+                                            </h5>
+                                            <h6>
+                                              <span className="text-capitalize">
+                                                {inner_index > 0
+                                                  ? !responseData[index][
+                                                      inner_index - 1
+                                                    ]?.filled_user?.role
+                                                      .split('_')
+                                                      .join(' ')
+                                                      .includes(
+                                                        inner_item?.filled_user?.role
+                                                          .split('_')
+                                                          .join(' ')
+                                                      ) &&
+                                                    inner_item?.filled_user?.role
+                                                      .split('_')
+                                                      .join(' ') + ','
+                                                  : inner_item?.filled_user?.role
+                                                      .split('_')
+                                                      .join(' ') + ','}
+                                              </span>{' '}
+                                              {inner_index > 0
+                                                ? !responseData[index][
+                                                    inner_index - 1
+                                                  ].filled_user?.franchisee?.franchisee_name.includes(
+                                                    inner_item?.filled_user
+                                                      ?.franchisee
+                                                      ?.franchisee_name
+                                                  ) &&
                                                   inner_item?.filled_user
                                                     ?.franchisee
                                                     ?.franchisee_name
-                                                ) &&
-                                                inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name
-                                              : inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name}
-                                          </h6>
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                                <div className="responses-header-right">
-                                  {console.log(
-                                    'CREATED AT:',
-                                    item[0].createdAt
-                                  )}
-                                  <p>
-                                    Completed on: <br />
-                                    {moment(item[0].createdAt)
-                                      // .utcOffset('+10:00')
-                                      .format('DD/MM/YYYY') +
-                                      ', ' +
+                                                : inner_item?.filled_user
+                                                    ?.franchisee
+                                                    ?.franchisee_name}
+                                            </h6>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                  <div className="responses-header-right">
+                                    {console.log(
+                                      'CREATED AT:',
                                       item[0].createdAt
-                                        .split('T')[1]
-                                        .split('.')[0]
-                                        .split(':', 2)
-                                        .join(':') +
-                                      ' hrs'}
-                                  </p>
+                                    )}
+                                    <p>
+                                      Completed on: <br />
+                                      {moment(item[0].createdAt)
+                                        // .utcOffset('+10:00')
+                                        .format('DD/MM/YYYY') +
+                                        ', ' +
+                                        item[0].createdAt
+                                          .split('T')[1]
+                                          .split('.')[0]
+                                          .split(':', 2)
+                                          .join(':') +
+                                        ' hrs'}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            </Accordion.Header>
-                            <Accordion.Body>
-                              {responseData[index]?.map((item, index) => {
-                                return (
-                                  <div
-                                    className={
-                                      index === 0
-                                        ? 'responses-content-wrap'
-                                        : 'responses-content-wrap response-margin'
-                                    }
-                                  >
-                                    <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item?.filled_user?.fullname}{' '}
-                                      {!item.section_name ||
-                                        (item.section_name !== '' &&
-                                          `| ${item.section_name
-                                            .split('_')
-                                            .join(' ')} Section`)}{' '}
-                                      {`| Behalf of ${item?.user?.fullname}`}
-                                    </h4>
+                              </Accordion.Header>
+                              <Accordion.Body>
+                                {responseData[index]?.map((item, index) => {
+                                  return (
+                                    <div
+                                      className={
+                                        index === 0
+                                          ? 'responses-content-wrap'
+                                          : 'responses-content-wrap response-margin'
+                                      }
+                                    >
+                                      <h4 className="content-wrap-title text-capitalize">
+                                        Filled By {item?.filled_user?.fullname}{' '}
+                                        {!item.section_name ||
+                                          (item.section_name !== '' &&
+                                            `| ${item.section_name
+                                              .split('_')
+                                              .join(' ')} Section`)}{' '}
+                                        {`| Behalf of ${item?.user?.fullname}`}
+                                      </h4>
 
-                                    {Object.keys(JSON.parse(item.fields)).map(
-                                      (inner_item, inner_index) => {
-                                        {
-                                          console.log(
-                                            'field_type----',
-                                            Object.keys(
+                                      {Object.keys(JSON.parse(item.fields)).map(
+                                        (inner_item, inner_index) => {
+                                          {
+                                            console.log(
+                                              'field_type----',
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]
+                                            );
+                                          }
+                                          {
+                                            (Object.keys(
                                               JSON.parse(item.fields)
-                                            )[inner_index]
-                                          );
-                                        }
-                                        {(Object.keys(
-                                          JSON.parse(item.fields)
-                                        )[inner_index] === 'headings' ||
-                                        Object.keys(
-                                          JSON.parse(item.fields)
-                                        )[inner_index] ===
-                                          'text_headings') && count++ }
-                                        return (
-                                          <div className="responses-content-box" style={{ marginTop:"12px"}}>
-                                            <div className="responses-content-question">
-                                              {!(Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] === 'headings' ||
-                                                Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] ===
-                                                  'text_headings') && <span>{inner_index + 1 - count}</span> }
-                                              {Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] === 'headings'
-                                                 ? (
-                                                <h6 className="text-capitalize" style={{fontSize:"20px",color:"#AA0061"}}>
-                                                  {
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                  }
-                                                </h6>
-                                              ) : Object.keys(
+                                            )[inner_index] === 'headings' ||
+                                              Object.keys(
                                                 JSON.parse(item.fields)
                                               )[inner_index] ===
-                                                'text_headings' ? 
-                                                <h6 className="text-capitalize" style={{fontSize:"16px",color:"#455c58"}}>
-                                                  {
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                  }
-                                                </h6>
-                                                : <h6 className="text-capitalize">
-                                                {inner_item
-                                                  .split('_')
-                                                  .join(' ')}
-                                              </h6>}
-                                            </div>
-                                            <div className="responses-content-answer">
-                                              {(!(Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] === 'headings' ||
-                                                Object.keys(
+                                                'text_headings') &&
+                                              count++;
+                                          }
+                                          return (
+                                            <div
+                                              className="responses-content-box"
+                                              style={{ marginTop: '12px' }}
+                                            >
+                                              <div className="responses-content-question">
+                                                {!(
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'headings' ||
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'text_headings'
+                                                ) && (
+                                                  <span>
+                                                    {inner_index + 1 - count}
+                                                  </span>
+                                                )}
+                                                {Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index] ===
-                                                  'text_headings')) && <img
-                                                src="../img/bx_right-arrow-alt.svg"
-                                                alt=""
-                                              />}
-
-                                              {Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                'data:image'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.png'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpg'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpeg'
-                                              ) ? (
-                                                <>
-                                                  <img
+                                                'headings' ? (
+                                                  <h6
+                                                    className="text-capitalize"
                                                     style={{
-                                                      height: '40px',
-                                                      width: '51px',
+                                                      fontSize: '20px',
+                                                      color: '#AA0061',
                                                     }}
-                                                    src={`${
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }`}
-                                                  ></img>
-                                                </>
-                                              ) : Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.doc'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.docx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.html'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.htm'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.odt'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.xls'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.xlsx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'ods'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.ppt'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.pptx'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.pdf'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.txt'
-                                                ) ? (
-                                                <a
-                                                  role="button"
-                                                  href={
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                  }
-                                                  download
-                                                >
-                                                  <p>
+                                                  >
                                                     {
                                                       Object.values(
                                                         JSON.parse(item.fields)
-                                                      )[inner_index].split('/')[
+                                                      )[inner_index]
+                                                    }
+                                                  </h6>
+                                                ) : Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                  'text_headings' ? (
+                                                  <h6
+                                                    className="text-capitalize"
+                                                    style={{
+                                                      fontSize: '16px',
+                                                      color: '#455c58',
+                                                    }}
+                                                  >
+                                                    {
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }
+                                                  </h6>
+                                                ) : (
+                                                  <h6 className="text-capitalize">
+                                                    {inner_item
+                                                      .split('_')
+                                                      .join(' ')}
+                                                  </h6>
+                                                )}
+                                              </div>
+                                              <div className="responses-content-answer">
+                                                {!(
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'headings' ||
+                                                  Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index] ===
+                                                    'text_headings'
+                                                ) && (
+                                                  <img
+                                                    src="../img/bx_right-arrow-alt.svg"
+                                                    alt=""
+                                                  />
+                                                )}
+
+                                                {Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  'data:image'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.png'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpg'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpeg'
+                                                ) ? (
+                                                  <>
+                                                    <img
+                                                      style={{
+                                                        height: '40px',
+                                                        width: '51px',
+                                                      }}
+                                                      src={`${
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index]
+                                                      }`}
+                                                    ></img>
+                                                  </>
+                                                ) : Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.doc'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.docx'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.html'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.htm'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.odt'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.xls'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.xlsx'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    'ods'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.ppt'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.pptx'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.pdf'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.txt'
+                                                  ) ? (
+                                                  <a
+                                                    role="button"
+                                                    href={
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]
+                                                    }
+                                                    download
+                                                  >
+                                                    <p>
+                                                      {
                                                         Object.values(
                                                           JSON.parse(
                                                             item.fields
                                                           )
                                                         )[inner_index].split(
                                                           '/'
-                                                        ).length - 1
-                                                      ]
-                                                    }
-                                                  </p>
-                                                </a>
-                                              ) : 
-                                                (!(Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] === 'headings' ||
-                                                Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] ===
-                                                  'text_headings')) && <p>
-                                                  {
-                                                    Object.values(
+                                                        )[
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index].split(
+                                                            '/'
+                                                          ).length - 1
+                                                        ]
+                                                      }
+                                                    </p>
+                                                  </a>
+                                                ) : (
+                                                  !(
+                                                    Object.keys(
                                                       JSON.parse(item.fields)
-                                                    )[inner_index]
-                                                  }
-                                                </p>
-                                              }
+                                                    )[inner_index] ===
+                                                      'headings' ||
+                                                    Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index] ===
+                                                      'text_headings'
+                                                  ) && (
+                                                    <p>
+                                                      {
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index]
+                                                      }
+                                                    </p>
+                                                  )
+                                                )}
+                                              </div>
                                             </div>
-                                          </div>
-                                        );
-                                      }
-                                    )}
-                                  </div>
-                                );
-                              })}
-                              {location?.state?.signature_access &&
-                                item.signature_button && (
-                                  <Button
-                                    onClick={() => {
-                                      setSignatureModel(true);
-                                      setIndex(index);
-                                    }}
-                                  >
-                                    Add Signature
-                                  </Button>
-                                )}
-                            </Accordion.Body>
-                          </Accordion.Item>
-                        );
-                      })}
-                    </Accordion>
-                  }
-                </div>
+                                          );
+                                        }
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                                {location?.state?.signature_access &&
+                                  item.signature_button && (
+                                    <Button
+                                      onClick={() => {
+                                        setSignatureModel(true);
+                                        setIndex(index);
+                                      }}
+                                    >
+                                      Add Signature
+                                    </Button>
+                                  )}
+                              </Accordion.Body>
+                            </Accordion.Item>
+                          );
+                        })}
+                      </Accordion>
+                    }
+                  </div>
+                ) : (
+                  <h4 style={{ fontWeight: '200', textAlign: 'center' }}>
+                    No Response found
+                  </h4>
+                )}
                 <Modal
                   className="responses_model"
                   show={signatureModel}
