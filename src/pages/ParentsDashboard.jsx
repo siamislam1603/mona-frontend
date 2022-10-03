@@ -14,11 +14,8 @@ const ParentsDashboard = () => {
   const [announcements, setannouncements] = useState([]);
   const [editTrainingData, setEditTrainingData] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
-  const [logUserOutDialog, setLogUserOutDialog] = useState(false);
+  const [logUserOutDialog, setLogUserOutDialog] = useState(true);
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
-
-
-
 
   const events = async () => {
     const token = localStorage.getItem('token');
@@ -96,14 +93,29 @@ const ParentsDashboard = () => {
 
   }
 
-
   const handleParentLogout = async () => {
     setLogUserOutDialog(false);
-    await localStorage.clear();
-    await logoutUser();
+    localStorage.clear();
+    logoutUser();
   }
 
+  const checkIfChildExist = async () => {
+    let parentId = localStorage.getItem('user_id');
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
 
+    if(response.status === 200 && response.data.status === "success") {
+      let { parentData } = response.data;
+      console.log('PARENT DATA', parentData === null);
+      if(parentData === null) {
+        setLogUserOutDialog(true);
+      }
+    }
+  }
 
   useEffect(() => {
 
@@ -113,8 +125,6 @@ const ParentsDashboard = () => {
 
   }, []);
 
-
-
   useEffect(() => {
     events();
     Userannouncements();
@@ -123,9 +133,8 @@ const ParentsDashboard = () => {
 
 
   useEffect(() => {
-    // checkIfChildExist();
+    checkIfChildExist();
   }, []);
-
 
   return (
     <>
@@ -266,7 +275,26 @@ const ParentsDashboard = () => {
           </Container>
         </section>
       </div>
-      
+      {
+        <Modal
+          show={logUserOutDialog}>
+          <Modal.Header>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <p>
+                No child is enrolled under you at this point. Please contact administrator for the same.
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={handleParentLogout}>Logout</button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };
