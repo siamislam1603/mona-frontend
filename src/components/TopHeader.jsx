@@ -645,10 +645,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                                     ))}
                                      {searchUser?.map((user) => (
                                       <li>
-                                        <a href={`/view-user/${user.id}`} className="d-flex">
+                                        <Link to={`/view-user/${user.id}`} className="d-flex">
                                           {/* <img alt="" src={trainingData?.coverImage?trainingData.coverImage:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
                                           <span className="sec-cont"><strong className="text-capitalize">{user?.fullname}</strong></span>
-                                        </a>
+                                        </Link>
                                       </li>
                                     ))}
               
