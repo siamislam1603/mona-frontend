@@ -122,7 +122,9 @@ const ParentsDashboard = () => {
   }, [selectedFranchisee])
 
 
-
+  useEffect(() => {
+    // checkIfChildExist();
+  }, []);
 
 
   return (
