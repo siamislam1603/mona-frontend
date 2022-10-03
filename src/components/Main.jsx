@@ -29,6 +29,7 @@ import FileRepository from '../pages/FileRepository';
 import Announcements from '../pages/Announcements';
 import TrainingCreatedByMe from '../pages/TrainingModule/TrainingCreatedByMe';
 import TrainingNonParticipant from '../pages/TrainingModule/TrainingNonParticipant';
+import TrainingParticipant from '../pages/TrainingModule/TrainingParticipant';
 import AddNewAnnouncements from '../pages/AddNewAnnouncements';
 import DynamicForm from '../pages/DynamicForm';
 import UploadFile from '../pages/UploadFile';
@@ -559,6 +560,16 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn} controller='training_files' action='view_detail'>
               <SignIn />
               <TrainingNonParticipant />
+            </Protected>
+          }
+        />
+        
+        <Route
+          path="/training-participant/:trainingId"
+          element={
+            <Protected isLoggedIn={isLoggedIn} controller='training_files' action='view_detail'>
+              <SignIn />
+              <TrainingParticipant />
             </Protected>
           }
         />
