@@ -783,7 +783,7 @@ const AddNewTraining = () => {
                 <Row>
                   <Col lg={3} sm={6}>
                     <Form.Group>
-                      <Form.Label>Start Date *</Form.Label>
+                      <Form.Label>Start Date *</Form.Label> 
                       <Form.Control
                         type="date"
                         className="datepicker"

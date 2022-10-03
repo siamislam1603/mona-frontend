@@ -293,13 +293,14 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   const selectFranchisee = (e) => {
     if (e === 'All') {
       setFranchiseeId({ franchisee_name: 'All' });
-      setSelectedFranchisee('all');
+      localStorage.setItem('selectedFranchise', 'all');
+      setSelectedFranchisee(localStorage.getItem('selectedFranchise'));
+      // setSelectedFranchisee('all');
     } else {
       setFranchiseeId({ ...franchiseeList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-
-      //   localStorage.setItem('selected_franchisee', JSON.stringify(franchiseeId))
-
-      setSelectedFranchisee(e);
+      localStorage.setItem('selectedFranchise', e);
+      setSelectedFranchisee(localStorage.getItem('selectedFranchise'));
+      // setSelectedFranchisee(e);
     }
   };
 
@@ -443,13 +444,29 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
 
   useEffect(() => {
-    if (localStorage.getItem('user_role') === 'franchisor_admin') {
-      setSelectedFranchisee('All');
-      setFranchiseeId({ franchisee_name: 'All' });
+    if(localStorage.getItem('selectedFranchise')) {
+      if(localStorage.getItem('selectedFranchise') === 'all') {
+        let selectedFID = localStorage.getItem('selectedFranchise');
+        setSelectedFranchisee(selectedFID);
+        setFranchiseeId({ franchisee_name: 'All' });
+      } else {
+        let selectedFID = localStorage.getItem('selectedFranchise');
+        setSelectedFranchisee(selectedFID);
+        setFranchiseeId(franchiseeList.filter(d => parseInt(d.id) === parseInt(selectedFID))[0]);
+      }
     } else {
-      setSelectedFranchisee(franchiseeList[0]?.id);
+      if (localStorage.getItem('user_role') === 'franchisor_admin') {
+        setSelectedFranchisee('All');
+        setFranchiseeId({ franchisee_name: 'All' });
+      } else {
+        setSelectedFranchisee(franchiseeList[0]?.id);
+      }
     }
-  }, [franchiseeList]);
+  }, [franchiseeList, localStorage.getItem('selectedFranchise')]);
+
+  // useEffect(() => {
+    
+  // }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
     // if (localStorage.getItem('user_role') === 'guardian') {
@@ -506,7 +523,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   // notifData && console.log('DATA=>:', notifData);
   // notifType && console.log('TYPE=>:', notifType);
-  console.log("training search data", searchTraining) 
+  // console.log("training search data", searchTraining) 
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>

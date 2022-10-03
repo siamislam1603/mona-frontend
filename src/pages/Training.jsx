@@ -114,7 +114,13 @@ const Training = () => {
 
   return (
     <>
-      <div id="main">
+      <div 
+        id="main"
+        onClickCapture={() => {
+          if(openFilter === true) {
+            setOpenFilter(false)
+          }
+        }}>
         <section className="mainsection">
           <Container>
             <div className="admin-wrapper">
