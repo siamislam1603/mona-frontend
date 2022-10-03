@@ -384,7 +384,7 @@ const AddOperatingManual = () => {
         flag = true;
       }
       console.log("file type", file.type)
-      if (!file.type.includes('mp4') && !file.type.includes('mkv')) {
+      if (!file.type.includes('mp4') && !file.type.includes('mkv') && !file.type.includes('video/x-matroska') ) {
         let errorData = { ...errors };
         errorData['reference_video'] = 'File format not supported.';
         setErrors(errorData);
