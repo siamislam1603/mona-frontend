@@ -7,7 +7,7 @@ export const DynamicFormValidation = (
   behalf_of_flag,
   signature_access_flag
 ) => {
-  console.log("signature_access_flag",signature_access_flag);
+  console.log("data",data);
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
@@ -15,20 +15,20 @@ export const DynamicFormValidation = (
   }
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
+    console.log("data[item]---->",data[item]);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
 
-      
-      
+    
       if (inner_item.required) {
-        if(inner_item.field_type==="signature" && signature_access_flag===true && !form[item][`${inner_item.field_name}`])
+        if(inner_item.field_type==="signature" && signature_access_flag===true && !data[item][`${inner_item.field_name}`])
         {
           newErrors[
             `${inner_item.field_name}`
           ] = `${inner_item.field_label} is required`;
         }
         else{
-          if (inner_item.field_type!=="signature" && !form[item][`${inner_item.field_name}`]) {
+          if (inner_item.field_type!=="signature" && !data[item][`${inner_item.field_name}`]) {
             newErrors[
               `${inner_item.field_name}`
             ] = `${inner_item.field_label} is required`;
