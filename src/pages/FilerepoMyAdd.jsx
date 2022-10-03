@@ -679,7 +679,6 @@ const FilerepoMyAdd = ({ filter }) => {
                             </Row>)}
 
                             {
-
                                 sendToAllFranchisee == "none" && formSettings?.franchisee.length < 1 ? "" :
                                 (<Row className="mt-4">
                                 <Col lg={3} md={6}>
