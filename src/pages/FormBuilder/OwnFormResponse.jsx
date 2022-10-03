@@ -115,26 +115,34 @@ function OwnFormResponse(props) {
         if (result) {
           setfullLoaderStatus(false);
         }
-        result?.result.map((item, index) => {
-          item['signature_button'] = true;
-          console.log('item--->', item);
-
-          result?.result[index]?.map((inner_item, inner_index) => {
-            // if(inner_item.fields)
-
-            console.log('inner_item--->first', inner_item);
-            Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-              console.log('inner_item--->', field_item);
-              if (field_item === 'signature') {
-                item['signature_button'] = false;
-              }
+        if(result?.result.length>0)
+        {
+          result?.result.map((item, index) => {
+            item['signature_button'] = true;
+            console.log('item--->', item);
+  
+            result?.result[index]?.map((inner_item, inner_index) => {
+              // if(inner_item.fields)
+  
+              console.log('inner_item--->first', inner_item);
+              Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+                console.log('inner_item--->', field_item);
+                if (field_item === 'signature') {
+                  item['signature_button'] = false;
+                }
+              });
             });
-          });
-          if (result?.result?.length - 1 === index) {
-            setResponseData(result?.result);
-            setFormData(result?.form);
-          }
-        });
+            if (result?.result?.length - 1 === index) {
+              setResponseData(result?.result);
+              setFormData(result?.form);
+            }
+          });  
+        }
+        else
+        {
+          setResponseData([]);
+        }
+        
       })
       .catch((error) => console.log('error', error));
   };
