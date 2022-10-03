@@ -335,6 +335,16 @@ const FilerepoMyAdd = ({ filter }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
+                var ret = cell[0].replace('application/', '')
+                var Text = cell[0].replace('text/', '')
+                var image = cell[0].replace('image/', '')
+                var tet2 = ""
+                if (ret === 'text/html' || ret === 'text/xml') {
+                    tet2 = Text
+                }
+                else {
+                    tet2 = ret
+                }
                 return (
                     <>
                         <div div className="user-list">
@@ -346,7 +356,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[0]}.img
+                                        {cell[0]}.{image}
                                     </span>
                                 </>
                                 :
