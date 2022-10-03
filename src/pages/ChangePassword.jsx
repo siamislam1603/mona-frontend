@@ -7,7 +7,8 @@ import { PasswordValidation } from '../helpers/validation';
 import { BASE_URL } from '../components/App';
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as ReactBootstrap from 'react-bootstrap';
+import { logoutUser } from '../helpers/logout';
+
 const ChangePassword = () => {
   const [userRoles, setUserRoles] = useState([]);
   const [franchiseeList, setFranchiseeList] = useState();
@@ -17,7 +18,7 @@ const ChangePassword = () => {
   const [hide, setHide] = useState(true);
   const [secHide, setSecHide] = useState(true);
   const [ThreHide, setThreHide] = useState(true);
-  const [check, setCheck] = useState(null);
+  const [logUserOutDialog, setLogUserOutDialog] = useState(false);
   const [passwordInitiationFlag, setPasswordInitiationFlag] = useState(0);
 
 
@@ -160,6 +161,12 @@ const ChangePassword = () => {
     }
   };
 
+  const handleParentLogout = async () => {
+    setLogUserOutDialog(false);
+    localStorage.clear();
+    logoutUser();
+  }
+
   const checkPasswordChangeRequestInitiation = async () => {
     let token = localStorage.getItem('token');
     let response = await axios.get(`${BASE_URL}/auth/getPasswordChangeInitiationFlag`, {
@@ -173,6 +180,24 @@ const ChangePassword = () => {
       setPasswordInitiationFlag(passwordChangeInitiationFlag);
     }
   };
+
+  const checkIfChildExist = async () => {
+    let parentId = localStorage.getItem('user_id');
+    let token = localStorage.getItem('token');
+    let response = await axios.get(`${BASE_URL}/enrollment/children/${parentId}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if(response.status === 200 && response.data.status === "success") {
+      let { parentData } = response.data;
+      console.log('PARENT DATA', parentData === null);
+      if(parentData === null) {
+        setLogUserOutDialog(true);
+      }
+    }
+  }
 
   const onSubmit = event =>{
     event.preventDefault()
@@ -206,6 +231,9 @@ const ChangePassword = () => {
     checkPasswordChangeRequestInitiation();
   }, []);
 
+  useEffect(() => {
+    checkIfChildExist();
+  }, []);
   // Get the previous value (was passed into hook on last render)
   
 const attempt = localStorage.getItem("attempts")
@@ -423,7 +451,26 @@ Minimum 8 characters, at least one uppercase and one lowercase letter, one numbe
         </Container>
       </section>
     </div>
- 
+    {
+        <Modal
+          show={logUserOutDialog}>
+          <Modal.Header>
+            <Modal.Title>Attention</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <p>
+                No child is enrolled under you at this point. Please contact administrator for the same.
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button 
+              className="modal-button"
+              onClick={handleParentLogout}>Logout</button>
+          </Modal.Footer>
+        </Modal>
+      }
   </div>
   )
 }
