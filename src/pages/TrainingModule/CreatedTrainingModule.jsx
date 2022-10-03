@@ -253,8 +253,8 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, []);
 
   myTrainingData && console.log('MY TRAINING DATA:', myTrainingData);
-  filter && console.log('FILTER:', filter);
-  selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
+  // filter && console.log('FILTER:', filter);
+  // selectedFranchisee && console.log('SELECTED FRANCHISEE:', selectedFranchisee);
   return (
     <>
       <div id="main">
