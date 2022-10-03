@@ -33,7 +33,7 @@ function getDuration(duration) {
   return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
 }
 
-const videoExtension = ['.mp4', '.flv', '.mkv'];
+const videoExtension = ['.mp4', '.flv', '.mkv', '.qt'];
 const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt', '.pdf'];
 
 const TrainingDetail = () => {
@@ -78,10 +78,13 @@ const TrainingDetail = () => {
 
       // FETCHING DUE DATE
       const { end_date, addedBy } = all_trainings;
-      let due_date = moment(end_date).format('YYYY-MM-DD');
-      let today = moment().format('YYYY-MM-DD');
+      let due_date = moment(end_date).format();
+      let today = moment().format();
       let currentUserId = localStorage.getItem('user_id');
       let currentUserRole = localStorage.getItem('user_role');
+
+      console.log('DUE TIME:', due_date);
+      console.log('CURRENT TIME:', today);
 
       if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
