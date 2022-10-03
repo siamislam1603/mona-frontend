@@ -33,7 +33,7 @@ function getDuration(duration) {
   return hours+':'+minutes+':'+seconds; // Return is HH : MM : SS
 }
 
-const videoExtension = ['.mp4', '.flv', '.mkv', '.qt'];
+const videoExtension = ['.mp4', '.mkv', '.qt'];
 const fileExtension = ['.csv', '.xlsx', '.pptx', '.docx', '.doc', '.ppt', '.pdf'];
 
 const TrainingDetail = () => {
