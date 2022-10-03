@@ -29,10 +29,27 @@ const FileRepository = () => {
   const [category_name, setCategory] = useState("")
   const [category, setgetCategory] = useState([]);
   const [SearchValue, setSearchValue] = useState("");
+  const [disable, setDisable] = useState({});
+  const [disablee, setDisablese] = useState(false);
+  console.log(disable, "disable")
+
   const [Updatecategory_name, setUpdateCategory] = useState({
     category_name: "",
     id: ""
   })
+
+  // const DisableButton = () => {
+  //   let category_name = localStorage.getItem("category_Update_Names");
+  //   console.log(category_name, Updatecategory_name.category_name, "Updatecategory_name.category_name")
+  //   if (category_name === Updatecategory_name.category_name) {
+  //     setDisable(false)
+  //   } else {
+  //     setDisable(true)
+  //   }
+  // }
+
+
+
 
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
 
@@ -84,13 +101,17 @@ const FileRepository = () => {
   const SubEditmiton = (e) => {
     e.preventDefault();
     EditCategory();
+    Updatecategory_name.category_name = "";
   }
   const handleChange = (evt) => {
     setUpdateCategory({
       category_name: evt.target.value,
       id: localStorage.getItem('category_id')
     });
+    setDisablese(true)
+
   }
+
   const EditCategory = async () => {
     let response = await axios.put(`${BASE_URL}/fileCategory/`, Updatecategory_name, {
       headers: {
@@ -103,6 +124,8 @@ const FileRepository = () => {
       window.location.reload(false)
       SetCategoryCreated(message)
       getFileCategory();
+
+
       setTimeout(() => {
         SetCategoryCreated(null)
       }, 3000)
@@ -128,11 +151,15 @@ const FileRepository = () => {
     });
     if (response.status === 200) {
       const category = response.data.category
+
       setUpdateCategory({
         category_name: category.category_name,
         id: category.id
       })
+      setDisable(category.category_name)
+
       localStorage.setItem('category_id', category.id)
+      localStorage.setItem('category_Update_Name', category.category_name)
 
     }
     console.log(response, "/fileCategory//fileCategory/");
@@ -412,9 +439,14 @@ const FileRepository = () => {
                                 >
                                   Cancel
                                 </Button>
-                                <Button className="done" onClick={(e) => SubEditmiton(e)}>
-                                  Save
-                                </Button>
+                                {!Updatecategory_name.category_name}
+                                {disablee &&
+                                  <Button
+
+                                    onClick={(e) => SubEditmiton(e)}>
+                                    Update
+                                  </Button>
+                                }
                               </Modal.Footer>
                             </Modal>
 
