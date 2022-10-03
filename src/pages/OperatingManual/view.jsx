@@ -165,8 +165,7 @@ const OperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-
-  useEffect(() => {
+  const manageCollpase=()=>{
     var tree = document.getElementById('tree1');
     if (tree) {
       tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
@@ -213,6 +212,12 @@ const OperatingManual = () => {
         );
       });
     }
+  }
+  useEffect(() => {
+    manageCollpase();
+  });
+  useEffect(() => {
+    manageCollpase();
   }, [operatingManualdata]);
   const getOneOperatingManual = async (id, category_name) => {
     var myHeaders = new Headers();
@@ -510,6 +515,7 @@ const OperatingManual = () => {
                             placeholder="Search..."
                             onChange={(e) => {
                               getOperatingManual('search', e.target.value);
+                              manageCollpase();
                             }}
                           />
                         </div>
