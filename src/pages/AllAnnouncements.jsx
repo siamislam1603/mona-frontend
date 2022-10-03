@@ -36,6 +36,7 @@ const paramsid = props.announId
 const theKey =Number(paramsid)
   const AllAnnouncementData = async () =>{
     try {
+      console.log("All Annocuneent method call")
       const token = localStorage.getItem('token');
 
       
@@ -72,33 +73,10 @@ const theKey =Number(paramsid)
   
 }
 
-const deleteAlert = (id) =>{
-  if(window.confirm('Are you sure you want to delete?')){
-     deleteAnnouncement(id);
-  }
-}
 
 
-const deleteAnnouncement = async (id) =>{
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
-    headers: {
-      "Authorization": "Bearer " + token
-    }
-  }); 
-  if(response.status === 200){
-      setTopMessage("Delete successfully")
-      AllAnnouncementData()
-    
-      setTimeout(() => {
-        setTopMessage(null)
-      }, 2000);
-  }
-  } catch (error) {
-    setTopMessage(error.data)    
-  }
-}
+
+
 
 const getRelatedFileName = (str) => {
   let arr = str.split("/");
@@ -138,7 +116,6 @@ const realtedFile1 = ( )=>{
 })
 }
 useEffect(() => {
-  AllAnnouncementData()
   const user_role = localStorage.getItem("user_role")
   setUserRole(user_role)
   
@@ -147,8 +124,9 @@ useEffect(() =>{
   setSearchData(props.search)
 },[props.search]) 
 useEffect(() =>{
-  if(!props.search){
-    AllAnnouncementData()
+  if(!props.search ){
+    console.log("The Search ann")
+    // AllAnnouncementData()
   }
   else if(props.allAnnouncement){
     setAnnouncementDetail(props.allAnnouncement)
