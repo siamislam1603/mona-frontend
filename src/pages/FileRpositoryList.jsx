@@ -141,7 +141,7 @@ const FileRpositoryList = () => {
     const defaultSortedBy = [{
         dataField: "name",
         order: "asc"  // or desc
-      }];
+    }];
 
     const [columns, setColumns] = useState([
         {
@@ -150,6 +150,16 @@ const FileRpositoryList = () => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
+                var ret = cell[1].replace('application/', '')
+                var Text = cell[1].replace('text/', '')
+                var image = cell[1].replace('image/', '')
+                var tet2 = ""
+                if (ret === 'text/html' || ret === 'text/xml') {
+                    tet2 = Text
+                }
+                else {
+                    tet2 = ret
+                }
                 return (
                     <>
                         <div div className="user-list">
@@ -161,7 +171,7 @@ const FileRpositoryList = () => {
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[0]}.img
+                                        {cell[0]}.{image}
                                     </span>
                                 </>
                                 :
@@ -197,7 +207,7 @@ const FileRpositoryList = () => {
                                                     </a>
                                                 </span>
                                                 <span className="user-name">
-                                                    {cell[0]}.Doc
+                                                    {cell[0]}.{tet2}
                                                 </span>
                                             </> : <>
                                                 <span className="user-pic-tow">
@@ -206,7 +216,7 @@ const FileRpositoryList = () => {
                                                     </a>
                                                 </span>
                                                 <span className="user-name">
-                                                    {cell[0]}
+                                                    {cell[0]}.{image}
                                                 </span>
                                             </>
                             }
