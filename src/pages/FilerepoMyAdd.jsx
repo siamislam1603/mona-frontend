@@ -391,7 +391,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </a>
                                         </span>
                                         <span className="user-name">
-                                            {cell[1]}.{tet2}
+                                            {cell[0]}.{tet2}
                                         </span>
                                     </>
                             }
