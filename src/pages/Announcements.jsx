@@ -613,8 +613,7 @@ const Announcements = () => {
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5`, {
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -623,7 +622,7 @@ const Announcements = () => {
       // console.log("ALL EVENTS",response)
       if (response.status === 200 && response.data.status === "success") {
         setEventCount(response.data.result.count)
-        setMyDataLength(response.data.result.searchedData.length)
+        // setEventLength(response.data.result.searchedData.length)
       }
     } catch (error) {
       if (error.response.status === 404) {
@@ -706,6 +705,9 @@ const Announcements = () => {
   useEffect(() => {
     if (selectedFranchisee && tabLinkPath === "/all-announcements") {
       onLoadAnnouncement()
+    }
+    else if(selectedFranchisee && tabLinkPath === "/all-events"){
+      OnLoadEvent()
     }
 
   }, [tabLinkPath])
@@ -803,7 +805,9 @@ const Announcements = () => {
   console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
   console.log("Event count and event lenght",eventCount,eventLength)
   // console.log("tablink path", tabLinkPath)
-  console.log("All Annoucnement",allAnnouncement)
+  // console.log("All Annoucnement",allAnnouncement)
+  console.log("ALL event",allEvent)
+  console.log("Pageevent",pageEvent)
 
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)
