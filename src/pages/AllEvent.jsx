@@ -107,29 +107,9 @@ const AllEvent = (props) => {
   //    if(Added<datae){
   //     return Added
   //    }
-  // }
-  const deleteAnnouncement = async (id) => {
-    const token = localStorage.getItem('token');
-    const response = await axios.delete(`${BASE_URL}/announcement/${id}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    console.log("The response after delete", response)
-    if (response.status === 200) {
-      console.log("Delete succussfully")
 
-      allEvent()
-      setTopMessage("Delete succussfully")
-
-      setTimeout(() => {
-        setTopMessage(null)
-      }, 3000)
-    }
-  }
 
   useEffect(() => {
-    allEvent()
     const user_role = localStorage.getItem("user_role")
     setUserRole(user_role)
   }, [])

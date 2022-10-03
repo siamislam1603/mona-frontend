@@ -801,8 +801,9 @@ const Announcements = () => {
   // console.log("USER ROLE",userRole)
   console.log("THE COUNT AND COMMON",theCount,theCommon)
   console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
-
-  console.log("tablink path", tabLinkPath)
+  console.log("Event count and event lenght",eventCount,eventLength)
+  // console.log("tablink path", tabLinkPath)
+  console.log("All Annoucnement",allAnnouncement)
 
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)

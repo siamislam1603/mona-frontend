@@ -547,9 +547,9 @@ const UserManagement = () => {
     console.log('TEMP DATA:', tempData);
     let filteredTempData = tempData.map((parent, index) => {
       let {children} = parent;
-      console.log('CHILDREN:', children);
+      // console.log('CHILDREN:', children);
       let childList = children.map(child => child?.users?.map(user => user.email === localStorage.getItem('email')));
-      console.log('CHILDLIST:', childList);
+      // console.log('CHILDLIST:', childList);
       let data = childList.map(child => child.includes(true));
       data = data.includes(true);
 
@@ -557,6 +557,7 @@ const UserManagement = () => {
         return parent.user_parent_id;
     });
     filteredTempData = filteredTempData.filter(d => typeof d !== "undefined");
+    console.log('FILTERED TEMP DATA:', filteredTempData);
     let data = tempEduData.filter(user => parseInt(user.roleDetail.split(",")[1]) !== 0);
     data = data.map(data => data.userID);
 
