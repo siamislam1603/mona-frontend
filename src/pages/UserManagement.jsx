@@ -702,7 +702,7 @@ const UserManagement = () => {
                               >
                                 <i className="filter-ico"></i> Add Filters
                               </Dropdown.Toggle>
-                              <Dropdown.Menu style={{ display: openFilter === true ? "block" : "none" }}>
+                              <Dropdown.Menu>
                                 <header>Filter by</header>
                                 <div className="custom-radio btn-radio mb-2">
                                   <label style={{ marginBottom: '5px' }}>Role</label>
@@ -730,8 +730,8 @@ const UserManagement = () => {
                                   </Form.Group>
                                 </div>
                                 <footer>
-                                  <Button
-                                    variant="transparent"
+                                  <Dropdown.Item as="button"
+                                    className="btn btn-transparent w-auto d-inline-block"
                                     type="submit"
                                     onClick={() => {
                                       setFilter('');
@@ -741,16 +741,16 @@ const UserManagement = () => {
                                     }}
                                   >
                                     Reset
-                                  </Button>
-                                  <Button
-                                    variant="primary"
+                                  </Dropdown.Item>
+                                  <Dropdown.Item as="button"
+                                    className="btn btn-primary w-auto d-inline-block"
                                     type="submit"
                                     onClickCapture={() => {
                                       handleApplyFilter(filter);
                                     }}
                                   >
                                     Apply
-                                  </Button>
+                                  </Dropdown.Item>
                                 </footer>
                               </Dropdown.Menu>
                             </Dropdown>

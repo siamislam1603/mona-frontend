@@ -283,7 +283,7 @@ const TrainingDetail = () => {
 
                       <Row>
                         {
-                          videoFiles.length > 0 &&
+                          videoFiles?.length > 0 &&
                         <Col lg={5} md={6}>
                           <div className="video-tuto-sec mb-5">
                               <>
@@ -308,7 +308,7 @@ const TrainingDetail = () => {
                         <Col lg={7} md={6}>
                           <div className="related-files-sec mb-5">
                             {
-                              relatedFiles.length > 0 &&
+                              relatedFiles?.length > 0 &&
                               <>
                                 <h3 className="title-sm">Related Files</h3>
                                 <div className="column-list files-list two-col mb-5">
@@ -338,7 +338,7 @@ const TrainingDetail = () => {
                         </Col>
 
                         {
-                          users.length > 0 &&
+                          users?.length > 0 &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -365,7 +365,7 @@ const TrainingDetail = () => {
                         }
 
                         {
-                          nonParticipants.length > 0 &&
+                          nonParticipants?.length > 0 &&
                           <Col md={12}>
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
