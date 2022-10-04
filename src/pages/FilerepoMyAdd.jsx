@@ -80,6 +80,7 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
+        console.log(selected_Franchisee, "selected_Franchisee")
     }, [])
 
 
@@ -90,9 +91,9 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-
+                    console.log('FILE RESPONSE:', files);
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
                         userID: dt.id,
                         creatorName: dt.creatorName + "," + dt.creatorRole,
@@ -102,6 +103,7 @@ const FilerepoMyAdd = ({ filter }) => {
                         filesId: dt.filesId,
 
                     }));
+                    console.log('FILE DATA:', tempData);
                     setUserData(tempData);
                 }
             }
@@ -203,7 +205,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileType},${dt.fileName},${dt.filesPath}`,
+                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
                         userID: dt.id,
                         creatorName: dt.creatorName + "," + dt.creatorRole,
@@ -322,6 +324,11 @@ const FilerepoMyAdd = ({ filter }) => {
         return bool;
     }
 
+    const defaultSortedBy = [{
+        dataField: "name",
+        order: "asc"  // or desc
+    }];
+
     const [columns, setColumns] = useState([
         {
             dataField: 'name',
@@ -329,9 +336,9 @@ const FilerepoMyAdd = ({ filter }) => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
-                var ret = cell[0].replace('application/', '')
-                var Text = cell[0].replace('text/', '')
-                var image = cell[0].replace('image/', '')
+                var ret = cell[1].replace('application/', '')
+                var Text = cell[1].replace('text/', '')
+                var image = cell[1].replace('image/', '')
                 var tet2 = ""
                 if (ret === 'text/html' || ret === 'text/xml') {
                     tet2 = Text
@@ -339,23 +346,22 @@ const FilerepoMyAdd = ({ filter }) => {
                 else {
                     tet2 = ret
                 }
-
                 return (
                     <>
                         <div div className="user-list">
-                            {cell[0] === "image/jpeg" || cell[0] === "image/png" || cell[0] === "image/webp" ?
+                            {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
-                                        <a href={cell[2]} download target='_blank' rel='noopener noreferrer'>
+                                        <a href={cell[2]} download>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[1]}.{image}
+                                        {cell[0]}.{image}
                                     </span>
                                 </>
                                 :
-                                cell[0] === "audio/mpeg" ?
+                                cell[1] === "audio/mpeg" ?
                                     <>
                                         <span className="user-pic-tow">
                                             <a href={cell[2]} download>
@@ -363,17 +369,17 @@ const FilerepoMyAdd = ({ filter }) => {
                                             </a>
                                         </span>
                                         <span className="user-name">
-                                            {cell[1]}.mp3
+                                            {cell[0]}.mp3
                                         </span>
                                     </>
 
-                                    : cell[0] === "video/mp4" ?
+                                    : cell[1] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
                                                 <VideoPopupfForFile
                                                     data={cell[2]}
-                                                    title={cell[0]}
-                                                    name={cell[1]}
+                                                    title={cell[1]}
+                                                    name={cell[0]}
                                                     // duration={cell[0]}
                                                     fun={handleVideoClose}
                                                 />
@@ -386,7 +392,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                 </a>
                                             </span>
                                             <span className="user-name">
-                                                {cell[1]}.{tet2}
+                                                {cell[0]}.{tet2}
                                             </span>
                                         </>
                             }
@@ -553,6 +559,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                     {userData.length > 0 ?
                                                         <BootstrapTable
                                                             {...props.baseProps}
+                                                            defaultSorted={defaultSortedBy}
                                                             pagination={paginationFactory()}
                                                         /> : (!fullLoaderStatus && <>
                                                             <div className="text-center mb-5 mt-5"><strong>Your file either deleted or not available.</strong></div>
@@ -621,12 +628,27 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
+                                                                assigned_franchisee: [],
                                                                 franchisee: []
                                                             }));
                                                             setSendToAllFranchisee('none')
                                                         }}
                                                         disabled={getUser_Role !== 'franchisor_admin'}
                                                     />
+                                                    {/* <input
+                                                        type="radio"
+                                                        name="send_to_all_franchisee"
+                                                        checked={sendToAllFranchisee === 'none'}
+                                                        id="none"
+                                                        onChange={() => {
+                                                            setFormSettings(prevState => ({
+                                                                ...prevState,
+                                                                franchisee: []
+                                                            }));
+                                                            setSendToAllFranchisee('none')
+                                                        }}
+                                                        disabled={getUser_Role !== 'franchisor_admin'}
+                                                    /> */}
                                                     <span className="radio-round"></span>
                                                     <p>No</p>
                                                 </label>
@@ -671,286 +693,292 @@ const FilerepoMyAdd = ({ filter }) => {
                                 </Col>
                             </Row>)}
 
-                            <Row className="mt-4">
-                                <Col lg={3} md={6}>
-                                    <Form.Group>
-                                        <Form.Label>Accessible to:</Form.Label>
-                                        <div className="new-form-radio d-block">
-                                            <div className="new-form-radio-box">
-                                                <label for="roles">
-                                                    <input
-                                                        type="radio"
-                                                        value={1}
-                                                        checked={formSettings.accessibleToRole === 1}
-                                                        name="accessibleToRole"
-                                                        id="roles"
-                                                        onChange={() => {
-                                                            setFormSettings(prevState => ({
-                                                                ...prevState,
-                                                                // assigned_users: [],
-                                                                // assigned_users_data: [],
-                                                                accessibleToRole: 1
-                                                            }));
-                                                            setApplicableToAll(true);
-                                                            setShareType("roles");
-                                                        }}
-                                                    />
-                                                    <span className="radio-round"></span>
-                                                    <p>User Roles</p>
-                                                </label>
-                                            </div>
-                                            <div className="new-form-radio-box m-0 mt-3">
-                                                <label for="users">
-                                                    <input
-                                                        type="radio"
-                                                        name="accessibleToRole"
-                                                        value={0}
-                                                        checked={formSettings.accessibleToRole === 0}
-                                                        id="users"
-                                                        onChange={() => {
-                                                            setFormSettings(prevState => ({
-                                                                ...prevState,
-                                                                // assigned_role: [],
-                                                                accessibleToRole: 0
-                                                            }));
-                                                            setApplicableToAll(false);
-                                                            setShareType("users");
-                                                        }}
-                                                    />
-                                                    <span className="radio-round"></span>
-                                                    <p>Specific Users</p>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </Form.Group>
-                                </Col>
-
-                                <Col lg={9} md={12}>
-                                    {
-                                        formSettings.accessibleToRole === 1 ?
-                                            (<>
-                                                <Form.Label className="d-block">Select User Roles</Form.Label>
-                                                <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
-                                                    {['franchisor_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                                                        <Form.Check
-                                                            type="checkbox"
-                                                            checked={formSettings.assigned_role.includes("franchisee_admin")}
-                                                            label="Franchisee Admin"
-                                                            onChange={() => {
-                                                                if (formSettings.assigned_role.includes("franchisee_admin")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "franchisee_admin");
+                            {
+                                sendToAllFranchisee == "none" && formSettings?.franchisee.length < 1 ? "" :
+                                    (<Row className="mt-4">
+                                        <Col lg={3} md={6}>
+                                            <Form.Group>
+                                                <Form.Label>Accessible to:</Form.Label>
+                                                <div className="new-form-radio d-block">
+                                                    <div className="new-form-radio-box">
+                                                        <label for="roles">
+                                                            <input
+                                                                type="radio"
+                                                                value={1}
+                                                                checked={formSettings.accessibleToRole === 1}
+                                                                name="accessibleToRole"
+                                                                id="roles"
+                                                                onChange={() => {
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...data],
+                                                                        // assigned_users: [],
+                                                                        // assigned_users_data: [],
                                                                         accessibleToRole: 1
                                                                     }));
-                                                                }
-
-                                                                if (!formSettings.assigned_role.includes("franchisee_admin"))
+                                                                    setApplicableToAll(true);
+                                                                    setShareType("roles");
+                                                                }}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>User Roles</p>
+                                                        </label>
+                                                    </div>
+                                                    <div className="new-form-radio-box m-0 mt-3">
+                                                        <label for="users">
+                                                            <input
+                                                                type="radio"
+                                                                name="accessibleToRole"
+                                                                value={0}
+                                                                checked={formSettings.accessibleToRole === 0}
+                                                                id="users"
+                                                                onChange={() => {
                                                                     setFormSettings(prevState => ({
                                                                         ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "franchisee_admin"],
-                                                                        accessibleToRole: 1
-                                                                    }))
-                                                            }} />
-                                                    </Form.Group>) : null}
-
-                                                    {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox0">
-                                                        <Form.Check
-                                                            type="checkbox"
-                                                            checked={formSettings.assigned_role.includes("coordinator")}
-                                                            label="Coordinator"
-                                                            onChange={() => {
-                                                                if (formSettings.assigned_role.includes("coordinator")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "coordinator");
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...data],
-                                                                        accessibleToRole: 1
+                                                                        // assigned_role: [],
+                                                                        accessibleToRole: 0
                                                                     }));
-                                                                }
+                                                                    setApplicableToAll(false);
+                                                                    setShareType("users");
+                                                                }}
+                                                            />
+                                                            <span className="radio-round"></span>
+                                                            <p>Specific Users</p>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
 
-                                                                if (!formSettings.assigned_role.includes("coordinator"))
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "coordinator"],
-                                                                        accessibleToRole: 1
-                                                                    }))
-                                                            }} />
-                                                    </Form.Group>) : null}
+                                        <Col lg={9} md={12}>
+                                            {
+                                                formSettings.accessibleToRole === 1 ?
+                                                    (<>
+                                                        <Form.Label className="d-block">Select User Roles</Form.Label>
+                                                        <div className="btn-checkbox" style={{ display: "flex", flexDirection: "row" }}>
+                                                            {['franchisor_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                                                                <Form.Check
+                                                                    type="checkbox"
+                                                                    checked={formSettings.assigned_role.includes("franchisee_admin")}
+                                                                    label="Franchisee Admin"
+                                                                    onChange={() => {
+                                                                        if (formSettings.assigned_role.includes("franchisee_admin")) {
+                                                                            let data = formSettings.assigned_role.filter(t => t !== "franchisee_admin");
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...data],
+                                                                                accessibleToRole: 1
+                                                                            }));
+                                                                        }
 
-                                                    {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                                                        <Form.Check
-                                                            type="checkbox"
-                                                            label="Educator"
-                                                            checked={formSettings.assigned_role.includes("educator")}
-                                                            onChange={() => {
-                                                                if (formSettings.assigned_role.includes("educator")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "educator");
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...data],
-                                                                        accessibleToRole: 1
-                                                                    }));
-                                                                }
+                                                                        if (!formSettings.assigned_role.includes("franchisee_admin"))
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...formSettings.assigned_role, "franchisee_admin"],
+                                                                                accessibleToRole: 1
+                                                                            }))
+                                                                    }} />
+                                                            </Form.Group>) : null}
 
-                                                                if (!formSettings.assigned_role.includes("educator"))
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "educator"],
-                                                                        accessibleToRole: 1
-                                                                    }))
-                                                            }} />
-                                                    </Form.Group>) : null}
+                                                            {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox0">
+                                                                <Form.Check
+                                                                    type="checkbox"
+                                                                    checked={formSettings.assigned_role.includes("coordinator")}
+                                                                    label="Coordinator"
+                                                                    onChange={() => {
+                                                                        if (formSettings.assigned_role.includes("coordinator")) {
+                                                                            let data = formSettings.assigned_role.filter(t => t !== "coordinator");
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...data],
+                                                                                accessibleToRole: 1
+                                                                            }));
+                                                                        }
 
-                                                    {!['guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                                                        <Form.Check
-                                                            type="checkbox"
-                                                            label="guardian"
-                                                            checked={formSettings.assigned_role.includes("guardian")}
-                                                            onChange={() => {
-                                                                if (formSettings.assigned_role.includes("guardian")) {
-                                                                    let data = formSettings.assigned_role.filter(t => t !== "guardian");
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...data],
-                                                                        accessibleToRole: 1
-                                                                    }));
-                                                                }
+                                                                        if (!formSettings.assigned_role.includes("coordinator"))
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...formSettings.assigned_role, "coordinator"],
+                                                                                accessibleToRole: 1
+                                                                            }))
+                                                                    }} />
+                                                            </Form.Group>) : null}
 
-                                                                if (!formSettings.assigned_role.includes("guardian"))
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_role: [...formSettings.assigned_role, "guardian"],
-                                                                        accessibleToRole: 1
-                                                                    }))
-                                                            }} />
-                                                    </Form.Group>) : null}
+                                                            {['franchisor_admin', 'franchisee_admin', 'coordinator'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                                                                <Form.Check
+                                                                    type="checkbox"
+                                                                    label="Educator"
+                                                                    checked={formSettings.assigned_role.includes("educator")}
+                                                                    onChange={() => {
+                                                                        if (formSettings.assigned_role.includes("educator")) {
+                                                                            let data = formSettings.assigned_role.filter(t => t !== "educator");
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...data],
+                                                                                accessibleToRole: 1
+                                                                            }));
+                                                                        }
 
-                                                    {!['educator', 'guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                                                        <Form.Check
-                                                            type="checkbox"
-                                                            label="All Roles"
-                                                            checked={isAllRolesChecked()}
-                                                            onChange={() => {
-                                                                if (getUser_Role == 'franchisor_admin') {
-                                                                    if (formSettings.assigned_role.includes("coordinator")
-                                                                        && formSettings.assigned_role.includes("educator")
-                                                                        && formSettings.assigned_role.includes("guardian")
-                                                                        && formSettings.assigned_role.includes("franchisee_admin")
-                                                                    ) {
-                                                                        setFormSettings(prevState => ({
+                                                                        if (!formSettings.assigned_role.includes("educator"))
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...formSettings.assigned_role, "educator"],
+                                                                                accessibleToRole: 1
+                                                                            }))
+                                                                    }} />
+                                                            </Form.Group>) : null}
+
+                                                            {!['guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                                                                <Form.Check
+                                                                    type="checkbox"
+                                                                    label="guardian"
+                                                                    checked={formSettings.assigned_role.includes("guardian")}
+                                                                    onChange={() => {
+                                                                        if (formSettings.assigned_role.includes("guardian")) {
+                                                                            let data = formSettings.assigned_role.filter(t => t !== "guardian");
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...data],
+                                                                                accessibleToRole: 1
+                                                                            }));
+                                                                        }
+
+                                                                        if (!formSettings.assigned_role.includes("guardian"))
+                                                                            setFormSettings(prevState => ({
+                                                                                ...prevState,
+                                                                                assigned_role: [...formSettings.assigned_role, "guardian"],
+                                                                                accessibleToRole: 1
+                                                                            }))
+                                                                    }} />
+                                                            </Form.Group>) : null}
+
+                                                            {!['educator', 'guardian'].includes(getUser_Role) ? (<Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                                                <Form.Check
+                                                                    type="checkbox"
+                                                                    label="All Roles"
+                                                                    checked={isAllRolesChecked()}
+                                                                    onChange={() => {
+                                                                        if (getUser_Role == 'franchisor_admin') {
+                                                                            if (formSettings.assigned_role.includes("coordinator")
+                                                                                && formSettings.assigned_role.includes("educator")
+                                                                                && formSettings.assigned_role.includes("guardian")
+                                                                                && formSettings.assigned_role.includes("franchisee_admin")
+                                                                            ) {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: [],
+                                                                                }));
+                                                                            }
+                                                                            else {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"],
+                                                                                    accessibleToRole: 1
+                                                                                }))
+                                                                            }
+
+                                                                        }
+
+                                                                        if (getUser_Role == 'franchisee_admin') {
+                                                                            if (formSettings.assigned_role.includes("coordinator")
+                                                                                && formSettings.assigned_role.includes("educator")
+                                                                                && formSettings.assigned_role.includes("guardian")
+                                                                            ) {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: [],
+                                                                                }));
+                                                                            }
+
+                                                                            else {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: ["coordinator", "educator", "guardian"],
+                                                                                    accessibleToRole: 1
+                                                                                })
+                                                                                )
+                                                                            }
+                                                                        }
+
+                                                                        if (getUser_Role == 'coordinator') {
+                                                                            if (
+                                                                                formSettings.assigned_role.includes("educator")
+                                                                                && formSettings.assigned_role.includes("guardian")
+                                                                            ) {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: [],
+                                                                                }));
+                                                                            }
+
+                                                                            else {
+                                                                                setFormSettings(prevState => ({
+                                                                                    ...prevState,
+                                                                                    assigned_role: ["educator", "guardian"],
+                                                                                    accessibleToRole: 1
+                                                                                })
+                                                                                )
+                                                                            }
+                                                                        }
+                                                                    }} />
+                                                            </Form.Group>) : null}
+                                                        </div> </>) : null}
+                                            {
+                                                formSettings.accessibleToRole === 0 ?
+                                                    (<>
+                                                        <Form.Group>
+                                                            <Form.Label>Select User</Form.Label>
+                                                            <div className="select-with-plus">
+                                                                <Multiselect
+                                                                    displayValue="email"
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    // placeholder="Select Franchisee"
+                                                                    selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
+                                                                    value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
+                                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                                    onRemove={onRemoveUser}
+                                                                    // onSearch={function noRefCheck() {}}
+                                                                    onSelect={(selectedOptions) => {
+                                                                        setFormSettings((prevState) => ({
                                                                             ...prevState,
-                                                                            assigned_role: [],
-                                                                        }));
-                                                                    }
-                                                                    else {
-                                                                        setFormSettings(prevState => ({
-                                                                            ...prevState,
-                                                                            assigned_role: ["coordinator", "educator", "guardian", "franchisee_admin"],
-                                                                            accessibleToRole: 1
+                                                                            assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                            accessibleToRole: 0
                                                                         }))
-                                                                    }
-
-                                                                }
-
-                                                                if (getUser_Role == 'franchisee_admin') {
-                                                                    if (formSettings.assigned_role.includes("coordinator")
-                                                                        && formSettings.assigned_role.includes("educator")
-                                                                        && formSettings.assigned_role.includes("guardian")
-                                                                    ) {
-                                                                        setFormSettings(prevState => ({
+                                                                    }}
+                                                                    options={user}
+                                                                />
+                                                            </div>
+                                                        </Form.Group>
+                                                        <Form.Group>
+                                                            <Form.Label>Select Child</Form.Label>
+                                                            <div className="select-with-plus">
+                                                                <Multiselect
+                                                                    displayValue="fullname"
+                                                                    className="multiselect-box default-arrow-select"
+                                                                    // placeholder="Select Franchisee"
+                                                                    selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
+                                                                    value={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
+                                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                                    onRemove={onRemoveUser}
+                                                                    // onSearch={function noRefCheck() {}}
+                                                                    onSelect={(selectedOptions) => {
+                                                                        setFormSettings((prevState) => ({
                                                                             ...prevState,
-                                                                            assigned_role: [],
-                                                                        }));
-                                                                    }
+                                                                            assigned_childs: [...selectedOptions.map(option => option.id + "")],
+                                                                            accessibleToRole: 0
+                                                                        }))
+                                                                    }}
+                                                                    options={child}
+                                                                />
+                                                            </div>
+                                                        </Form.Group>
+                                                    </>) : null
+                                            }
+                                        </Col>
+                                    </Row>)
 
-                                                                    else {
-                                                                        setFormSettings(prevState => ({
-                                                                            ...prevState,
-                                                                            assigned_role: ["coordinator", "educator", "guardian"],
-                                                                            accessibleToRole: 1
-                                                                        })
-                                                                        )
-                                                                    }
-                                                                }
+                            }
 
-                                                                if (getUser_Role == 'coordinator') {
-                                                                    if (
-                                                                        formSettings.assigned_role.includes("educator")
-                                                                        && formSettings.assigned_role.includes("guardian")
-                                                                    ) {
-                                                                        setFormSettings(prevState => ({
-                                                                            ...prevState,
-                                                                            assigned_role: [],
-                                                                        }));
-                                                                    }
 
-                                                                    else {
-                                                                        setFormSettings(prevState => ({
-                                                                            ...prevState,
-                                                                            assigned_role: ["educator", "guardian"],
-                                                                            accessibleToRole: 1
-                                                                        })
-                                                                        )
-                                                                    }
-                                                                }
-                                                            }} />
-                                                    </Form.Group>) : null}
-                                                </div> </>) : null}
-                                    {
-                                        formSettings.accessibleToRole === 0 ?
-                                            (<>
-                                                <Form.Group>
-                                                    <Form.Label>Select User</Form.Label>
-                                                    <div className="select-with-plus">
-                                                        <Multiselect
-                                                            displayValue="email"
-                                                            className="multiselect-box default-arrow-select"
-                                                            // placeholder="Select Franchisee"
-                                                            selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
-                                                            value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
-                                                            // onKeyPressFn={function noRefCheck() {}}
-                                                            onRemove={onRemoveUser}
-                                                            // onSearch={function noRefCheck() {}}
-                                                            onSelect={(selectedOptions) => {
-                                                                setFormSettings((prevState) => ({
-                                                                    ...prevState,
-                                                                    assigned_users: [...selectedOptions.map(option => option.id + "")],
-                                                                    accessibleToRole: 0
-                                                                }))
-                                                            }}
-                                                            options={user}
-                                                        />
-                                                    </div>
-                                                </Form.Group>
-                                                <Form.Group>
-                                                    <Form.Label>Select Child</Form.Label>
-                                                    <div className="select-with-plus">
-                                                        <Multiselect
-                                                            displayValue="fullname"
-                                                            className="multiselect-box default-arrow-select"
-                                                            // placeholder="Select Franchisee"
-                                                            selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
-                                                            value={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
-                                                            // onKeyPressFn={function noRefCheck() {}}
-                                                            onRemove={onRemoveUser}
-                                                            // onSearch={function noRefCheck() {}}
-                                                            onSelect={(selectedOptions) => {
-                                                                setFormSettings((prevState) => ({
-                                                                    ...prevState,
-                                                                    assigned_childs: [...selectedOptions.map(option => option.id + "")],
-                                                                    accessibleToRole: 0
-                                                                }))
-                                                            }}
-                                                            options={child}
-                                                        />
-                                                    </div>
-                                                </Form.Group>
-                                            </>) : null
-                                    }
-                                </Col>
-                            </Row>
                         </div>
                     </Modal.Body>
                     <Modal.Footer className="justify-content-center">

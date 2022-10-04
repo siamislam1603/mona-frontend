@@ -37,7 +37,11 @@ const FileRepository = () => {
     category_name: "",
     id: ""
   })
-
+  // const HideButton = () => {
+  //   if (Updatecategory_name.category_name.length > 0) {
+  //     setDisablese(false)
+  //   }
+  // }
   // const DisableButton = () => {
   //   let category_name = localStorage.getItem("category_Update_Names");
   //   console.log(category_name, Updatecategory_name.category_name, "Updatecategory_name.category_name")
@@ -124,8 +128,6 @@ const FileRepository = () => {
       window.location.reload(false)
       SetCategoryCreated(message)
       getFileCategory();
-
-
       setTimeout(() => {
         SetCategoryCreated(null)
       }, 3000)
@@ -442,7 +444,6 @@ const FileRepository = () => {
                                 {!Updatecategory_name.category_name}
                                 {disablee &&
                                   <Button
-
                                     onClick={(e) => SubEditmiton(e)}>
                                     Update
                                   </Button>
