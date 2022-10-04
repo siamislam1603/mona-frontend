@@ -71,9 +71,11 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }
 
   const trainingCreatedByMe = async () => {
+    console.log("THe training created by me call",selectedFranchisee)
     let user_id = localStorage.getItem('user_id');
+
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "All" || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "all" || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -223,14 +225,18 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [formSettings?.assigned_franchisee])
 
   useEffect(() => {
-    console.log('TRACED CHANGES');
-    trainingCreatedByMe()
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
+    }
   }, [filter.search, filter.category_id]);
   
   useEffect(() => {
-    console.log('SELECTED FRANCHISE:', selectedFranchisee);
-    if(selectedFranchisee) {
+    if(typeof selectedFranchisee !== "undefined") {
       trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
     }
   }, [selectedFranchisee])
 
@@ -240,7 +246,12 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   useEffect(() => {
     fetchFranchiseeList();
-    trainingCreatedByMe();
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
+    }
+    // trainingCreatedByMe();
     trainingCreatedByOther();
   }, [])
 
