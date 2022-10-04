@@ -20,26 +20,29 @@ export const DynamicFormValidation = (
       // console.log('inner_item', form[item]);
       if (inner_item.required) {
         if (!form[item]) {
-          newErrors[
-            `${inner_item.field_name}`
-          ] = `${inner_item.field_label} is required`;
+          if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+            newErrors[
+              `${inner_item.field_name}`
+            ] = `${inner_item.field_label} is required`;
         } else {
           if (
             inner_item.field_type === 'signature' &&
             signature_access_flag === true &&
             !form[item][`${inner_item.field_name}`]
           ) {
-            newErrors[
-              `${inner_item.field_name}`
-            ] = `${inner_item.field_label} is required`;
+            if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+              newErrors[
+                `${inner_item.field_name}`
+              ] = `${inner_item.field_label} is required`;
           } else {
             if (
               inner_item.field_type !== 'signature' &&
               !form[item][`${inner_item.field_name}`]
             ) {
-              newErrors[
-                `${inner_item.field_name}`
-              ] = `${inner_item.field_label} is required`;
+              if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+                newErrors[
+                  `${inner_item.field_name}`
+                ] = `${inner_item.field_label} is required`;
             }
           }
         }
