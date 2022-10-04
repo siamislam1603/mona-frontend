@@ -39,6 +39,7 @@ const FilerepoUploadFile = () => {
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
+    console.log(formSettingData, "formSettingData", formSettings)
     console.log('selected_item---->1selectedFranchisee', formSettings.assigned_franchisee.length);
 
     //======================== GET FILE CATAGOREY==================

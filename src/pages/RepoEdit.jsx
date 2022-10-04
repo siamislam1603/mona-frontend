@@ -467,7 +467,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: []
+                                                                                            assigned_franchisee: ["none"]
                                                                                         }));
                                                                                         setSendToAllFranchisee('none')
                                                                                     }}
@@ -554,7 +554,7 @@ const RepoEdit = () => {
                                                                 </Form.Group>
                                                             </Col>
                                                         </Row>)}
-                                                        {sendToAllFranchisee === "none" && formSettings.franchisee.length < 1 ? "" : (
+                                                        {sendToAllFranchisee === "none" && formSettings.franchisee.length  ? "" : (
                                                             <Row className="mt-4">
                                                                 <Col lg={3} md={6}>
                                                                     <Form.Group>

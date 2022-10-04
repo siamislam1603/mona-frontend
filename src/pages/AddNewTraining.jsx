@@ -58,10 +58,10 @@ const validateTrainingSettings = (trainingSettings) => {
   if (!start_time)
     errors.start_time = "Choose a start time";
 
-  if(end_date && end_date < start_date)
+  if (end_date && end_date < start_date)
     errors.end_date = "End date must be greater than start date";
 
-  if(start_date && start_time && end_date && end_time && start_date === end_date && start_time > end_time) 
+  if (start_date && start_time && end_date && end_time && start_date === end_date && start_time > end_time)
     errors.end_time = "End time must be greater than start time"
 
   return errors;
@@ -119,6 +119,7 @@ const AddNewTraining = () => {
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
+ 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
 
@@ -297,18 +298,18 @@ const AddNewTraining = () => {
   // AUTOFOCUS ON TRAINING
   const setAutoFocusOnTraining = (errorObj) => {
     let errArray = Object.keys(errorObj);
-    
-    if(errArray.includes("title")) {
+
+    if (errArray.includes("title")) {
       title?.current?.focus();
-    } else if(errArray.includes("category_id")) {
+    } else if (errArray.includes("category_id")) {
       category_id?.current?.focus();
-    } else if(errArray.includes("description")) {
+    } else if (errArray.includes("description")) {
       description?.current?.focus();
-    } else if(errArray.includes("meta_description")) {
+    } else if (errArray.includes("meta_description")) {
       meta_description?.current?.focus();
-    } else if(errArray.includes("time_required_to_complete")) {
+    } else if (errArray.includes("time_required_to_complete")) {
       time_required_to_complete?.current?.focus();
-    } 
+    }
   }
 
   const handleDataSubmit = event => {
@@ -392,7 +393,7 @@ const AddNewTraining = () => {
   }, []);
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') !== 'franchisor_admin') {
+    if (localStorage.getItem('user_role') !== 'franchisor_admin') {
       setTrainingSettings(prevState => ({
         ...prevState,
         assigned_franchisee: [selectedFranchisee]
@@ -401,7 +402,7 @@ const AddNewTraining = () => {
   }, [selectedFranchisee]);
 
   useEffect(() => {
-    if(relatedFiles?.length < 5) {
+    if (relatedFiles?.length < 5) {
       setErrors(prevState => ({
         ...prevState,
         doc: null
@@ -410,7 +411,7 @@ const AddNewTraining = () => {
   }, [relatedFiles]);
 
   useEffect(() => {
-    if(videoTutorialFiles?.length > 5) {
+    if (videoTutorialFiles?.length > 5) {
       setErrors(prevState => ({
         ...prevState,
         video: null
@@ -420,13 +421,13 @@ const AddNewTraining = () => {
 
   const getUniqueErrors = (arr) => {
     var result = [];
-    arr.forEach(function(item) {
-        if(result.indexOf(item) < 0) {
-            result.push(item);
-        }
+    arr.forEach(function (item) {
+      if (result.indexOf(item) < 0) {
+        result.push(item);
+      }
     });
 
-   return result;
+    return result;
   }
 
   useEffect(() => {
@@ -434,13 +435,13 @@ const AddNewTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [videoFileErrorMessage])
-  
+
   useEffect(() => {
     setDocFileError(docErrorMessage?.map(errObj => (
       errObj?.error[0]?.message
     )));
   }, [docErrorMessage])
-  
+
   useEffect(() => {
     setImageFileError(docErrorMessage?.map(errObj => (
       errObj?.error[0]?.message
@@ -602,7 +603,7 @@ const AddNewTraining = () => {
                               max={9999}
                               value={trainingData?.time_required_to_complete || ""}
                               onChange={(event) => {
-                                if(parseInt(event.target.value) < 10000) {
+                                if (parseInt(event.target.value) < 10000) {
                                   setTrainingData((prevState) => ({
                                     ...prevState,
                                     time_required_to_complete: parseInt(event.target.value),
@@ -692,7 +693,7 @@ const AddNewTraining = () => {
                               setPopupVisible={setPopupVisible} />
                           }
                           {
-                            imageFileError  &&
+                            imageFileError &&
                             getUniqueErrors(imageFileError).map(errorObj => {
                               return (
                                 <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only one image file allowed" : errorObj}</p>
@@ -715,14 +716,14 @@ const AddNewTraining = () => {
                             onSave={setVideoTutorialFiles}
                           />
                           {
-                            videoFileError  &&
+                            videoFileError &&
                             getUniqueErrors(videoFileError).map(errorObj => {
                               return (
                                 <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
                               )
                             })
                           }
-                          { errors.video !== null && <span className="error">{errors.video}</span> }
+                          {errors.video !== null && <span className="error">{errors.video}</span>}
                         </Form.Group>
                       </Col>
 
@@ -734,14 +735,14 @@ const AddNewTraining = () => {
                             onSave={setRelatedFiles}
                           />
                           {
-                            docFileError  &&
+                            docFileError &&
                             getUniqueErrors(docFileError).map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed" : errorObj}</p>
                               )
                             })
                           }
-                          { errors.doc !== null && <span className="error">{errors.doc}</span> }
+                          {errors.doc !== null && <span className="error">{errors.doc}</span>}
                         </Form.Group>
                       </Col>
                       <Col md={12}>
@@ -771,9 +772,9 @@ const AddNewTraining = () => {
           </Container>
         </section>
       </div>
-      
+
       {
-          localStorage.getItem('user_role') === 'franchisor_admin'
+        localStorage.getItem('user_role') === 'franchisor_admin'
           ?
           (<Modal
             className="training-modal"
@@ -791,11 +792,11 @@ const AddNewTraining = () => {
                 <Row>
                   <Col lg={3} sm={6}>
                     <Form.Group>
-                      <Form.Label>Start Date *</Form.Label> 
+                      <Form.Label>Start Date *</Form.Label>
                       <Form.Control
                         type="date"
                         className="datepicker"
-                        placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
+                        placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
                         name="start_date"
                         value={trainingSettings?.start_date}
                         min={moment().format('YYYY-MM-DD')}
@@ -819,7 +820,7 @@ const AddNewTraining = () => {
                         name="start_time"
                         // min={moment().format(pickTime: false )}
                         className="timepicker"
-                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --"}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
                         onChange={(e) => {
@@ -840,7 +841,7 @@ const AddNewTraining = () => {
                         type="date"
                         name="end_date"
                         className="datepicker"
-                        placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
+                        placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
                         value={trainingSettings?.end_date}
                         min={moment().format('YYYY-MM-DD')}
                         onChange={(e) => {
@@ -1085,7 +1086,7 @@ const AddNewTraining = () => {
                             checked={trainingSettings.assigned_roles.length === 3}
                             onChange={() => {
 
-                              if(trainingSettings?.assigned_roles?.length > 0) {
+                              if (trainingSettings?.assigned_roles?.length > 0) {
                                 setTrainingSettings(prevState => ({
                                   ...prevState,
                                   assigned_roles: ["franchisee_admin", "coordinator", "educator"]
@@ -1214,7 +1215,7 @@ const AddNewTraining = () => {
                         type="time"
                         name="start_time"
                         className="timepicker"
-                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --" }
+                        placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time, 'HH:mm').format("hh:mm A") : "--:-- --"}
                         min={moment().format('HH:mm')}
                         style={{ zIndex: "9999999 !important" }}
                         value={trainingSettings?.start_time}
@@ -1399,72 +1400,72 @@ const AddNewTraining = () => {
 
                         {
                           localStorage.getItem('user_role') === 'franchisor_admin'
-                          ?(
-                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                              <Form.Check
-                                type="checkbox"
-                                label="All Roles"
-                                checked={trainingSettings.assigned_roles.length === 3}
-                                onChange={() => {
-                                  if(trainingSettings?.assigned_roles?.length > 0) {
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                    }));
-                                  }
+                            ? (
+                              <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                <Form.Check
+                                  type="checkbox"
+                                  label="All Roles"
+                                  checked={trainingSettings.assigned_roles.length === 3}
+                                  onChange={() => {
+                                    if (trainingSettings?.assigned_roles?.length > 0) {
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                      }));
+                                    }
 
-                                  if (trainingSettings.assigned_roles.includes("franchisee_admin")
-                                    && trainingSettings.assigned_roles.includes("coordinator")
-                                    && trainingSettings.assigned_roles.includes("educator")) {
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: [],
-                                    }));
-                                  }
+                                    if (trainingSettings.assigned_roles.includes("franchisee_admin")
+                                      && trainingSettings.assigned_roles.includes("coordinator")
+                                      && trainingSettings.assigned_roles.includes("educator")) {
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: [],
+                                      }));
+                                    }
 
-                                  if (!trainingSettings.assigned_roles.includes("franchisee_admin")
-                                    && !trainingSettings.assigned_roles.includes("coordinator")
-                                    && !trainingSettings.assigned_roles.includes("educator"))
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                    })
-                                    )
-                                }} />
-                            </Form.Group>
-                          )
-                          :(
-                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                              <Form.Check
-                                type="checkbox"
-                                label="All Roles"
-                                checked={trainingSettings.assigned_roles.length === 2}
-                                onChange={() => {
-                                  if(trainingSettings?.assigned_roles?.length > 0) {
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: ["coordinator", "educator"]
-                                    }));
-                                  }
+                                    if (!trainingSettings.assigned_roles.includes("franchisee_admin")
+                                      && !trainingSettings.assigned_roles.includes("coordinator")
+                                      && !trainingSettings.assigned_roles.includes("educator"))
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                      })
+                                      )
+                                  }} />
+                              </Form.Group>
+                            )
+                            : (
+                              <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                <Form.Check
+                                  type="checkbox"
+                                  label="All Roles"
+                                  checked={trainingSettings.assigned_roles.length === 2}
+                                  onChange={() => {
+                                    if (trainingSettings?.assigned_roles?.length > 0) {
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["coordinator", "educator"]
+                                      }));
+                                    }
 
-                                  if (trainingSettings.assigned_roles.includes("coordinator")
-                                    && trainingSettings.assigned_roles.includes("educator")) {
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: [],
-                                    }));
-                                  }
+                                    if (trainingSettings.assigned_roles.includes("coordinator")
+                                      && trainingSettings.assigned_roles.includes("educator")) {
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: [],
+                                      }));
+                                    }
 
-                                  if (!trainingSettings.assigned_roles.includes("coordinator")
-                                    && !trainingSettings.assigned_roles.includes("educator"))
-                                    setTrainingSettings(prevState => ({
-                                      ...prevState,
-                                      assigned_roles: ["coordinator", "educator"]
-                                    })
-                                    )
-                                }} />
-                            </Form.Group>
-                          )
+                                    if (!trainingSettings.assigned_roles.includes("coordinator")
+                                      && !trainingSettings.assigned_roles.includes("educator"))
+                                      setTrainingSettings(prevState => ({
+                                        ...prevState,
+                                        assigned_roles: ["coordinator", "educator"]
+                                      })
+                                      )
+                                  }} />
+                              </Form.Group>
+                            )
                         }
                       </div>
                     </div>
@@ -1530,7 +1531,7 @@ const AddNewTraining = () => {
             </Modal.Footer>
           </Modal>
           )
-        }
+      }
       {
         createTrainingModal &&
         <Modal
