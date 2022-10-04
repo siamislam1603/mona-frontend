@@ -665,6 +665,12 @@ const EditTraining = () => {
                               components={animatedComponents}
                               placeholder="Select"
                               options={trainingFormData}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
@@ -1021,8 +1027,8 @@ const EditTraining = () => {
                     <Col lg={3} md={6}>
                       <Form.Group>
                         <Form.Label>Accessible to</Form.Label>
-                        <div className="new-form-radio">
-                          <div className="new-form-radio-box">
+                        <div className="new-form-radio d-block">
+                          <div className="new-form-radio-box mb-3">
                             <label htmlFor="yes1">
                               <input
                                 type="radio"
@@ -1041,7 +1047,7 @@ const EditTraining = () => {
                               <p>User Roles</p>
                             </label>
                           </div>
-                          <div className="new-form-radio-box">
+                          <div className="new-form-radio-box mb-3">
                             <label htmlFor="no1">
                               <input
                                 type="radio"

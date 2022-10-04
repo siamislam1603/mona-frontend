@@ -7,7 +7,7 @@ export const DynamicFormValidation = (
   behalf_of_flag,
   signature_access_flag
 ) => {
-  console.log("data",data);
+  console.log('form------->sdfdsfdsfdsfdsfs', form);
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
@@ -15,31 +15,38 @@ export const DynamicFormValidation = (
   }
   Object.keys(data)?.map((item) => {
     // console.log('inner_item_item--->', item);
-    console.log("data[item]---->",data[item]);
+    console.log('data[item]---->', data[item]);
     data[item].map((inner_item) => {
       // console.log('inner_item', form[item]);
-
-    
       if (inner_item.required) {
-        if(inner_item.field_type==="signature" && signature_access_flag===true && !data[item][`${inner_item.field_name}`])
-        {
+        if (!form[item]) {
           newErrors[
             `${inner_item.field_name}`
           ] = `${inner_item.field_label} is required`;
-        }
-        else{
-          if (inner_item.field_type!=="signature" && !data[item][`${inner_item.field_name}`]) {
+        } else {
+          if (
+            inner_item.field_type === 'signature' &&
+            signature_access_flag === true &&
+            !form[item][`${inner_item.field_name}`]
+          ) {
             newErrors[
               `${inner_item.field_name}`
             ] = `${inner_item.field_label} is required`;
+          } else {
+            if (
+              inner_item.field_type !== 'signature' &&
+              !form[item][`${inner_item.field_name}`]
+            ) {
+              newErrors[
+                `${inner_item.field_name}`
+              ] = `${inner_item.field_label} is required`;
+            }
           }
         }
-        
-        
       }
     });
   });
-  
+
   return newErrors;
 };
 export const createCategoryValidation = (form) => {
@@ -154,10 +161,10 @@ export const createFormValidation = (form) => {
 
   return newErrors;
 };
-export const createOperatingManualValidation = (form,wordCount) => {
+export const createOperatingManualValidation = (form, wordCount) => {
   let newErrors = {};
-  console.log("THE FORM",form)
-  let { title, description, order,related_files } = form;
+  console.log('THE FORM', form);
+  let { title, description, order, related_files } = form;
   if (!title || title === '') newErrors.title = 'Title is Required';
   if (order < 0) newErrors.order = 'Order must be greater than 0';
   if (order === 0 || order === '0')
@@ -165,20 +172,28 @@ export const createOperatingManualValidation = (form,wordCount) => {
   if (!order || order === '') newErrors.order = 'Position is Required';
   if (!description || description === '')
     newErrors.description = 'Description is Required';
-  if(wordCount>1000){
+  if (wordCount > 1000) {
     newErrors.description = 'Description character count is more than 1000';
   }
-  if(related_files.length>5){
-    newErrors.related_files="Max limit is 5 files"
+  if (related_files.length > 5) {
+    newErrors.related_files = 'Max limit is 5 files';
   }
   return newErrors;
 };
 //Validation for edit annoutment
 
-export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titleError,titleChecking,wordCount,relatedFiles) => {
-  console.log('The form validation', titleError,titleChecking);
+export const AddNewAnnouncementValidation = (
+  form,
+  coverImage,
+  allFranchise,
+  titleError,
+  titleChecking,
+  wordCount,
+  relatedFiles
+) => {
+  console.log('The form validation', titleError, titleChecking);
   let newErrors = {};
-  const role = localStorage.getItem("user_role")
+  const role = localStorage.getItem('user_role');
 
   console.log('The form validat', form);
   let { title, meta_description, start_date, start_time, franchise } = form;
@@ -186,22 +201,21 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   if (!title || title === ' ')
     newErrors.title = 'Announcement Title is Required ';
   // if (!coverImage)newErrors.coverImage = 'Cover image is Required';
-  let reg = /^\s|\s$/
-  if(wordCount>1000){
-    newErrors.meta_description = 'Description character count is more than 1000';
+  let reg = /^\s|\s$/;
+  if (wordCount > 1000) {
+    newErrors.meta_description =
+      'Description character count is more than 1000';
   }
- if(title){
-  if(title.match(reg)){
-    // console.log("contains spaces");
-    newErrors.title = 'Contain unwanted space';
-     
+  if (title) {
+    if (title.match(reg)) {
+      // console.log("contains spaces");
+      newErrors.title = 'Contain unwanted space';
     }
- } 
- if(relatedFiles?.length>5){
-  newErrors.relatedFile = "Max limit of files is 5"
- }
- 
-  
+  }
+  if (relatedFiles?.length > 5) {
+    newErrors.relatedFile = 'Max limit of files is 5';
+  }
+
   if (!start_date || start_date === 'undefined')
     newErrors.start_date = 'Start Date Required';
   if (!start_time || start_time === 'undefined')
@@ -209,70 +223,68 @@ export const AddNewAnnouncementValidation = (form, coverImage, allFranchise,titl
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Announcement Description is Required';
 
-
   // if(meta_description.match(reg)){
-     
-  //     newErrors.meta_description = 'Contain unwanted space';     
+
+  //     newErrors.meta_description = 'Contain unwanted space';
   // }
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      if(role == "franchisor_admin"){
-        newErrors.franchise = "Please Select Franchise"
-
+      if (role == 'franchisor_admin') {
+        newErrors.franchise = 'Please Select Franchise';
       }
-
     }
-
   }
-
 
   return newErrors;
 };
-export const EditAnnouncementValidation = (form, coverImage, Data, allFranchise,wordCount,relatedFiles) => {
+export const EditAnnouncementValidation = (
+  form,
+  coverImage,
+  Data,
+  allFranchise,
+  wordCount,
+  relatedFiles
+) => {
   let newErrors = {};
-  const role = localStorage.getItem("user_role")
-  console.log('The form validat', form,allFranchise);
+  const role = localStorage.getItem('user_role');
+  console.log('The form validat', form, allFranchise);
   // console.log("The DATA VALIDATION",newData)
   let { title, meta_description, start_date, start_time, franchise } = form;
 
   console.log('All valiatiion', title, start_date, meta_description);
   if (!title || title === ' ') newErrors.title = 'Title is Required';
-  let reg = /^\s|\s$/
-  if(title){
-    if(title.match(reg)){
+  let reg = /^\s|\s$/;
+  if (title) {
+    if (title.match(reg)) {
       // console.log("contains spaces");
       newErrors.title = 'Contain unwanted space';
-       
-      }
-   } 
+    }
+  }
   // if (!coverImage || coverImage === '')newErrors.coverImage = 'Cover image is Required';
   if (!meta_description || meta_description === ' ')
     newErrors.meta_description = 'Description is Required';
 
-    if(meta_description.match(reg)){
-      // console.log("contains spaces");
-      newErrors.meta_description = 'Contain unwanted space';
-      } 
-   if(wordCount>1000){
-    newErrors.meta_description = 'Description character count is more than 1000';
-  
-   }   
+  if (meta_description.match(reg)) {
+    // console.log("contains spaces");
+    newErrors.meta_description = 'Contain unwanted space';
+  }
+  if (wordCount > 1000) {
+    newErrors.meta_description =
+      'Description character count is more than 1000';
+  }
   if ((start_date === ' ' && !start_date) || start_date === ' ')
     newErrors.start_date = 'Start Date Required';
   if ((start_time === ' ' && !start_time) || start_time === ' ')
     newErrors.start_time = 'Start Time Required';
   if (!franchise || franchise.length === 0) {
     if (!allFranchise) {
-      if(role == "franchisor_admin"){
-        newErrors.franchise = "Please Select Franchise"
-
+      if (role == 'franchisor_admin') {
+        newErrors.franchise = 'Please Select Franchise';
       }
-
     }
-    if(relatedFiles?.length>5){
-      newErrors.relatedFile = 'Max limit of files is 5'
+    if (relatedFiles?.length > 5) {
+      newErrors.relatedFile = 'Max limit of files is 5';
     }
-
   }
   return newErrors;
 };
@@ -315,7 +327,11 @@ export const ChildRegisterFormValidation = (form) => {
   return newErrors;
 };
 
-export const TrainingFormValidation = (form, relatedFiles, videoTutorialFiles) => {
+export const TrainingFormValidation = (
+  form,
+  relatedFiles,
+  videoTutorialFiles
+) => {
   let errors = {};
   let {
     title,
@@ -323,7 +339,6 @@ export const TrainingFormValidation = (form, relatedFiles, videoTutorialFiles) =
     description,
     meta_description,
     time_required_to_complete,
-
   } = form;
 
   if (!title) {
@@ -358,16 +373,21 @@ export const TrainingFormValidation = (form, relatedFiles, videoTutorialFiles) =
   //   errors.croppedImage = 'Cover image required!';
   // }
 
-  if(relatedFiles?.length > 5)
-    errors.doc = "Only 5 documents can be uploaded"
+  if (relatedFiles?.length > 5) errors.doc = 'Only 5 documents can be uploaded';
 
-  if(videoTutorialFiles?.length > 5)
-    errors.video = "Only 5 videos can be uploaded"
+  if (videoTutorialFiles?.length > 5)
+    errors.video = 'Only 5 videos can be uploaded';
 
   return errors;
 };
 
-export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFiles, videoTutorialFiles, fetchedVideoTutorialFiles) => {
+export const EditTrainingFormValidation = (
+  form,
+  relatedFiles,
+  fetchedRelatedFiles,
+  videoTutorialFiles,
+  fetchedVideoTutorialFiles
+) => {
   let errors = {};
   let {
     title,
@@ -375,7 +395,6 @@ export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFil
     description,
     meta_description,
     time_required_to_complete,
-
   } = form;
 
   if (!title) {
@@ -410,11 +429,11 @@ export const EditTrainingFormValidation = (form, relatedFiles, fetchedRelatedFil
   //   errors.croppedImage = 'Cover image required!';
   // }
 
-  if((relatedFiles?.length + fetchedRelatedFiles?.length) > 5)
-    errors.doc = "Only 5 documents can be uploaded"
+  if (relatedFiles?.length + fetchedRelatedFiles?.length > 5)
+    errors.doc = 'Only 5 documents can be uploaded';
 
-  if((videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length) > 5)
-    errors.video = "Only 5 videos can be uploaded"
+  if (videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length > 5)
+    errors.video = 'Only 5 videos can be uploaded';
   return errors;
 };
 
@@ -475,7 +494,9 @@ export const EditFleRepo = (form, coverImage) => {
 
 export const PasswordValidation = (form) => {
   let errors = {};
-  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
+  let regex = new RegExp(
+    '(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$'
+  );
   let { oldpassword, new_password, confirm_password } = form;
 
   if (!oldpassword) {
@@ -485,10 +506,10 @@ export const PasswordValidation = (form) => {
     errors.new_password = 'New Password is required';
   }
   if (new_password && !regex.test(new_password)) {
-    errors.new_password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
+    errors.new_password =
+      'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character';
 
     // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
-
   }
 
   if (!confirm_password) {
@@ -508,17 +529,19 @@ export const PasswordValidation = (form) => {
 };
 export const ResetPasswordValidation = (form) => {
   let errors = {};
-  let regex = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
+  let regex = new RegExp(
+    '(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$'
+  );
 
   let { new_password, confirm_password } = form;
   if (!new_password) {
     errors.new_password = 'New password require';
   }
   if (new_password && !regex.test(new_password)) {
-    errors.new_password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
+    errors.new_password =
+      'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character';
 
     // "^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"
-
   }
   if (!confirm_password) {
     errors.confirm_password = 'Confirm password require';
@@ -551,21 +574,21 @@ export const FranchiseeFormValidation = (formObj) => {
   if (!franchisee_number) {
     errors.franchisee_number = 'Franchise number is required';
   }
-  
+
   if (!abn) {
     errors.abn = 'Australian business number is required';
   }
 
-  if(abn.length > 0 && (/^[a-zA-Z ]+$/i.test(abn)))
-    errors.abn = "Field should only contain digits"
-  
+  if (abn.length > 0 && /^[a-zA-Z ]+$/i.test(abn))
+    errors.abn = 'Field should only contain digits';
+
   if (!acn) {
     errors.acn = 'Australian company number is required';
   }
 
-  if(acn.length > 0 && (/^[a-zA-Z ]+$/i.test(acn)))
-    errors.acn = "Field should only contain digits"
-  
+  if (acn.length > 0 && /^[a-zA-Z ]+$/i.test(acn))
+    errors.acn = 'Field should only contain digits';
+
   if (!city) {
     errors.city = 'Suburb is required';
   }
@@ -573,7 +596,7 @@ export const FranchiseeFormValidation = (formObj) => {
   if (!address) {
     errors.address = 'Address is required';
   }
-  
+
   if (!state) {
     errors.state = 'State is required';
   }
@@ -586,8 +609,8 @@ export const FranchiseeFormValidation = (formObj) => {
     errors.contact = 'Contact number is required';
   }
 
-  if(contact?.length > 0 && !(/^[0-9]+$/i.test(contact)))
-    errors.contact = "Field should only contain digits"; 
+  if (contact?.length > 0 && !/^[0-9]+$/i.test(contact))
+    errors.contact = 'Field should only contain digits';
 
   return errors;
 };
@@ -595,110 +618,140 @@ export const FranchiseeFormValidation = (formObj) => {
 export const acceptPointValidator = (value) => {
   let errors = {};
 
-  if(value === false)
-    errors.value = "Please give your acknowledgement";
-
-  return errors;
-}
-
-export const UserFormValidation = (formObj, trainingDocuments) => {
-  let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-
-  let { fullname, role, state, city, address, postalCode, crn, email, phone, franchisee, open_coordinator, coordinator } =
-  formObj;
-  
-  if (!email) errors.email = 'Email address is required';
-
-  if(email.length > 0 && !regex.test(email)) {
-    errors.email = "Email format is invalid";
-  }
-
-  if (!role) errors.role = 'User role is required';
-  
-  if (!fullname) errors.fullname = 'Full name is required';
-
-  if(fullname.length > 0 && !(/^[a-zA-Z ]+$/i.test(fullname)))
-    errors.fullname = "Field shouldn't contain numbers & special characters"
-
-  if(!state) errors.state = 'State is required';
-  
-  if (!city) errors.city = 'Suburb is required';
-
-  if (!address) errors.address = 'Address is required';
-  
-  if (!postalCode) errors.postalCode = 'Post code is required';
-  
-  if(postalCode.length > 0 && postalCode.length < 4)
-    errors.postalCode = 'Post code must be 4-digit long';
-
-  if(postalCode?.length === 4 && isNaN(postalCode))
-    errors.postalCode = 'Post code must only consist digits';
-
-  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
-  if(role === "guardian" && crn?.length > 0 && !(/^[0-9]+$/i.test(crn)))
-    errors.crn = "Field should only contain digits";
-  
-  if (!phone) errors.phone = 'Phone number is required';
-
-  if(phone.length > 0 && phone.length < 4)
-    errors.phone = "Phone number must have atleast 4 digits";
-  
-  if (!franchisee) errors.franchisee = 'Franchise is required';
-
-  if(open_coordinator === true && role === 'educator' && !coordinator)
-    errors.coordinator = 'Coordinator is required'
-
-  if(trainingDocuments?.length > 5)
-    errors.doc = "Only 5 documents can be uploaded"
+  if (value === false) errors.value = 'Please give your acknowledgement';
 
   return errors;
 };
 
-export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocuments) => {
+export const UserFormValidation = (formObj, trainingDocuments) => {
   let errors = {};
-  let regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
-  let regexPassword = new RegExp('(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$' )
-  let { address, city, crn, email, fullname, phone, role, postalCode, state, password, confirm_password } = form;
-  
-  if (!fullname) errors.fullname = 'Full name is required';
-  
-  if(fullname.length > 0 && !(/^[a-zA-Z ]+$/i.test(fullname)))
-    errors.fullname = "Field shouldn't contain numbers & special characters"
-  
+  let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
+
+  let {
+    fullname,
+    role,
+    state,
+    city,
+    address,
+    postalCode,
+    crn,
+    email,
+    phone,
+    franchisee,
+    open_coordinator,
+    coordinator,
+  } = formObj;
+
   if (!email) errors.email = 'Email address is required';
-  
-  if(!state) errors.state = 'State is required';
-  
+
+  if (email.length > 0 && !regex.test(email)) {
+    errors.email = 'Email format is invalid';
+  }
+
+  if (!role) errors.role = 'User role is required';
+
+  if (!fullname) errors.fullname = 'Full name is required';
+
+  if (fullname.length > 0 && !/^[a-zA-Z ]+$/i.test(fullname))
+    errors.fullname = "Field shouldn't contain numbers & special characters";
+
+  if (!state) errors.state = 'State is required';
+
   if (!city) errors.city = 'Suburb is required';
 
-  if(state && !city) errors.city = "Suburb is required";
-
   if (!address) errors.address = 'Address is required';
-  
+
   if (!postalCode) errors.postalCode = 'Post code is required';
-  
-  if(postalCode?.length > 0 && postalCode.length < 4)
+
+  if (postalCode.length > 0 && postalCode.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
-  if(postalCode?.length === 4 && isNaN(postalCode))
+  if (postalCode?.length === 4 && isNaN(postalCode))
     errors.postalCode = 'Post code must only consist digits';
-  
-  if (role === "guardian" && !crn) errors.crn = "CRN number is required";
-  if(role === "guardian" && crn?.length > 0 && !(/^[0-9]+$/i.test(crn)))
-    errors.crn = "Field should only contain digits";
-  
-  if(email?.length > 0 && !regex.test(email)) {
-    errors.email = "Email format is invalid";
+
+  if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
+  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+    errors.crn = 'Field should only contain digits';
+
+  if (!phone) errors.phone = 'Phone number is required';
+
+  if (phone.length > 0 && phone.length < 4)
+    errors.phone = 'Phone number must have atleast 4 digits';
+
+  if (!franchisee) errors.franchisee = 'Franchise is required';
+
+  if (open_coordinator === true && role === 'educator' && !coordinator)
+    errors.coordinator = 'Coordinator is required';
+
+  if (trainingDocuments?.length > 5)
+    errors.doc = 'Only 5 documents can be uploaded';
+
+  return errors;
+};
+
+export const editUserValidation = (
+  form,
+  trainingDocuments,
+  fetchedTrainingDocuments
+) => {
+  let errors = {};
+  let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
+  let regexPassword = new RegExp(
+    '(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$'
+  );
+  let {
+    address,
+    city,
+    crn,
+    email,
+    fullname,
+    phone,
+    role,
+    postalCode,
+    state,
+    password,
+    confirm_password,
+  } = form;
+
+  if (!fullname) errors.fullname = 'Full name is required';
+
+  if (fullname.length > 0 && !/^[a-zA-Z ]+$/i.test(fullname))
+    errors.fullname = "Field shouldn't contain numbers & special characters";
+
+  if (!email) errors.email = 'Email address is required';
+
+  if (!state) errors.state = 'State is required';
+
+  if (!city) errors.city = 'Suburb is required';
+
+  if (state && !city) errors.city = 'Suburb is required';
+
+  if (!address) errors.address = 'Address is required';
+
+  if (!postalCode) errors.postalCode = 'Post code is required';
+
+  if (postalCode?.length > 0 && postalCode.length < 4)
+    errors.postalCode = 'Post code must be 4-digit long';
+
+  if (postalCode?.length === 4 && isNaN(postalCode))
+    errors.postalCode = 'Post code must only consist digits';
+
+  if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
+  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+    errors.crn = 'Field should only contain digits';
+
+  if (email?.length > 0 && !regex.test(email)) {
+    errors.email = 'Email format is invalid';
   }
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if(phone?.length > 0 && phone?.length < 4)
-    errors.phone = "Phone number must have atleast 4 digits";
+  if (phone?.length > 0 && phone?.length < 4)
+    errors.phone = 'Phone number must have atleast 4 digits';
 
   if (password?.length > 0 && !regexPassword.test(password)) {
-    errors.password = 'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character'
+    errors.password =
+      'Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character';
   }
 
   if (password && !confirm_password) {
@@ -710,11 +763,11 @@ export const editUserValidation = (form, trainingDocuments, fetchedTrainingDocum
       'New password and Confirm password need to be same';
   }
 
-  if(trainingDocuments?.length + fetchedTrainingDocuments?.length > 5)
-    errors.doc = "Only 5 documents can be uploaded"
+  if (trainingDocuments?.length + fetchedTrainingDocuments?.length > 5)
+    errors.doc = 'Only 5 documents can be uploaded';
 
   return errors;
-}
+};
 
 export const personValidation = (personValidationForm) => {
   let errors = {};
@@ -723,36 +776,38 @@ export const personValidation = (personValidationForm) => {
 
   if (!name) errors.name = 'Please complete mandatory field';
 
-  if (name.length > 0 && !(/^[a-zA-Z ]+$/i.test(name)))
-    errors.name = 'Field shouldn\'t contain digits & special characters';
+  if (name.length > 0 && !/^[a-zA-Z ]+$/i.test(name))
+    errors.name = "Field shouldn't contain digits & special characters";
 
   if (!address) errors.address = 'Please complete mandatory field';
 
   if (!telephone) errors.telephone = 'Please complete mandatory field';
 
-  if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits";
+  if (telephone.length > 0 && !/^[0-9]+$/i.test(telephone))
+    errors.telephone = 'Field should only contain digits';
 
   if (!relationship_to_the_child)
-    errors.relationship_to_the_child =
-      'Please complete mandatory field!';
+    errors.relationship_to_the_child = 'Please complete mandatory field!';
 
-  if(relationship_to_the_child.length > 0 && !(/^[a-zA-Z ]+$/i.test(relationship_to_the_child)))
-    errors.relationship_to_the_child = 'Field shouldn\'t contain digits & special characters';
+  if (
+    relationship_to_the_child.length > 0 &&
+    !/^[a-zA-Z ]+$/i.test(relationship_to_the_child)
+  )
+    errors.relationship_to_the_child =
+      "Field shouldn't contain digits & special characters";
 
   return errors;
 };
 
 export const personValidation2 = (personValidationForm) => {
   let errors = {};
-  let { telephone } =
-    personValidationForm;
+  let { telephone } = personValidationForm;
 
-  if(telephone.length > 0 && !(/^[0-9]+$/i.test(telephone)))
-    errors.telephone = "Field should only contain digits";
+  if (telephone.length > 0 && !/^[0-9]+$/i.test(telephone))
+    errors.telephone = 'Field should only contain digits';
 
   return errors;
-}
+};
 
 // export const person2Validation = (obj) => {
 //   let errors = {};
@@ -766,21 +821,16 @@ export const personValidation2 = (personValidationForm) => {
 
 export const digitalSignatureValidator = (form) => {
   let errors = {};
-  let {
-    consent_signature,
-    consent_date
-  } = form;
+  let { consent_signature, consent_date } = form;
   let date = moment(consent_date);
 
-  if(!consent_signature)
-    errors.consent_signature = "Please provide your signature below";
+  if (!consent_signature)
+    errors.consent_signature = 'Please provide your signature below';
 
-  if(!date.isValid())
-    errors.consent_date = "Please provide a date";
+  if (!date.isValid()) errors.consent_date = 'Please provide a date';
 
   return errors;
-}
-
+};
 
 export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   let errors = {};
@@ -805,7 +855,8 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
 
   if (!routines) errors.routines = 'Please complete mandatory field';
 
-  if (!likes_dislikes) errors.likes_dislikes = 'Please complete mandatory field';
+  if (!likes_dislikes)
+    errors.likes_dislikes = 'Please complete mandatory field';
 
   if (!comforter) errors.comforter = 'Please complete mandatory field';
 
@@ -821,30 +872,39 @@ export const childDailyRoutineValidation = (childDailyRoutineForm) => {
   return errors;
 };
 
-export const enrollmentInitiationFormValidation = (
-  formOneChildData
-) => {
-  let { fullname, family_name, dob, start_date, home_address, child_crn, school_status, name_of_school, educator, franchisee_id } = formOneChildData;
+export const enrollmentInitiationFormValidation = (formOneChildData) => {
+  let {
+    fullname,
+    family_name,
+    dob,
+    start_date,
+    home_address,
+    child_crn,
+    school_status,
+    name_of_school,
+    educator,
+    franchisee_id,
+  } = formOneChildData;
   let errors = {};
 
   if (!fullname) errors.fullname = 'Fullname is required';
 
-  if (!family_name) errors.family_name = 'Family name is required'
+  if (!family_name) errors.family_name = 'Family name is required';
 
   if (!dob) errors.dob = 'Date of birth is required';
 
-  if (!start_date) errors.start_date = 'Start date is required'
+  if (!start_date) errors.start_date = 'Start date is required';
 
   if (!home_address) errors.home_address = 'Home address is required';
 
   if (!franchisee_id) errors.franchiseData = 'Franchise is required';
-  
+
   if (educator.length === 0) errors.educatorData = 'Educator is required';
-  
+
   if (!child_crn) errors.child_crn = 'Child CRN is required';
 
-  if (school_status === "Y" && !name_of_school) errors.name_of_school = "School name is required";
-
+  if (school_status === 'Y' && !name_of_school)
+    errors.name_of_school = 'School name is required';
 
   return errors;
 };

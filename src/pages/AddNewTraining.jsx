@@ -958,8 +958,8 @@ const AddNewTraining = () => {
                   <Col lg={3} md={6}>
                     <Form.Group>
                       <Form.Label>Accessible to</Form.Label>
-                      <div>
-                        <div className="new-form-radio-box">
+                      <div className="new-form-radio d-block">
+                        <div className="new-form-radio-box mb-3">
                           <label htmlFor="yes1">
                             <input
                               type="radio"
@@ -984,7 +984,7 @@ const AddNewTraining = () => {
                             <p>User Roles</p>
                           </label>
                         </div>
-                        <div className="new-form-radio-box" style={{ marginLeft: 0, marginTop: '10px' }}>
+                        <div className="new-form-radio-box mb-3">
                           <label htmlFor="no1">
                             <input
                               type="radio"

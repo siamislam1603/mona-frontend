@@ -22,7 +22,7 @@ const FilerepoUploadFile = () => {
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [selectedChild, setSelectedChild] = useState([]);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
     const [franchiseeList, setFranchiseeList] = useState();
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
@@ -110,7 +110,7 @@ const FilerepoUploadFile = () => {
     //======================== GET User List==================
     const getUser = async () => {
         try {
-            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee) : [getFranchisee]
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
             let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -211,7 +211,7 @@ const FilerepoUploadFile = () => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', franchiseeArr[0] == "all" ? [] : franchiseeArr);
+        formdata.append('franchisee', franchiseeArr.length == 0 ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -485,7 +485,7 @@ const FilerepoUploadFile = () => {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_franchisee: ['all'],
-                                                                            franchisee: ['all']
+                                                                            franchisee: []
                                                                         }));
                                                                         setSendToAllFranchisee('all')
                                                                     }}
