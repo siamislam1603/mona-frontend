@@ -22,7 +22,10 @@ const FilerepoMyAdd = ({ filter }) => {
     let Params = useParams();
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
-    const [formSettingData, setFormSettingData] = useState({ shared_role: '' });
+    const [formSettingData, setFormSettingData] = useState({
+        shared_role: '',
+        accessible_to_role: 1
+    });
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
@@ -42,6 +45,8 @@ const FilerepoMyAdd = ({ filter }) => {
         franchisee: [],
         assigned_users: [],
         assigned_childs: [],
+        assigned_franchisee: [],
+        shared_role: '',
         accessibleToRole: 1
     });
     const [child, setChild] = useState([]);
@@ -693,8 +698,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                 </Col>
                             </Row>)}
 
-                            {
-                                sendToAllFranchisee == "none" && formSettings?.franchisee.length < 1 ? "" :
+                            {sendToAllFranchisee == "none" && formSettings?.franchisee.length < 1 ? "" :
                                     (<Row className="mt-4">
                                         <Col lg={3} md={6}>
                                             <Form.Group>
