@@ -150,7 +150,7 @@ const FilerepoMyAdd = ({ filter }) => {
             assigned_childs: data?.repository_shares[0].assigned_childs,
             file_type: data?.repository_files[0].fileType,
         }));
-        data?.repository_shares[0].franchisee[0] == "all" ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
 
     const fetchFranchiseeList = async () => {
@@ -173,7 +173,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const handleFileSharing = async () => {
         let token = localStorage.getItem('token');
         setLoaderFlag(true);
-        formSettings.franchisee = formSettings.franchisee[0] == "all" ? ["all"] : formSettings.franchisee
+        formSettings.franchisee = formSettings.franchisee.length == 0 ? [] : formSettings.franchisee
         const response = await axios.put(`${BASE_URL}/fileRepo/${saveFileId}`, {
             ...formSettings
         }, {
@@ -238,7 +238,7 @@ const FilerepoMyAdd = ({ filter }) => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee
+        let franchiseeArr = formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
@@ -254,7 +254,7 @@ const FilerepoMyAdd = ({ filter }) => {
             'Bearer ' + localStorage.getItem('token')
         );
 
-        let franchiseeArr = formSettings.franchisee
+        let franchiseeArr = formSettings.franchisee.length == 0 ? ["all"] : formSettings.franchisee
 
         var request = {
             headers: myHeaders,
@@ -613,7 +613,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         onChange={() => {
                                                             setFormSettings(prevState => ({
                                                                 ...prevState,
-                                                                franchisee: ['all']
+                                                                franchisee: []
                                                             }));
                                                             setSendToAllFranchisee('all')
                                                         }}
