@@ -26,7 +26,7 @@ const RepoEdit = () => {
     const [user, setUser] = useState([]);
     const [data, setData] = useState([])
     const [franchiseeList, setFranchiseeList] = useState();
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
     console.log(sendToAllFranchisee, "sendToAllFranchisee")
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
@@ -77,6 +77,7 @@ const RepoEdit = () => {
             file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
+        data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
 
     const onChange = (e) => {
@@ -151,7 +152,7 @@ const RepoEdit = () => {
     const childList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
-            franchisee_id: data.franchise
+            franchisee_id: data.franchise.length == 0 ? ["all"] : data.franchise
         },
             {
                 headers: {
@@ -214,7 +215,7 @@ const RepoEdit = () => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = data.franchise[0] == 'all' ? "all" : data.franchise
+        let franchiseeArr = data.franchise.length == 0 ? "all" : data.franchise
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
@@ -447,7 +448,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: ['all']
+                                                                                            assigned_franchisee: []
                                                                                         }));
                                                                                         setSendToAllFranchisee('all')
                                                                                     }}
@@ -502,7 +503,7 @@ const RepoEdit = () => {
                                                                             }}
                                                                             selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
                                                                             onSelect={function noRefCheck(data) {
-                                                                                setFormSettings((prevState) => ({
+                                                                                setData((prevState) => ({
                                                                                     ...prevState,
                                                                                     franchise: [...data.map((data) => data.id)],
                                                                                     franchisee: [...data.map(data => data.id)],
@@ -554,7 +555,7 @@ const RepoEdit = () => {
                                                                 </Form.Group>
                                                             </Col>
                                                         </Row>)}
-                                                        {sendToAllFranchisee === "none" && formSettings.franchisee.length < 1 ? "" : (
+                                                        {sendToAllFranchisee === "none" && data.franchise.length < 1 ? "" : (
                                                             <Row className="mt-4">
                                                                 <Col lg={3} md={6}>
                                                                     <Form.Group>

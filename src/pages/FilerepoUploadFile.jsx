@@ -39,6 +39,7 @@ const FilerepoUploadFile = () => {
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
+    console.log(formSettingData, "formSettingData", formSettings)
     console.log('selected_item---->1selectedFranchisee', formSettings.assigned_franchisee.length);
 
     //======================== GET FILE CATAGOREY==================
@@ -109,7 +110,7 @@ const FilerepoUploadFile = () => {
     //======================== GET User List==================
     const getUser = async () => {
         try {
-            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee[0] == 'all' ? "all" : formSettings.franchisee) : [getFranchisee]
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
             let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -210,7 +211,7 @@ const FilerepoUploadFile = () => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', franchiseeArr[0] == "all" ? [] : franchiseeArr);
+        formdata.append('franchisee', franchiseeArr.length == 0 ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -465,95 +466,96 @@ const FilerepoUploadFile = () => {
                                     </Form.Group>
                                 </Col>
                             </Row>
-                            {getUser_Role === "guardian" ? (<></>) : (
-
+                            {getUser_Role === "guardian" ? "" : (
                                 <>
-                                    {getUser_Role !== "franchisor_admin" ? "" : (<Row className="mt-4">
-                                        <Col lg={3} md={6}>
-                                            <Form.Group>
-                                                <Form.Label>Give access to all Franchises</Form.Label>
-                                                <div className="new-form-radio d-block">
-                                                    <div className="new-form-radio-box">
-                                                        <label for="all">
-                                                            <input
-                                                                type="radio"
-                                                                checked={sendToAllFranchisee === 'all'}
-                                                                name="send_to_all_franchisee"
-                                                                id="all"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: ['all'],
-                                                                        franchisee: ['all']
-                                                                    }));
-                                                                    setSendToAllFranchisee('all')
-                                                                }}
-                                                                disabled={getUser_Role !== 'franchisor_admin'}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>Yes</p>
-                                                        </label>
+                                    {getUser_Role === "franchisor_admin" ?
+                                        <Row className="mt-4">
+                                            <Col lg={3} md={6}>
+                                                <Form.Group>
+                                                    <Form.Label>Give access to all Franchises</Form.Label>
+                                                    <div className="new-form-radio d-block">
+                                                        <div className="new-form-radio-box">
+                                                            <label for="all">
+                                                                <input
+                                                                    type="radio"
+                                                                    checked={sendToAllFranchisee === 'all'}
+                                                                    name="send_to_all_franchisee"
+                                                                    id="all"
+                                                                    onChange={() => {
+                                                                        setFormSettings(prevState => ({
+                                                                            ...prevState,
+                                                                            assigned_franchisee: ['all'],
+                                                                            franchisee: []
+                                                                        }));
+                                                                        setSendToAllFranchisee('all')
+                                                                    }}
+                                                                    disabled={getUser_Role !== 'franchisor_admin'}
+                                                                />
+                                                                <span className="radio-round"></span>
+                                                                <p>Yes</p>
+                                                            </label>
+                                                        </div>
+                                                        <div className="new-form-radio-box m-0 mt-3">
+                                                            <label for="none">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="send_to_all_franchisee"
+                                                                    checked={sendToAllFranchisee === 'none'}
+                                                                    id="none"
+                                                                    onChange={() => {
+                                                                        setFormSettings(prevState => ({
+                                                                            ...prevState,
+                                                                            assigned_franchisee: [],
+                                                                            franchisee: []
+                                                                        }));
+                                                                        setSendToAllFranchisee('none')
+                                                                    }}
+                                                                    disabled={getUser_Role !== 'franchisor_admin'}
+                                                                />
+                                                                <span className="radio-round"></span>
+                                                                <p>No</p>
+                                                            </label>
+                                                        </div>
                                                     </div>
-                                                    <div className="new-form-radio-box m-0 mt-3">
-                                                        <label for="none">
-                                                            <input
-                                                                type="radio"
-                                                                name="send_to_all_franchisee"
-                                                                checked={sendToAllFranchisee === 'none'}
-                                                                id="none"
-                                                                onChange={() => {
-                                                                    setFormSettings(prevState => ({
-                                                                        ...prevState,
-                                                                        assigned_franchisee: [],
-                                                                        franchisee: []
-                                                                    }));
-                                                                    setSendToAllFranchisee('none')
-                                                                }}
-                                                                disabled={getUser_Role !== 'franchisor_admin'}
-                                                            />
-                                                            <span className="radio-round"></span>
-                                                            <p>No</p>
-                                                        </label>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col lg={9} md={12}>
+                                                <Form.Group>
+                                                    <Form.Label>Select Franchise(s)</Form.Label>
+                                                    <div className="select-with-plus">
+                                                        <Multiselect
+                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                            placeholder={"Select"}
+                                                            displayValue="key"
+                                                            className="multiselect-box default-arrow-select"
+                                                            onRemove={function noRefCheck(data) {
+                                                                setFormSettings((prevState) => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: [...data.map(data => data.id)],
+                                                                    franchisee: [...data.map(data => data.id)]
+                                                                }));
+                                                                setSelectedUser([])
+                                                                setSelectedChild([])
+                                                            }}
+                                                            selectedValues={getUser_Role != 'franchisor_admin' ? (franchiseeList && franchiseeList.filter(c => c.id == getFranchisee)) : ""}
+                                                            onSelect={function noRefCheck(data) {
+                                                                setFormSettings((prevState) => ({
+                                                                    ...prevState,
+                                                                    assigned_franchisee: [...data.map((data) => data.id)],
+                                                                    franchisee: [...data.map(data => data.id)]
+                                                                }));
+
+                                                                setSelectedUser([])
+                                                                setSelectedChild([])
+                                                            }}
+                                                            options={franchiseeList}
+                                                        />
                                                     </div>
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-
-                                        <Col lg={9} md={12}>
-                                            <Form.Group>
-                                                <Form.Label>Select Franchise(s)</Form.Label>
-                                                <div className="select-with-plus">
-                                                    <Multiselect
-                                                        disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                        placeholder={"Select"}
-                                                        displayValue="key"
-                                                        className="multiselect-box default-arrow-select"
-                                                        onRemove={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map(data => data.id)],
-                                                                franchisee: [...data.map(data => data.id)]
-                                                            }));
-                                                            setSelectedUser([])
-                                                            setSelectedChild([])
-                                                        }}
-                                                        selectedValues={getUser_Role != 'franchisor_admin' ? (franchiseeList && franchiseeList.filter(c => c.id == getFranchisee)) : ""}
-                                                        onSelect={function noRefCheck(data) {
-                                                            setFormSettings((prevState) => ({
-                                                                ...prevState,
-                                                                assigned_franchisee: [...data.map((data) => data.id)],
-                                                                franchisee: [...data.map(data => data.id)]
-                                                            }));
-
-                                                            setSelectedUser([])
-                                                            setSelectedChild([])
-                                                        }}
-                                                        options={franchiseeList}
-                                                    />
-                                                </div>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>)}
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                        : ""
+                                    }
                                     {sendToAllFranchisee == "none" && formSettings.assigned_franchisee.length < 1 ? "" : (
                                         <Row className="mt-4">
                                             <Col lg={3} md={6}>
@@ -596,7 +598,6 @@ const FilerepoUploadFile = () => {
                                                 </Form.Group>
                                             </Col>
                                             <Col lg={9} md={12}>
-
                                                 {formSettingData.accessible_to_role === 1 ? (
                                                     <Form.Group>
                                                         <Form.Label>Select User Roles</Form.Label>
