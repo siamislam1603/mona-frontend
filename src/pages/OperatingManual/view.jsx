@@ -193,6 +193,7 @@ const OperatingManual = () => {
   }
   useEffect(() => {
     manageCollpase();
+    manageCollpase();
   });
   useEffect(() =>{
     checkDelete()
