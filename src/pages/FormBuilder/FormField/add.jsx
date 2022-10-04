@@ -1063,6 +1063,7 @@ const AddFormField = (props) => {
                                           index
                                         );
                                       }}
+                                      disabled={form[index]?.field_type==="headings" || form[index]?.field_type==="text_headings"}
                                     />
                                   </div>
                                 </div>
