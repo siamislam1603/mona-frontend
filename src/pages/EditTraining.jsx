@@ -665,6 +665,12 @@ const EditTraining = () => {
                               components={animatedComponents}
                               placeholder="Select"
                               options={trainingFormData}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               value={trainingFormData?.filter(d => parseInt(d.id) === trainingData?.training_form_id)}
                               onChange={(event) => {
                                 setTrainingData((prevState) => ({
