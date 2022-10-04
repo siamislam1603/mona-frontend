@@ -26,7 +26,7 @@ const RepoEdit = () => {
     const [user, setUser] = useState([]);
     const [data, setData] = useState([])
     const [franchiseeList, setFranchiseeList] = useState();
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
     console.log(sendToAllFranchisee, "sendToAllFranchisee")
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
@@ -467,7 +467,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: ["none"]
+                                                                                            assigned_franchisee: []
                                                                                         }));
                                                                                         setSendToAllFranchisee('none')
                                                                                     }}
