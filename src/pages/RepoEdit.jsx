@@ -467,7 +467,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: ["none"]
+                                                                                            assigned_franchisee: []
                                                                                         }));
                                                                                         setSendToAllFranchisee('none')
                                                                                     }}
