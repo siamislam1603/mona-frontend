@@ -1142,6 +1142,7 @@ function ViewFormBuilder(props) {
                                                                     {
                                                                       state: {
                                                                         id: inner_item.id,
+                                                                        update:true
                                                                       },
                                                                     }
                                                                   );
@@ -1453,6 +1454,7 @@ function ViewFormBuilder(props) {
                                                                           state:
                                                                             {
                                                                               id: inner_item.id,
+                                                                              update:true
                                                                             },
                                                                         }
                                                                       );
