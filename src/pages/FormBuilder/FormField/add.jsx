@@ -5,7 +5,7 @@ import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import LeftNavbar from '../../../components/LeftNavbar';
 import TopHeader from '../../../components/TopHeader';
 import Multiselect from 'multiselect-react-dropdown';
-import {  createFormFieldValidation } from '../../../helpers/validation';
+import { createFormFieldValidation } from '../../../helpers/validation';
 import { BASE_URL } from '../../../components/App';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Setting from '../Setting';
@@ -54,11 +54,16 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
+  const [updateFlag,setUpdateFlag]=useState(false);
+  const [newFieldAddIndex,setNewFieldAddIndex]=useState(-1);
+  const [newOptionAddIndex,setNewOptionAddIndex]=useState(-1);
+  const [newConditionOptionAddIndex,setNewConditionOptionAddIndex]=useState(-1);
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
     : null;
   useEffect(() => {
+    console.log("location----->",location);
     if (form_name) {
       getFormField();
       getFormData();
@@ -269,6 +274,11 @@ const AddFormField = (props) => {
       .then((response) => response.json())
       .then((res) => {
         if (res?.result.length > 0) {
+          if (location?.state?.update) {
+            if (location?.state?.update === true) {
+              setUpdateFlag(true);
+            }
+          }
           let sectionData = [];
           let flag = false;
           res?.result?.map((item) => {
@@ -342,6 +352,11 @@ const AddFormField = (props) => {
               .then((response) => response.json())
               .then((result) => {
                 if (result?.result.length > 0) {
+                  if (location?.state?.update) {
+                    if (location?.state?.update === true) {
+                      setUpdateFlag(true);
+                    }
+                  }
                   let sectionData = [];
                   let flag = false;
                   result?.result?.map((item) => {
@@ -432,8 +447,7 @@ const AddFormField = (props) => {
       if (flag === false) {
         form.map((inner_item, inner_index) => {
           if (index !== inner_index) {
-            if(item.field_label && inner_item.field_label)
-            {
+            if (item.field_label && inner_item.field_label) {
               if (
                 item.field_label.toLowerCase() ===
                 inner_item.field_label.toLowerCase()
@@ -441,7 +455,6 @@ const AddFormField = (props) => {
                 flag = true;
               }
             }
-            
           }
         });
       }
@@ -467,36 +480,36 @@ const AddFormField = (props) => {
       });
       if (error_flag) {
         setErrors(newErrors);
-        if(newErrors.length>0)
-        {
-          let flag=false;
-          newErrors.map((item,index)=>{
-            console.log("Object.keys(item).length---->",Object.keys(item).length);
-            if(Object.keys(item).length>0 && !flag)
-            {
-              console.log("Object.keys(item)[0]--->",Object.keys(item)[0]);
-              if(Object.keys(item)[0]==="option")
-              {
-                Object.values(item)[0].map((inner_item,inner_index)=>{
-                  if(Object.keys(inner_item).length>0 && !flag)
-                  {
-                    console.log("inner_item--->",Object.keys(inner_item).length,"---",inner_index);
-                    document.getElementById("option"+index+inner_index).focus();
-                    flag=true;
+        if (newErrors.length > 0) {
+          let flag = false;
+          newErrors.map((item, index) => {
+            console.log(
+              'Object.keys(item).length---->',
+              Object.keys(item).length
+            );
+            if (Object.keys(item).length > 0 && !flag) {
+              console.log('Object.keys(item)[0]--->', Object.keys(item)[0]);
+              if (Object.keys(item)[0] === 'option') {
+                Object.values(item)[0].map((inner_item, inner_index) => {
+                  if (Object.keys(inner_item).length > 0 && !flag) {
+                    console.log(
+                      'inner_item--->',
+                      Object.keys(inner_item).length,
+                      '---',
+                      inner_index
+                    );
+                    document
+                      .getElementById('option' + index + inner_index)
+                      .focus();
+                    flag = true;
                   }
-                  
-                })
-
+                });
+              } else {
+                document.getElementById(Object.keys(item)[0] + index).focus();
+                flag = true;
               }
-              else
-              {
-                document.getElementById(Object.keys(item)[0]+index).focus();
-                flag=true;
-              }
-              
             }
-              
-          })
+          });
         }
       } else {
         var myHeaders = new Headers();
@@ -721,7 +734,8 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
-                                    id={"field_label"+index}
+                                    disabled={updateFlag && newFieldAddIndex!==index}
+                                    id={'field_label' + index}
                                     maxLength={255}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
@@ -753,11 +767,13 @@ const AddFormField = (props) => {
                                         index
                                       );
                                     }}
+                                    disabled={updateFlag && newFieldAddIndex!==index}
                                   >
                                     <option
                                       value="text_headings"
                                       selected={
-                                        form[index]?.field_type === 'text_headings'
+                                        form[index]?.field_type ===
+                                        'text_headings'
                                       }
                                     >
                                       Text
@@ -888,7 +904,10 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
-                                              id={"option"+index+inner_index}
+                                              disabled={updateFlag && newFieldAddIndex!==index && inner_index!==newOptionAddIndex}
+                                              id={
+                                                'option' + index + inner_index
+                                              }
                                               value={Object.keys(item)[0]}
                                               onChange={(e) => {
                                                 setField(
@@ -964,6 +983,7 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           tempObj['option'].push({ '': '' });
+                                          setNewOptionAddIndex(tempObj['option'].length-1);
                                           tempArr[index] = tempObj;
                                           setForm(tempArr);
                                         }}
@@ -978,12 +998,16 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           const tempOption = tempObj['option'];
-
+                                          console.log("temp option--->",tempOption);
                                           tempOption.map((item) => {
                                             if (
                                               !(Object.keys(item)[0] === '')
                                             ) {
                                               fillOptionCounter++;
+                                              if(Object.keys(item)[0].toString()===Object.values(item)[0].toString())
+                                              {
+                                                setUpdateFlag(false);
+                                              }
                                             }
                                           });
                                           if (
@@ -1004,6 +1028,7 @@ const AddFormField = (props) => {
                                                     { '': '' },
                                                   ],
                                                 };
+                                                // setUpdateFlag(false);
                                               }
                                             });
                                           } else {
@@ -1015,6 +1040,7 @@ const AddFormField = (props) => {
                                           tempArr[index]['option'] = tempOption;
 
                                           setForm(tempArr);
+                                          
                                         }}
                                       >
                                         Apply Condition
@@ -1063,6 +1089,12 @@ const AddFormField = (props) => {
                                           index
                                         );
                                       }}
+                                      disabled={
+                                        form[index]?.field_type ===
+                                          'headings' ||
+                                        form[index]?.field_type ===
+                                          'text_headings'
+                                      }
                                     />
                                   </div>
                                 </div>
@@ -1074,6 +1106,7 @@ const AddFormField = (props) => {
                           <Button
                             variant="link"
                             onClick={() => {
+                              setNewFieldAddIndex(index+1);
                               let data = [...form];
                               data.splice(index + 1, 0, {
                                 field_type: 'text',
@@ -1117,6 +1150,7 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
+                          setUpdateFlag(true);
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1153,7 +1187,8 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
-                                      id={"field_label"+index}
+                                      disabled={updateFlag}
+                                      id={'field_label' + index}
                                       name="field_label"
                                       value={
                                         Object.values(item)[0]['field_label']
@@ -1175,6 +1210,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
+                                        disabled={updateFlag}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
@@ -1327,6 +1363,7 @@ const AddFormField = (props) => {
                                                 <Form.Control
                                                   type="text"
                                                   name="option"
+                                                  disabled={updateFlag && newConditionOptionAddIndex!==inner_index}
                                                   value={
                                                     inner_item[
                                                       Object.keys(inner_item)[0]
@@ -1404,6 +1441,9 @@ const AddFormField = (props) => {
                                           keyOfOption[Object.keys(item)[0]][
                                             'option'
                                           ].push({ '': '' });
+                                          setNewConditionOptionAddIndex(keyOfOption[Object.keys(item)[0]][
+                                            'option'
+                                          ].length-1);
                                           tempOption[index] = keyOfOption;
                                           tempArr[Index]['option'] = tempOption;
                                           setForm(tempArr);
@@ -1432,8 +1472,10 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
+                              setUpdateFlag(true);
                               setConditionFlag(false);
                               counter++;
+                              setUpdateFlag(true);
                               setCount(counter);
                             }}
                           >

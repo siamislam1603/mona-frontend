@@ -547,12 +547,24 @@ const EditUser = () => {
     let newRoleList = userRoleData;
 
     if(currentRole === "educator") {
-      newRoleList = newRoleList.filter(role => role.sequence < 5);
-      setUserRoleData(newRoleList);
+      if(currentRole === "educator") {
+        if(localStorage.getItem("user_role") === "coordinator") {
+          newRoleList = newRoleList.filter(role => role.sequence > 2 && role.sequence < 5);
+        } else if(localStorage.getItem("user_role") === "franchisee_admin") {
+          newRoleList = newRoleList.filter(role => role.sequence > 1 && role.sequence < 5);
+        } else {
+          newRoleList = newRoleList.filter(role => role.sequence < 5);
+        }
+        setUserRoleData(newRoleList);
+      }
     }
 
     if(currentRole === "coordinator") {
-      newRoleList = newRoleList.filter(role => role.sequence < 4);
+      if(localStorage.getItem('user_role') === "franchisee_admin") {
+        newRoleList = newRoleList.filter(role => role.sequence > 2 && role.sequence < 4);
+      } else {
+        newRoleList = newRoleList.filter(role => role.sequence < 4);
+      }
       setUserRoleData(newRoleList);
     }
 
@@ -814,6 +826,7 @@ const EditUser = () => {
                               <Form.Label>CRN *</Form.Label>
                               <Form.Control
                                 type="text"
+                                disabled={localStorage.getItem('user_role') === "guardian"}
                                 ref={crn}
                                 name="crn"
                                 value={formData.crn}

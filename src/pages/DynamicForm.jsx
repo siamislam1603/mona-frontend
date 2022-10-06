@@ -371,7 +371,6 @@ const DynamicForm = () => {
           }),
           redirect: 'follow',
         };
-
         fetch(`${BASE_URL}/form/form_data?role=${localStorage.getItem("user_role")}`, requestOptions)
           .then((response) => response.text())
           .then((result) => {
@@ -488,6 +487,7 @@ const DynamicForm = () => {
                                   }}
                                   disabled
                                 >
+                                  {(formPermission?.target_user?.includes('parent') ? behalfOfFlag = true : behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item) => {
                                     return (
@@ -523,6 +523,7 @@ const DynamicForm = () => {
                                   }}
                                   disabled
                                 >
+                                  {(formPermission?.target_user?.includes('parent') ? behalfOfFlag = true : behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item) => {
                                     return (

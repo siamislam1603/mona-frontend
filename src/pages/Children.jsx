@@ -692,11 +692,11 @@ const Children = () => {
                                             cell.active === 1 &&
                                             <>
                                                 <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Educator</Dropdown.Item>}
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>}
                                             </>
                                         }
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
+                                        { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>

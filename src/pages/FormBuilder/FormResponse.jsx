@@ -317,7 +317,7 @@ function FormResponse(props) {
                     <div className="forms-search me-0 ms-auto mt-3">
                       <Form.Group>
                         <div className="forms-icon">
-                          <img src="../img/search-icon-light.svg" alt="" />
+                          <img src="/img/search-icon-light.svg" alt="" />
                         </div>
                         <Form.Control
                           type="text"
@@ -347,7 +347,7 @@ function FormResponse(props) {
                                           item[0]?.filled_user?.profile_photo
                                             ? item[0]?.filled_user
                                                 ?.profile_photo
-                                            : '../img/small-user.png'
+                                            : '/img/upload.jpg'
                                         }
                                         alt=""
                                       />

@@ -22,6 +22,16 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [page, setPage] = useState(6)
 
+  function isTrainingExpired(end_date) {
+    let due_date = moment(end_date).format();
+    let today = moment().format();
+
+    if(due_date < today)
+      return true
+
+    return false
+  }
+
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
     assigned_franchisee: [],
@@ -71,9 +81,11 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }
 
   const trainingCreatedByMe = async () => {
+    console.log("THe training created by me call",selectedFranchisee)
     let user_id = localStorage.getItem('user_id');
+
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "All" || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "all" || selectedFranchisee === "All"  || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -223,14 +235,18 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [formSettings?.assigned_franchisee])
 
   useEffect(() => {
-    console.log('TRACED CHANGES');
-    trainingCreatedByMe()
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
+    }
   }, [filter.search, filter.category_id]);
   
   useEffect(() => {
-    console.log('SELECTED FRANCHISE:', selectedFranchisee);
-    if(selectedFranchisee) {
+    if(typeof selectedFranchisee !== "undefined") {
       trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
     }
   }, [selectedFranchisee])
 
@@ -240,7 +256,12 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   useEffect(() => {
     fetchFranchiseeList();
-    trainingCreatedByMe();
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByMe();
+      console.log('SELECTED FRANCHISE:', selectedFranchisee);
+
+    }
+    // trainingCreatedByMe();
     trainingCreatedByOther();
   }, [])
 
@@ -310,11 +331,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
-                            <Dropdown.Item href="#" onClick={() => {
+                            {isTrainingExpired(training.end_date) === false && training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
+                            { isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
-                            }}>Share</Dropdown.Item>
+                              }}>Share</Dropdown.Item>
+                            }
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id, "me")
@@ -374,11 +397,22 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
-                            <Dropdown.Item href="#" onClick={() => {
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href={`/edit-training/${training.id}`}>
+                                Edit
+                              </Dropdown.Item>
+                            }
+                            
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
-                            }}>Share</Dropdown.Item>
+                              }}>
+                                Share
+                              </Dropdown.Item>
+                            }
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id, "others")

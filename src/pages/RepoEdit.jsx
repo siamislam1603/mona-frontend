@@ -77,6 +77,7 @@ const RepoEdit = () => {
             file_type: data?.repository_files[0].fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
+        data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
     }
 
     const onChange = (e) => {
@@ -151,7 +152,7 @@ const RepoEdit = () => {
     const childList = async () => {
         const token = localStorage.getItem('token');
         const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
-            franchisee_id: data.franchise
+            franchisee_id: data.franchise.length == 0 ? ["all"] : data.franchise
         },
             {
                 headers: {
@@ -214,27 +215,29 @@ const RepoEdit = () => {
             headers: myHeaders,
         };
 
-        let franchiseeArr = data.franchise[0] == 'all' ? "all" : data.franchise
+        let franchiseeArr = data.franchise.length == 0 ? "all" : data.franchise
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            setUser(response.data.users)
+            let userList = response.data.users
+            let formattedUserData = userList.map((d) => ({
+                id: d.id,
+                fullname: d.fullname,
+                email: d.email,
+                namemail: `(${d.fullname}) ${d.email}`,
+            }));
+            setUser(formattedUserData)
         }
     };
-    function onSelectUser(optionsList, selectedItem) {
-        selectedUserId += selectedItem.id + ',';
-        selectedUser.push({
-            id: selectedItem.id,
-            email: selectedItem.email,
-        });
-    }
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
+        const index = user.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        selectedUser.splice(index, 1);
+        user.splice(index, 1);
     }
+
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
         if (!!errors[field]) {
@@ -447,7 +450,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: ['all']
+                                                                                            assigned_franchisee: []
                                                                                         }));
                                                                                         setSendToAllFranchisee('all')
                                                                                     }}
@@ -467,7 +470,7 @@ const RepoEdit = () => {
                                                                                     onChange={() => {
                                                                                         setFormSettings(prevState => ({
                                                                                             ...prevState,
-                                                                                            assigned_franchisee: []
+                                                                                            assigned_franchisee: ["none"]
                                                                                         }));
                                                                                         setSendToAllFranchisee('none')
                                                                                     }}
@@ -502,7 +505,7 @@ const RepoEdit = () => {
                                                                             }}
                                                                             selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
                                                                             onSelect={function noRefCheck(data) {
-                                                                                setFormSettings((prevState) => ({
+                                                                                setData((prevState) => ({
                                                                                     ...prevState,
                                                                                     franchise: [...data.map((data) => data.id)],
                                                                                     franchisee: [...data.map(data => data.id)],
@@ -515,46 +518,12 @@ const RepoEdit = () => {
                                                                             }}
                                                                             options={franchiseeList}
                                                                         />
-                                                                        {/* <Multiselect
-                                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                                            placeholder={"Select Franchise"}
-                                                                            displayValue="key"
-                                                                            isClearable={false}
-                                                                            className="multiselect-box default-arrow-select"
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    franchisee: [...data.map(data => data.id)]
 
-                                                                                }));
-                                                                                setSelectedUser([])
-                                                                                setSelectedChild([])
-                                                                            }}
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
-                                                                            onSelect={(selectedOptions) => {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...selectedOptions.map(option => option.id + "")],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            options={franchiseeList}
-                                                                        /> */}
                                                                     </div>
                                                                 </Form.Group>
                                                             </Col>
                                                         </Row>)}
-                                                        {sendToAllFranchisee === "none" && formSettings.franchisee.length < 1 ? "" : (
+                                                        {sendToAllFranchisee === "none" && data.franchise.length < 1 ? "" : (
                                                             <Row className="mt-4">
                                                                 <Col lg={3} md={6}>
                                                                     <Form.Group>
@@ -813,7 +782,7 @@ const RepoEdit = () => {
                                                                                 <div className="select-with-plus">
                                                                                     <Multiselect
                                                                                         // disable={sendToAllFranchisee === 'all'}
-                                                                                        displayValue="email"
+                                                                                        displayValue="namemail"
                                                                                         className="multiselect-box default-arrow-select"
                                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onRemove={onRemoveUser}

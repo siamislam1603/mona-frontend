@@ -20,26 +20,29 @@ export const DynamicFormValidation = (
       // console.log('inner_item', form[item]);
       if (inner_item.required) {
         if (!form[item]) {
-          newErrors[
-            `${inner_item.field_name}`
-          ] = `${inner_item.field_label} is required`;
+          if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+            newErrors[
+              `${inner_item.field_name}`
+            ] = `${inner_item.field_label} is required`;
         } else {
           if (
             inner_item.field_type === 'signature' &&
             signature_access_flag === true &&
             !form[item][`${inner_item.field_name}`]
           ) {
-            newErrors[
-              `${inner_item.field_name}`
-            ] = `${inner_item.field_label} is required`;
+            if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+              newErrors[
+                `${inner_item.field_name}`
+              ] = `${inner_item.field_label} is required`;
           } else {
             if (
               inner_item.field_type !== 'signature' &&
               !form[item][`${inner_item.field_name}`]
             ) {
-              newErrors[
-                `${inner_item.field_name}`
-              ] = `${inner_item.field_label} is required`;
+              if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
+                newErrors[
+                  `${inner_item.field_name}`
+                ] = `${inner_item.field_label} is required`;
             }
           }
         }
@@ -670,8 +673,8 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
-  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
-    errors.crn = 'Field should only contain digits';
+  // if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+  //   errors.crn = 'Field should only contain digits';
 
   if (!phone) errors.phone = 'Phone number is required';
 
@@ -737,8 +740,8 @@ export const editUserValidation = (
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
-  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
-    errors.crn = 'Field should only contain digits';
+  // if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+  //   errors.crn = 'Field should only contain digits';
 
   if (email?.length > 0 && !regex.test(email)) {
     errors.email = 'Email format is invalid';

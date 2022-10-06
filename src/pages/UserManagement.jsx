@@ -88,41 +88,13 @@ const UserManagement = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [deleteResponse, setDeleteResponse] = useState(null);
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const [parentFranchiseeId, setParentFranchiseeId] = useState(null);
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
-  const [tempEduData, setTempEduData] = useState(null);
-  const [parentConnectedToEducator, setParentConnectedToEducator] = useState(null);
 
 
   const rowEvents = {
     onClick: (e, row, rowIndex) => {
-      // if (e.target.text === 'Delete') {
-
-      //   async function deleteUserFromDB() {
-      //     const response = await axios.patch(
-      //       `${BASE_URL}/auth/user/status/${row.userID}`,
-      //       {
-      //         is_active: 2,
-      //       }, {
-      //       headers: {
-      //         "Authorization": `Bearer ${localStorage.getItem('token')}`
-      //       }
-      //     });
-
-      //     if(response.status === 201 && response.data.status === "success") {
-      //       fetchUserDetails();
-      //     }
-      //   }
-
-      //   if (window.confirm('Are you sure you want to delete this user?')) {
-      //     deleteUserFromDB();
-      //   }
-
-      //   // fetchUserDetails();
-      // }
-
       if (e.target.text === "Deactivate") {
         async function deactivateUserFromDB() {
           const response = await axios.patch(
@@ -177,51 +149,6 @@ const UserManagement = () => {
     }
   }
 
-  const selectRow = {
-    mode: 'checkbox',
-    onSelect: (row, isSelect, rowIndex, e) => {
-      if (DeleteId.includes(row.userID)) {
-        let Index;
-        DeleteId.map((item, index) => {
-          if (item === row.userID) {
-            Index = index;
-          }
-        })
-        DeleteId.splice(Index, 1);
-      }
-      else {
-        DeleteId.push(row.userID);
-      }
-
-    },
-    onSelectAll: (isSelect, rows, e) => {
-      if (isSelect) {
-        userData.map((item) => {
-          DeleteId.push(item.userID);
-        });
-      }
-      else {
-        DeleteId = [];
-      }
-    }
-  };
-  const onDeleteAll = async () => {
-
-    if (window.confirm('Are you sure you want to delete All Records?')) {
-
-      let response = await axios.post(`${BASE_URL}/auth/user/delete/all`, { id: DeleteId }, {
-
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-
-      });
-      if (response.status === 200) {
-        fetchUserDetails();
-        DeleteId = [];
-      }
-    }
-  }
   const columns = [
     {
       dataField: 'name',
@@ -323,9 +250,6 @@ const UserManagement = () => {
       },
     },
   ];
-  // const onFilter = debounce(() => {
-  //   fetchUserDetails();
-  // }, 200);
 
   const getFormattedName = (name) => {
     let firstName = name?.split(" ")[0];
@@ -336,8 +260,8 @@ const UserManagement = () => {
 
   const fetchUserDetails = async () => {
     let api_url = '';
-    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    api_url = `${BASE_URL}/role/user/${id}?search=${search}&filter=${filter}`;
+    // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+    api_url = `${BASE_URL}/role/user/list/${selectedFranchisee}?search=${search}&filter=${filter}`;
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -347,9 +271,9 @@ const UserManagement = () => {
     if (response) {
       setfullLoaderStatus(false)
     }
-    if (response.status === 200) {
+    if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
-      // console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
+      console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
@@ -364,32 +288,14 @@ const UserManagement = () => {
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: `${dt.is_active},${dt.role}`
       }));
-      // console.log('TEMP DATA:', tempData);
-      // if (localStorage.getItem('user_role') === 'guardian') {
-      //   tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      // }
 
-      // if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-      //   tempData = tempData.filter(d => d.action === 1);
-      // }
-
-      setUserDataAfterFilter(tempData);
+      setUserData(tempData);
       setIsLoading(false)
 
       let temp = tempData;
       let csv_data = [];
       temp.map((item, index) => {
-        // item['Name'] = item['name'];
-        // item['Email'] = item['email'];
-        // item['Phone Number'] = item['number'];
-        // item['Location'] = item['location'];
-        // delete item['name'];
-        // delete item['email'];
-        // delete item['number'];
-        // delete item['location'];
-
         delete item.is_deleted;
-        // delete item.user_id;
         csv_data.push(item);
         let data = { ...csv_data[index] };
         data["name"] = data.name.split(",")[1];
@@ -401,116 +307,11 @@ const UserManagement = () => {
     }
   };
 
-  const setUserDataAfterFilter = data => {
-    let role = localStorage.getItem('user_role');
-    let filteredData = null;
-
-    if (role === 'franchisor_admin') {
-      filteredData = data.filter(d => d);
-      setUserData(filteredData);
-    }
-
-    if (role === 'franchisee_admin') {
-      filteredData = data.filter(d => d)
-      setUserData(filteredData);
-    }
-
-    if (role === 'coordinator') {
-      filteredData = data.filter(d => d.role !== "franchisor_admin");
-      setUserData(filteredData);
-    }
-
-    if (role === 'educator') {
-      filteredData = data.filter(d => d.role !== 'franchisor_admin');
-      filteredData = data.filter(d => d.role !== 'franchisee_admin');
-      // setUserData(filteredData);
-      setTempEduData(filteredData);
-    }
-    // setStateChangeData(filterData);
-  };
-
-
-
   const handleApplyFilter = async () => {
     if (openFilter === true) {
       setOpenFilter(false);
     }
     fetchUserDetails();
-  }
-
-  const fetchParentsConnectedToEducator = async () => {
-    let token = localStorage.getItem('token');
-    let response = await axios.get(`${BASE_URL}/enrollment/list/parent/parentList`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-
-    if(response.status === 200 && response.data.status === "success") {
-      let { parentData } = response.data;
-      setParentConnectedToEducator(parentData);
-    }
-  }
-
-  const Show_eduactor = async () => {
-    let api_url = '';
-    let filter = Key.key
-    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    if (filter) {
-      api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
-    }
-
-    let response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')} `,
-      },
-    });
-    if (response) {
-      setfullLoaderStatus(false)
-    }
-
-    if (response.status === 200) {
-      const { users } = response.data;
-      let tempData = users.map((dt) => ({
-        name: `${dt?.profile_photo}, ${dt?.fullname}, ${dt?.role
-          .split('_')
-          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')
-          }, ${dt?.is_active} `,
-        email: dt?.email,
-        number: (dt.phone !== null ? dt?.phone.slice(1) : null),
-        location: dt?.city,
-        is_deleted: dt?.is_deleted,
-        userID: dt?.id,
-        role: dt?.role,
-        roleDetail: dt?.role + "," + dt?.isChildEnrolled + "," + dt?.franchisee_id + "," + dt?.id,
-        action: `${dt.is_active},${dt.role}`
-      }));
-
-
-      // if (localStorage.getItem('user_role') === 'guardian') {
-      //   tempData = tempData.filter(d => parseInt(d.userID) === parseInt(localStorage.getItem('user_id')));
-      // }
-
-      // if (localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
-      //   tempData = tempData.filter(d => d?.action === 1);
-      // }
-      setEducator(tempData);
-      console.log(tempData, "tempData")
-
-      setIsLoading(false)
-
-      let temp = tempData;
-      let csv_data = [];
-      temp.map((item, index) => {
-        delete item.is_deleted;
-        csv_data.push(item);
-        let data = { ...csv_data[index] };
-        data["name"] = data.name.split(",")[1];
-        csv_data[index] = data;
-      });
-      setCsvData(csv_data);
-    }
   }
 
   const trimRoleList = () => {
@@ -543,37 +344,9 @@ const UserManagement = () => {
     }
   }
 
-  function getFilteredDataForEducator(tempData, tempEduData) {
-    console.log('TEMP DATA:', tempData);
-    let filteredTempData = tempData.map((parent, index) => {
-      let {children} = parent;
-      // console.log('CHILDREN:', children);
-      let childList = children.map(child => child?.users?.map(user => user.email === localStorage.getItem('email')));
-      // console.log('CHILDLIST:', childList);
-      let data = childList.map(child => child.includes(true));
-      data = data.includes(true);
-
-      if(data === true)
-        return parent.user_parent_id;
-    });
-    filteredTempData = filteredTempData.filter(d => typeof d !== "undefined");
-    console.log('FILTERED TEMP DATA:', filteredTempData);
-    let data = tempEduData.filter(user => parseInt(user.roleDetail.split(",")[1]) !== 0);
-    data = data.map(data => data.userID);
-
-    let parentToExclude = data.filter(d => !filteredTempData.includes(d));
-    let userD = tempEduData.filter(user => !parentToExclude.includes(parseInt(user.userID)));
-    return userD;
-  }
-
-  useEffect(() => {
-    Show_eduactor()
-  }, [selectedFranchisee])
-
   useEffect(() => {
     fetchUserDetails()
   }, [search])
-
 
   useEffect(() => {
     if (selectedFranchisee) {
@@ -612,25 +385,6 @@ const UserManagement = () => {
     trimRoleList();
   }, [userRoleData]);
 
-  // useEffect(() => {
-  //   if (displayRoles) {
-  //     console.log('DISPLAY ROLES:', displayRoles);
-  //   }
-  // }, [displayRoles])
-
-  useEffect(() => {
-    if(localStorage.getItem('user_role') === 'educator') {
-      fetchParentsConnectedToEducator()
-    }
-  }, []);
-
-  useEffect(() => {
-    if(parentConnectedToEducator && tempEduData) {
-      console.log('TEMP EDU DATA:', parentConnectedToEducator);
-      let d = getFilteredDataForEducator(parentConnectedToEducator, tempEduData);
-      setUserData(d);
-    } 
-  }, [parentConnectedToEducator, tempEduData]);
 
   const csvLink = useRef();
   // const container = useRef();
