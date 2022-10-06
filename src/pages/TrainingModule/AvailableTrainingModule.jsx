@@ -24,6 +24,16 @@ const filterCategory = [
   }
 ];
 
+function isTrainingExpired(end_date) {
+  let due_date = moment(end_date).format();
+  let today = moment().format();
+
+  if(due_date < today)
+    return true
+
+  return false
+}
+
 const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
@@ -336,7 +346,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                           </div>
                         </div>
                         <div className="cta-col">
-                        { localStorage.getItem('user_role') !== 'educator' &&
+                        { localStorage.getItem('user_role') !== 'educator' && isTrainingExpired(item.training.end_date) === false &&
                           <Dropdown>
                             <Dropdown.Toggle variant="transparent" id="ctacol">
                               <img src="../img/dot-ico.svg" alt="" />
