@@ -388,22 +388,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Child CRN *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="child_crn"
-                                  // ref={child_crn}
-                                  value={formOneChildData.child_crn || ""}
-                                  onChange={(e) => {
-                                    handleChildData(e);
-                                  }} />
-
-                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
-                              </Form.Group>
-                            </Col>
-
-                            <Col md={12}>
-                              <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
                                   <Form.Label>School Status *</Form.Label>
                                   <Form.Check
@@ -451,6 +435,22 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Child CRN *</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="child_crn"
+                                  // ref={child_crn}
+                                  value={formOneChildData.child_crn || ""}
+                                  onChange={(e) => {
+                                    handleChildData(e);
+                                  }} />
+
+                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
+                              </Form.Group>
+                            </Col>
                           </Row>
                         </div>
                       </div>
