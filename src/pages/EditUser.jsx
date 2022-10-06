@@ -826,6 +826,7 @@ const EditUser = () => {
                               <Form.Label>CRN *</Form.Label>
                               <Form.Control
                                 type="text"
+                                disabled={localStorage.getItem('user_role') === "guardian"}
                                 ref={crn}
                                 name="crn"
                                 value={formData.crn}

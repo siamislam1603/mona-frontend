@@ -442,6 +442,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="text"
                                   name="child_crn"
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   // ref={child_crn}
                                   value={formOneChildData.child_crn || ""}
                                   onChange={(e) => {
