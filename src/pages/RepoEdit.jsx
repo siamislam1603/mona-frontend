@@ -219,23 +219,25 @@ const RepoEdit = () => {
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            setUser(response.data.users)
+            let userList = response.data.users
+            let formattedUserData = userList.map((d) => ({
+                id: d.id,
+                fullname: d.fullname,
+                email: d.email,
+                namemail: `(${d.fullname}) ${d.email}`,
+            }));
+            setUser(formattedUserData)
         }
     };
-    function onSelectUser(optionsList, selectedItem) {
-        selectedUserId += selectedItem.id + ',';
-        selectedUser.push({
-            id: selectedItem.id,
-            email: selectedItem.email,
-        });
-    }
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
+        const index = user.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        selectedUser.splice(index, 1);
+        user.splice(index, 1);
     }
+
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
         if (!!errors[field]) {
@@ -516,41 +518,7 @@ const RepoEdit = () => {
                                                                             }}
                                                                             options={franchiseeList}
                                                                         />
-                                                                        {/* <Multiselect
-                                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                                            placeholder={"Select Franchise"}
-                                                                            displayValue="key"
-                                                                            isClearable={false}
-                                                                            className="multiselect-box default-arrow-select"
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    franchisee: [...data.map(data => data.id)]
 
-                                                                                }));
-                                                                                setSelectedUser([])
-                                                                                setSelectedChild([])
-                                                                            }}
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
-                                                                            onSelect={(selectedOptions) => {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...selectedOptions.map(option => option.id + "")],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            options={franchiseeList}
-                                                                        /> */}
                                                                     </div>
                                                                 </Form.Group>
                                                             </Col>
@@ -814,7 +782,7 @@ const RepoEdit = () => {
                                                                                 <div className="select-with-plus">
                                                                                     <Multiselect
                                                                                         // disable={sendToAllFranchisee === 'all'}
-                                                                                        displayValue="email"
+                                                                                        displayValue="namemail"
                                                                                         className="multiselect-box default-arrow-select"
                                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onRemove={onRemoveUser}

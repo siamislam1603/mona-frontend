@@ -36,6 +36,11 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
         setPopupVisible(false);
     }
 
+    const onImageCancle = () => {
+        setPopupVisible(false);
+        setTempImage(null)
+    }
+    
     const convertCanvasToImg = (canvas) => {
         let img = new Image();
         img.src = canvas.toDataURL();
@@ -67,7 +72,6 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete} />
                     </div>
-
                     <div className="slider">
                         <Slider
                             min={1}
@@ -80,7 +84,7 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                 </div>
 
                 <div className="container-buttons">
-                    <Button variant="contained" color="primary" className="me-3" onClick={() => setPopupVisible(false)}>
+                    <Button variant="contained" color="primary" className="me-3" onClick={onImageCancle}>
                         Cancel
                     </Button>
                     <Button variant="contained" color="primary" onClick={onImageCrop}>
