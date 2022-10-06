@@ -61,7 +61,6 @@ function ViewFormBuilder(props) {
       toast.success(location?.state?.message);
       navigate('/form', { state: { message: null } });
     }
-    // getFormData(localStorage.getItem('franchisee_id'));
   }, []);
 
   const dateCheck = (start_date, start_time, end_date, end_time, form_name) => {
@@ -73,9 +72,6 @@ function ViewFormBuilder(props) {
     if (start_date) {
       let dataAndTime = start_date + ' ' + start_time;
       let startDate = new Date(dataAndTime);
-      // startDate = new Date(startDate).toLocaleString('en-ZA', {
-      //   timeZone: 'Australia/Perth',
-      // });
       startDate = new Date(startDate);
       if (todayDate.getTime() < startDate.getTime()) {
         toast.error(
@@ -89,9 +85,6 @@ function ViewFormBuilder(props) {
         if (end_date) {
           let dataAndTime = end_date + ' ' + end_time;
           let endDate = new Date(dataAndTime);
-          // endDate = new Date(endDate).toLocaleString('en-ZA', {
-          //   timeZone: 'Australia/Perth',
-          // });
           endDate = new Date(endDate);
           if (todayDate.getTime() > endDate.getTime()) {
             toast.error(
@@ -146,21 +139,6 @@ function ViewFormBuilder(props) {
       .then((response) => response.json())
       .then((result) => {
         toast.success(result?.message);
-
-        // let separatedCategoryData = formData.filter(d => d.category === formCategory);
-        // separatedCategoryData = separatedCategoryData[0].forms;
-        // let filteredFormArray = separatedCategoryData.filter(d => d.id !== id);
-
-        // let filteredData = formData.map(d => {
-        //   if(d.category === formCategory) {
-        //     return {
-        //       ...d,
-        //       forms: filteredFormArray
-        //     }
-        //   }
-        //   return d
-        // });
-        // setFormData(filteredData);
         getFormData('', localStorage.getItem('franchisee_id'));
       })
       .catch((error) => console.log('error', error));
@@ -215,8 +193,6 @@ function ViewFormBuilder(props) {
             delete others[index];
           }
         });
-        console.log('ME FORM DATA FORMAT:', me);
-        console.log('OTHER FORM DATA:', others);
         setMeFormData(me);
         setOthersFormData(others);
         if (result) {
@@ -319,8 +295,6 @@ function ViewFormBuilder(props) {
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
                           'franchisor_admin') && (
-                        // || localStorage.getItem('user_role') ===
-                        //   'coordinator'
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -432,24 +406,6 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem(
-                                          //     'user_role'
-                                          //   ) === 'guardian'
-                                          //     ? 'parent'
-                                          //     : localStorage.getItem(
-                                          //         'user_role'
-                                          //       )
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -588,18 +544,6 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem('user_role')
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -756,18 +700,6 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem('user_role')
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -1142,7 +1074,7 @@ function ViewFormBuilder(props) {
                                                                     {
                                                                       state: {
                                                                         id: inner_item.id,
-                                                                        update:true
+                                                                        update: true,
                                                                       },
                                                                     }
                                                                   );
@@ -1454,7 +1386,7 @@ function ViewFormBuilder(props) {
                                                                           state:
                                                                             {
                                                                               id: inner_item.id,
-                                                                              update:true
+                                                                              update: true,
                                                                             },
                                                                         }
                                                                       );
@@ -1614,7 +1546,6 @@ function ViewFormBuilder(props) {
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
                       return (
-                        // http://13.237.14.155:4000/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">

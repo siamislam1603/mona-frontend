@@ -52,20 +52,10 @@ function FormResponse(props) {
   };
   const trim = (e, index) => {
     e.preventDefault();
-    // console.log(
-    //   'index--->',
-    //   Index,
-    //   '-----',
-    //   JSON.parse(responseData[Index][0].fields)
-    // );
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    // console.log(
-    //   'sigpad--------->><<<<<<<<',
-    //   sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    // );
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
@@ -93,8 +83,6 @@ function FormResponse(props) {
           hideFlag = true;
         }
       });
-
-    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
   };
   const getAllForm = () => {
     var myHeaders = new Headers();
@@ -147,7 +135,6 @@ function FormResponse(props) {
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
-              // if(inner_item.fields)
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
                 if (field_item === 'signature') {
                   item['signature_button'] = false;
@@ -189,7 +176,6 @@ function FormResponse(props) {
       body: JSON.stringify(seenData),
       redirect: 'follow',
     };
-    console.log('seen responceeeeeeeeeeeeeeeeeeeeeee', seenData);
     fetch(`${BASE_URL}/form/response/seen`, requestOptions)
       .then((response) => response.json())
       .then((result) => console.log(result?.message))
@@ -228,7 +214,6 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  // dateFilter && console.log('Filter Date:', dateFilter);
   return (
     <>
       <div id="main">
@@ -273,7 +258,6 @@ function FormResponse(props) {
                             type="date"
                             name="from_date"
                             value={dateFilter?.from_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -281,7 +265,6 @@ function FormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
@@ -289,7 +272,6 @@ function FormResponse(props) {
                             type="date"
                             name="to_date"
                             value={dateFilter?.to_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -297,7 +279,6 @@ function FormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
@@ -370,11 +351,6 @@ function FormResponse(props) {
                                                 : 'responses-header-detail response-header-left-line'
                                             }
                                           >
-                                            {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                            {/* {console.log(
-                                            'iner_itemwdasdasddassd---->',
-                                            inner_item
-                                          )} */}
                                             <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
@@ -435,9 +411,9 @@ function FormResponse(props) {
                                     )}
                                     <p>
                                       Completed on: <br />
-                                      {moment(item[0].createdAt)
-                                        // .utcOffset('+10:00')
-                                        .format('DD/MM/YYYY') +
+                                      {moment(item[0].createdAt).format(
+                                        'DD/MM/YYYY'
+                                      ) +
                                         ', ' +
                                         item[0].createdAt
                                           .split('T')[1]
@@ -471,14 +447,6 @@ function FormResponse(props) {
 
                                       {Object.keys(JSON.parse(item.fields)).map(
                                         (inner_item, inner_index) => {
-                                          {
-                                            console.log(
-                                              'field_type----',
-                                              Object.keys(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]
-                                            );
-                                          }
                                           {
                                             (Object.keys(
                                               JSON.parse(item.fields)
@@ -788,9 +756,6 @@ function FormResponse(props) {
                             </button>
                           </div>
                         </Form.Group>
-                        {/* <p style={{ color: 'red' }}>
-                                    {controls.error[controls.field_name]}
-                                  </p> */}
                       </Col>
                     )}
                   </Modal.Body>
