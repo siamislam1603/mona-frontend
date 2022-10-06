@@ -56,6 +56,8 @@ const AddFormField = (props) => {
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   const [updateFlag,setUpdateFlag]=useState(false);
   const [newFieldAddIndex,setNewFieldAddIndex]=useState(-1);
+  const [newOptionAddIndex,setNewOptionAddIndex]=useState(-1);
+  const [newConditionOptionAddIndex,setNewConditionOptionAddIndex]=useState(-1);
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -902,6 +904,7 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
+                                              disabled={updateFlag && newFieldAddIndex!==index && inner_index!==newOptionAddIndex}
                                               id={
                                                 'option' + index + inner_index
                                               }
@@ -980,6 +983,7 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           tempObj['option'].push({ '': '' });
+                                          setNewOptionAddIndex(tempObj['option'].length-1);
                                           tempArr[index] = tempObj;
                                           setForm(tempArr);
                                         }}
@@ -994,12 +998,16 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           const tempOption = tempObj['option'];
-
+                                          console.log("temp option--->",tempOption);
                                           tempOption.map((item) => {
                                             if (
                                               !(Object.keys(item)[0] === '')
                                             ) {
                                               fillOptionCounter++;
+                                              if(Object.keys(item)[0].toString()===Object.values(item)[0].toString())
+                                              {
+                                                setUpdateFlag(false);
+                                              }
                                             }
                                           });
                                           if (
@@ -1020,6 +1028,7 @@ const AddFormField = (props) => {
                                                     { '': '' },
                                                   ],
                                                 };
+                                                // setUpdateFlag(false);
                                               }
                                             });
                                           } else {
@@ -1031,6 +1040,7 @@ const AddFormField = (props) => {
                                           tempArr[index]['option'] = tempOption;
 
                                           setForm(tempArr);
+                                          
                                         }}
                                       >
                                         Apply Condition
@@ -1140,6 +1150,7 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
+                          setUpdateFlag(true);
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1176,6 +1187,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
+                                      disabled={updateFlag}
                                       id={'field_label' + index}
                                       name="field_label"
                                       value={
@@ -1198,6 +1210,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
+                                        disabled={updateFlag}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
@@ -1350,6 +1363,7 @@ const AddFormField = (props) => {
                                                 <Form.Control
                                                   type="text"
                                                   name="option"
+                                                  disabled={updateFlag && newConditionOptionAddIndex!==inner_index}
                                                   value={
                                                     inner_item[
                                                       Object.keys(inner_item)[0]
@@ -1427,6 +1441,9 @@ const AddFormField = (props) => {
                                           keyOfOption[Object.keys(item)[0]][
                                             'option'
                                           ].push({ '': '' });
+                                          setNewConditionOptionAddIndex(keyOfOption[Object.keys(item)[0]][
+                                            'option'
+                                          ].length-1);
                                           tempOption[index] = keyOfOption;
                                           tempArr[Index]['option'] = tempOption;
                                           setForm(tempArr);
@@ -1455,8 +1472,10 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
+                              setUpdateFlag(true);
                               setConditionFlag(false);
                               counter++;
+                              setUpdateFlag(true);
                               setCount(counter);
                             }}
                           >

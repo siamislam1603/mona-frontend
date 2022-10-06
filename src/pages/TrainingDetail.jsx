@@ -133,7 +133,11 @@ const TrainingDetail = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { userObj } = response.data;
-      let participants = userObj.slice(0, 6);
+      let filteredUser = [...userObj];
+      if(localStorage.getItem('user_role') === 'educator') {
+        filteredUser = filteredUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('user_id')));
+      }
+      let participants = filteredUser.slice(0, 6);
       setUsers(participants.map(user => ({
         id: user.id,
         name: user.fullname,
