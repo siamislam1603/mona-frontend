@@ -111,7 +111,7 @@ function AddFormBuilder(props) {
             setErrors(errorData);
           } else {
             navigate('/form/setting', {
-              state: { id: res?.result?.id, form_name: res?.result?.form_name },
+              state: { id: res?.result?.id, form_name: res?.result?.form_name,update:location?.state?.update ? true : false },
             });
           }
         });
