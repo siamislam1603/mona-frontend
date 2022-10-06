@@ -107,6 +107,7 @@ const FileRepository = () => {
     EditCategory();
     Updatecategory_name.category_name = "";
   }
+
   const handleChange = (evt) => {
     setUpdateCategory({
       category_name: evt.target.value,
@@ -131,7 +132,6 @@ const FileRepository = () => {
       setTimeout(() => {
         SetCategoryCreated(null)
       }, 3000)
-
     }
     if (response.data.status === "fail") {
       let { message } = response.data;
@@ -441,12 +441,16 @@ const FileRepository = () => {
                                 >
                                   Cancel
                                 </Button>
-                                {!Updatecategory_name.category_name}
-                                {disablee &&
-                                  <Button
-                                    onClick={(e) => SubEditmiton(e)}>
-                                    Update
-                                  </Button>
+                                {Updatecategory_name.category_name.length > 0 ?
+                                  <>
+                                    {disablee &&
+                                      <Button
+                                        onClick={(e) => SubEditmiton(e)}>
+                                        Update
+                                      </Button>
+                                    }
+                                  </>
+                                  : ""
                                 }
                               </Modal.Footer>
                             </Modal>

@@ -30,6 +30,7 @@ const FilerepoUploadFile = () => {
     const [user, setUser] = useState([]);
     const [selectedAll, setSelectedAll] = useState(false);
     const [generalCategory, setGeneralCategory] = useState("")
+    console.log("generalCategory", user)
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
     const [formSettingData, setFormSettingData] = useState({
@@ -41,6 +42,67 @@ const FilerepoUploadFile = () => {
     });
     console.log(formSettingData, "formSettingData", formSettings)
     console.log('selected_item---->1selectedFranchisee', formSettings.assigned_franchisee.length);
+
+
+
+    const getUser = async () => {
+        try {
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+
+            if (response.status === 200) {
+                let userList = response.data.users
+
+
+                if (getUser_Role == 'franchisee_admin') {
+                    userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'coordinator') {
+                    userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'educator') {
+                    userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+                }
+                let formattedUserData = userList.map((d) => ({
+                    id: d.id,
+                    fullname: d.fullname,
+                    email: d.email,
+                    namemail: `(${d.fullname}) ${d.email}`,
+                }));
+                console.log(formattedUserData, "userList")
+                setUser(formattedUserData)
+            }
+
+        } catch (err) {
+
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //======================== GET FILE CATAGOREY==================
 
@@ -108,45 +170,7 @@ const FilerepoUploadFile = () => {
         }
     }
     //======================== GET User List==================
-    const getUser = async () => {
-        try {
-            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            })
 
-            if (response.status === 200) {
-                let userList = response.data.users
-                if (getUser_Role == 'franchisee_admin') {
-                    userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
-                } else if (getUser_Role == 'coordinator') {
-                    userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
-                } else if (getUser_Role == 'educator') {
-                    userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
-                }
-                setUser(userList)
-            }
-
-        } catch (err) {
-
-        }
-    };
-
-
-    function onSelectChild(selectedItem) {
-        let selectedchildarr = selectedItem
-        selectedItem = selectedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: selectedItem
-        }));
-
-        setSelectedChild(selectedchildarr)
-    }
 
     useEffect(() => {
         getFileCategory();
@@ -305,20 +329,31 @@ const FilerepoUploadFile = () => {
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
-            email: selectedItem.email,
+            fullname: selectedItem.fullname,
         });
+    }
 
+    function onSelectChild(selectedItem) {
+        let selectedchildarr = selectedItem
+        selectedItem = selectedItem.map((item) => {
+            return item.id
+        })
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_childs: selectedItem
+        }));
+        setSelectedChild(selectedchildarr)
     }
 
 
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
+        const index = user.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        selectedUser.splice(index, 1);
-
+        user.splice(index, 1);
     }
+
 
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
@@ -430,40 +465,41 @@ const FilerepoUploadFile = () => {
                                     </div>
                                 </Col>
                                 <Col lg={12}>
-                                    <Form.Group>
-                                        <Form.Label>File Category*</Form.Label>
-                                        {getUser_Role === "guardian" ? (
-                                            <>
-                                                <Form.Select
-                                                    name="file_category"
-                                                    onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
-                                                    }}
-                                                    disabled={true}
-                                                >
-                                                    {/* <option value="8">Select</option> */}
-                                                    <option value={generalCategory} selected={true}>General</option>
-                                                </Form.Select>
-                                            </>) : (
-                                            <>
-                                                <Form.Select
-                                                    name="file_category"
-                                                    onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
-                                                    }}
-                                                >
-                                                    <option value="">Select</option>
-                                                    {category?.map((item) => {
-                                                        return (
-                                                            <option value={item.id}>{item.category_name}</option>
-                                                        );
-                                                    })}
-                                                </Form.Select>
-                                            </>)}
+                                    {getUser_Role === "guardian" ? "" :
+                                        <Form.Group>
 
-
-                                        {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
-                                    </Form.Group>
+                                            <Form.Label>File Category*</Form.Label>
+                                            {getUser_Role === "guardian" ? (
+                                                <>
+                                                    <Form.Select
+                                                        name="file_category"
+                                                        onChange={(e) => {
+                                                            setField(e.target.name, e.target.value);
+                                                        }}
+                                                        disabled={true}
+                                                    >
+                                                        {/* <option value="8">Select</option> */}
+                                                        <option value={generalCategory} selected={true}>General</option>
+                                                    </Form.Select>
+                                                </>) : (
+                                                <>
+                                                    <Form.Select
+                                                        name="file_category"
+                                                        onChange={(e) => {
+                                                            setField(e.target.name, e.target.value);
+                                                        }}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {category?.map((item) => {
+                                                            return (
+                                                                <option value={item.id}>{item.category_name}</option>
+                                                            );
+                                                        })}
+                                                    </Form.Select>
+                                                </>)}
+                                            {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
+                                        </Form.Group>
+                                    }
                                 </Col>
                             </Row>
                             {getUser_Role === "guardian" ? "" : (
@@ -792,12 +828,10 @@ const FilerepoUploadFile = () => {
                                                 {formSettingData.accessible_to_role === 0 ? (
                                                     <>
                                                         <Form.Group>
-
-
                                                             <Form.Label>Select User</Form.Label>
                                                             <div className="select-with-plus">
                                                                 <Multiselect
-                                                                    displayValue="email"
+                                                                    displayValue="namemail"
                                                                     className="multiselect-box default-arrow-select"
                                                                     // placeholder="Select Franchisee"
                                                                     selectedValues={selectedUser}

@@ -29,6 +29,8 @@ const FilerepoMyAdd = ({ filter }) => {
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
     const [selectedUser, setSelectedUser] = useState([]);
+
+    console.log(selectedUser, "selectedUser")
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
     const [user, setUser] = useState([]);
@@ -190,13 +192,29 @@ const FilerepoMyAdd = ({ filter }) => {
         }
     }
 
+
     function onRemoveUser(selectedList, removedItem) {
-        selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
+        selectedUserId = selectedUserId.replace(
+            removedItem.id + ',',
+            ''
+        );
+        const index = user.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        selectedUser.splice(index, 1);
+        user.splice(index, 1);
     }
+
+    function onRemoveChild(selectedList, removedItem) {
+        selectedUserId = selectedUserId.replace(
+            removedItem.id + ',',
+            ''
+        );
+        const index = child.findIndex((object) => {
+            return object.id === removedItem.id;
+        });
+        child.splice(index, 1);
+    }
+
 
     const GetFile = async () => {
         try {
@@ -241,7 +259,14 @@ const FilerepoMyAdd = ({ filter }) => {
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            setUser(response.data.users)
+            let userList = response.data.users
+            let formattedUserData = userList.map((d) => ({
+                id: d.id,
+                fullname: d.fullname,
+                email: d.email,
+                namemail: `(${d.fullname}) ${d.email}`,
+            }));
+            setUser(formattedUserData)
         }
     };
 
@@ -932,7 +957,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         <Form.Label>Select User</Form.Label>
                                                         <div className="select-with-plus">
                                                             <Multiselect
-                                                                displayValue="email"
+                                                                displayValue="namemail"
                                                                 className="multiselect-box default-arrow-select"
                                                                 // placeholder="Select Franchisee"
                                                                 selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
@@ -961,7 +986,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
                                                                 value={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
+                                                                onRemove={onRemoveChild}
                                                                 // onSearch={function noRefCheck() {}}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
