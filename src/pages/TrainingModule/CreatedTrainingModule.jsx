@@ -22,6 +22,16 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [page, setPage] = useState(6)
 
+  function isTrainingExpired(end_date) {
+    let due_date = moment(end_date).format();
+    let today = moment().format();
+
+    if(due_date < today)
+      return true
+
+    return false
+  }
+
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
     assigned_franchisee: [],
@@ -321,11 +331,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
-                            <Dropdown.Item href="#" onClick={() => {
+                            {isTrainingExpired(training.end_date) === false && training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
+                            { isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
-                            }}>Share</Dropdown.Item>
+                              }}>Share</Dropdown.Item>
+                            }
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id, "me")
@@ -385,11 +397,22 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
-                            <Dropdown.Item href="#" onClick={() => {
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href={`/edit-training/${training.id}`}>
+                                Edit
+                              </Dropdown.Item>
+                            }
+                            
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href="#" onClick={() => {
                               setSaveTrainingId(training.id);
                               setShowModal(true)
-                            }}>Share</Dropdown.Item>
+                              }}>
+                                Share
+                              </Dropdown.Item>
+                            }
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id, "others")
