@@ -74,7 +74,8 @@ const AddOperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
+       api_url = `${BASE_URL}/auth/users`;
       else
         api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
     } else {
@@ -83,6 +84,7 @@ const AddOperatingManual = () => {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("The result",result)
         result?.data?.map((item) => {
           item['status'] = false;
         });
