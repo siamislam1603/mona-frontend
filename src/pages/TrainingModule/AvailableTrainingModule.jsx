@@ -228,7 +228,7 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
+          key: `${data.fullname} (${data.email})`
         })),
       ]);
     }

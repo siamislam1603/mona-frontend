@@ -13,7 +13,6 @@ import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
 import _ from 'lodash'
-
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 
@@ -273,7 +272,7 @@ const FilerepoMyAdd = ({ filter }) => {
 
 
     const getChildren = async () => {
-        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users)}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users ? formSettings.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },

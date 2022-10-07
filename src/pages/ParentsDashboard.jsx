@@ -135,6 +135,13 @@ const ParentsDashboard = () => {
 
 
   useEffect(() => {
+    if (localStorage.getItem('success_msg')) {
+      setTopSuccessMessage(localStorage.getItem('success_msg'));
+      localStorage.removeItem('success_msg');
+      setTimeout(() => {
+        setTopSuccessMessage(null);
+      }, 3000);
+    }
     checkIfChildExist();
   }, []);
 
@@ -286,7 +293,7 @@ const ParentsDashboard = () => {
           <Modal.Body>
             <div>
               <p>
-                No child is enrolled under you at this point. Please contact administrator for the same.
+                No child is enroled under you at this point. Please contact administrator for the same.
               </p>
             </div>
           </Modal.Body>
