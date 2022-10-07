@@ -10,6 +10,7 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
+import _ from 'lodash'
 
 
 const getUser_Role = localStorage.getItem(`user_role`)
@@ -33,7 +34,9 @@ const RepoEdit = () => {
     const [selectedChild, setSelectedChild] = useState([])
     const [child, setChild] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const [generalCategory, setGeneralCategory] = useState("")
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [userCount, setUserCount] = useState(0)
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -78,6 +81,7 @@ const RepoEdit = () => {
         }));
         setCoverImage(data?.repository_files[0].filesPath);
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const onChange = (e) => {
@@ -151,16 +155,26 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
-            franchisee_id: data.franchise.length == 0 ? ["all"] : data.franchise
-        },
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         if (response.status === 200 && response.data.status === "success") {
-            setChild(response.data.children.map(data => ({
+            let extraArr = []
+            let parents = response.data.parentData.map((item)=>{
+                return item.children
+            })  
+
+            parents.forEach((item)=>{
+                extraArr = [...item,...extraArr]
+            })
+
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+              });
+            
+            setChild(uniqArr.map(data=>({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -195,6 +209,8 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
+            console.log(categoryList[0].id, "General=====================")
+            setGeneralCategory(categoryList[0].id)
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -236,6 +252,7 @@ const RepoEdit = () => {
             return object.id === removedItem.id;
         });
         user.splice(index, 1);
+        setUserCount(userCount - 1)
     }
 
     const setField = async (field, value) => {
@@ -286,9 +303,13 @@ const RepoEdit = () => {
     }, []);
 
     useEffect(() => {
-        childList()
+        // childList()
         getUser();
     }, [data.franchise])
+
+    useEffect(() => {
+        childList()
+    }, [userCount])
 
 
 
@@ -396,48 +417,50 @@ const RepoEdit = () => {
                                                         </div>
                                                     </Col>
                                                     <Col lg={12}>
-                                                        <Form.Group>
-                                                            <Form.Label>File Category*</Form.Label>
-                                                            {getUser_Role === "guardian" ? (
-                                                                <>
-                                                                    <Form.Select
-                                                                        name="file_category"
-                                                                        onChange={(e) => {
-                                                                            setField(e.target.name, e.target.value);
-                                                                        }}
-                                                                        value={data?.categoryId}
-                                                                    >
-                                                                        <option value="">Select</option>
-                                                                        <option value="8">General</option>
-                                                                    </Form.Select>
-                                                                </>) : (
-                                                                <>
-                                                                    <Form.Select
-                                                                        name="file_category"
-                                                                        onChange={(e) => {
-                                                                            setField(e.target.name, e.target.value);
-                                                                        }}
-                                                                        value={data?.categoryId}
-                                                                    >
-                                                                        <option value="">Select</option>
-                                                                        {category?.map((item) => {
-                                                                            return (
-                                                                                <option value={item.id}>{item.value}</option>
-                                                                            );
-                                                                        })}
-                                                                    </Form.Select>
-                                                                </>)}
+                                                        {getUser_Role === "guardian" ? "" : <>
+                                                            <Form.Group>
+                                                                <Form.Label>File Category*</Form.Label>
+                                                                {getUser_Role === "guardian" ? (
+                                                                    <>
+                                                                        <Form.Select
+                                                                            name="file_category"
+                                                                            onChange={(e) => {
+                                                                                setField(e.target.name, e.target.value);
+                                                                            }}
+                                                                            disabled={true}
+                                                                        >
+                                                                            {/* <option value="8">Select</option> */}
+                                                                            <option value={generalCategory} selected={true}>General</option>
+                                                                        </Form.Select>
+                                                                    </>) : (
+                                                                    <>
+                                                                        <Form.Select
+                                                                            name="file_category"
+                                                                            onChange={(e) => {
+                                                                                setField(e.target.name, e.target.value);
+                                                                            }}
+                                                                            value={data?.categoryId}
+                                                                        >
+                                                                            <option value="">Select</option>
+                                                                            {category?.map((item) => {
+                                                                                return (
+                                                                                    <option value={item.id}>{item.value}</option>
+                                                                                );
+                                                                            })}
+                                                                        </Form.Select>
+                                                                    </>)}
 
-                                                            {error && !data.categoryId && < span className="error"> File Category is required!</span>}
-                                                            {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
-                                                        </Form.Group>
+                                                                {error && !data.categoryId && < span className="error"> File Category is required!</span>}
+                                                                {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
+                                                            </Form.Group>
+                                                        </>}
                                                     </Col>
                                                 </Row>
                                                 {getUser_Role === "guardian" ? (<></>) :
                                                     (<>
                                                         {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                                             <Col lg={3} md={6}>
-                                                                <Form.Group>
+                                        ``                        <Form.Group>
                                                                     <Form.Label>Give access to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
@@ -792,6 +815,8 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...selectedOptions.map(option => option.id + "")]
                                                                                             }));
+
+                                                                                            setUserCount(userCount + 1)
                                                                                         }}
                                                                                         options={user}
                                                                                     />
