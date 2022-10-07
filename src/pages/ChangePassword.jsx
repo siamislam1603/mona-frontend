@@ -461,7 +461,7 @@ Minimum 8 characters, at least one uppercase and one lowercase letter, one numbe
           <Modal.Body>
             <div>
               <p>
-                No child is enrolled under you at this point. Please contact administrator for the same.
+                No child is enroled under you at this point. Please contact administrator for the same.
               </p>
             </div>
           </Modal.Body>
