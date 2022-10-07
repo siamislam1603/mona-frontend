@@ -691,7 +691,7 @@ const Children = () => {
                                         {
                                             cell.active === 1 &&
                                             <>
-                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
+                                                {localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Edit</Dropdown.Item>}
                                                 { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Educator</Dropdown.Item>}
                                                 { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>}
                                             </>
