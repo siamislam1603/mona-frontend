@@ -10,7 +10,7 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
-
+import _ from 'lodash'
 
 const getUser_Role = localStorage.getItem(`user_role`)
 
@@ -27,7 +27,6 @@ const RepoEdit = () => {
     const [data, setData] = useState([])
     const [franchiseeList, setFranchiseeList] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
-    console.log(sendToAllFranchisee, "sendToAllFranchisee")
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
     const [selectedChild, setSelectedChild] = useState([])
@@ -42,7 +41,6 @@ const RepoEdit = () => {
         assigned_users: []
 
     });
-    console.log(formSettings.franchisee, "formSettings")
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
@@ -59,7 +57,6 @@ const RepoEdit = () => {
             copyFetchedData(file);
         }
     }
-    console.log('fileName', data)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -123,7 +120,6 @@ const RepoEdit = () => {
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
-                console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
 
                     navigate(`/file-repository-List-me/${data.categoryId}`);
@@ -161,19 +157,19 @@ const RepoEdit = () => {
         })
         if (response.status === 200 && response.data.status === "success") {
             let extraArr = []
-            let parents = response.data.parentData.map((item)=>{
+            let parents = response.data.parentData.map((item) => {
                 return item.children
-            })  
+            })
 
-            parents.forEach((item)=>{
-                extraArr = [...item,...extraArr]
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
             })
 
             let uniqArr = _.uniqBy(extraArr, function (e) {
                 return e.id;
-              });
-            
-            setChild(uniqArr.map(data=>({
+            });
+
+            setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -208,7 +204,6 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
-            console.log(categoryList[0].id, "General=====================")
             setGeneralCategory(categoryList[0].id)
             setCategory([
                 ...categoryList.map((data) => ({
@@ -459,7 +454,7 @@ const RepoEdit = () => {
                                                     (<>
                                                         {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                                             <Col lg={3} md={6}>
-                                        ``                        <Form.Group>
+                                                                ``                        <Form.Group>
                                                                     <Form.Label>Give access to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
@@ -624,7 +619,6 @@ const RepoEdit = () => {
                                                                                 </label>) : null}
                                                                                 {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                     Coordinator
-                                                                                    {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                     <input
                                                                                         type="checkbox"
                                                                                         name="shared_role"

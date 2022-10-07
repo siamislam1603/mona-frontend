@@ -12,6 +12,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
+import _ from 'lodash'
 
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
@@ -28,9 +29,7 @@ const FilerepoMyAdd = ({ filter }) => {
     });
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
-    const [selectedUser, setSelectedUser] = useState([]);
 
-    console.log(selectedUser, "selectedUser")
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
     const [user, setUser] = useState([]);
@@ -80,7 +79,6 @@ const FilerepoMyAdd = ({ filter }) => {
         id: ""
     })
 
-    console.log("Updatecategory_name", Updatecategory_name)
 
     useEffect(() => {
         GetEditCategory()
@@ -88,7 +86,7 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
-        console.log(selected_Franchisee, "selected_Franchisee")
+  
     }, [])
 
 
@@ -99,7 +97,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-                    console.log('FILE RESPONSE:', files);
+               
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -111,7 +109,7 @@ const FilerepoMyAdd = ({ filter }) => {
                         filesId: dt.filesId,
 
                     }));
-                    console.log('FILE DATA:', tempData);
+               
                     setUserData(tempData);
                 }
             }
@@ -226,7 +224,7 @@ const FilerepoMyAdd = ({ filter }) => {
 
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${selectedFranchisee}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-                console.log("DELETE RESPONSE", response)
+            
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -282,19 +280,19 @@ const FilerepoMyAdd = ({ filter }) => {
         })
         if (response.status === 200 && response.data.status === "success") {
             let extraArr = []
-            let parents = response.data.parentData.map((item)=>{
+            let parents = response.data.parentData.map((item) => {
                 return item.children
-            })  
+            })
 
-            parents.forEach((item)=>{
-                extraArr = [...item,...extraArr]
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
             })
 
             let uniqArr = _.uniqBy(extraArr, function (e) {
                 return e.id;
-              });
-            
-              setChild(uniqArr.map(data=>({
+            });
+
+            setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`

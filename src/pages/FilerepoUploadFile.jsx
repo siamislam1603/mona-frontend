@@ -31,7 +31,7 @@ const FilerepoUploadFile = () => {
     const [user, setUser] = useState([]);
     const [selectedAll, setSelectedAll] = useState(false);
     const [generalCategory, setGeneralCategory] = useState("")
-    console.log("generalCategory", user)
+
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
     const [userCount, setUserCount] = useState(0)
@@ -42,10 +42,7 @@ const FilerepoUploadFile = () => {
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
-    console.log(formSettingData, "formSettingData", formSettings)
-    console.log('selected_item---->1selectedFranchisee', formSettings.assigned_franchisee.length);
-
-
+  
 
     const getUser = async () => {
         try {
@@ -73,7 +70,7 @@ const FilerepoUploadFile = () => {
                     email: d.email,
                     namemail: `(${d.fullname}) ${d.email}`,
                 }));
-                console.log(formattedUserData, "userList")
+       
                 setUser(formattedUserData)
             }
 
@@ -98,7 +95,7 @@ const FilerepoUploadFile = () => {
                         return item.id
                     }
                 })
-                console.log(general[0].id, "General=====================")
+             
                 setGeneralCategory(general[0].id)
             })
             .catch((error) => {
@@ -170,7 +167,7 @@ const FilerepoUploadFile = () => {
     }, [formSettings.franchisee])
 
     useEffect(()=>{
-        console.log("user added or removed")
+ 
         getChildren()
     },[userCount])
 

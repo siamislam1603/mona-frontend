@@ -31,26 +31,13 @@ const FileRepository = () => {
   const [SearchValue, setSearchValue] = useState("");
   const [disable, setDisable] = useState({});
   const [disablee, setDisablese] = useState(false);
-  console.log(disable, "disable")
+
 
   const [Updatecategory_name, setUpdateCategory] = useState({
     category_name: "",
     id: ""
   })
-  // const HideButton = () => {
-  //   if (Updatecategory_name.category_name.length > 0) {
-  //     setDisablese(false)
-  //   }
-  // }
-  // const DisableButton = () => {
-  //   let category_name = localStorage.getItem("category_Update_Names");
-  //   console.log(category_name, Updatecategory_name.category_name, "Updatecategory_name.category_name")
-  //   if (category_name === Updatecategory_name.category_name) {
-  //     setDisable(false)
-  //   } else {
-  //     setDisable(true)
-  //   }
-  // }
+  
 
 
 
@@ -164,7 +151,7 @@ const FileRepository = () => {
       localStorage.setItem('category_Update_Name', category.category_name)
 
     }
-    console.log(response, "/fileCategory//fileCategory/");
+  
   }
 
 

@@ -63,7 +63,7 @@ const FileRepodAddbyMe = ({ selectedFranchisee, SearchValue, seteditCategoryModa
                 }));
                 setUserData(tempData);
                 setfullLoaderStatus(false)
-                console.log(tempData, "tempData")
+          
             }
             else if (response.status === 404) {
                 setUserData([])
