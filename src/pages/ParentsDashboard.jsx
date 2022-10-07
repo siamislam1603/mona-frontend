@@ -291,7 +291,7 @@ const ParentsDashboard = () => {
           <Modal.Body>
             <div>
               <p>
-                No child is enrolled under you at this point. Please contact administrator for the same.
+                No child is enroled under you at this point. Please contact administrator for the same.
               </p>
             </div>
           </Modal.Body>

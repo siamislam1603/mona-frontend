@@ -1257,6 +1257,7 @@ const EditUser = () => {
                     <Form.Control
                       type="date"
                       name="terminationDate"
+                      min={moment().format('YYYY-MM-DD')} 
                       value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
                       onChange={(e) => setFormData(prevState => ({
                         ...prevState,

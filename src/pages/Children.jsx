@@ -228,7 +228,7 @@ const Children = () => {
             if (e.target.text === 'Delete') {
                 // CODE TO DELETE THE USER 
             }
-            if (e.target.text === "Edit") {
+            if (e.target.text === "Edit" || e.target.text === "View") {
                 navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
@@ -682,7 +682,6 @@ const Children = () => {
                 return (
                     <>  {
                             localStorage.getItem("user_role") !== "educator" &&
-                            localStorage.getItem('user_role') !== "guardian" &&
                             <div className="cta-col">
                                 <Dropdown>
                                     <Dropdown.Toggle variant="transparent" id="ctacol">
@@ -692,12 +691,12 @@ const Children = () => {
                                         {
                                             cell.active === 1 &&
                                             <>
-                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                                <Dropdown.Item href="#">{localStorage.getItem('user_role') === "guardian" ? "View" : "Edit"}</Dropdown.Item>
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Educator</Dropdown.Item>}
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>}
                                             </>
                                         }
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
+                                        { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
