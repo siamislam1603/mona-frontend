@@ -10,6 +10,7 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
+import _ from 'lodash'
 
 
 const getUser_Role = localStorage.getItem(`user_role`)
@@ -35,6 +36,7 @@ const RepoEdit = () => {
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [generalCategory, setGeneralCategory] = useState("")
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [userCount, setUserCount] = useState(0)
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -79,6 +81,7 @@ const RepoEdit = () => {
         }));
         setCoverImage(data?.repository_files[0].filesPath);
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const onChange = (e) => {
@@ -152,16 +155,26 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
-            franchisee_id: data.franchise.length == 0 ? ["all"] : data.franchise
-        },
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         if (response.status === 200 && response.data.status === "success") {
-            setChild(response.data.children.map(data => ({
+            let extraArr = []
+            let parents = response.data.parentData.map((item)=>{
+                return item.children
+            })  
+
+            parents.forEach((item)=>{
+                extraArr = [...item,...extraArr]
+            })
+
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+              });
+            
+            setChild(uniqArr.map(data=>({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -239,6 +252,7 @@ const RepoEdit = () => {
             return object.id === removedItem.id;
         });
         user.splice(index, 1);
+        setUserCount(userCount - 1)
     }
 
     const setField = async (field, value) => {
@@ -289,9 +303,13 @@ const RepoEdit = () => {
     }, []);
 
     useEffect(() => {
-        childList()
+        // childList()
         getUser();
     }, [data.franchise])
+
+    useEffect(() => {
+        childList()
+    }, [userCount])
 
 
 
@@ -797,6 +815,8 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...selectedOptions.map(option => option.id + "")]
                                                                                             }));
+
+                                                                                            setUserCount(userCount + 1)
                                                                                         }}
                                                                                         options={user}
                                                                                     />
