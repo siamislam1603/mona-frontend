@@ -19,13 +19,14 @@ const Checkbox = (props) => {
         </label>
         <div className="d-flex mt-2"></div>
         <div className="btn-radio d-flex align-items-center modal-two-check dynamic-form-check">
-          {eval(controls.option)?.map((item2) => {
+          {eval(controls.option)?.map((item2,index) => {
             return (
               <>
                 <label className="container">
                   {Object.keys(item2)[0]}
                   <input
                     type="checkbox"
+                    key={index}
                     name={controls.field_name}
                     id={Object.keys(item2)[0]}
                     value={Object.keys(item2)[0]}

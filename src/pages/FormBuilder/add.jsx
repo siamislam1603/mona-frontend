@@ -282,7 +282,7 @@ function AddFormBuilder(props) {
                             </Form.Label>
                             <div className="new-form-radio">
                               <div className="new-form-radio-box">
-                                <label for="yes">
+                                <label htmlFor="yes">
                                   <input
                                     type="radio"
                                     value="Yes"
@@ -301,7 +301,7 @@ function AddFormBuilder(props) {
                                 </label>
                               </div>
                               <div className="new-form-radio-box">
-                                <label for="no">
+                                <label htmlFor="no">
                                   <input
                                     type="radio"
                                     value="No"
@@ -336,9 +336,10 @@ function AddFormBuilder(props) {
                                 isInvalid={!!errors.previous_form}
                               >
                                 <option value="1">Select</option>
-                                {formData?.map((item) => {
+                                {formData?.map((item,index) => {
                                   return (
                                     <option
+                                      key={index}
                                       value={item.form_name}
                                       selected={
                                         form?.previous_form === item.form_name
@@ -369,9 +370,10 @@ function AddFormBuilder(props) {
                           }}
                         >
                           <option value="">Select</option>
-                          {formCategory?.map((item) => {
+                          {formCategory?.map((item,index) => {
                             return (
                               <option
+                                key={index}
                                 value={item.id}
                                 selected={form?.category_id === item.id}
                               >
