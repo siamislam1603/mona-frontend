@@ -12,7 +12,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
-
+import _ from 'lodash'
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 
