@@ -108,10 +108,10 @@ const ParentsDashboard = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { parentData } = response.data;
       console.log('PARENT DATA', parentData === null);
-      if(parentData === null) {
+      if (parentData === null) {
         setLogUserOutDialog(true);
       }
     }
@@ -126,9 +126,11 @@ const ParentsDashboard = () => {
   }, []);
 
   useEffect(() => {
-    events();
-    Userannouncements();
-    assignededucators();
+    if (selectedFranchisee) {
+      events();
+      Userannouncements();
+      assignededucators();
+    }
   }, [selectedFranchisee])
 
 
@@ -227,13 +229,13 @@ const ParentsDashboard = () => {
                           </header>
                           <div className="column-list access-list two-col">
                             <div className="item">
-                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993"  target="_blank" className="flex">
+                              <a href="https://app.storypark.com/users/sign_in?_ga=2.96275036.1184893872.1661406994-2035467191.1661406993" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/story-ico.png" alt="" /></div>
                                 <div className="name">Story park</div>
                               </a>
                             </div>
                             <div className="item">
-                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login"  target="_blank"className="flex">
+                              <a href="https://sp8.harmonykids.com.au/UserAccount/Login" target="_blank" className="flex">
                                 <div className="pic"><img src="../img/harmony-ico.png" alt="" /></div>
                                 <div className="name">Harmony</div>
                               </a>
@@ -296,7 +298,7 @@ const ParentsDashboard = () => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <button 
+            <button
               className="modal-button"
               onClick={handleParentLogout}>Logout</button>
           </Modal.Footer>

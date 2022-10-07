@@ -62,7 +62,7 @@ const Children = () => {
     const params = useParams();
     const [parentFullname, setParentFullname] = useState(null);
     const [userData, setUserData] = useState([]);
-    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchise'));
     const [deleteResponse, setDeleteResponse] = useState(null);
     const [childrenList, setChildrenList] = useState([]);
     const [franchiseId, setFranchiseId] = useState(null);
@@ -77,8 +77,8 @@ const Children = () => {
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const init = async() => {
-        // Set Parents Franchisee
-        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
+        // Set Parents franchisee
+        const franchiseeId = localStorage.getItem('user_role') === 'franchisor_admin' ? (localStorage.getItem('selectedFranchise') ? localStorage.getItem('selectedFranchise') : "all") : location?.state?.franchisee_id || localStorage.getItem('franchisee_id')
           setFranchiseId(franchiseeId);
         
         // FETCHING PARENT DATA
@@ -126,7 +126,7 @@ const Children = () => {
           }
 
         //   Parents list
-        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/parents/${franchiseeId}`, {
+        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
