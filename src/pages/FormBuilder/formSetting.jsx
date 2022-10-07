@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Col,
-  Container,
-  Row,
-} from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
@@ -27,10 +22,12 @@ function FormSetting(props) {
                 <TopHeader
                   selectedFranchisee={selectedFranchiseeId}
                   setSelectedFranchisee={(id) => {
-                    id=localStorage.getItem("user_role")==="guardian" ? localStorage.getItem("franchisee_id") : id;
+                    id =
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? localStorage.getItem('franchisee_id')
+                        : id;
                     setSelectedFranchiseeId(id);
                     localStorage.setItem('f_id', id);
-
                   }}
                 />
                 <Row>

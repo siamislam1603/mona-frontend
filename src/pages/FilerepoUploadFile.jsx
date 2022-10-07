@@ -93,15 +93,13 @@ const FilerepoUploadFile = () => {
         })
             .then((res) => {
                 setCategory(res.data.category)
-
                 let general = res.data.category.filter((item) => {
                     if (item.category_name == "General") {
                         return item.id
                     }
                 })
-                console.log(general[0].id, "General")
+                console.log(general[0].id, "General=====================")
                 setGeneralCategory(general[0].id)
-
             })
             .catch((error) => {
                 console.error(error)
@@ -467,7 +465,6 @@ const FilerepoUploadFile = () => {
                                 <Col lg={12}>
                                     {getUser_Role === "guardian" ? "" :
                                         <Form.Group>
-
                                             <Form.Label>File Category*</Form.Label>
                                             {getUser_Role === "guardian" ? (
                                                 <>

@@ -74,22 +74,25 @@ const AddOperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
+       api_url = `${BASE_URL}/auth/usersListByCondition/?franchise`;
       else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
+        api_url = `${BASE_URL}/auth/usersListByCondition/?franchise=${selectedFranchisee}`;
     } else {
-      api_url = `${BASE_URL}/auth/users`;
+      api_url = `${BASE_URL}/auth/usersListByCondition/?franchise`;
     }
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("The result",result)
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.users);
           else setUser(result?.users);
-        } else setUser(result?.data);
+        } 
+        else setUser(result?.users);
       })
       .catch((error) => console.log('error', error));
   };
@@ -476,7 +479,8 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-  console.log("Operating manual",operatingManualData)
+  // console.log("Operating manual",operatingManualData)
+  // console.log("The user",user,selectedFranchisee)
 // console.log("Oepratiing",errors)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
