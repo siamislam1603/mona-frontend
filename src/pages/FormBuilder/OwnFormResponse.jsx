@@ -55,20 +55,10 @@ function OwnFormResponse(props) {
   };
   const trim = (e, index) => {
     e.preventDefault();
-    console.log(
-      'index--->',
-      Index,
-      '-----',
-      JSON.parse(responseData[Index][0].fields)
-    );
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    console.log(
-      'sigpad--------->><<<<<<<<',
-      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    );
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
@@ -120,14 +110,9 @@ function OwnFormResponse(props) {
         if (result?.result.length > 0) {
           result?.result.map((item, index) => {
             item['signature_button'] = true;
-            console.log('item--->', item);
 
             result?.result[index]?.map((inner_item, inner_index) => {
-              // if(inner_item.fields)
-
-              console.log('inner_item--->first', inner_item);
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-                console.log('inner_item--->', field_item);
                 if (field_item === 'signature') {
                   item['signature_button'] = false;
                 }
@@ -189,7 +174,6 @@ function OwnFormResponse(props) {
                             type="date"
                             name="from_date"
                             value={dateFilter?.from_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -197,7 +181,6 @@ function OwnFormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
@@ -205,7 +188,6 @@ function OwnFormResponse(props) {
                             type="date"
                             name="to_date"
                             value={dateFilter?.to_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -213,7 +195,6 @@ function OwnFormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
@@ -285,11 +266,6 @@ function OwnFormResponse(props) {
                                               : 'responses-header-detail response-header-left-line'
                                           }
                                         >
-                                          {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                          {console.log(
-                                            'iner_itemwdasdasddassd---->',
-                                            inner_item
-                                          )}
                                           <div className="d-flex">
                                             <h5>
                                               {inner_index > 0
@@ -367,7 +343,6 @@ function OwnFormResponse(props) {
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                   />
-                                                  {/* </div> */}
                                                 </Link>
                                               )
                                             )}
@@ -783,9 +758,6 @@ function OwnFormResponse(props) {
                             </button>
                           </div>
                         </Form.Group>
-                        {/* <p style={{ color: 'red' }}>
-                                    {controls.error[controls.field_name]}
-                                  </p> */}
                       </Col>
                     )}
                   </Modal.Body>

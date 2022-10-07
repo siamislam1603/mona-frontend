@@ -40,7 +40,6 @@ const AddFormField = (props) => {
       : null
   );
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
-  // const [conditionModelData, setConditionModelData] = useState([]);
   const [franchisee, setFranchisee] = useState([]);
   const [userRole, setUserRole] = useState([]);
   const [groupModelData, setGroupModelData] = useState([]);
@@ -56,12 +55,13 @@ const AddFormField = (props) => {
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
   const [updateFlag,setUpdateFlag]=useState(false);
   const [newFieldAddIndex,setNewFieldAddIndex]=useState(-1);
+  const [newOptionAddIndex,setNewOptionAddIndex]=useState(-1);
+  const [newConditionOptionAddIndex,setNewConditionOptionAddIndex]=useState(-1);
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
     : null;
   useEffect(() => {
-    console.log("location----->",location);
     if (form_name) {
       getFormField();
       getFormData();
@@ -166,7 +166,6 @@ const AddFormField = (props) => {
       .then((response) => response.json())
       .then((res) => {
         setUserRole(res?.userRoleList);
-        console.log('response0-------->1', res?.userRoleList);
       })
       .catch((error) => console.log('error', error));
     fetch(`${BASE_URL}/role/franchisee`, requestOptions)
@@ -204,18 +203,13 @@ const AddFormField = (props) => {
       const keyOfOption = tempOption[inner_index];
 
       if (!keyOfOption[key]['option']) {
-        console.log('Hello');
         keyOfOption[key]['option'] = [{ '': '' }, { '': '' }];
       }
 
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
-      console.log('tempOption[inner_index]', tempOption[inner_index]);
       tempArr[index]['option'] = tempOption;
-      console.log(
-        'keyOfOption[key][option][inner_inner_index]',
-        tempArr[index]['option']
-      );
+      
       setForm(tempArr);
     } else {
       const keyOfOption = tempOption[inner_index];
@@ -383,7 +377,6 @@ const AddFormField = (props) => {
                       res?.form[0]?.form_permissions[0]?.signatories === true &&
                       flag === false
                     ) {
-                      console.log('Hello23423423423');
                       result?.result?.push({
                         field_label: `Signature ${signature_count}`,
                         field_type: 'signature',
@@ -437,9 +430,7 @@ const AddFormField = (props) => {
   };
   const onSubmit = (e, form_submit_status) => {
     e.preventDefault();
-    console.log('form_submit_status--->', form_submit_status);
     const newErrors = createFormFieldValidation(form);
-    console.log('form---->', form);
     let flag = false;
     form.map((item, index) => {
       if (flag === false) {
@@ -481,21 +472,12 @@ const AddFormField = (props) => {
         if (newErrors.length > 0) {
           let flag = false;
           newErrors.map((item, index) => {
-            console.log(
-              'Object.keys(item).length---->',
-              Object.keys(item).length
-            );
+           
             if (Object.keys(item).length > 0 && !flag) {
-              console.log('Object.keys(item)[0]--->', Object.keys(item)[0]);
               if (Object.keys(item)[0] === 'option') {
                 Object.values(item)[0].map((inner_item, inner_index) => {
                   if (Object.keys(inner_item).length > 0 && !flag) {
-                    console.log(
-                      'inner_item--->',
-                      Object.keys(inner_item).length,
-                      '---',
-                      inner_index
-                    );
+                    
                     document
                       .getElementById('option' + index + inner_index)
                       .focus();
@@ -515,7 +497,6 @@ const AddFormField = (props) => {
         myHeaders.append('authorization', 'Bearer ' + token);
         let data = [...form];
         data?.map((item) => {
-          console.log('item.accessible_to_role--->', item.accessible_to_role);
           data['accessible_to_role'] = item.accessible_to_role;
           data['signatories'] = item.signatories;
           if (
@@ -611,7 +592,6 @@ const AddFormField = (props) => {
       tempArr[index] = tempObj;
       setForm(tempArr);
     }
-    console.log('form--->', tempObj);
 
     if (!!errors[index][field]) {
       if (field === 'option') {
@@ -632,7 +612,6 @@ const AddFormField = (props) => {
 
   return (
     <>
-      {console.log('form----->111122222', form)}
       <div id="main">
         <section className="mainsection">
           <Container>
@@ -894,14 +873,12 @@ const AddFormField = (props) => {
                                     (item, inner_index) => {
                                       return (
                                         <Col sm={6}>
-                                          {console.log(
-                                            'item---->',
-                                            item[Object.keys(item)[0]]
-                                          )}
+                                          
                                           <div className="my-form-input">
                                             <Form.Control
                                               type="text"
                                               name="option"
+                                              disabled={updateFlag && newFieldAddIndex!==index && inner_index!==newOptionAddIndex}
                                               id={
                                                 'option' + index + inner_index
                                               }
@@ -980,6 +957,7 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           tempObj['option'].push({ '': '' });
+                                          setNewOptionAddIndex(tempObj['option'].length-1);
                                           tempArr[index] = tempObj;
                                           setForm(tempArr);
                                         }}
@@ -994,12 +972,15 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           const tempOption = tempObj['option'];
-
                                           tempOption.map((item) => {
                                             if (
                                               !(Object.keys(item)[0] === '')
                                             ) {
                                               fillOptionCounter++;
+                                              if(Object.keys(item)[0].toString()===Object.values(item)[0].toString())
+                                              {
+                                                setUpdateFlag(false);
+                                              }
                                             }
                                           });
                                           if (
@@ -1031,6 +1012,7 @@ const AddFormField = (props) => {
                                           tempArr[index]['option'] = tempOption;
 
                                           setForm(tempArr);
+                                          
                                         }}
                                       >
                                         Apply Condition
@@ -1140,6 +1122,7 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
+                          setUpdateFlag(true);
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1176,6 +1159,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
+                                      disabled={updateFlag}
                                       id={'field_label' + index}
                                       name="field_label"
                                       value={
@@ -1198,6 +1182,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
+                                        disabled={updateFlag}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
@@ -1350,6 +1335,7 @@ const AddFormField = (props) => {
                                                 <Form.Control
                                                   type="text"
                                                   name="option"
+                                                  disabled={updateFlag && newConditionOptionAddIndex!==inner_index}
                                                   value={
                                                     inner_item[
                                                       Object.keys(inner_item)[0]
@@ -1427,6 +1413,9 @@ const AddFormField = (props) => {
                                           keyOfOption[Object.keys(item)[0]][
                                             'option'
                                           ].push({ '': '' });
+                                          setNewConditionOptionAddIndex(keyOfOption[Object.keys(item)[0]][
+                                            'option'
+                                          ].length-1);
                                           tempOption[index] = keyOfOption;
                                           tempArr[Index]['option'] = tempOption;
                                           setForm(tempArr);
@@ -1455,8 +1444,10 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
+                              setUpdateFlag(true);
                               setConditionFlag(false);
                               counter++;
+                              setUpdateFlag(true);
                               setCount(counter);
                             }}
                           >
@@ -1508,25 +1499,16 @@ const AddFormField = (props) => {
                                           .toLocaleLowerCase()
                                           .split(' ')
                                           .join('_');
-                                        console.log(
-                                          'e.target.value--->',
-                                          e.target.value
-                                        );
-                                        console.log('form--->', form);
                                         const tempArr = [...form];
                                         let flag = false;
                                         tempArr?.map((item, index) => {
                                           if (flag === false) {
                                             if (item.section_name) {
-                                              console.log(
-                                                'item.section_name--->',
-                                                item.section_name
-                                              );
+                                            
                                               if (
                                                 item.section_name ===
                                                 e.target.value
                                               ) {
-                                                console.log('matched-->');
                                                 const tempObj = tempArr[Index];
                                                 tempObj[e.target.name] =
                                                   e.target.value;
@@ -1542,7 +1524,6 @@ const AddFormField = (props) => {
                                                 setForm(tempArr);
                                                 flag = true;
                                               } else {
-                                                console.log('Not matched-->');
                                                 const tempObj = tempArr[Index];
                                                 tempObj[e.target.name] =
                                                   e.target.value;
@@ -1556,7 +1537,6 @@ const AddFormField = (props) => {
                                                 setForm(tempArr);
                                               }
                                             } else {
-                                              console.log('Not matched-->');
                                               const tempObj = tempArr[Index];
                                               tempObj[e.target.name] =
                                                 e.target.value;

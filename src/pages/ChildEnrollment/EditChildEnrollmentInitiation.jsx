@@ -183,6 +183,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="text"
                                   name="fullname"
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   value={formOneChildData?.fullname || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
@@ -202,6 +203,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="text"
                                   minLenth={3}
                                   maxLength={50}
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   name="family_name"
                                   value={formOneChildData?.family_name || ""}
                                   onChange={(e) => {
@@ -225,6 +227,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="date"
                                   name="dob"
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.dob || ""}
                                   onChange={(e) => {
@@ -244,6 +247,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   type="date"
                                   name="start_date"
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
@@ -266,6 +270,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="gender"
                                     id="malecheck"
                                     label="Male"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     checked={formOneChildData?.gender === "M"}
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
@@ -275,6 +280,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Check
                                     type="radio"
                                     name="gender"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     id="femalecheck"
                                     checked = {formOneChildData?.gender === "F"}
                                     label="Female"
@@ -291,6 +297,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 <Form.Control
                                   as="textarea"
                                   rows={3}
+                                  style={{ resize: "none" }}
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
                                   value={formOneChildData?.home_address || ""}
                                   onChange={(e) => {
                                     setFormOneChildData(prevState => ({
@@ -363,6 +371,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Label>Does your child have special needs? *</Form.Label>
                                   <Form.Check
                                     type="radio"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     name="has_special_needs"
                                     id="specialneedsyes"
                                     label="Yes"
@@ -375,6 +384,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Check
                                     type="radio"
                                     name="has_special_needs"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     id="specialneedsno"
                                     checked = {formOneChildData?.has_special_needs === 0}
                                     label="No"
@@ -388,22 +398,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Child CRN *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="child_crn"
-                                  // ref={child_crn}
-                                  value={formOneChildData.child_crn || ""}
-                                  onChange={(e) => {
-                                    handleChildData(e);
-                                  }} />
-
-                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
-                              </Form.Group>
-                            </Col>
-
-                            <Col md={12}>
-                              <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
                                   <Form.Label>School Status *</Form.Label>
                                   <Form.Check
@@ -411,6 +405,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="school_status"
                                     id="statuscheckyes"
                                     label="Yes"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     checked={formOneChildData?.school_status === "Y"}
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
@@ -421,6 +416,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     type="radio"
                                     name="school_status"
                                     id="statuscheckno"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     checked = {formOneChildData?.school_status === "N"}
                                     label="No"
                                     onChange={(event) => setFormOneChildData(prevState => ({
@@ -439,6 +435,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   <Form.Control
                                     type="text"
                                     name="name_of_school"
+                                    disabled={localStorage.getItem('user_role') === "guardian"}
                                     value={formOneChildData?.name_of_school || ""}
                                     onChange={(e) => {
                                       handleChildData(e);
@@ -451,6 +448,23 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Child CRN *</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="child_crn"
+                                  disabled={localStorage.getItem('user_role') === "guardian"}
+                                  // ref={child_crn}
+                                  value={formOneChildData.child_crn || ""}
+                                  onChange={(e) => {
+                                    handleChildData(e);
+                                  }} />
+
+                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
+                              </Form.Group>
+                            </Col>
                           </Row>
                         </div>
                       </div>

@@ -119,7 +119,7 @@ const AddNewTraining = () => {
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
- 
+
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
 
@@ -227,11 +227,12 @@ const AddNewTraining = () => {
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
+      console.log('USERS:', users);
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
+          key: `${data.fullname} (${data.email})`
         })),
       ]);
     }
@@ -448,16 +449,7 @@ const AddNewTraining = () => {
     )));
   }, [imageFileErrorMessage])
 
-  // useEffect(() => {
-  //   if(trainingSettings?.start_time && trainingSettings?.start_time < moment().format('HH:mm')) {
-  //     setTrainingSettingErrors(prevState => ({
-  //       ...prevState,
-  //       start_time: 'Choose valid time'
-  //     }));
-  //   }
-  // }, [trainingSettings?.start_time]);
-
-  console.log('IS DATE SIMILAR?', trainingSettings?.start_date === trainingSettings?.end_date);
+  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -689,6 +681,7 @@ const AddNewTraining = () => {
                             popupVisible &&
                             <ImageCropTraning
                               image={coverImage}
+                              setCoverImage={setCoverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }

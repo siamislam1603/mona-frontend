@@ -7,7 +7,7 @@ import './ImageCropPopup.css';
 
 let temp = () => { };
 
-const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
+const ImageCropTraning = ({ image, setCoverImage, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
 
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
@@ -34,6 +34,14 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
             profile_pic: null
         }));
         setPopupVisible(false);
+    }
+
+    const onImageCancle = async () => {
+        setTempImage(null)
+        setCoverImage(null)
+        image = null
+        setPopupVisible(false);
+
     }
 
     const convertCanvasToImg = (canvas) => {
@@ -67,7 +75,6 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete} />
                     </div>
-
                     <div className="slider">
                         <Slider
                             min={1}
@@ -80,7 +87,7 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                 </div>
 
                 <div className="container-buttons">
-                    <Button variant="contained" color="primary" className="me-3" onClick={() => setPopupVisible(false)}>
+                    <Button variant="contained" color="primary" className="me-3" onClick={onImageCancle}>
                         Cancel
                     </Button>
                     <Button variant="contained" color="primary" onClick={onImageCrop}>

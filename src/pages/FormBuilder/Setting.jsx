@@ -45,7 +45,6 @@ function Setting(props) {
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-    console.log("location----->",location);
     getUser();
   }, [localStorage.getItem('f_id')]);
   const getParticularFormData = (userData, childData) => {
@@ -232,7 +231,6 @@ function Setting(props) {
         }
       })
       .catch((error) => {
-        console.log('error', error);
         setfullLoaderStatus(false);
       });
   };
@@ -485,13 +483,15 @@ function Setting(props) {
       .then((res) => res.json())
       .then((res) => {
         navigate('/form/field/add', {
-          state: { id: location?.state?.id, form_name: form?.form_name,update:location?.state?.update ? true : false },
+          state: {
+            id: location?.state?.id,
+            form_name: form?.form_name,
+            update: location?.state?.update ? true : false,
+          },
         });
         props.onModelChange();
       });
   };
-
-  user && console.log('USERs>>>>>>>>>>>>>>>>>:', user);
   return (
     <>
       <Form>

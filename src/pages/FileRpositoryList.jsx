@@ -74,7 +74,7 @@ const FileRpositoryList = () => {
                     setfullLoaderStatus(false)
                 }
                 const users = response.result.files;
-                console.log(users, "users")
+            
                 let tempData = users.map((dt) => ({
                     name: `${dt?.repository?.repository_files[0]?.fileName},${dt?.repository?.repository_files[0]?.fileType},${dt?.repository?.repository_files[0]?.filesPath}`,
                     createdAt: dt?.createdAt,
@@ -114,7 +114,7 @@ const FileRpositoryList = () => {
                     setCount(response.result.count)
                     if (response) {
                         const users = response.result.files;
-                        console.log(users, "users")
+                  
                         let tempData = users.map((dt) => ({
                             name: `${dt?.repository?.repository_files[0]?.fileName},${dt?.repository?.repository_files[0]?.fileType},${dt?.repository?.repository_files[0]?.filesPath}`,
                             createdAt: dt?.createdAt,
@@ -122,7 +122,7 @@ const FileRpositoryList = () => {
                             creatorName: dt?.repository?.repository_files[0]?.creatorName + "," + dt.repository?.repository_files[0]?.creatorRole,
                             Shaired: dt?.repository.repository_files[0]?.length,
                         }));
-                        console.log(tempData, "tempData")
+                  
                         setUserData(tempData);
                     }
                 }

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 
-const VideoPopupfForFile = ({ data, title, duration }) => {
+const VideoPopupfForFile = ({ data, title, duration, name }) => {
     console.log(data, 'cellcellcell')
     const [showVideo, setVideo] = useState(false);
     const handleVideoClose = () => setVideo(false);
@@ -16,9 +16,9 @@ const VideoPopupfForFile = ({ data, title, duration }) => {
                         <div className="pic">
                             <iframe title="video file" style={{ height: "70px" }} className="embed-responsive-item" src={data} frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                         </div>
-                        <div className="vid-title">
-                            {title}<span className="time">{duration}</span>
-                        </div>
+                        <span className="user-name">
+                            {name}
+                        </span>
                     </div>
                     <Modal
                         size="lg"

@@ -56,6 +56,7 @@ const TrainingDetail = () => {
   const [popupNotification, setPopupNotification] = useState(null);
   const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
   const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
+  const [trainingExpiredDate, setTrainingExpiredDate] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [videoFiles, setVideoFiles] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState(null);
@@ -88,6 +89,7 @@ const TrainingDetail = () => {
 
       if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
+        setTrainingExpiredDate(due_date);
       } else {
         setTrainingDetails(all_trainings);
         setUserDetails(user);
@@ -133,7 +135,11 @@ const TrainingDetail = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { userObj } = response.data;
-      let participants = userObj.slice(0, 6);
+      let filteredUser = [...userObj];
+      if(localStorage.getItem('user_role') === 'educator') {
+        filteredUser = filteredUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('user_id')));
+      }
+      let participants = filteredUser.slice(0, 6);
       setUsers(participants.map(user => ({
         id: user.id,
         name: user.fullname,
@@ -530,7 +536,7 @@ const TrainingDetail = () => {
 
           <Modal.Body>
             <div>
-              <p>The training has been expired. You can no longer view or access the training material.</p>
+              <p>The training has been expired on {moment(trainingExpiredDate).format('DD/MM/YYYY')} at {moment(trainingExpiredDate).format('hh:mm A')}. You can no longer view or access the training material.</p>
             </div>
           </Modal.Body>
           <Modal.Footer>

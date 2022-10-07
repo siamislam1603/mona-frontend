@@ -4,12 +4,11 @@ import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
 
 const ImageUpload = (props) => {
-  useEffect(()=>{
-    if(props.errorFocus)
-    {
+  useEffect(() => {
+    if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
-  },[])
+  }, []);
   const { ...controls } = props;
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -19,7 +18,7 @@ const ImageUpload = (props) => {
       reader.onerror = (error) => reject(error);
     });
   const uploadFiles = async (file) => {
-    let type=file.name.split(".")[file.name.split(".").length-1];
+    let type = file.name.split('.')[file.name.split('.').length - 1];
     if (
       !(
         type.includes('jpg') ||
@@ -30,8 +29,7 @@ const ImageUpload = (props) => {
     ) {
       toast.error('Image must be JPG, PNG, or PSD.');
       return null;
-    }
-    else if (file.size > 2048 * 1024) {
+    } else if (file.size > 2048 * 1024) {
       toast.error('File is too large. File limit 2 MB.');
       return null;
     } else {
@@ -56,18 +54,21 @@ const ImageUpload = (props) => {
   };
   return (
     <Col sm={6}>
-      <Form.Group className="form-input-section"> 
+      <Form.Group className="form-input-section">
         <Form.Label>{controls.field_label}</Form.Label>
 
         <Form.Control
           type="file"
           id={controls.field_name}
           name={controls.field_name}
-          value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
+          value={
+            props.field_data &&
+            props.field_data.fields[`${controls.field_name}`]
+          }
           onChange={async (e) => {
             let file = e.target.files[0];
-            await uploadFiles(file).then((url)=>{
-              props.onChange(e.target.name, url,"image");
+            await uploadFiles(file).then((url) => {
+              props.onChange(e.target.name, url, 'image');
             });
           }}
           isInvalid={!!controls.error[controls.field_name]}

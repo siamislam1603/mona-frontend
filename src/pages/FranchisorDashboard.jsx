@@ -160,12 +160,9 @@ const FranchisorDashboard = () => {
   useEffect(() => {
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
-
       localStorage.removeItem('success_msg');
       setTimeout(() => {
-
         setTopSuccessMessage(null);
-
       }, 3000);
 
     }
@@ -177,14 +174,14 @@ const FranchisorDashboard = () => {
 
 
   }, []);
-
-
-
+  
   React.useEffect(() => {
-    count_Api();
-    announcement();
-    Forms_count();
-    FormData();
+    if (selectedFranchisee) {
+      count_Api();
+      announcement();
+      Forms_count();
+      FormData();
+    }
   }, [selectedFranchisee]);
 
   return (

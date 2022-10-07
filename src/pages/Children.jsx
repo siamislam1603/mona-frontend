@@ -62,7 +62,7 @@ const Children = () => {
     const params = useParams();
     const [parentFullname, setParentFullname] = useState(null);
     const [userData, setUserData] = useState([]);
-    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchise'));
     const [deleteResponse, setDeleteResponse] = useState(null);
     const [childrenList, setChildrenList] = useState([]);
     const [franchiseId, setFranchiseId] = useState(null);
@@ -77,8 +77,8 @@ const Children = () => {
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
     const init = async() => {
-        // Set Parents Franchisee
-        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
+        // Set Parents franchisee
+        const franchiseeId = localStorage.getItem('user_role') === 'franchisor_admin' ? (localStorage.getItem('selectedFranchise') ? localStorage.getItem('selectedFranchise') : "all") : location?.state?.franchisee_id || localStorage.getItem('franchisee_id')
           setFranchiseId(franchiseeId);
         
         // FETCHING PARENT DATA
@@ -126,7 +126,7 @@ const Children = () => {
           }
 
         //   Parents list
-        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/parents/${franchiseeId}`, {
+        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
             headers: {
               authorization: `Bearer ${localStorage.getItem('token')}`,
             },
@@ -228,7 +228,7 @@ const Children = () => {
             if (e.target.text === 'Delete') {
                 // CODE TO DELETE THE USER 
             }
-            if (e.target.text === "Edit") {
+            if (e.target.text === "Edit" || e.target.text === "View") {
                 navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
@@ -691,12 +691,12 @@ const Children = () => {
                                         {
                                             cell.active === 1 &&
                                             <>
-                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                                <Dropdown.Item href="#">{localStorage.getItem('user_role') === "guardian" ? "View" : "Edit"}</Dropdown.Item>
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Educator</Dropdown.Item>}
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>}
                                             </>
                                         }
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
+                                        { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
@@ -724,7 +724,7 @@ const Children = () => {
 
     useEffect(() => {
         init();
-    }, [reloadFlag]);
+    }, [reloadFlag,localStorage.getItem('selectedFranchise')]);
 
     return (
         <>

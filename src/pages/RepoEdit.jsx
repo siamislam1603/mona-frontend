@@ -10,7 +10,7 @@ import DragDropFileEdit from '../components/DragDropFileEdit';
 import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
-
+import _ from 'lodash'
 
 const getUser_Role = localStorage.getItem(`user_role`)
 
@@ -27,20 +27,20 @@ const RepoEdit = () => {
     const [data, setData] = useState([])
     const [franchiseeList, setFranchiseeList] = useState();
     const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
-    console.log(sendToAllFranchisee, "sendToAllFranchisee")
     const [error, setError] = useState(false);
     const [coverImage, setCoverImage] = useState({});
     const [selectedChild, setSelectedChild] = useState([])
     const [child, setChild] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
+    const [generalCategory, setGeneralCategory] = useState("")
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [userCount, setUserCount] = useState(0)
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
         assigned_users: []
 
     });
-    console.log(formSettings.franchisee, "formSettings")
 
     const GetData = async () => {
         let response = await axios.get(`${BASE_URL}/fileRepo/fileInfo/${Params.id}`, {
@@ -57,7 +57,6 @@ const RepoEdit = () => {
             copyFetchedData(file);
         }
     }
-    console.log('fileName', data)
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
@@ -78,6 +77,7 @@ const RepoEdit = () => {
         }));
         setCoverImage(data?.repository_files[0].filesPath);
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const onChange = (e) => {
@@ -120,7 +120,6 @@ const RepoEdit = () => {
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
                 response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
-                console.log('IMAGE UPDATE RESPONSE:', response);
                 if (response.status === 201 && response.data.status === "success") {
 
                     navigate(`/file-repository-List-me/${data.categoryId}`);
@@ -151,16 +150,26 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        const response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, {
-            franchisee_id: data.franchise.length == 0 ? ["all"] : data.franchise
-        },
-            {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            })
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
         if (response.status === 200 && response.data.status === "success") {
-            setChild(response.data.children.map(data => ({
+            let extraArr = []
+            let parents = response.data.parentData.map((item) => {
+                return item.children
+            })
+
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
+            })
+
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+            });
+
+            setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -195,6 +204,7 @@ const RepoEdit = () => {
         );
         if (response.status === 200 && response.data.status === "success") {
             const categoryList = response.data.category;
+            setGeneralCategory(categoryList[0].id)
             setCategory([
                 ...categoryList.map((data) => ({
                     id: data.id,
@@ -219,23 +229,26 @@ const RepoEdit = () => {
 
         let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
         if (response.status === 200) {
-            setUser(response.data.users)
+            let userList = response.data.users
+            let formattedUserData = userList.map((d) => ({
+                id: d.id,
+                fullname: d.fullname,
+                email: d.email,
+                namemail: `(${d.fullname}) ${d.email}`,
+            }));
+            setUser(formattedUserData)
         }
     };
-    function onSelectUser(optionsList, selectedItem) {
-        selectedUserId += selectedItem.id + ',';
-        selectedUser.push({
-            id: selectedItem.id,
-            email: selectedItem.email,
-        });
-    }
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = selectedUser.findIndex((object) => {
+        const index = user.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        selectedUser.splice(index, 1);
+        user.splice(index, 1);
+        setUserCount(userCount - 1)
     }
+
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
         if (!!errors[field]) {
@@ -284,9 +297,13 @@ const RepoEdit = () => {
     }, []);
 
     useEffect(() => {
-        childList()
+        // childList()
         getUser();
     }, [data.franchise])
+
+    useEffect(() => {
+        childList()
+    }, [userCount])
 
 
 
@@ -394,48 +411,50 @@ const RepoEdit = () => {
                                                         </div>
                                                     </Col>
                                                     <Col lg={12}>
-                                                        <Form.Group>
-                                                            <Form.Label>File Category*</Form.Label>
-                                                            {getUser_Role === "guardian" ? (
-                                                                <>
-                                                                    <Form.Select
-                                                                        name="file_category"
-                                                                        onChange={(e) => {
-                                                                            setField(e.target.name, e.target.value);
-                                                                        }}
-                                                                        value={data?.categoryId}
-                                                                    >
-                                                                        <option value="">Select</option>
-                                                                        <option value="8">General</option>
-                                                                    </Form.Select>
-                                                                </>) : (
-                                                                <>
-                                                                    <Form.Select
-                                                                        name="file_category"
-                                                                        onChange={(e) => {
-                                                                            setField(e.target.name, e.target.value);
-                                                                        }}
-                                                                        value={data?.categoryId}
-                                                                    >
-                                                                        <option value="">Select</option>
-                                                                        {category?.map((item) => {
-                                                                            return (
-                                                                                <option value={item.id}>{item.value}</option>
-                                                                            );
-                                                                        })}
-                                                                    </Form.Select>
-                                                                </>)}
+                                                        {getUser_Role === "guardian" ? "" : <>
+                                                            <Form.Group>
+                                                                <Form.Label>File Category*</Form.Label>
+                                                                {getUser_Role === "guardian" ? (
+                                                                    <>
+                                                                        <Form.Select
+                                                                            name="file_category"
+                                                                            onChange={(e) => {
+                                                                                setField(e.target.name, e.target.value);
+                                                                            }}
+                                                                            disabled={true}
+                                                                        >
+                                                                            {/* <option value="8">Select</option> */}
+                                                                            <option value={generalCategory} selected={true}>General</option>
+                                                                        </Form.Select>
+                                                                    </>) : (
+                                                                    <>
+                                                                        <Form.Select
+                                                                            name="file_category"
+                                                                            onChange={(e) => {
+                                                                                setField(e.target.name, e.target.value);
+                                                                            }}
+                                                                            value={data?.categoryId}
+                                                                        >
+                                                                            <option value="">Select</option>
+                                                                            {category?.map((item) => {
+                                                                                return (
+                                                                                    <option value={item.id}>{item.value}</option>
+                                                                                );
+                                                                            })}
+                                                                        </Form.Select>
+                                                                    </>)}
 
-                                                            {error && !data.categoryId && < span className="error"> File Category is required!</span>}
-                                                            {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
-                                                        </Form.Group>
+                                                                {error && !data.categoryId && < span className="error"> File Category is required!</span>}
+                                                                {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
+                                                            </Form.Group>
+                                                        </>}
                                                     </Col>
                                                 </Row>
                                                 {getUser_Role === "guardian" ? (<></>) :
                                                     (<>
                                                         {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                                             <Col lg={3} md={6}>
-                                                                <Form.Group>
+                                                                ``                        <Form.Group>
                                                                     <Form.Label>Give access to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
@@ -516,41 +535,7 @@ const RepoEdit = () => {
                                                                             }}
                                                                             options={franchiseeList}
                                                                         />
-                                                                        {/* <Multiselect
-                                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
-                                                                            placeholder={"Select Franchise"}
-                                                                            displayValue="key"
-                                                                            isClearable={false}
-                                                                            className="multiselect-box default-arrow-select"
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    franchisee: [...data.map(data => data.id)]
 
-                                                                                }));
-                                                                                setSelectedUser([])
-                                                                                setSelectedChild([])
-                                                                            }}
-                                                                            onRemove={function noRefCheck(data) {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...data.map(data => data.id)],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            selectedValues={franchiseeList && franchiseeList.filter(c => data.franchise?.includes(c.id + ""))}
-                                                                            onSelect={(selectedOptions) => {
-                                                                                setData((prevState) => ({
-                                                                                    ...prevState,
-                                                                                    franchise: [...selectedOptions.map(option => option.id + "")],
-                                                                                    assigned_childs: [],
-                                                                                    assigned_users: []
-                                                                                }));
-                                                                            }}
-                                                                            options={franchiseeList}
-                                                                        /> */}
                                                                     </div>
                                                                 </Form.Group>
                                                             </Col>
@@ -634,7 +619,6 @@ const RepoEdit = () => {
                                                                                 </label>) : null}
                                                                                 {['franchisor_admin', 'franchisee_admin'].includes(getUser_Role) ? (<label className="container">
                                                                                     Coordinator
-                                                                                    {console.log(data?.assigned_roles?.toString().includes('coordinator'), "coordinator")}
                                                                                     <input
                                                                                         type="checkbox"
                                                                                         name="shared_role"
@@ -814,7 +798,7 @@ const RepoEdit = () => {
                                                                                 <div className="select-with-plus">
                                                                                     <Multiselect
                                                                                         // disable={sendToAllFranchisee === 'all'}
-                                                                                        displayValue="email"
+                                                                                        displayValue="namemail"
                                                                                         className="multiselect-box default-arrow-select"
                                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onRemove={onRemoveUser}
@@ -824,6 +808,8 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...selectedOptions.map(option => option.id + "")]
                                                                                             }));
+
+                                                                                            setUserCount(userCount + 1)
                                                                                         }}
                                                                                         options={user}
                                                                                     />

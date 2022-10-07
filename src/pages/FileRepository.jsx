@@ -31,26 +31,13 @@ const FileRepository = () => {
   const [SearchValue, setSearchValue] = useState("");
   const [disable, setDisable] = useState({});
   const [disablee, setDisablese] = useState(false);
-  console.log(disable, "disable")
+
 
   const [Updatecategory_name, setUpdateCategory] = useState({
     category_name: "",
     id: ""
   })
-  // const HideButton = () => {
-  //   if (Updatecategory_name.category_name.length > 0) {
-  //     setDisablese(false)
-  //   }
-  // }
-  // const DisableButton = () => {
-  //   let category_name = localStorage.getItem("category_Update_Names");
-  //   console.log(category_name, Updatecategory_name.category_name, "Updatecategory_name.category_name")
-  //   if (category_name === Updatecategory_name.category_name) {
-  //     setDisable(false)
-  //   } else {
-  //     setDisable(true)
-  //   }
-  // }
+  
 
 
 
@@ -107,6 +94,7 @@ const FileRepository = () => {
     EditCategory();
     Updatecategory_name.category_name = "";
   }
+
   const handleChange = (evt) => {
     setUpdateCategory({
       category_name: evt.target.value,
@@ -131,7 +119,6 @@ const FileRepository = () => {
       setTimeout(() => {
         SetCategoryCreated(null)
       }, 3000)
-
     }
     if (response.data.status === "fail") {
       let { message } = response.data;
@@ -164,7 +151,7 @@ const FileRepository = () => {
       localStorage.setItem('category_Update_Name', category.category_name)
 
     }
-    console.log(response, "/fileCategory//fileCategory/");
+  
   }
 
 
@@ -441,12 +428,16 @@ const FileRepository = () => {
                                 >
                                   Cancel
                                 </Button>
-                                {!Updatecategory_name.category_name}
-                                {disablee &&
-                                  <Button
-                                    onClick={(e) => SubEditmiton(e)}>
-                                    Update
-                                  </Button>
+                                {Updatecategory_name.category_name.length > 0 ?
+                                  <>
+                                    {disablee &&
+                                      <Button
+                                        onClick={(e) => SubEditmiton(e)}>
+                                        Update
+                                      </Button>
+                                    }
+                                  </>
+                                  : ""
                                 }
                               </Modal.Footer>
                             </Modal>

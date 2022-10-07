@@ -44,6 +44,15 @@ const training = [
 ];
 const animatedComponents = makeAnimated();
 
+function isTrainingExpired(end_date) {
+  let due_date = moment(end_date).format();
+  let today = moment().format();
+
+  if(due_date < today)
+    return true
+
+  return false
+}
 
 const TrainingCreatedByMe = ({ filter }) => {
   let location = useLocation();
@@ -189,7 +198,7 @@ const TrainingCreatedByMe = ({ filter }) => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
+          key: `${data.fullname} (${data.email})`
         })),
       ]);
     }
@@ -400,7 +409,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                   style={{
                     overflow: "hidden"
                   }}
-                        dataLength={myTrainingData.length} //This is important field to render the next data
+                        dataLength={myTrainingData?.length} //This is important field to render the next data
                         next={() => setPage(page+6)}
                         hasMore={true}
                         // loader={<h4>Loading...</h4>}
@@ -444,11 +453,22 @@ const TrainingCreatedByMe = ({ filter }) => {
                                       <img src="../img/dot-ico.svg" alt="" />
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                      {training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
-                                      <Dropdown.Item href="#" onClick={() => {
-                                        setSaveTrainingId(training.id);
-                                        setShowModal(true)
-                                      }}>Share</Dropdown.Item>
+                                      {
+                                        training.is_Training_completed === false &&
+                                         isTrainingExpired(training.end_date) === false && 
+                                        <Dropdown.Item href={`/edit-training/${training.id}`}>
+                                        Edit
+                                        </Dropdown.Item>
+                                      }
+                                      {
+                                        isTrainingExpired(training.end_date) === false &&
+                                        <Dropdown.Item href="#" onClick={() => {
+                                          setSaveTrainingId(training.id);
+                                          setShowModal(true)
+                                        }}>
+                                          Share
+                                        </Dropdown.Item>
+                                      }
                                       <Dropdown.Item onClick={() => {
                                         if (window.confirm("Are you sure you want to delete this training?"))
                                           handleTrainingDelete(training.id)

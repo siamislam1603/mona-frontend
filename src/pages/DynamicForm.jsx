@@ -15,8 +15,6 @@ let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
   const query = new URL(window.location.href);
-  console.log('QWUERY:', query);
-  console.log('TRAINING ID:', query.searchParams.get('trainingId'));
   const location = useLocation();
   const navigate = useNavigate();
   const [signatureAccessFlag, setSignatureAccessFlag] = useState();
@@ -35,15 +33,9 @@ const DynamicForm = () => {
     ? location.search.split('?')[1].split('=')[1]
     : null;
   const setField = (section, field, value, type) => {
-    console.log('set---section', section);
-    console.log('set---field', field);
-    console.log('set---value', value);
-    console.log('set---type', type);
-
     let flag = false;
     if (type === 'text') {
       value = value.trimEnd();
-      console.log('length----->', value.split(' ').length);
       if (value.split(' ').length > 250) {
         let errorsData = { ...errors };
         errorsData[
@@ -65,9 +57,6 @@ const DynamicForm = () => {
       }
     }
     if (location?.state?.id) {
-      console.log('field---->', field);
-      console.log('value---->', value);
-
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
@@ -117,13 +106,6 @@ const DynamicForm = () => {
         });
       }
     }
-
-    // if (field === 'hobby') {
-    //   values.includes(value) ? values.pop(value) : values.push(value);
-    //   setForm({ ...form, [field]: values });
-
-    // console.log('Values', values);
-    // }
   };
   useEffect(() => {
     if (location?.state?.id) {
@@ -145,7 +127,6 @@ const DynamicForm = () => {
       .then((response) => response.json())
       .then((result) => {
         result.result.fields = JSON.parse(result.result.fields);
-        console.log('result---->', result.result.fields);
         setFieldData(result.result);
       })
       .catch((error) => console.log('error', error));
@@ -201,11 +182,7 @@ const DynamicForm = () => {
       .then((response) => response.json())
       .then((result) => {
         let res = result;
-        console.log('res----->', Object.values(res?.result));
 
-        // res?.result?.map((item)=>{
-        //   console.log("item---->",item);
-        // })
         if (res?.success == false) {
           localStorage.setItem('form_error', res?.message);
           window.location.href = '/form';
@@ -220,25 +197,8 @@ const DynamicForm = () => {
           if (!data[item]) data[item] = [];
 
           res?.result[item]?.map((inner_item) => {
-            console.log('inner_item--->', inner_item.field_type);
-            // if(inner_item.field_type==="headings" || inner_item.field_type==="text_headings")
-            // {
-            //   setForm({
-            //     ...form,
-            //     [item]: { ...form[`${item}`], [inner_item.field_type]: inner_item.field_label },
-            //   });
-            // }
-            // else{
-
-            //   setForm({
-            //     ...form,
-            //     [item]: { ...form[`${item}`], [inner_item.field_label]: "" },
-            //   });
-            // }
             if (inner_item.form_field_permissions.length > 0) {
-              console.log('HEllloooo------>');
               inner_item?.form_field_permissions?.map((permission) => {
-                console.log('HEllloooo------>');
                 if (
                   permission?.fill_access_users.includes(
                     localStorage.getItem('user_role')
@@ -284,7 +244,6 @@ const DynamicForm = () => {
                 : localStorage.getItem('user_role')
             )
           ) {
-            console.log('Hello----12121212---->');
             setSignatureAccessFlag(true);
           } else {
             setSignatureAccessFlag(false);
@@ -367,7 +326,6 @@ const DynamicForm = () => {
           }),
           redirect: 'follow',
         };
-
         fetch(
           `${BASE_URL}/form/form_data?role=${localStorage.getItem(
             'user_role'
@@ -417,7 +375,6 @@ const DynamicForm = () => {
   };
   return (
     <>
-      {console.log('form------>', form)}
       <div id="main">
         <ToastContainer />
         <section className="mainsection">
@@ -430,7 +387,6 @@ const DynamicForm = () => {
                 <TopHeader
                   setSelectedFranchisee={(id) => {
                     setChildId(id);
-                    console.log('user_id', id);
                     id =
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.getItem('franchisee_id')
@@ -465,10 +421,6 @@ const DynamicForm = () => {
                         )
                       ) && (
                         <Col sm={6}>
-                          {console.log(
-                            'Hello New once',
-                            formPermission?.target_user
-                          )}
                           {(behalfOfFlag = true)}
                           <div className="child_info_field sex">
                             <span className="form-label">Behalf of:</span>
@@ -489,6 +441,11 @@ const DynamicForm = () => {
                                   }}
                                   disabled
                                 >
+                                  {formPermission?.target_user?.includes(
+                                    'parent'
+                                  )
+                                    ? (behalfOfFlag = true)
+                                    : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item) => {
                                     return (
@@ -524,6 +481,11 @@ const DynamicForm = () => {
                                   }}
                                   disabled
                                 >
+                                  {formPermission?.target_user?.includes(
+                                    'parent'
+                                  )
+                                    ? (behalfOfFlag = true)
+                                    : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item) => {
                                     return (
@@ -625,11 +587,6 @@ const DynamicForm = () => {
                                     : localStorage.getItem('user_role')
                                 ) && (
                                   <>
-                                    {console.log(
-                                      'inner_item111111',
-                                      inner_item.form_field_permissions[0]
-                                        .fill_access_users
-                                    )}
                                     {index === 0 && (
                                       <h6 className="text-capitalize">
                                         {item.split('_').join(' ')}
