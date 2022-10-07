@@ -504,7 +504,7 @@ const FilerepoMyAdd = ({ filter }) => {
             }
         },
         {
-            dataField: 'userID',
+            dataField: 'filesId',
             text: '',
             formatter: (cell) => {
                 return (
