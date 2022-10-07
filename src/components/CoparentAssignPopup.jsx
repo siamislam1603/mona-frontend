@@ -120,7 +120,7 @@ const PopColumns = [
                         Add New
                     </Button>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body style={{height:"40rem",overflowY: "scroll"}}>
                 <ToolkitProvider
                     bootstrap4
                     keyField="id"

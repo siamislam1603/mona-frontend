@@ -724,7 +724,7 @@ const Children = () => {
 
     useEffect(() => {
         init();
-    }, [reloadFlag]);
+    }, [reloadFlag,localStorage.getItem('selectedFranchise')]);
 
     return (
         <>
