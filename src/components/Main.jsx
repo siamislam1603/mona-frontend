@@ -356,25 +356,29 @@ const Main = () => {
             </Protected>
           }
         />
-        <Route
+       <Route
           path="/operatingmanual/add"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="operating_manual" action="add">
               <SignIn />
               <AddOperatingManual />
             </Protected>
           }
-        />
 
-        <Route
+          />
+
+
+
+          <Route
           path="/operatingmanual"
           element={
-            <Protected isLoggedIn={isLoggedIn}>
+            <Protected isLoggedIn={isLoggedIn} controller="operating_manual" action="listing">
               <SignIn />
               <OperatingManual />
             </Protected>
           }
-        />
+
+          />
 
         {/* <Route 
           path="/form/field/add" 

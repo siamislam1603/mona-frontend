@@ -89,10 +89,36 @@ const AddOperatingManual = () => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.users);
-          else setUser(result?.users);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') {
+            let formattedUserData = result?.users?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              namemail: `(${d.fullname}) ${d.email}`,
+          }));
+            setUser(formattedUserData);
+          }
+          else{
+            let formattedUserData = result?.users?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              namemail: `(${d.fullname}) ${d.email}`,
+          }));
+            setUser(formattedUserData);
+
+          }
         } 
-        else setUser(result?.users);
+        else{
+          let formattedUserData = result?.users?.map((d) => ({
+            id: d.id,
+            fullname: d.fullname,
+            email: d.email,
+            namemail: `(${d.fullname}) ${d.email}`,
+        }));
+          setUser(formattedUserData);
+
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -480,7 +506,7 @@ const AddOperatingManual = () => {
       .catch((error) => console.log('error', error));
   };
   // console.log("Operating manual",operatingManualData)
-  // console.log("The user",user,selectedFranchisee)
+  console.log("The user",user)
 // console.log("Oepratiing",errors)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
@@ -1018,7 +1044,7 @@ const AddOperatingManual = () => {
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
-                      displayValue="email"
+                      displayValue="namemail"
                       className="multiselect-box default-arrow-select"
                       selectedValues={selectedUser}
                       onRemove={onRemoveUser}
