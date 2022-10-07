@@ -42,6 +42,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [SearchValue, setSearchValue] = useState('');
+    const [userCount, setUserCount] = useState(0)
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -153,6 +154,7 @@ const FilerepoMyAdd = ({ filter }) => {
             file_type: data?.repository_files[0].fileType,
         }));
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const fetchFranchiseeList = async () => {
@@ -202,6 +204,7 @@ const FilerepoMyAdd = ({ filter }) => {
             return object.id === removedItem.id;
         });
         user.splice(index, 1);
+        setUserCount(userCount - 1)
     }
 
     function onRemoveChild(selectedList, removedItem) {
@@ -272,21 +275,30 @@ const FilerepoMyAdd = ({ filter }) => {
 
 
     const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users)}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+        if (response.status === 200 && response.data.status === "success") {
+            let extraArr = []
+            let parents = response.data.parentData.map((item)=>{
+                return item.children
+            })  
 
-        let franchiseeArr = formSettings.franchisee.length == 0 ? ["all"] : formSettings.franchisee
+            parents.forEach((item)=>{
+                extraArr = [...item,...extraArr]
+            })
 
-        var request = {
-            headers: myHeaders,
-        };
-
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
-        if (response.status === 200) {
-            setChild(response.data.children)
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+              });
+            
+              setChild(uniqArr.map(data=>({
+                id: data.id,
+                name: data.fullname,
+                key: `${data.fullname}`
+            })));
         }
     }
 
@@ -298,8 +310,11 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         GetFile();
         getUser();
-        getChildren();
     }, [formSettings.franchisee, fileDeleteMessage]);
+
+    useEffect(() => {
+        getChildren();
+    }, [userCount]);
 
     useEffect(() => {
         if (selectedFranchisees) {
@@ -971,6 +986,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                         assigned_users: [...selectedOptions.map(option => option.id + "")],
                                                                         accessibleToRole: 0
                                                                     }))
+                                                                    setUserCount(userCount + 1)
                                                                 }}
                                                                 options={user}
                                                             />
@@ -980,7 +996,7 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         <Form.Label>Select Child</Form.Label>
                                                         <div className="select-with-plus">
                                                             <Multiselect
-                                                                displayValue="fullname"
+                                                                displayValue="name"
                                                                 className="multiselect-box default-arrow-select"
                                                                 // placeholder="Select Franchisee"
                                                                 selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}

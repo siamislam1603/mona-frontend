@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import DragDropFileEdit from '../components/DragDropFileEdit';
+import _ from 'lodash'
 
 
 let selectedUserId = '';
@@ -33,6 +34,7 @@ const FilerepoUploadFile = () => {
     console.log("generalCategory", user)
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
+    const [userCount, setUserCount] = useState(0)
     const [formSettingData, setFormSettingData] = useState({
         shared_role: '',
         accessible_to_role: 1
@@ -79,29 +81,6 @@ const FilerepoUploadFile = () => {
 
         }
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     //======================== GET FILE CATAGOREY==================
@@ -155,14 +134,27 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let franchiseeArr = formSettings.assigned_franchisee
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, { franchisee_id: franchiseeArr }, {
+        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item=>item.id)
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
         if (response.status === 200 && response.data.status === "success") {
-            setChild(response.data.children.map(data => ({
+            let extraArr = []
+            let parents = response.data.parentData.map((item)=>{
+                return item.children
+            })  
+
+            parents.forEach((item)=>{
+                extraArr = [...item,...extraArr]
+            })
+
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+              });
+            
+            setChild(uniqArr.map(data=>({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -174,10 +166,15 @@ const FilerepoUploadFile = () => {
 
     useEffect(() => {
         getFileCategory();
-        getChildren();
+        // getChildren();
         getUser();
         fetchFranchiseeList();
     }, [formSettings.franchisee])
+
+    useEffect(()=>{
+        console.log("user added or removed")
+        getChildren()
+    },[userCount])
 
 
     const setField = (field, value) => {
@@ -331,6 +328,8 @@ const FilerepoUploadFile = () => {
             id: selectedItem.id,
             fullname: selectedItem.fullname,
         });
+        setSelectedUser(selectedUser)
+        setUserCount(userCount + 1)
     }
 
     function onSelectChild(selectedItem) {
@@ -352,6 +351,7 @@ const FilerepoUploadFile = () => {
             return object.id === removedItem.id;
         });
         user.splice(index, 1);
+        setUserCount(userCount - 1)
     }
 
 
