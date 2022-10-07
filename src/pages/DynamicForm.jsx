@@ -29,7 +29,7 @@ const DynamicForm = () => {
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
   const [childId, setChildId] = useState();
-  const [errorFocus,setErrorFocus]=useState('');
+  const [errorFocus, setErrorFocus] = useState('');
   const token = localStorage.getItem('token');
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
@@ -52,7 +52,6 @@ const DynamicForm = () => {
         setErrors(errorsData);
         flag = true;
       }
-
     }
     if (type === 'textarea') {
       value = value.trimEnd();
@@ -142,7 +141,6 @@ const DynamicForm = () => {
       headers: myHeaders,
       redirect: 'follow',
     };
-
     fetch(`${BASE_URL}/form/form_data/${id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -249,13 +247,12 @@ const DynamicForm = () => {
                     localStorage.getItem('user_id')
                   )
                 ) {
-
                   if (
                     inner_item.field_type === 'headings' ||
                     inner_item.field_type === 'text_headings'
                   ) {
-                    formsData[item][`${inner_item.field_type}`] = inner_item.field_label;
-
+                    formsData[item][`${inner_item.field_type}`] =
+                      inner_item.field_label;
                   } else {
                     formsData[item][`${inner_item.field_name}`] = null;
                   }
@@ -270,8 +267,8 @@ const DynamicForm = () => {
                 inner_item.field_type === 'headings' ||
                 inner_item.field_type === 'text_headings'
               ) {
-                formsData[item][`${inner_item.field_type}`] = inner_item.field_label;
-
+                formsData[item][`${inner_item.field_type}`] =
+                  inner_item.field_label;
               } else {
                 formsData[item][`${inner_item.field_name}`] = null;
               }
@@ -295,10 +292,7 @@ const DynamicForm = () => {
         } else {
           setSignatureAccessFlag(true);
         }
-        console.log(
-          'formsData---->',
-          formsData
-          );
+        console.log('formsData---->', formsData);
 
         setForm(formsData);
         setFormData(data);
@@ -324,6 +318,8 @@ const DynamicForm = () => {
           id: location?.state?.id,
           data: fieldData,
           status: 'update',
+          updated: true,
+          updatedBy: localStorage.getItem('user_id'),
         }),
         redirect: 'follow',
       };
@@ -372,7 +368,12 @@ const DynamicForm = () => {
           redirect: 'follow',
         };
 
-        fetch(`${BASE_URL}/form/form_data?role=${localStorage.getItem("user_role")}`, requestOptions)
+        fetch(
+          `${BASE_URL}/form/form_data?role=${localStorage.getItem(
+            'user_role'
+          )}`,
+          requestOptions
+        )
           .then((response) => response.text())
           .then((result) => {
             result = JSON.parse(result);
@@ -588,7 +589,7 @@ const DynamicForm = () => {
                           </div>
                         </Col>
                       )}
-                    {Object.keys(formData)?.map((item,index) => {
+                    {Object.keys(formData)?.map((item, index) => {
                       return item ? (
                         <>
                           {formData[item]?.map((inner_item, inner_index) => {
@@ -674,7 +675,7 @@ const DynamicForm = () => {
                           })}
                         </>
                       ) : (
-                        formData[item]?.map((inner_item,inner_index) => {
+                        formData[item]?.map((inner_item, inner_index) => {
                           return location?.state?.id ? (
                             <InputFields
                               {...inner_item}

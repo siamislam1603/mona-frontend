@@ -614,15 +614,15 @@ function ViewFormBuilder(props) {
                                             )}
                                             <Col
                                               lg={4}
-                                              onClick={() => {
-                                                dateCheck(
-                                                  inner_item.start_date,
-                                                  inner_item.start_time,
-                                                  inner_item.end_date,
-                                                  inner_item.end_time,
-                                                  inner_item.form_name
-                                                );
-                                              }}
+                                              // onClick={() => {
+                                              //   dateCheck(
+                                              //     inner_item.start_date,
+                                              //     inner_item.start_time,
+                                              //     inner_item.end_date,
+                                              //     inner_item.end_time,
+                                              //     inner_item.form_name
+                                              //   );
+                                              // }}
                                             >
                                               <div className="forms-content create-other">
                                                 <div className="content-icon-section">
@@ -654,7 +654,13 @@ function ViewFormBuilder(props) {
                                                   />
                                                 </div>
                                                 <div className="content-title-section">
-                                                  <h6>
+                                                  <h6
+                                                    onClick={() => {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`
+                                                      );
+                                                    }}
+                                                  >
                                                     {inner_item.form_name}
                                                   </h6>
                                                   <h4>
@@ -665,6 +671,89 @@ function ViewFormBuilder(props) {
                                                       .utcOffset('+11:00')
                                                       .format('DD/MM/YYYY')}
                                                   </h4>
+                                                </div>
+                                                <div className="content-toogle">
+                                                  <Dropdown>
+                                                    <Dropdown.Toggle id="dropdown-basic1">
+                                                      <FontAwesomeIcon
+                                                        icon={
+                                                          faEllipsisVertical
+                                                        }
+                                                      />
+                                                    </Dropdown.Toggle>
+
+                                                    <Dropdown.Menu>
+                                                      <Dropdown.Item
+                                                        onClick={() => {
+                                                          if (
+                                                            inner_item.end_date
+                                                          ) {
+                                                            let todayDate =
+                                                              new Date();
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              ).toLocaleString(
+                                                                'en-ZA',
+                                                                {
+                                                                  timeZone:
+                                                                    'Australia/Perth',
+                                                                }
+                                                              );
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              );
+                                                            let dataAndTime =
+                                                              inner_item.end_date +
+                                                              ' ' +
+                                                              inner_item.end_time;
+                                                            let endDate =
+                                                              new Date(
+                                                                dataAndTime
+                                                              );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            ).toLocaleString(
+                                                              'en-ZA',
+                                                              {
+                                                                timeZone:
+                                                                  'Australia/Perth',
+                                                              }
+                                                            );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            );
+                                                            if (
+                                                              todayDate.getTime() >
+                                                              endDate.getTime()
+                                                            )
+                                                              toast.error(
+                                                                'Your form was expired on ' +
+                                                                  moment(
+                                                                    inner_item.end_date
+                                                                  ).format(
+                                                                    'DD/MM/YYYY'
+                                                                  ) +
+                                                                  '.'
+                                                              );
+                                                            else
+                                                              navigate(
+                                                                `/form/dynamic/${inner_item.form_name}`
+                                                              );
+                                                          } else
+                                                            navigate(
+                                                              `/form/dynamic/${inner_item.form_name}`
+                                                            );
+                                                        }}
+                                                      >
+                                                        <FontAwesomeIcon
+                                                          icon={faPen}
+                                                        />{' '}
+                                                        Add Response
+                                                      </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                  </Dropdown>
                                                 </div>
                                               </div>
                                             </Col>
@@ -1142,7 +1231,7 @@ function ViewFormBuilder(props) {
                                                                     {
                                                                       state: {
                                                                         id: inner_item.id,
-                                                                        update:true
+                                                                        update: true,
                                                                       },
                                                                     }
                                                                   );
@@ -1454,7 +1543,7 @@ function ViewFormBuilder(props) {
                                                                           state:
                                                                             {
                                                                               id: inner_item.id,
-                                                                              update:true
+                                                                              update: true,
                                                                             },
                                                                         }
                                                                       );

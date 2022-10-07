@@ -429,23 +429,52 @@ function FormResponse(props) {
                                     )}
                                   </div>
                                   <div className="responses-header-right">
-                                    {console.log(
-                                      'CREATED AT:',
-                                      item[0].createdAt
+                                    {item[0]?.updated ? (
+                                      <p>
+                                        Updated By :{' '}
+                                        {item[0]?.filled_user?.fullname} <br />
+                                        Updated on: <br />
+                                        {moment(item[0].updatedAt)
+                                          .utcOffset('+11:00')
+                                          .format('DD/MM/YYYY') +
+                                          ', ' +
+                                          item[0].updatedAt
+                                            .split('T')[1]
+                                            .split('.')[0]
+                                            .split(':', 2)
+                                            .join(':') +
+                                          ' hrs'}
+                                      </p>
+                                    ) : (
+                                      <p>
+                                        Completed By :{' '}
+                                        {item[0]?.filled_user?.fullname} <br />
+                                        Completed on: <br />
+                                        {moment(item[0].createdAt)
+                                          .utcOffset('+11:00')
+                                          .format('DD/MM/YYYY') +
+                                          ', ' +
+                                          item[0].createdAt
+                                            .split('T')[1]
+                                            .split('.')[0]
+                                            .split(':', 2)
+                                            .join(':') +
+                                          ' hrs'}
+                                      </p>
                                     )}
-                                    <p>
-                                      Completed on: <br />
-                                      {moment(item[0].createdAt)
-                                        // .utcOffset('+10:00')
-                                        .format('DD/MM/YYYY') +
-                                        ', ' +
-                                        item[0].createdAt
-                                          .split('T')[1]
-                                          .split('.')[0]
-                                          .split(':', 2)
-                                          .join(':') +
-                                        ' hrs'}
-                                    </p>
+                                    {/* <p>
+                                    Completed on: <br />
+                                    {moment(item[0].createdAt)
+                                      .utcOffset('+11:00')
+                                      .format('DD/MM/YYYY') +
+                                      ', ' +
+                                      item[0].createdAt
+                                        .split('T')[1]
+                                        .split('.')[0]
+                                        .split(':', 2)
+                                        .join(':') +
+                                      ' hrs'}
+                                  </p> */}
                                   </div>
                                 </div>
                               </Accordion.Header>
