@@ -275,7 +275,7 @@ const FilerepoMyAdd = ({ filter }) => {
 
 
     const getChildren = async () => {
-        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users)}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users ? formSettings.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },

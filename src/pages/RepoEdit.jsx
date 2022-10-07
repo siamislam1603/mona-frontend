@@ -155,7 +155,7 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users)}`, {
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
