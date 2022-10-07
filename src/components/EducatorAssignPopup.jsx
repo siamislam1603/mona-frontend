@@ -102,14 +102,14 @@ const PopColumns = [
     return (
     <>
       <div className="item mb-3">
-          <Modal size="lg" show={props.show} onHide={handleClose}>
+          <Modal size="lg" show={props.show} onHide={handleClose} >
                 <Modal.Header closeButton>
                     <Modal.Title>Select Educator</Modal.Title>
                     <Button variant="outline-secondary" onClick={()=>(navigate("/new-user"))} style={{ position: 'absolute', right: '80px' }}>
                         Add New
                     </Button>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body style={{height:"40rem",overflowY: "scroll"}}>
                 <ToolkitProvider
                     bootstrap4
                     keyField="id"

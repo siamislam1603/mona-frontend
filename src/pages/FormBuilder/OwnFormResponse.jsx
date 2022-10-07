@@ -234,7 +234,7 @@ function OwnFormResponse(props) {
                     <Accordion defaultActiveKey="0">
                       {responseData.map((item, index) => {
                         return (
-                          <Accordion.Item eventKey={index}>
+                          <Accordion.Item key={index} eventKey={index}>
                             <Accordion.Header>
                               <div className="responses-header-row">
                                 <div className="responses-header-left">
@@ -252,6 +252,7 @@ function OwnFormResponse(props) {
                                     (inner_item, inner_index) => {
                                       return (
                                         <div
+                                          key={inner_index}
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
@@ -364,6 +365,7 @@ function OwnFormResponse(props) {
                               {responseData[index]?.map((item, index) => {
                                 return (
                                   <div
+                                    key={index}
                                     className={
                                       index === 0
                                         ? 'responses-content-wrap'
@@ -396,6 +398,7 @@ function OwnFormResponse(props) {
                                         }
                                         return (
                                           <div
+                                            key={inner_index}sss
                                             className="responses-content-box"
                                             style={{ marginTop: '12px' }}
                                           >
