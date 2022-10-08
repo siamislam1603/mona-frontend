@@ -692,6 +692,12 @@ const NewUser = () => {
                               placeholder="Select"
                               ref={role}
                               closeMenuOnSelect={true}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               options={userRoleData}
                               value={userRoleData?.filter(d => d.value ===  formData?.role)}
                               onChange={(e) => {
@@ -733,6 +739,12 @@ const NewUser = () => {
                               placeholder="Select"
                               closeMenuOnSelect={true}
                               options={stateData}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               ref={state}
                               value={stateData?.filter(d => d.label === formData?.state)}
                               onChange={(e) => {
@@ -755,6 +767,12 @@ const NewUser = () => {
                             <Select
                               placeholder="Select"
                               ref={city}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
@@ -852,6 +870,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 components={animatedComponents}
                                 isMulti
                                 options={trainingCategoryData}
@@ -873,6 +897,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 components={animatedComponents}
                                 isMulti
                                 options={pdcData}
@@ -958,6 +988,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={true}
                                 isDisabled={childfranchise}
                                 ref={franchisee}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 options={franchiseeData}
                                 onChange={(e) => {
                                   setFormData((prevState) => ({
@@ -998,6 +1034,12 @@ const NewUser = () => {
                                 isDisabled={formData.role !== 'educator'}
                                 ref={coordinator}
                                 closeMenuOnSelect={true}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 // placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select" : "Not Applicable"}
                                 placeholder={"Select"}
                                 options={coordinatorData}
@@ -1026,6 +1068,12 @@ const NewUser = () => {
                                 components={animatedComponents}
                                 isMulti
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 placeholder="Select"
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {

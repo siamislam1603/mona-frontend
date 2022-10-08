@@ -376,7 +376,11 @@ const TrainingDetail = () => {
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <h3 className="title-sm">Training Participants Not Attended</h3>
+<<<<<<< HEAD
                                 { nonParticipants?.length > 6 && <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
+=======
+                                {nonParticipants?.length > 6 && <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
+>>>>>>> master
                               </div>
                               <div className="column-list files-list three-col">
                                 {
