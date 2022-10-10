@@ -14,16 +14,22 @@ import { FullLoader } from "../components/Loader";
 let DeleteId = [];
 
 function getFilteredChildren(children) {
+  console.log('Children:', children);
+  let  newFilteredList = null;
 
-    let loggedInUserEmail = localStorage.getItem('email');
-    console.log('CHILDREN:', children);
-    let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email === loggedInUserEmail));
-    console.log('EMAIL CHILDREN:', filteredChildrenByEmail)
-    filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
-    let newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
-    console.log('FILTERED LIST:', newFilteredList);
+  if(localStorage.getItem('user_role') !== 'franchisor_admin' && localStorage.getItem('user_role') !== 'guardian') {
+    if(localStorage.getItem('user_role') === 'educator') {
+      let loggedInUserEmail = localStorage.getItem('email');
+      let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email === loggedInUserEmail));
+      filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
+      newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
+    } else {
+      let franchisee_id = localStorage.getItem('franchisee_id');
+      newFilteredList = children.filter(children => children.franchisee_id === parseInt(franchisee_id));
+    }
+  }
 
-    return localStorage.getItem('user_role') === 'educator' ? newFilteredList : children;
+  return newFilteredList || children;
 }
 
 const Children = () => {
