@@ -53,7 +53,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       setEducatorData(users.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: `${user.fullname} (${user.email})`
       })));
     }
   };
@@ -155,6 +155,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   
 
   educatorData && console.log('EDUCATOR:', educatorData);
+  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  errors && console.log('ERRORS:', errors);
   return (
     <>
       <div id="main">
@@ -248,7 +250,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   disabled={localStorage.getItem('user_role') === "guardian"}
-                                  max={new Date().toISOString().slice(0, 10)}
+                                  // max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
                                     handleChildData(e);

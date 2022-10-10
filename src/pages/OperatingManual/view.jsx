@@ -212,16 +212,43 @@ const OperatingManual = () => {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("The result",result)
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
           if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
-            setUser(result?.data);
-          else setUser(result?.users);
-        } else setUser(result?.data);
+          {
+            let formattedUserData = result?.data?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+
+              // charAt(0).toUpperCase() + string.slice(1);
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+          }
+          else {
+            let formattedUserData = result?.data?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+          }
+        } else {
+          let formattedUserData = result?.data?.map((d) => ({
+            id: d.id,
+            fullname: d.fullname,
+            email: d.email,
+            namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+          setUser(formattedUserData);
+        }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => console.log('View OM error', error));
   };
 
   const checkDelete = async()=>{
@@ -501,6 +528,7 @@ const OperatingManual = () => {
     console.log('Skn');
   }, [operatingManualdata]);
   console.log('Rohan manual', operatingManualdata, formSettingData);
+  console.log("The users",user)
 
   return (
     <>
@@ -1244,7 +1272,7 @@ const OperatingManual = () => {
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
-                      displayValue="email"
+                      displayValue="namemail"
                       className="multiselect-box default-arrow-select"
                       selectedValues={selectedUser}
                       onRemove={onRemoveUser}

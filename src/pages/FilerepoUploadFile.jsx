@@ -42,7 +42,7 @@ const FilerepoUploadFile = () => {
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
-  
+
 
     const getUser = async () => {
         try {
@@ -68,9 +68,9 @@ const FilerepoUploadFile = () => {
                     id: d.id,
                     fullname: d.fullname,
                     email: d.email,
-                    namemail: `(${d.fullname}) ${d.email}`,
+                    namemail: `${d.fullname} (${d.email})`,
                 }));
-       
+
                 setUser(formattedUserData)
             }
 
@@ -95,7 +95,7 @@ const FilerepoUploadFile = () => {
                         return item.id
                     }
                 })
-             
+
                 setGeneralCategory(general[0].id)
             })
             .catch((error) => {
@@ -129,7 +129,7 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item=>item.id)
+        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item => item.id)
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -137,19 +137,19 @@ const FilerepoUploadFile = () => {
         })
         if (response.status === 200 && response.data.status === "success") {
             let extraArr = []
-            let parents = response.data.parentData.map((item)=>{
+            let parents = response.data.parentData.map((item) => {
                 return item.children
-            })  
+            })
 
-            parents.forEach((item)=>{
-                extraArr = [...item,...extraArr]
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
             })
 
             let uniqArr = _.uniqBy(extraArr, function (e) {
                 return e.id;
-              });
-            
-            setChild(uniqArr.map(data=>({
+            });
+
+            setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
@@ -166,10 +166,10 @@ const FilerepoUploadFile = () => {
         fetchFranchiseeList();
     }, [formSettings.franchisee])
 
-    useEffect(()=>{
- 
+    useEffect(() => {
+
         getChildren()
-    },[userCount])
+    }, [userCount])
 
 
     const setField = (field, value) => {
@@ -342,12 +342,12 @@ const FilerepoUploadFile = () => {
 
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = user.findIndex((object) => {
+        const index = selectedUser.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        user.splice(index, 1);
-        setUserCount(userCount - 1)
+        selectedUser.splice(index, 1);
     }
+
 
 
     function onRemoveChild(removedItem) {
@@ -827,11 +827,10 @@ const FilerepoUploadFile = () => {
                                                                 <Multiselect
                                                                     displayValue="namemail"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedUser}
-                                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                                    onKeyPressFn={function noRefCheck() { }}
                                                                     onRemove={onRemoveUser}
-                                                                    // onSearch={function noRefCheck() {}}
+                                                                    onSearch={function noRefCheck() { }}
                                                                     onSelect={onSelectUser}
                                                                     options={user}
                                                                 />
@@ -845,11 +844,8 @@ const FilerepoUploadFile = () => {
                                                                 <Multiselect
                                                                     displayValue="name"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedChild}
-                                                                    // onKeyPressFn={function noRefCheck() {}}
                                                                     onRemove={onRemoveChild}
-                                                                    // onSearch={function noRefCheck() {}}
                                                                     onSelect={onSelectChild}
                                                                     options={child}
                                                                 />
