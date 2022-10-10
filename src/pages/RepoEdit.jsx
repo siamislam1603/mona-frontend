@@ -7,7 +7,6 @@ import { BASE_URL } from '../components/App';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import DragDropFileEdit from '../components/DragDropFileEdit';
-import FileRepoVideo from '../components/FileRepoVideo';
 import { FullLoader } from "../components/Loader";
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import _ from 'lodash'
@@ -15,6 +14,8 @@ import _ from 'lodash'
 const getUser_Role = localStorage.getItem(`user_role`)
 
 let selectedUserId = '';
+
+
 const RepoEdit = () => {
     const [url, setUrl] = React.useState('');
     const Params = useParams();
@@ -38,7 +39,7 @@ const RepoEdit = () => {
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
-        assigned_users: []
+        // assigned_users: []
 
     });
 
@@ -79,6 +80,8 @@ const RepoEdit = () => {
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
         data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
+
+    console.log(data, "data")
 
     const onChange = (e) => {
         const files = data.image;
@@ -234,20 +237,12 @@ const RepoEdit = () => {
                 id: d.id,
                 fullname: d.fullname,
                 email: d.email,
-                namemail: `(${d.fullname}) ${d.email}`,
+                namemail: `${d.fullname} (${d.email})`,
             }));
             setUser(formattedUserData)
         }
     };
 
-    function onRemoveUser(selectedList, removedItem) {
-        selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-        const index = user.findIndex((object) => {
-            return object.id === removedItem.id;
-        });
-        user.splice(index, 1);
-        setUserCount(userCount - 1)
-    }
 
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
@@ -294,7 +289,7 @@ const RepoEdit = () => {
         getUser();
         fetchFranchiseeList();
         // childList()
-    }, []);
+    }, [setSelectedUser]);
 
     useEffect(() => {
         // childList()
@@ -303,6 +298,7 @@ const RepoEdit = () => {
 
     useEffect(() => {
         childList()
+        getUser();
     }, [userCount])
 
 
@@ -454,7 +450,7 @@ const RepoEdit = () => {
                                                     (<>
                                                         {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
                                                             <Col lg={3} md={6}>
-                                                                ``                        <Form.Group>
+                                                                <Form.Group>
                                                                     <Form.Label>Give access to all franchises</Form.Label>
                                                                     <div className="new-form-radio d-block">
                                                                         <div className="new-form-radio-box">
@@ -801,14 +797,19 @@ const RepoEdit = () => {
                                                                                         displayValue="namemail"
                                                                                         className="multiselect-box default-arrow-select"
                                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
-                                                                                        onRemove={onRemoveUser}
+                                                                                        // onRemove={onRemoveUser}
+                                                                                        onRemove={function noRefCheck(data) {
+                                                                                            setData((prevState) => ({
+                                                                                                ...prevState,
+                                                                                                assigned_users: [...data.map(data => data.id + '')],
+                                                                                            }));
+                                                                                        }}
                                                                                         value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
                                                                                             setData((prevState) => ({
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...selectedOptions.map(option => option.id + "")]
                                                                                             }));
-
                                                                                             setUserCount(userCount + 1)
                                                                                         }}
                                                                                         options={user}
@@ -824,7 +825,13 @@ const RepoEdit = () => {
                                                                                         placeholder={"Select"}
                                                                                         displayValue="name"
                                                                                         className="multiselect-box default-arrow-select"
-                                                                                        onRemove={onRemoveChild}
+                                                                                        // onRemove={onRemoveChild}
+                                                                                        onRemove={function noRefCheck(data) {
+                                                                                            setData((prevState) => ({
+                                                                                                ...prevState,
+                                                                                                assigned_childs: [...data.map(data => data.id + '')],
+                                                                                            }));
+                                                                                        }}
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
