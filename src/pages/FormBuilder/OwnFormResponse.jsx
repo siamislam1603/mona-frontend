@@ -281,13 +281,38 @@ function OwnFormResponse(props) {
                                                 : inner_item?.filled_user
                                                     ?.fullname}
                                             </h5>
-                                            {inner_index === 0 &&
+
+                                            {console.log(
+                                              moment(
+                                                item[inner_index].isEditTime
+                                              ).format() > moment().format()
+                                            )}
+                                            {item[inner_index].isEditTime !=
+                                              null &&
+                                            moment(
+                                              item[inner_index].isEditTime
+                                            ).format() > moment().format() ? (
+                                              <span
+                                                style={{
+                                                  fontSize: '12px',
+                                                  paddingLeft: '12px',
+                                                }}
+                                              >
+                                                Currently in editing mode <br />
+                                                [Refresh the page after some
+                                                time]
+                                              </span>
+                                            ) : (
+                                              formData &&
+                                              inner_index === 0 &&
                                               (formData?.form_type ===
                                                 'editable' ||
                                                 formData?.form_type ===
                                                   'multi_submission') && (
                                                 <Link
-                                                  style={{ marginLeft: '5px' }}
+                                                  style={{
+                                                    marginLeft: '5px',
+                                                  }}
                                                   to={`/form/dynamic/${formData.form_name}`}
                                                   state={{
                                                     id: item[inner_index]?.id,
@@ -298,12 +323,30 @@ function OwnFormResponse(props) {
                                                     'item[index]?.id--->',
                                                     item[inner_index]
                                                   )}
-
+                                                  {/* <div
+                                                  className="edit-icon-form"
+                                                  onClick={() => {
+                                                    alert(
+                                                      'Hello--->' +
+                                                        inner_index
+                                                    );
+                                                    navigate(
+                                                      `/form/dynamic/${formData.form_name}`,
+                                                      {
+                                                        state: {
+                                                          id: item[index].id,
+                                                          form_id: id,
+                                                        },
+                                                      }
+                                                    );
+                                                  }}
+                                                > */}
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                   />
                                                 </Link>
-                                              )}
+                                              )
+                                            )}
                                           </div>
                                           <h6>
                                             <span className="text-capitalize">
@@ -345,7 +388,41 @@ function OwnFormResponse(props) {
                                 </div>
 
                                 <div className="responses-header-right">
-                                  <p>
+                                  {item[0]?.updated ? (
+                                    <p>
+                                      Updated By :{' '}
+                                      {item[0]?.updatedByUsers[0]?.fullname}{' '}
+                                      <br />
+                                      Updated on: <br />
+                                      {moment(item[0].updatedAt)
+                                        .utcOffset('+11:00')
+                                        .format('DD/MM/YYYY') +
+                                        ', ' +
+                                        item[0].updatedAt
+                                          .split('T')[1]
+                                          .split('.')[0]
+                                          .split(':', 2)
+                                          .join(':') +
+                                        ' hrs'}
+                                    </p>
+                                  ) : (
+                                    <p>
+                                      Completed By :{' '}
+                                      {item[0]?.filled_user?.fullname} <br />
+                                      Completed on: <br />
+                                      {moment(item[0].createdAt)
+                                        .utcOffset('+11:00')
+                                        .format('DD/MM/YYYY') +
+                                        ', ' +
+                                        item[0].createdAt
+                                          .split('T')[1]
+                                          .split('.')[0]
+                                          .split(':', 2)
+                                          .join(':') +
+                                        ' hrs'}
+                                    </p>
+                                  )}
+                                  {/* <p>
                                     Completed on: <br />
                                     {moment(item[0].createdAt)
                                       .utcOffset('+11:00')
@@ -357,7 +434,7 @@ function OwnFormResponse(props) {
                                         .split(':', 2)
                                         .join(':') +
                                       ' hrs'}
-                                  </p>
+                                  </p> */}
                                 </div>
                               </div>
                             </Accordion.Header>
