@@ -593,7 +593,7 @@ function Setting(props) {
                         </Form.Label>
                         <div className="new-form-radio">
                           <div className="new-form-radio-box">
-                            <label for="user_role">
+                            <label htmlFor="user_role">
                               <input
                                 type="radio"
                                 value={1}
@@ -612,7 +612,7 @@ function Setting(props) {
                             </label>
                           </div>
                           <div className="new-form-radio-box">
-                            <label for="specific_user">
+                            <label htmlFor="specific_user">
                               <input
                                 type="radio"
                                 value={0}

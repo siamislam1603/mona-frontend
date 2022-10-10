@@ -53,10 +53,11 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
-  const [updateFlag,setUpdateFlag]=useState(false);
-  const [newFieldAddIndex,setNewFieldAddIndex]=useState(-1);
-  const [newOptionAddIndex,setNewOptionAddIndex]=useState(-1);
-  const [newConditionOptionAddIndex,setNewConditionOptionAddIndex]=useState(-1);
+  const [updateFlag, setUpdateFlag] = useState(false);
+  const [newFieldAddIndex, setNewFieldAddIndex] = useState(-1);
+  const [newOptionAddIndex, setNewOptionAddIndex] = useState(-1);
+  const [newConditionOptionAddIndex, setNewConditionOptionAddIndex] =
+    useState(-1);
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -209,7 +210,7 @@ const AddFormField = (props) => {
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
       tempArr[index]['option'] = tempOption;
-      
+
       setForm(tempArr);
     } else {
       const keyOfOption = tempOption[inner_index];
@@ -472,12 +473,10 @@ const AddFormField = (props) => {
         if (newErrors.length > 0) {
           let flag = false;
           newErrors.map((item, index) => {
-           
             if (Object.keys(item).length > 0 && !flag) {
               if (Object.keys(item)[0] === 'option') {
                 Object.values(item)[0].map((inner_item, inner_index) => {
                   if (Object.keys(inner_item).length > 0 && !flag) {
-                    
                     document
                       .getElementById('option' + index + inner_index)
                       .focus();
@@ -711,7 +710,9 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
-                                    disabled={updateFlag && newFieldAddIndex!==index}
+                                    disabled={
+                                      updateFlag && newFieldAddIndex !== index
+                                    }
                                     id={'field_label' + index}
                                     maxLength={255}
                                     value={form[index]?.field_label}
@@ -744,7 +745,9 @@ const AddFormField = (props) => {
                                         index
                                       );
                                     }}
-                                    disabled={updateFlag && newFieldAddIndex!==index}
+                                    disabled={
+                                      updateFlag && newFieldAddIndex !== index
+                                    }
                                   >
                                     <option
                                       value="text_headings"
@@ -873,12 +876,16 @@ const AddFormField = (props) => {
                                     (item, inner_index) => {
                                       return (
                                         <Col sm={6}>
-                                          
                                           <div className="my-form-input">
                                             <Form.Control
                                               type="text"
                                               name="option"
-                                              disabled={updateFlag && newFieldAddIndex!==index && inner_index!==newOptionAddIndex}
+                                              disabled={
+                                                updateFlag &&
+                                                newFieldAddIndex !== index &&
+                                                inner_index !==
+                                                  newOptionAddIndex
+                                              }
                                               id={
                                                 'option' + index + inner_index
                                               }
@@ -957,7 +964,9 @@ const AddFormField = (props) => {
                                           const tempArr = form;
                                           const tempObj = tempArr[index];
                                           tempObj['option'].push({ '': '' });
-                                          setNewOptionAddIndex(tempObj['option'].length-1);
+                                          setNewOptionAddIndex(
+                                            tempObj['option'].length - 1
+                                          );
                                           tempArr[index] = tempObj;
                                           setForm(tempArr);
                                         }}
@@ -977,8 +986,14 @@ const AddFormField = (props) => {
                                               !(Object.keys(item)[0] === '')
                                             ) {
                                               fillOptionCounter++;
-                                              if(Object.keys(item)[0].toString()===Object.values(item)[0].toString())
-                                              {
+                                              if (
+                                                Object.keys(
+                                                  item
+                                                )[0].toString() ===
+                                                Object.values(
+                                                  item
+                                                )[0].toString()
+                                              ) {
                                                 setUpdateFlag(false);
                                               }
                                             }
@@ -1012,7 +1027,6 @@ const AddFormField = (props) => {
                                           tempArr[index]['option'] = tempOption;
 
                                           setForm(tempArr);
-                                          
                                         }}
                                       >
                                         Apply Condition
@@ -1078,7 +1092,7 @@ const AddFormField = (props) => {
                           <Button
                             variant="link"
                             onClick={() => {
-                              setNewFieldAddIndex(index+1);
+                              setNewFieldAddIndex(index + 1);
                               let data = [...form];
                               data.splice(index + 1, 0, {
                                 field_type: 'text',
@@ -1335,7 +1349,11 @@ const AddFormField = (props) => {
                                                 <Form.Control
                                                   type="text"
                                                   name="option"
-                                                  disabled={updateFlag && newConditionOptionAddIndex!==inner_index}
+                                                  disabled={
+                                                    updateFlag &&
+                                                    newConditionOptionAddIndex !==
+                                                      inner_index
+                                                  }
                                                   value={
                                                     inner_item[
                                                       Object.keys(inner_item)[0]
@@ -1413,9 +1431,11 @@ const AddFormField = (props) => {
                                           keyOfOption[Object.keys(item)[0]][
                                             'option'
                                           ].push({ '': '' });
-                                          setNewConditionOptionAddIndex(keyOfOption[Object.keys(item)[0]][
-                                            'option'
-                                          ].length-1);
+                                          setNewConditionOptionAddIndex(
+                                            keyOfOption[Object.keys(item)[0]][
+                                              'option'
+                                            ].length - 1
+                                          );
                                           tempOption[index] = keyOfOption;
                                           tempArr[Index]['option'] = tempOption;
                                           setForm(tempArr);
@@ -1504,7 +1524,6 @@ const AddFormField = (props) => {
                                         tempArr?.map((item, index) => {
                                           if (flag === false) {
                                             if (item.section_name) {
-                                            
                                               if (
                                                 item.section_name ===
                                                 e.target.value

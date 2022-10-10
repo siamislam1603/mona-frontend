@@ -198,7 +198,7 @@ const TrainingCreatedByMe = ({ filter }) => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: `${data.fullname} (${data.email})`
+          key: `(${data.fullname}) ${data.email}`
         })),
       ]);
     }
@@ -409,7 +409,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                   style={{
                     overflow: "hidden"
                   }}
-                        dataLength={myTrainingData.length} //This is important field to render the next data
+                        dataLength={myTrainingData?.length} //This is important field to render the next data
                         next={() => setPage(page+6)}
                         hasMore={true}
                         // loader={<h4>Loading...</h4>}

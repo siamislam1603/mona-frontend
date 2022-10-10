@@ -107,7 +107,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       const { categoryList } = response.data;
       setTrainingCategory([
         {
-          id: 0,
+          id: 0, 
           value: 'all categories',
           label: 'All Categories'
         },
