@@ -84,22 +84,12 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     if (response.status === 200 && response.data.status === "success") {
       const { franchiseeList: franchiseeData } = response.data;
 
-      let renderedData, filteredData;
-      if (localStorage.getItem('user_role') === 'franchisor_admin') {
-        renderedData = franchiseeData.map((data) => ({
-          id: data.id,
-          franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        }));
-        setFranchiseeList(renderedData);
-      } else {
-        let franchisee_id = localStorage.getItem('franchisee_id');
-        renderedData = franchiseeData.map((data) => ({
-          id: data.id,
-          franchisee_name: `${data.franchisee_name}, ${data.city}`,
-        }));
-        filteredData = renderedData.filter(d => parseInt(d.id) === parseInt(franchisee_id));
-        setFranchiseeList(filteredData);
-      }
+      let renderedData;
+      renderedData = franchiseeData.map((data) => ({
+        id: data.id,
+        franchisee_name: `${data.franchisee_name}, ${data.city}`,
+      }));
+      setFranchiseeList(renderedData);
     }
   };
 
