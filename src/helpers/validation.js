@@ -900,7 +900,7 @@ export const enrollmentInitiationFormValidation = (formOneChildData) => {
 
   if (!home_address) errors.home_address = 'Home address is required';
 
-  if (franchisee_id.length === 0) errors.franchiseData = 'Franchise is required';
+  if (!franchisee_id) errors.franchiseData = 'Franchise is required';
 
   if (educator.length === 0) errors.educatorData = 'Educator is required';
 
