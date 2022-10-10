@@ -243,28 +243,6 @@ const RepoEdit = () => {
         }
     };
 
-    // function onRemoveUser(selectedList, removedItem) {
-    //     selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
-    //     const index = selectedUser.findIndex((object) => {
-    //         return object.id === removedItem.id;
-    //     });
-    //     selectedUser.splice(index, 1);
-    // }
-    function onRemoveUser(selectedList, removedItem) {
-        let removedchildarr = removedItem
-        removedItem = removedItem.map((item) => {
-            return item.id
-        })
-        setData(prevState => ({
-            ...prevState,
-            assigned_users: removedItem
-        }));
-        setSelectedUser(removedchildarr)
-    }
-    // setData((prevState) => ({
-    //     ...prevState,
-    //     assigned_users: [...selectedOptions.map(option => option.id + "")]
-    // }));
 
     const setField = async (field, value) => {
         setData({ ...data, image: field[0] })
@@ -819,14 +797,20 @@ const RepoEdit = () => {
                                                                                         displayValue="namemail"
                                                                                         className="multiselect-box default-arrow-select"
                                                                                         selectedValues={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
-                                                                                        onRemove={onRemoveUser}
+                                                                                        // onRemove={onRemoveUser}
+                                                                                        onRemove={function noRefCheck(data) {
+                                                                                            setData((prevState) => ({
+                                                                                                ...prevState,
+                                                                                                assigned_users: [...data.map(data => data.id + '')],
+                                                                                            }));
+                                                                                        }}
                                                                                         value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
                                                                                             setData((prevState) => ({
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...selectedOptions.map(option => option.id + "")]
                                                                                             }));
-                                                                                            // setUserCount(userCount + 1)
+                                                                                            setUserCount(userCount + 1)
                                                                                         }}
                                                                                         options={user}
                                                                                     />
@@ -841,7 +825,13 @@ const RepoEdit = () => {
                                                                                         placeholder={"Select"}
                                                                                         displayValue="name"
                                                                                         className="multiselect-box default-arrow-select"
-                                                                                        onRemove={onRemoveChild}
+                                                                                        // onRemove={onRemoveChild}
+                                                                                        onRemove={function noRefCheck(data) {
+                                                                                            setData((prevState) => ({
+                                                                                                ...prevState,
+                                                                                                assigned_childs: [...data.map(data => data.id + '')],
+                                                                                            }));
+                                                                                        }}
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
