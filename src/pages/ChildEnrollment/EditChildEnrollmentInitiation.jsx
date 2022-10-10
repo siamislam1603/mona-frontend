@@ -53,7 +53,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       setEducatorData(users.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: `${user.fullname} (${user.email})`
       })));
     }
   };
