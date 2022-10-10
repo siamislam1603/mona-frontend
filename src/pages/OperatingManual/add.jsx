@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { includes } from 'lodash';
+import { includes, slice } from 'lodash';
 let selectedUserId = '';
 let upperRoleUser = '';
 const AddOperatingManual = () => {
@@ -94,7 +94,8 @@ const AddOperatingManual = () => {
               id: d.id,
               fullname: d.fullname,
               email: d.email,
-              namemail: `(${d.fullname}) ${d.email}`,
+              
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
           }));
             setUser(formattedUserData);
           }
@@ -103,7 +104,7 @@ const AddOperatingManual = () => {
               id: d.id,
               fullname: d.fullname,
               email: d.email,
-              namemail: `(${d.fullname}) ${d.email}`,
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
           }));
             setUser(formattedUserData);
 
@@ -114,8 +115,8 @@ const AddOperatingManual = () => {
             id: d.id,
             fullname: d.fullname,
             email: d.email,
-            namemail: `(${d.fullname}) ${d.email}`,
-        }));
+            namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
           setUser(formattedUserData);
 
         }
@@ -505,9 +506,11 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
+  // namemail: `${d.fullname.charAt(0).toUpperCase() +d.fullname.split(" ")[1].charAt(0).toUpperCase()+d.fullname.split(" ")[1].slice(1)}  (${d.email})`,
   // console.log("Operating manual",operatingManualData)
-  console.log("The user",user)
 // console.log("Oepratiing",errors)
+
+console.log("The user",user)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>

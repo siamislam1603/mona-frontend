@@ -28,7 +28,7 @@ const FilerepoMyAdd = ({ filter }) => {
     });
     const [userData, setUserData] = useState([]);
     const [fileDeleteMessage, SetfileDeleteMessage] = useState('');
-
+    const [selectedUser, setSelectedUser] = useState([]);
     const [loaderFlag, setLoaderFlag] = useState(false);
     const [saveFileId, setSaveFileId] = useState(null);
     const [user, setUser] = useState([]);
@@ -85,7 +85,7 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
-  
+
     }, [])
 
 
@@ -96,7 +96,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-               
+
                     let tempData = files.map((dt) => ({
                         name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
                         createdAt: dt.createdAt,
@@ -108,7 +108,7 @@ const FilerepoMyAdd = ({ filter }) => {
                         filesId: dt.filesId,
 
                     }));
-               
+
                     setUserData(tempData);
                 }
             }
@@ -193,16 +193,13 @@ const FilerepoMyAdd = ({ filter }) => {
 
 
     function onRemoveUser(selectedList, removedItem) {
-        selectedUserId = selectedUserId.replace(
-            removedItem.id + ',',
-            ''
-        );
-        const index = user.findIndex((object) => {
+        selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+        const index = selectedUser.findIndex((object) => {
             return object.id === removedItem.id;
         });
-        user.splice(index, 1);
-        setUserCount(userCount - 1)
+        selectedUser.splice(index, 1);
     }
+
 
     function onRemoveChild(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(
@@ -223,7 +220,7 @@ const FilerepoMyAdd = ({ filter }) => {
 
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${selectedFranchisee}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-            
+
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -264,7 +261,7 @@ const FilerepoMyAdd = ({ filter }) => {
                 id: d.id,
                 fullname: d.fullname,
                 email: d.email,
-                namemail: `(${d.fullname}) ${d.email}`,
+                namemail: `${d.fullname}(${d.email})`,
             }));
             setUser(formattedUserData)
         }
