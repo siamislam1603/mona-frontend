@@ -827,20 +827,9 @@ const FilerepoUploadFile = () => {
                                                                 <Multiselect
                                                                     displayValue="namemail"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedUser}
                                                                     onKeyPressFn={function noRefCheck() { }}
                                                                     onRemove={onRemoveUser}
-                                                                    // onRemove={function noRefCheck(data) {
-                                                                    //     setFormSettings((prevState) => ({
-                                                                    //         ...prevState,
-                                                                    //         assigned_franchisee: [...data.map(data => data.id)],
-                                                                    //         franchisee: [...data.map(data => data.id)]
-                                                                    //     }));
-                                                                    //     // setSelectedUser([])
-                                                                    //     // setSelectedChild([])
-                                                                    // }
-                                                                    // }
                                                                     onSearch={function noRefCheck() { }}
                                                                     onSelect={onSelectUser}
                                                                     options={user}
@@ -855,11 +844,8 @@ const FilerepoUploadFile = () => {
                                                                 <Multiselect
                                                                     displayValue="name"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedChild}
-                                                                    // onKeyPressFn={function noRefCheck() {}}
                                                                     onRemove={onRemoveChild}
-                                                                    // onSearch={function noRefCheck() {}}
                                                                     onSelect={onSelectChild}
                                                                     options={child}
                                                                 />
