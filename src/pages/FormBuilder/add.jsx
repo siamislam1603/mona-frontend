@@ -85,7 +85,7 @@ function AddFormBuilder(props) {
     }
   };
   const OnSubmit = (e) => {
-    const formNameRegex = /^#[^#\s]+(?: #[^#\s]+)*$/;
+    const formNameRegex = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     e.preventDefault();
     const newErrors = createFormValidation(form);
     if (Object.keys(newErrors).length > 0) {
@@ -101,8 +101,8 @@ function AddFormBuilder(props) {
       data['upper_role'] = getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
 
-      if (!formNameRegex.test(data.form_name)) {
-        toast.error('Special character not valid in form name');
+      if (formNameRegex.test(data.form_name)) {
+        toast.error('Special Character not valid in Form name');
         return false;
       }
 
@@ -344,7 +344,7 @@ function AddFormBuilder(props) {
                                 isInvalid={!!errors.previous_form}
                               >
                                 <option value="1">Select</option>
-                                {formData?.map((item,index) => {
+                                {formData?.map((item, index) => {
                                   return (
                                     <option
                                       key={index}
@@ -378,7 +378,7 @@ function AddFormBuilder(props) {
                           }}
                         >
                           <option value="">Select</option>
-                          {formCategory?.map((item,index) => {
+                          {formCategory?.map((item, index) => {
                             return (
                               <option
                                 key={index}

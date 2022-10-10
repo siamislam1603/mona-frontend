@@ -17,6 +17,9 @@ import TopHeader from '../../components/TopHeader';
 import SignaturePad from 'react-signature-canvas';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function FormResponse(props) {
   const Params = useParams();
@@ -352,7 +355,7 @@ function FormResponse(props) {
                                                 : 'responses-header-detail response-header-left-line'
                                             }
                                           >
-                                            <h5>
+                                            {/* <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
                                                     inner_index - 1
@@ -364,7 +367,85 @@ function FormResponse(props) {
                                                     ?.fullname
                                                 : inner_item?.filled_user
                                                     ?.fullname}
-                                            </h5>
+                                            </h5> */}
+                                            <div className="d-flex">
+                                              <h5>
+                                                {inner_index > 0
+                                                  ? !responseData[index][
+                                                      inner_index - 1
+                                                    ].filled_user?.fullname?.includes(
+                                                      inner_item?.filled_user
+                                                        ?.fullname
+                                                    ) &&
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  : inner_item?.filled_user
+                                                      ?.fullname}
+                                              </h5>
+
+                                              {console.log(
+                                                moment(
+                                                  item[inner_index].isEditTime
+                                                ).format() > moment().format()
+                                              )}
+                                              {item[inner_index].isEditTime !=
+                                                null &&
+                                              moment(
+                                                item[inner_index].isEditTime
+                                              ).format() > moment().format() ? (
+                                                <span
+                                                  style={{
+                                                    fontSize: '12px',
+                                                    paddingLeft: '12px',
+                                                  }}
+                                                >
+                                                  Currently in editing mode{' '}
+                                                  <br />
+                                                  [Refresh the page after some
+                                                  time]
+                                                </span>
+                                              ) : (
+                                                formData &&
+                                                inner_index === 0 &&
+                                                (formData?.form_type ===
+                                                  'editable' ||
+                                                  formData?.form_type ===
+                                                    'multi_submission') && (
+                                                  <Link
+                                                    style={{
+                                                      marginLeft: '5px',
+                                                    }}
+                                                    to={`/form/dynamic/${formData.form_name}`}
+                                                  >
+                                                    {console.log(
+                                                      'item[index]?.id--->',
+                                                      item[inner_index]
+                                                    )}
+                                                    {/* <div
+                                                  className="edit-icon-form"
+                                                  onClick={() => {
+                                                    alert(
+                                                      'Hello--->' +
+                                                        inner_index
+                                                    );
+                                                    navigate(
+                                                      `/form/dynamic/${formData.form_name}`,
+                                                      {
+                                                        state: {
+                                                          id: item[index].id,
+                                                          form_id: id,
+                                                        },
+                                                      }
+                                                    );
+                                                  }}
+                                                > */}
+                                                    <FontAwesomeIcon
+                                                      icon={faPen}
+                                                    />
+                                                  </Link>
+                                                )
+                                              )}
+                                            </div>
                                             <h6>
                                               <span className="text-capitalize">
                                                 {inner_index > 0
