@@ -447,17 +447,17 @@ const DynamicForm = () => {
                                     ? (behalfOfFlag = true)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
-                                  {targetUser?.map((item) => {
+                                  {targetUser?.map((item,index) => {
                                     return (
                                       <>
                                         {item.id === parseInt(childId) ? (
-                                          <option value={item.id} selected>
+                                          <option value={item.id} selected key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
-                                          <option value={item.id}>
+                                          <option value={item.id} key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -487,17 +487,17 @@ const DynamicForm = () => {
                                     ? (behalfOfFlag = true)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
-                                  {targetUser?.map((item) => {
+                                  {targetUser?.map((item,index) => {
                                     return (
                                       <>
                                         {item.id === fieldData.behalf_of ? (
-                                          <option value={item.id} selected>
+                                          <option value={item.id} selected key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
-                                          <option value={item.id}>
+                                          <option value={item.id} key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -522,7 +522,7 @@ const DynamicForm = () => {
                                   isInvalid={!!errors.behalf_of}
                                 >
                                   <option value="">Select</option>
-                                  {targetUser?.map((item) => {
+                                  {targetUser?.map((item,index) => {
                                     return (
                                       <>
                                         {(parseInt(
@@ -530,7 +530,7 @@ const DynamicForm = () => {
                                         ) === item.franchisee_id ||
                                           localStorage.getItem('user_role') ===
                                             'franchisor_admin') && (
-                                          <option value={item.id}>
+                                          <option value={item.id} key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}

@@ -198,7 +198,7 @@ const TrainingCreatedByMe = ({ filter }) => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: `${data.fullname} (${data.email})`
+          key: `(${data.fullname}) ${data.email}`
         })),
       ]);
     }

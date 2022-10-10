@@ -198,7 +198,7 @@ const EditTraining = () => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: `${data.fullname} (${data.email})`
+          key: `(${data.fullname}) ${data.email}`
         })),
       ]);
     }
@@ -918,7 +918,7 @@ const EditTraining = () => {
                             }))
                           }}
                         />
-                        {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
+                        {trainingSettingErrors?.end_date !== null && <span className="error">{trainingSettingErrors?.end_date}</span>}
                       </Form.Group>
                     </Col>
                     <Col lg={3} sm={6} className="mt-3 mt-lg-0">

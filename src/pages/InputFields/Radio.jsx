@@ -34,7 +34,7 @@ const Radio = (props) => {
                   {Object.keys(eval(controls.option)[index])[0] ===
                   Object.values(eval(controls.option)[index])[0] ? (
                     <div className="new-form-radio-box">
-                      <label for={Object.keys(item)[0] + props?.diff_index}>
+                      <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
                         {console.log(
                           'props.field_data',
                           props.field_name,
@@ -42,7 +42,7 @@ const Radio = (props) => {
                         )}
                         <input
                           type="radio"
-                          key={props?.diff_index}
+                          key={index}
                           value={Object.keys(item)[0]}
                           name={controls.field_name}
                           id={Object.keys(item)[0] + props?.diff_index}
@@ -70,10 +70,11 @@ const Radio = (props) => {
                   ) : (
                     <>
                       <div className="new-form-radio-box">
-                        <label for={Object.keys(item)[0] + props?.diff_index}>
+                        <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
                           <input
                             type="radio"
                             value={Object.keys(item)[0]}
+                            key={index}
                             name={controls.field_name}
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {
@@ -117,16 +118,17 @@ const Radio = (props) => {
               </Form.Label>
               <div className="new-form-radio">
                 {Object.values(eval(controls.option)[Index])[0]['option'].map(
-                  (item) => {
+                  (item,index) => {
                     return (
                       <div className="new-form-radio-box">
-                        <label for={Object.keys(item)[0]}>
+                        <label htmlFor={Object.keys(item)[0]}>
                           <input
                             type={
                               Object.values(eval(controls.option)[Index])[0][
                                 'field_type'
                               ]
                             }
+                            key={index}
                             value={Object.values(item)[0]}
                             name={
                               Object.values(eval(controls.option)[Index])[0][
@@ -175,10 +177,10 @@ const Radio = (props) => {
                 >
                   <option>Select </option>
                   {Object.values(eval(controls.option)[Index])[0]['option'].map(
-                    (item) => {
+                    (item,index) => {
                       return (
                         <>
-                          <option>{Object.keys(item)[0]}</option>
+                          <option key={index}>{Object.keys(item)[0]}</option>
                         </>
                       );
                     }
@@ -198,7 +200,7 @@ const Radio = (props) => {
               <div className="d-flex mt-2"></div>
               <div className="btn-radio d-flex align-items-center">
                 {Object.values(eval(controls.option)[Index])[0]['option'].map(
-                  (item) => {
+                  (item,index) => {
                     return (
                       <>
                         <label htmlFor={Object.keys(item)[0]}>
@@ -207,6 +209,7 @@ const Radio = (props) => {
                         <Form.Check
                           type="checkbox"
                           className="checktest"
+                          key={index}
                           name={
                             Object.values(eval(controls.option)[Index])[0]
                               .field_name

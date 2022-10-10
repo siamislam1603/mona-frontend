@@ -324,7 +324,7 @@ function ViewFormBuilder(props) {
                         title="Forms to complete"
                       >
                         <div className="forms-content-section">
-                          {formData?.map((item) => {
+                          {formData?.map((item, index) => {
                             return (
                               ((item.category === 'Talent Management' &&
                                 localStorage.getItem('user_role') !==
@@ -335,7 +335,7 @@ function ViewFormBuilder(props) {
                                   localStorage.getItem('user_role') ===
                                     'guardian')) && (
                                 <>
-                                  <Row>
+                                  <Row key={index + '1'}>
                                     {(item['title_flag'] = false)}
 
                                     {item?.forms?.map(
@@ -421,6 +421,7 @@ function ViewFormBuilder(props) {
 
                                             <Col
                                               lg={4}
+                                              key={inner_index + '2'}
                                               onClick={() => {
                                                 dateCheck(
                                                   inner_item.start_date,
@@ -549,7 +550,10 @@ function ViewFormBuilder(props) {
                                               <>
                                                 {(item['title_flag'] = true)}
                                                 {(no_record = true)}
-                                                <Col lg={12}>
+                                                <Col
+                                                  lg={12}
+                                                  key={inner_index + '3'}
+                                                >
                                                   <h2 className="page_title">
                                                     {item.category}
                                                   </h2>
@@ -719,7 +723,7 @@ function ViewFormBuilder(props) {
                       </Tab>
                       <Tab eventKey="forms-history" title="Forms History">
                         <div className="forms-content-section">
-                          {formData?.map((item) => {
+                          {formData?.map((item, index) => {
                             return (
                               ((item.category === 'Talent Management' &&
                                 localStorage.getItem('user_role') !==
@@ -796,14 +800,17 @@ function ViewFormBuilder(props) {
                                                 {
                                                   (form_history_no_record = true)
                                                 }
-                                                <div className="col-lg-12">
+                                                <div
+                                                  className="col-lg-12"
+                                                  key={inner_index + '5'}
+                                                >
                                                   <h2 className="page_title">
                                                     {item.category}
                                                   </h2>
                                                 </div>
                                               </>
                                             )}
-                                            <Col lg={4}>
+                                            <Col lg={4} key={inner_index + '6'}>
                                               <div className="forms-content create-other">
                                                 <div
                                                   className="content-icon-section"
@@ -1001,14 +1008,14 @@ function ViewFormBuilder(props) {
                                     MeFormData?.map((item, index) => {
                                       return (
                                         <>
-                                          <Row>
+                                          <Row key={index + '7'}>
                                             <div className="col-lg-12">
                                               <h2 className="page_title">
                                                 {item.category}
                                               </h2>
                                             </div>
                                           </Row>
-                                          <Row>
+                                          <Row key={index + '8'}>
                                             {item?.forms?.map(
                                               (inner_item, inner_index) => {
                                                 return (
@@ -1018,7 +1025,10 @@ function ViewFormBuilder(props) {
                                                         'user_id'
                                                       )
                                                     ) && (
-                                                    <Col lg={4}>
+                                                    <Col
+                                                      lg={4}
+                                                      key={inner_index + '9'}
+                                                    >
                                                       <div className="forms-content create-other">
                                                         <div className="content-icon-section">
                                                           <img
@@ -1251,7 +1261,7 @@ function ViewFormBuilder(props) {
                                     }
                                     return (
                                       <>
-                                        <Row>
+                                        <Row key={index + '10'}>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
                                               return (
@@ -1311,14 +1321,22 @@ function ViewFormBuilder(props) {
                                                             'title_flag'
                                                           ] = true)
                                                         }
-                                                        <Col lg={12}>
+                                                        <Col
+                                                          lg={12}
+                                                          key={
+                                                            inner_index + '11'
+                                                          }
+                                                        >
                                                           <h2 className="page_title">
                                                             {item.category}
                                                           </h2>
                                                         </Col>
                                                       </>
                                                     )}
-                                                    <Col lg={4}>
+                                                    <Col
+                                                      lg={4}
+                                                      key={inner_index + '12'}
+                                                    >
                                                       <div className="forms-content">
                                                         <div className="create-other">
                                                           <div className="content-icon-section">
