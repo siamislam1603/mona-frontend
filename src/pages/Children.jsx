@@ -78,7 +78,7 @@ const Children = () => {
 
     const init = async() => {
         // Set Parents franchisee
-        const franchiseeId = localStorage.getItem('user_role') === 'franchisor_admin' ? (localStorage.getItem('selectedFranchise') ? localStorage.getItem('selectedFranchise') : "all") : location?.state?.franchisee_id || localStorage.getItem('franchisee_id')
+        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id')
           setFranchiseId(franchiseeId);
         
         // FETCHING PARENT DATA
@@ -724,7 +724,7 @@ const Children = () => {
 
     useEffect(() => {
         init();
-    }, [reloadFlag,localStorage.getItem('selectedFranchise')]);
+    }, [reloadFlag]);
 
     return (
         <>
