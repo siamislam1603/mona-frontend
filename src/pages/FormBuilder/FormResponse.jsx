@@ -439,7 +439,7 @@ function FormResponse(props) {
                                           ' hrs'}
                                       </p>
                                     )}
-                                    <p>
+                                    {/* <p>
                                       Completed on: <br />
                                       {moment(item[0].createdAt).format(
                                         'DD/MM/YYYY'
@@ -451,7 +451,7 @@ function FormResponse(props) {
                                           .split(':', 2)
                                           .join(':') +
                                         ' hrs'}
-                                    </p>
+                                    </p> */}
                                   </div>
                                 </div>
                               </Accordion.Header>

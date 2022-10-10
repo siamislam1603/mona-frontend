@@ -6,6 +6,7 @@ import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FullLoader } from '../../components/Loader';
+import { toast, ToastContainer } from 'react-toastify';
 
 function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
@@ -84,6 +85,7 @@ function AddFormBuilder(props) {
     }
   };
   const OnSubmit = (e) => {
+    const formNameRegex = /^#[^#\s]+(?: #[^#\s]+)*$/;
     e.preventDefault();
     const newErrors = createFormValidation(form);
     if (Object.keys(newErrors).length > 0) {
@@ -98,6 +100,12 @@ function AddFormBuilder(props) {
       data['created_by'] = localStorage.getItem('user_id');
       data['upper_role'] = getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
+
+      if (!formNameRegex.test(data.form_name)) {
+        toast.error('Special character not valid in form name');
+        return false;
+      }
+
       fetch(`${BASE_URL}/form/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -409,6 +417,7 @@ function AddFormBuilder(props) {
           </Container>
         </section>
       </div>
+      <ToastContainer />
     </>
   );
 }
