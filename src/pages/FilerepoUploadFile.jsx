@@ -140,15 +140,12 @@ const FilerepoUploadFile = () => {
             let parents = response.data.parentData.map((item) => {
                 return item.children
             })
-
             parents.forEach((item) => {
                 extraArr = [...item, ...extraArr]
             })
-
             let uniqArr = _.uniqBy(extraArr, function (e) {
                 return e.id;
             });
-
             setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
@@ -156,20 +153,21 @@ const FilerepoUploadFile = () => {
             })));
         }
     }
+    useEffect(() => {
+        getChildren();
+    }, [])
+
     //======================== GET User List==================
 
 
     useEffect(() => {
         getFileCategory();
-        // getChildren();
         getUser();
         fetchFranchiseeList();
     }, [formSettings.franchisee])
 
-    useEffect(() => {
 
-        getChildren()
-    }, [userCount])
+
 
 
     const setField = (field, value) => {
@@ -347,8 +345,6 @@ const FilerepoUploadFile = () => {
         });
         selectedUser.splice(index, 1);
     }
-
-
 
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
@@ -830,6 +826,12 @@ const FilerepoUploadFile = () => {
                                                                     selectedValues={selectedUser}
                                                                     onKeyPressFn={function noRefCheck() { }}
                                                                     onRemove={onRemoveUser}
+                                                                    // onRemove={function noRefCheck(data) {
+                                                                    //     setFormSettings((prevState) => ({
+                                                                    //         ...prevState,
+                                                                    //         assigned_users: [...data.map(data => data.id)],
+                                                                    //     }));
+                                                                    // }}
                                                                     onSearch={function noRefCheck() { }}
                                                                     onSelect={onSelectUser}
                                                                     options={user}
@@ -839,7 +841,6 @@ const FilerepoUploadFile = () => {
                                                         </Form.Group>
                                                         <Form.Group>
                                                             <Form.Label>Select Child</Form.Label>
-
                                                             <div className="select-with-plus">
                                                                 <Multiselect
                                                                     displayValue="name"

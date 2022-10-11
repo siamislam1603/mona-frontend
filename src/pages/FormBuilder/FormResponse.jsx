@@ -39,6 +39,7 @@ function FormResponse(props) {
     from_date: '',
     to_date: '',
   });
+  const [fillPermission, setFillPermission] = useState([]);
   let hideFlag = false;
   let count = 0;
 
@@ -132,8 +133,8 @@ function FormResponse(props) {
         if (result) {
           setfullLoaderStatus(false);
         }
-
         if (result?.result?.length > 0) {
+          setFillPermission(result?.fillPermission?.fill_access_users);
           result?.result.map((item, index) => {
             item['signature_button'] = true;
 
@@ -382,68 +383,60 @@ function FormResponse(props) {
                                                   : inner_item?.filled_user
                                                       ?.fullname}
                                               </h5>
-
                                               {console.log(
                                                 moment(
                                                   item[inner_index].isEditTime
-                                                ).format() > moment().format()
-                                              )}
-                                              {item[inner_index].isEditTime !=
-                                                null &&
-                                              moment(
-                                                item[inner_index].isEditTime
-                                              ).format() > moment().format() ? (
-                                                <span
-                                                  style={{
-                                                    fontSize: '12px',
-                                                    paddingLeft: '12px',
-                                                  }}
-                                                >
-                                                  Currently in editing mode{' '}
-                                                  <br />
-                                                  [Refresh the page after some
-                                                  time]
-                                                </span>
-                                              ) : (
-                                                formData &&
-                                                inner_index === 0 &&
-                                                (formData?.form_type ===
-                                                  'editable' ||
-                                                  formData?.form_type ===
-                                                    'multi_submission') && (
-                                                  <Link
-                                                    style={{
-                                                      marginLeft: '5px',
-                                                    }}
-                                                    to={`/form/dynamic/${formData.form_name}`}
-                                                  >
-                                                    {console.log(
-                                                      'item[index]?.id--->',
-                                                      item[inner_index]
-                                                    )}
-                                                    {/* <div
-                                                  className="edit-icon-form"
-                                                  onClick={() => {
-                                                    alert(
-                                                      'Hello--->' +
-                                                        inner_index
-                                                    );
-                                                    navigate(
-                                                      `/form/dynamic/${formData.form_name}`,
-                                                      {
-                                                        state: {
-                                                          id: item[index].id,
-                                                          form_id: id,
-                                                        },
-                                                      }
-                                                    );
-                                                  }}
-                                                > */}
-                                                    <FontAwesomeIcon
-                                                      icon={faPen}
-                                                    />
-                                                  </Link>
                                                 )
+                                                  .tz('Australia/Sydney')
+                                                  .format()
+                                              )}
+                                              {fillPermission.includes(
+                                                localStorage.getItem(
+                                                  'user_role'
+                                                )
+                                              ) ? (
+                                                item[inner_index].isEditTime !=
+                                                  null &&
+                                                moment(
+                                                  item[inner_index].isEditTime
+                                                ).format() >
+                                                  moment().format() ? (
+                                                  <span
+                                                    style={{
+                                                      fontSize: '12px',
+                                                      paddingLeft: '12px',
+                                                    }}
+                                                  >
+                                                    Currently in editing mode{' '}
+                                                    <br />
+                                                    [Refresh the page after some
+                                                    time]
+                                                  </span>
+                                                ) : (
+                                                  formData &&
+                                                  inner_index === 0 &&
+                                                  (formData?.form_type ===
+                                                    'editable' ||
+                                                    formData?.form_type ===
+                                                      'multi_submission') && (
+                                                    <Link
+                                                      style={{
+                                                        marginLeft: '5px',
+                                                      }}
+                                                      to={`/form/dynamic/${formData.form_name}`}
+                                                    >
+                                                      {console.log(
+                                                        'item[index]?.id--->',
+                                                        item[inner_index]
+                                                      )}
+                                                      <FontAwesomeIcon
+                                                        icon={faPen}
+                                                      />
+                                                    </Link>
+                                                  )
+                                                )
+                                              ) : (
+                                                ''
                                               )}
                                             </div>
                                             <h6>
@@ -489,8 +482,9 @@ function FormResponse(props) {
                                   <div className="responses-header-right">
                                     {item[0]?.updated ? (
                                       <p>
-                                        Updated By :{' '}
-                                        {item[0]?.filled_user?.fullname} <br />
+                                        Last Updated By :{' '}
+                                        {item[0]?.updatedByUsers[0]?.fullname}{' '}
+                                        <br />
                                         Updated on: <br />
                                         {moment(item[0].updatedAt)
                                           .utcOffset('+11:00')
