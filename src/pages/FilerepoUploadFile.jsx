@@ -140,12 +140,15 @@ const FilerepoUploadFile = () => {
             let parents = response.data.parentData.map((item) => {
                 return item.children
             })
+
             parents.forEach((item) => {
                 extraArr = [...item, ...extraArr]
             })
+
             let uniqArr = _.uniqBy(extraArr, function (e) {
                 return e.id;
             });
+
             setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
@@ -153,21 +156,19 @@ const FilerepoUploadFile = () => {
             })));
         }
     }
-    useEffect(() => {
-        getChildren();
-    }, [])
-
     //======================== GET User List==================
 
 
     useEffect(() => {
         getFileCategory();
+        // getChildren();
         getUser();
         fetchFranchiseeList();
     }, [formSettings.franchisee])
 
-
-
+    useEffect(() => {
+        getChildren()
+    }, [userCount])
 
 
     const setField = (field, value) => {
@@ -219,13 +220,13 @@ const FilerepoUploadFile = () => {
 
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         var formdata = new FormData();
-        formdata.append('image', blob, file.name);
-        formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', formSettingData.meta_description);
+        formdata.append('image', blob, file?.name);
+        formdata.append('description', formSettingData?.meta_description);
+        formdata.append('title', formSettingData?.meta_description);
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
-        formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', franchiseeArr.length == 0 ? [] : franchiseeArr);
+        formdata.append('categoryId', formSettingData?.file_category);
+        formdata.append('franchisee', franchiseeArr?.length == 0 ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -344,7 +345,9 @@ const FilerepoUploadFile = () => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
+        getChildren();
     }
+
 
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
@@ -826,12 +829,6 @@ const FilerepoUploadFile = () => {
                                                                     selectedValues={selectedUser}
                                                                     onKeyPressFn={function noRefCheck() { }}
                                                                     onRemove={onRemoveUser}
-                                                                    // onRemove={function noRefCheck(data) {
-                                                                    //     setFormSettings((prevState) => ({
-                                                                    //         ...prevState,
-                                                                    //         assigned_users: [...data.map(data => data.id)],
-                                                                    //     }));
-                                                                    // }}
                                                                     onSearch={function noRefCheck() { }}
                                                                     onSelect={onSelectUser}
                                                                     options={user}
@@ -841,6 +838,7 @@ const FilerepoUploadFile = () => {
                                                         </Form.Group>
                                                         <Form.Group>
                                                             <Form.Label>Select Child</Form.Label>
+
                                                             <div className="select-with-plus">
                                                                 <Multiselect
                                                                     displayValue="name"
