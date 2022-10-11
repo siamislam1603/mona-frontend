@@ -123,7 +123,6 @@ const DynamicForm = () => {
       headers: myHeaders,
       redirect: 'follow',
     };
-
     fetch(`${BASE_URL}/form/form_data/${id}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -252,6 +251,7 @@ const DynamicForm = () => {
         } else {
           setSignatureAccessFlag(true);
         }
+        console.log('formsData---->', formsData);
 
         setForm(formsData);
         setFormData(data);
@@ -277,6 +277,8 @@ const DynamicForm = () => {
           id: location?.state?.id,
           data: fieldData,
           status: 'update',
+          updated: true,
+          updatedBy: localStorage.getItem('user_id'),
         }),
         redirect: 'follow',
       };

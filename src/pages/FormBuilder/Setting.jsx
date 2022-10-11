@@ -916,9 +916,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="target_user"
-                                          value="parent"
+                                          value="guardian"
                                           checked={form?.target_user?.includes(
-                                            'parent'
+                                            'guardian'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(
@@ -936,9 +936,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="fill_access_users"
-                                          value="parent"
+                                          value="guardian"
                                           checked={form?.fill_access_users?.includes(
-                                            'parent'
+                                            'guardian'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(
@@ -956,9 +956,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="response_visibility"
-                                          value="parent"
+                                          value="guardian"
                                           checked={form?.response_visibility?.includes(
-                                            'parent'
+                                            'guardian'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(

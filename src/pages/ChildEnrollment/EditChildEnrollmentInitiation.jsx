@@ -19,13 +19,14 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     dob: "",
     home_address: "",
     gender: "M",
-    educator: []
+    educator: [],
   });
   const [educatorData, setEducatorData] = useState(null);
   const [franchiseData, setFranchiseData] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState();
   const [loader, setLoader] = useState(false);
   const [errors, setErrors] = useState({});
+  const [oldEducatorIDs, setOldEducatorIDs] = useState(null);
 
   const fetchFranchiseList = async () => {
     const token = localStorage.getItem('token');
@@ -53,7 +54,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       setEducatorData(users.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: `${user.fullname} (${user.email})`
       })));
     }
   };
@@ -86,8 +87,17 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       });
 
       if(response.status === 201 && response.data.status === "success") {
-        console.log('Updated Sucessfully!');
-        window.location.href=`/children/${paramsParentId}`;
+        let removedEducators = oldEducatorIDs.filter(d => !formOneChildData.educator.includes(d));
+        console.log('REMOVED EDUCATORS:', removedEducators);
+        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${paramsChildId}`,{ educatorIds: formOneChildData?.educator, removedEducatorIds: removedEducators}, {
+          headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+        if (response.status === 201) {
+            console.log('Updated Sucessfully!');
+            window.location.href=`/children/${paramsParentId}`;
+        }
       }
     }
   }
@@ -123,6 +133,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         franchisee_id,
         educator: [...educatorIds]
       }))
+
+      setOldEducatorIDs([...educatorIds]);
     }
   }
 
@@ -154,7 +166,9 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   }, []);
   
 
-  educatorData && console.log('EDUCATOR:', educatorData);
+  oldEducatorIDs && console.log('EDUCATOR:', oldEducatorIDs);
+  formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
+  errors && console.log('ERRORS:', errors);
   return (
     <>
       <div id="main">
@@ -248,7 +262,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   disabled={localStorage.getItem('user_role') === "guardian"}
-                                  max={new Date().toISOString().slice(0, 10)}
+                                  // max={new Date().toISOString().slice(0, 10)}
+                                  min={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
                                     handleChildData(e);

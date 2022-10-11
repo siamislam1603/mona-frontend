@@ -57,7 +57,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       setEducatorData(users?.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: `${user.fullname} (${user.email})`
       })));
     }
   };
@@ -293,6 +293,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   ref={start_date}
+                                  min={new Date().toISOString().slice(0, 10)}
                                   // max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {

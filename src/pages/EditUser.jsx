@@ -547,16 +547,14 @@ const EditUser = () => {
     let newRoleList = userRoleData;
 
     if(currentRole === "educator") {
-      if(currentRole === "educator") {
-        if(localStorage.getItem("user_role") === "coordinator") {
-          newRoleList = newRoleList.filter(role => role.sequence > 2 && role.sequence < 5);
-        } else if(localStorage.getItem("user_role") === "franchisee_admin") {
-          newRoleList = newRoleList.filter(role => role.sequence > 1 && role.sequence < 5);
-        } else {
-          newRoleList = newRoleList.filter(role => role.sequence < 5);
-        }
-        setUserRoleData(newRoleList);
+      if(localStorage.getItem("user_role") === "coordinator") {
+        newRoleList = newRoleList.filter(role => role.sequence > 2 && role.sequence < 5);
+      } else if(localStorage.getItem("user_role") === "franchisee_admin") {
+        newRoleList = newRoleList.filter(role => role.sequence > 2 && role.sequence < 5);
+      } else {
+        newRoleList = newRoleList.filter(role => role.sequence < 5);
       }
+      setUserRoleData(newRoleList);
     }
 
     if(currentRole === "coordinator") {
@@ -656,6 +654,8 @@ const EditUser = () => {
     // console.log('UNIQUE ERRORS:', uniqueList);
   }, [uploadError]);
 
+  fetchedTrainingDocuments && console.log('FETCHED TRAINING DOCUMENTS:', fetchedTrainingDocuments); 
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       {
