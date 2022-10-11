@@ -137,10 +137,21 @@ const FilerepoUploadFile = () => {
         })
         if (response.status === 200 && response.data.status === "success") {
             let extraArr = []
+
+            // let parents = response.data.parentData
+
+            // let formattedUserData = parents.map((d) => ({
+            //     // id: d?.id,
+            //     // fullname: d?.fullname,
+            //     // email: d?.email,
+            //     namemail: `${d?.ParentName} (${d?.children.map((item) => {
+            //         return item.fullname
+            //     })})`,
+            // }));
+            // console.log(parents, "parents", formattedUserData)
             let parents = response.data.parentData.map((item) => {
                 return item.children
             })
-           
             parents.forEach((item) => {
                 extraArr = [...item, ...extraArr]
             })
@@ -156,12 +167,7 @@ const FilerepoUploadFile = () => {
             })));
         }
     }
-    // let formattedUserData = userList.map((d) => ({
-    //     id: d.id,
-    //     fullname: d.fullname,
-    //     email: d.email,
-    //     namemail: `${d.fullname} (${d.email})`,
-    // }));
+
     //======================== GET User List==================
 
 

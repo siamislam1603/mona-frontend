@@ -982,8 +982,15 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
-                                                                // onSearch={function noRefCheck() {}}
+                                                                // onRemove={onRemoveUser}
+                                                                onRemove={(selectedOptions) => {
+                                                                    setFormSettings((prevState) => ({
+                                                                        ...prevState,
+                                                                        assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                        accessibleToRole: 0
+                                                                    }))
+                                                                }}
+                                                                onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
                                                                         ...prevState,

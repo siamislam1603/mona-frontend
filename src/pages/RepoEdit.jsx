@@ -835,7 +835,6 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_childs: [...data.map(data => data.id + '')],
                                                                                             }));
-
                                                                                         }
                                                                                         }
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
