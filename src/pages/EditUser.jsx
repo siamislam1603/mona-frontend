@@ -654,6 +654,8 @@ const EditUser = () => {
     // console.log('UNIQUE ERRORS:', uniqueList);
   }, [uploadError]);
 
+  fetchedTrainingDocuments && console.log('FETCHED TRAINING DOCUMENTS:', fetchedTrainingDocuments); 
+  trainingDocuments && console.log('TRAINING DOCUMENTS:', trainingDocuments);
   return (
     <>
       {
