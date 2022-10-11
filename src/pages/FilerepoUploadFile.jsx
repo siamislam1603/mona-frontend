@@ -140,7 +140,7 @@ const FilerepoUploadFile = () => {
             let parents = response.data.parentData.map((item) => {
                 return item.children
             })
-
+           
             parents.forEach((item) => {
                 extraArr = [...item, ...extraArr]
             })
@@ -156,6 +156,12 @@ const FilerepoUploadFile = () => {
             })));
         }
     }
+    // let formattedUserData = userList.map((d) => ({
+    //     id: d.id,
+    //     fullname: d.fullname,
+    //     email: d.email,
+    //     namemail: `${d.fullname} (${d.email})`,
+    // }));
     //======================== GET User List==================
 
 
@@ -838,7 +844,6 @@ const FilerepoUploadFile = () => {
                                                         </Form.Group>
                                                         <Form.Group>
                                                             <Form.Label>Select Child</Form.Label>
-
                                                             <div className="select-with-plus">
                                                                 <Multiselect
                                                                     displayValue="name"
