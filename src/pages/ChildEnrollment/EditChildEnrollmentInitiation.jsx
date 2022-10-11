@@ -20,7 +20,6 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     home_address: "",
     gender: "M",
     educator: [],
-    removedEducator: [],
   });
   const [educatorData, setEducatorData] = useState(null);
   const [franchiseData, setFranchiseData] = useState(null);
