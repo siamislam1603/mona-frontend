@@ -447,11 +447,15 @@ const DynamicForm = () => {
                                     ? (behalfOfFlag = true)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
-                                  {targetUser?.map((item,index) => {
+                                  {targetUser?.map((item, index) => {
                                     return (
                                       <>
                                         {item.id === parseInt(childId) ? (
-                                          <option value={item.id} selected key={index}>
+                                          <option
+                                            value={item.id}
+                                            selected
+                                            key={index}
+                                          >
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -487,11 +491,15 @@ const DynamicForm = () => {
                                     ? (behalfOfFlag = true)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
-                                  {targetUser?.map((item,index) => {
+                                  {targetUser?.map((item, index) => {
                                     return (
                                       <>
                                         {item.id === fieldData.behalf_of ? (
-                                          <option value={item.id} selected key={index}>
+                                          <option
+                                            value={item.id}
+                                            selected
+                                            key={index}
+                                          >
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -522,7 +530,7 @@ const DynamicForm = () => {
                                   isInvalid={!!errors.behalf_of}
                                 >
                                   <option value="">Select</option>
-                                  {targetUser?.map((item,index) => {
+                                  {targetUser?.map((item, index) => {
                                     return (
                                       <>
                                         {(parseInt(

@@ -282,11 +282,6 @@ function OwnFormResponse(props) {
                                                     ?.fullname}
                                             </h5>
 
-                                            {console.log(
-                                              moment(
-                                                item[inner_index].isEditTime
-                                              ).format() > moment().format()
-                                            )}
                                             {item[inner_index].isEditTime !=
                                               null &&
                                             moment(
@@ -390,7 +385,7 @@ function OwnFormResponse(props) {
                                 <div className="responses-header-right">
                                   {item[0]?.updated ? (
                                     <p>
-                                      Updated By :{' '}
+                                      Last Updated By :{' '}
                                       {item[0]?.updatedByUsers[0]?.fullname}{' '}
                                       <br />
                                       Updated on: <br />
@@ -475,7 +470,8 @@ function OwnFormResponse(props) {
                                         }
                                         return (
                                           <div
-                                            key={inner_index}sss
+                                            key={inner_index}
+                                            sss
                                             className="responses-content-box"
                                             style={{ marginTop: '12px' }}
                                           >
