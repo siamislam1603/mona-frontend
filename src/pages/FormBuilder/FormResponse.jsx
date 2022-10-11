@@ -387,7 +387,10 @@ function FormResponse(props) {
                                                 localStorage.getItem(
                                                   'user_role'
                                                 )
-                                              ) ? (
+                                              ) ||
+                                              localStorage.getItem(
+                                                'user_role'
+                                              ) === 'guardian' ? (
                                                 item[inner_index].isEditTime !=
                                                   null &&
                                                 moment(
