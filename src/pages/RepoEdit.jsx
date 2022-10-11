@@ -153,6 +153,7 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
+        
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -802,8 +803,11 @@ const RepoEdit = () => {
                                                                                             setData((prevState) => ({
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...data.map(data => data.id + '')],
-                                                                                            }));
-                                                                                        }}
+                                                                                            }
+                                                                                            ));
+                                                                                            childList()
+                                                                                        }
+                                                                                        }
                                                                                         value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
                                                                                             setData((prevState) => ({
@@ -831,7 +835,8 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_childs: [...data.map(data => data.id + '')],
                                                                                             }));
-                                                                                        }}
+                                                                                        }
+                                                                                        }
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
