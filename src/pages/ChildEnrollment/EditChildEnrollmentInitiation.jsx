@@ -251,6 +251,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   name="start_date"
                                   disabled={localStorage.getItem('user_role') === "guardian"}
                                   // max={new Date().toISOString().slice(0, 10)}
+                                  min={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
