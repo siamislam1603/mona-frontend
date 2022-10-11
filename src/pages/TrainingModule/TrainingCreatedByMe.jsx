@@ -63,7 +63,7 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [saveTrainingId, setSaveTrainingId] = useState(null);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-  const [page, setPage] = useState(6)
+  const [page, setPage] = useState(0)
   const [noMore,setNoMore] = useState(true)
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const navigate = useNavigate();
@@ -230,9 +230,10 @@ const TrainingCreatedByMe = ({ filter }) => {
   const CreatedByme = async () => {
     try {
       setfullLoaderStatus(true)
+      setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=10&offset=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -241,8 +242,11 @@ const TrainingCreatedByMe = ({ filter }) => {
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data
         console.log("Searched Data", searchedData)
-        setMyTrainingData(searchedData)
+        setMyTrainingData(oldData => [...oldData,...searchedData])
         setfullLoaderStatus(false)
+        // setNoMore(false)
+       
+      //  setPage(page+6)
      
       }
     } catch (error) {
@@ -257,8 +261,15 @@ const TrainingCreatedByMe = ({ filter }) => {
       console.log("error created by me", error)
     }
   }
+  const  handelScroll = (e) =>{
+    if(window.innerHeight +e.target.documentElement.scrollTop+1 > e.target.documentElement.scrollHeight){
+      console.log("Scroll hit")
+    }
+  }
   useEffect(() => {
     fetchTrainingCategories()
+    window.addEventListener('scroll',handelScroll)
+
     console.log("Traingin created")
   }, []);
   useEffect(() => {
@@ -293,6 +304,13 @@ const TrainingCreatedByMe = ({ filter }) => {
     }, 4000);
   }, [errorMessageToast]);
 
+
+  const fetchMoreData = async ( ) =>{
+        setPage(page => page+6)
+  
+       
+        
+  }
   // console.log("TRAIING DATA", filterData.category_id)
   // console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
   console.log("Selected frnahise", selectedFranchisee)
@@ -410,19 +428,20 @@ const TrainingCreatedByMe = ({ filter }) => {
                     overflow: "hidden"
                   }}
                         dataLength={myTrainingData?.length} //This is important field to render the next data
-                        next={() => setPage(page+6)}
-                        hasMore={true}
-                        // loader={<h4>Loading...</h4>}
-                        // endMessage={
-                        //   <p style={{ textAlign: 'center' }}>
-                        //     <b>Yay! You have seen it all</b>
-                        //   </p>
-                        // }
+                        next={() =>{
+                          fetchMoreData()
+                        }}
+                        hasMore={noMore}
+                        endMessage={
+                          <p style={{ textAlign: 'center' }}>
+                            <b>Yay! You have seen it all</b>
+                          </p>
+                        }
                        
                       >
                          <div className="training-column">
 
-                    <Row style={{ marginBottom: '40px' }}>
+                    <Row style={{ marginBottom: '40px' }} > 
 
                       {myTrainingData?.map((training) => {
                         return (
