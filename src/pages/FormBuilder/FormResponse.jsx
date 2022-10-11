@@ -383,13 +383,7 @@ function FormResponse(props) {
                                                   : inner_item?.filled_user
                                                       ?.fullname}
                                               </h5>
-                                              {console.log(
-                                                moment(
-                                                  item[inner_index].isEditTime
-                                                )
-                                                  .tz('Australia/Sydney')
-                                                  .format()
-                                              )}
+
                                               {fillPermission.includes(
                                                 localStorage.getItem(
                                                   'user_role'
