@@ -1,13 +1,14 @@
 import { uniq } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Col, Form } from 'react-bootstrap';
+
 let value = {};
+
 const Checkbox = (props) => {
   const { ...controls } = props;
 
   const [array, setArray] = useState([]);
-
-  console.log(array);
+  const [event, setEvent] = useState();
 
   useEffect(() => {
     if (props.errorFocus) {
@@ -32,6 +33,14 @@ const Checkbox = (props) => {
     );
   }, []);
 
+  useEffect(() => {
+    props.onChange(
+      event,
+      value[controls.field_name] + array.join(','),
+      'checkbox'
+    );
+  }, [array]);
+
   return (
     <Col sm={6}>
       <div className="child_info_field sex flex_wrap_checkbox">
@@ -53,6 +62,7 @@ const Checkbox = (props) => {
                     value={Object.keys(item2)[0]}
                     onClick={(e) => {
                       if (e.target.checked) {
+                        setEvent(e.target.name);
                         value[controls.field_name] =
                           value[controls.field_name] + e.target.value + ',';
 
@@ -61,7 +71,7 @@ const Checkbox = (props) => {
                           Object.keys(item2)[0],
                         ]);
                       } else {
-                        console.log('uncheck');
+                        setEvent(e.target.name);
                         setArray((oldData) =>
                           oldData.filter((item) => item !== e.target.value)
                         );
@@ -69,12 +79,6 @@ const Checkbox = (props) => {
                           controls.field_name
                         ].replace(e.target.value + ',', '');
                       }
-
-                      props.onChange(
-                        e.target.name,
-                        value[controls.field_name] + array.join(','),
-                        'checkbox'
-                      );
                     }}
                     checked={array.includes(Object.keys(item2)[0])}
                   />
