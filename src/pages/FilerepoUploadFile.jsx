@@ -597,6 +597,7 @@ const FilerepoUploadFile = () => {
                                         </Row>
                                         : ""
                                     }
+                                   
                                     {sendToAllFranchisee == "none" && formSettings.assigned_franchisee.length < 1 ? "" : (
                                         <Row className="mt-4">
                                             <Col lg={3} md={6}>
@@ -670,7 +671,6 @@ const FilerepoUploadFile = () => {
                                                                         }
                                                                         setFormSettingData(data);
                                                                     }}
-
                                                                 />
                                                                 <span className="checkmark"></span>
                                                             </label>) : null}

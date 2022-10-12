@@ -7,7 +7,7 @@ import './ImageCropPopup.css';
 
 let temp = () => { };
 
-const ImageCropTraning = ({ image, setCoverImage, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
+const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
 
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
@@ -39,10 +39,23 @@ const ImageCropTraning = ({ image, setCoverImage, setCroppedImage, setPopupVisib
     const onImageCancle = async () => {
         setTempImage(null)
         setCoverImage(null)
-        image = null
+        image = ""
         setPopupVisible(false);
-
     }
+
+    
+    const empity = () => {
+        if (popupVisible === false) {
+            setCoverImage = ""
+            image = ""
+            setCroppedImage("")
+            setPopupVisible(false)
+        }
+    }
+    useEffect(() => {
+        empity();
+    })
+    empity();
 
     const convertCanvasToImg = (canvas) => {
         let img = new Image();
