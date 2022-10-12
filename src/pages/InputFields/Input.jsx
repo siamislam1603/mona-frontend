@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { useEffect } from 'react';
 import { Form, Col } from 'react-bootstrap';
 
@@ -11,22 +12,38 @@ const Input = (props) => {
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
-        <Form.Label>{controls.field_label}</Form.Label>
+        <Form.Label>{controls?.field_label}</Form.Label>
         <Form.Control
-          type={controls.field_type}
-          id={controls.field_name}
-          name={controls.field_name}
+          type={controls?.field_type}
+          id={controls?.field_name}
+          name={controls?.field_name}
           maxLength={255}
           onChange={(e) => {
-            props.onChange(e.target.name, e.target.value, controls.field_type);
+            console.log(e.target);
+            props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
           value={
-            props?.field_data &&
-            props?.field_data?.fields[`${controls?.field_name}`]
+            (props !== {} &&
+              props?.field_data &&
+              controls?.field_name === 'date_of_birth') ||
+            controls?.field_name === 'signature_date' ||
+            controls?.field_name === 'date' ||
+            controls?.field_name === 'date_of_illness' ||
+            controls?.field_name === 'date_of_record_was_made' ||
+            controls?.field_name === 'parents_notification_date' ||
+            controls?.field_name ===
+              'regulatory_authority_(if_applicable)_notification_date' ||
+            controls?.field_name ===
+              'regulatory_authority_(if_applicable)_notification_date'
+              ? moment(
+                  props?.field_data?.fields[`${controls?.field_name}`],
+                  'DD-MM-YYYY'
+                ).format('YYYY-MM-DD')
+              : props?.field_data?.fields[`${controls?.field_name}`]
           }
-          isInvalid={!!controls.error[controls.field_name]}
+          isInvalid={!!controls.error[controls?.field_name]}
         />
-        {controls.field_type === 'text' && (
+        {controls?.field_type === 'text' && (
           <p
             style={{ fontSize: '12px', marginBottom: '3px', marginLeft: '79%' }}
           >
@@ -34,7 +51,7 @@ const Input = (props) => {
           </p>
         )}
         <Form.Control.Feedback type="invalid">
-          {controls.error[controls.field_name]}
+          {controls?.error[controls?.field_name]}
         </Form.Control.Feedback>
       </Form.Group>
     </Col>
