@@ -386,11 +386,12 @@ function FormResponse(props) {
                                               {fillPermission.includes(
                                                 localStorage.getItem(
                                                   'user_role'
-                                                )
-                                              ) ||
-                                              localStorage.getItem(
-                                                'user_role'
-                                              ) === 'guardian' ? (
+                                                ) === 'guardian'
+                                                  ? 'parent'
+                                                  : localStorage.getItem(
+                                                      'user_role'
+                                                    )
+                                              ) ? (
                                                 item[inner_index].isEditTime !=
                                                   null &&
                                                 moment(
