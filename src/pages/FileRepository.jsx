@@ -78,8 +78,6 @@ const FileRepository = () => {
     e.preventDefault();
     addAndSaveCategory();
   }
-
-
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
     setTabLinkPath(path);
@@ -189,7 +187,6 @@ const FileRepository = () => {
     })
       .then((res) => {
         setgetCategory(res.data.category)
-
       })
       .catch((error) => {
         console.error(error)

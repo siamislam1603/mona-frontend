@@ -98,14 +98,14 @@ const FilerepoMyAdd = ({ filter }) => {
                     const { files } = response.data;
 
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
-                        createdAt: dt.createdAt,
-                        userID: dt.id,
-                        creatorName: dt.creatorName + "," + dt.creatorRole,
-                        categoryId: dt.categoryId,
-                        Shaired: dt.repository_shares.length,
-                        // Shaired: dt.repository.repository_shares[0].length,
-                        filesId: dt.filesId,
+                        name: `${dt?.fileName},${dt?.fileType},${dt?.filesPath}`,
+                        createdAt: dt?.createdAt,
+                        userID: dt?.id,
+                        creatorName: dt?.creatorName + "," + dt?.creatorRole,
+                        categoryId: dt?.categoryId,
+                        Shaired: dt?.repository_shares.length,
+                        // Shaired: dt?.repository.repository_shares[0].length,
+                        filesId: dt?.filesId,
 
                     }));
 
@@ -140,18 +140,18 @@ const FilerepoMyAdd = ({ filter }) => {
             createdAt: data?.createdAt,
             description: data?.description,
             title: data?.title,
-            categoryId: data?.repository_files[0].categoryId,
-            image: data?.repository_files[0].filesPath,
-            franchisee: data?.repository_shares[0].franchisee,
-            accessibleToRole: data?.repository_shares[0].accessibleToRole,
-            accessibleToAll: data?.repository_shares[0].accessibleToAll,
-            assigned_users: data?.repository_shares[0].assigned_users,
-            assigned_role: data?.repository_shares[0].assigned_roles,
-            assigned_childs: data?.repository_shares[0].assigned_childs,
-            file_type: data?.repository_files[0].fileType,
+            categoryId: data?.repository_files[0]?.categoryId,
+            image: data?.repository_files[0]?.filesPath,
+            franchisee: data?.repository_shares[0]?.franchisee,
+            accessibleToRole: data?.repository_shares[0]?.accessibleToRole,
+            accessibleToAll: data?.repository_shares[0]?.accessibleToAll,
+            assigned_users: data?.repository_shares[0]?.assigned_users,
+            assigned_role: data?.repository_shares[0]?.assigned_roles,
+            assigned_childs: data?.repository_shares[0]?.assigned_childs,
+            file_type: data?.repository_files[0]?.fileType,
         }));
-        data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
-        data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
+        data?.repository_shares[0]?.franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0]?.assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const fetchFranchiseeList = async () => {
@@ -192,12 +192,22 @@ const FilerepoMyAdd = ({ filter }) => {
     }
 
 
+    // function onRemoveUser(selectedList, removedItem) {
+    //     selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+    //     const index = selectedUser.findIndex((object) => {
+    //         return object.id === removedItem.id;
+    //     });
+    //     selectedUser.splice(index, 1);
+    //     getChildren();
+    // }
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
+        getChildren();
     }
 
 
@@ -972,8 +982,15 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
-                                                                // onSearch={function noRefCheck() {}}
+                                                                // onRemove={onRemoveUser}
+                                                                onRemove={(selectedOptions) => {
+                                                                    setFormSettings((prevState) => ({
+                                                                        ...prevState,
+                                                                        assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                        accessibleToRole: 0
+                                                                    }))
+                                                                }}
+                                                                onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
                                                                         ...prevState,
