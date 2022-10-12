@@ -1708,15 +1708,18 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
-                                  navigate('/form/response', {
-                                    state: {
-                                      id: MeFormData[Index]?.forms[innerIndex]
-                                        ?.id,
-                                      form_name:
-                                        MeFormData[Index]?.forms[innerIndex]
-                                          ?.form_name,
-                                    },
-                                  });
+                                  navigate(
+                                    `/form/response/${item[0]?.form_id}`,
+                                    {
+                                      state: {
+                                        id: MeFormData[Index]?.forms[innerIndex]
+                                          ?.id,
+                                        form_name:
+                                          MeFormData[Index]?.forms[innerIndex]
+                                            ?.form_name,
+                                      },
+                                    }
+                                  );
                                 }}
                               >
                                 View Response
@@ -1801,31 +1804,37 @@ function ViewFormBuilder(props) {
                                         : localStorage.getItem('user_role')
                                     )
                                   ) {
-                                    navigate('/form/response', {
-                                      state: {
-                                        id: OthersFormData[Index]?.forms[
-                                          innerIndex
-                                        ]?.id,
-                                        form_name:
-                                          OthersFormData[Index]?.forms[
+                                    navigate(
+                                      `/form/response/${item[0]?.form_id}`,
+                                      {
+                                        state: {
+                                          id: OthersFormData[Index]?.forms[
                                             innerIndex
-                                          ]?.form_name,
-                                        signature_access: true,
-                                      },
-                                    });
+                                          ]?.id,
+                                          form_name:
+                                            OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.form_name,
+                                          signature_access: true,
+                                        },
+                                      }
+                                    );
                                   } else {
-                                    navigate('/form/response', {
-                                      state: {
-                                        id: OthersFormData[Index]?.forms[
-                                          innerIndex
-                                        ]?.id,
-                                        form_name:
-                                          OthersFormData[Index]?.forms[
+                                    navigate(
+                                      `/form/response/${item[0]?.form_id}`,
+                                      {
+                                        state: {
+                                          id: OthersFormData[Index]?.forms[
                                             innerIndex
-                                          ]?.form_name,
-                                        signature_access: false,
-                                      },
-                                    });
+                                          ]?.id,
+                                          form_name:
+                                            OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.form_name,
+                                          signature_access: false,
+                                        },
+                                      }
+                                    );
                                   }
                                 }}
                               >
