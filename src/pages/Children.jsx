@@ -81,6 +81,7 @@ const Children = () => {
     const [reloadFlag, setReloadFlag] = useState(false);
     const [topSuccessMessage, setTopSuccessMessage] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [rowFranchiseId,setRowFranchiseId] = useState(0);
 
     const init = async() => {
         // Set Parents franchisee
@@ -119,29 +120,6 @@ const Children = () => {
              }
           }
           
-        //   Educators list
-        let eduResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/educator`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          if (eduResponse.status === 200) {
-            const {coordinators} = eduResponse.data;
-            // console.log(coordinators,"coordinatorrr")
-            setEducators(coordinators)
-          }
-
-        //   Parents list
-        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/guardian`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          if (CpResponse.status === 200) {
-            const {coordinators} = CpResponse.data;
-            // console.log(coordinators,"coordinatorrr")
-            setParents(coordinators)
-          }
     }
 
     const sendInitiationMail = async (childId) => {
@@ -228,6 +206,34 @@ const Children = () => {
         }
 
     }
+
+    const getEducatorsByFranchisee = async (id) => {
+      //   Educators list
+      let eduResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${id}/educator`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (eduResponse.status === 200) {
+        const {coordinators} = eduResponse.data;
+        // console.log(coordinators,"coordinatorrr")
+        setEducators(coordinators)
+      }
+    }
+
+    const getParentsByFranchisee = async (id) => {
+      //   Parents list
+      let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${id }/guardian`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (CpResponse.status === 200) {
+        const {coordinators} = CpResponse.data;
+        // console.log(coordinators,"coordinatorrr")
+        setParents(coordinators)
+      }
+    }
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
@@ -238,6 +244,7 @@ const Children = () => {
                 navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
+                setRowFranchiseId(row.Franchisee)
                 console.log(row,"educatorRow")
                 let defEducators = row.educator.educators.map((edu)=>{
                     return edu.id 
@@ -245,6 +252,7 @@ const Children = () => {
                 handleShow(row.id,row.educator.educators || [])
             }
             if (e.target.text === 'Add Co-Parent'){
+                setRowFranchiseId(row.Franchisee)
                 handleCpShow(row.id)
                 // addCoparentToChild()
             }
@@ -299,7 +307,8 @@ const Children = () => {
         action: { enrollFlag: child.isChildEnrolled, active: child.is_active },
         parents: {parents:child.parents, childId:child.id},
         Parents: `${childrenList[index]?.parents[0]?.parent_family_name}, ${childrenList[index]?.parents[1]?.parent_family_name},${childrenList[index]?.parents[2]?.parent_family_name},${childrenList[index]?.parents[3]?.parent_family_name},${childrenList[index]?.parents[4]?.parent_family_name},${childrenList[index]?.parents[5]?.parent_family_name},${childrenList[index]?.parents[6]?.parent_family_name},${childrenList[index]?.parents[7]?.parent_family_name},${childrenList[index]?.parents[8]?.parent_family_name},${childrenList[index]?.parents[9]?.parent_family_name},${childrenList[index]?.parents[0]?.profile_pic},${childrenList[index]?.parents[1]?.profile_pic},${childrenList[index]?.parents[2]?.user?.profile_pic},${childrenList[index]?.parents[3]?.user?.profile_pic},${childrenList[index]?.parents[4]?.user?.profile_pic},${childrenList[index]?.parents[5]?.user?.profile_pic},${childrenList[index]?.parents[6]?.user?.profile_pic},${childrenList[index]?.parents[7]?.user?.profile_pic},${childrenList[index]?.parents[8]?.user?.profile_pic},${childrenList[index]?.parents[9]?.user?.profile_pic},${child.id}`,
-        status: child.is_active
+        status: child.is_active,
+        Franchisee : child.franchisee_id
     }));
 
     const   PColumns = [
@@ -731,6 +740,11 @@ const Children = () => {
     useEffect(() => {
         init();
     }, [reloadFlag]);
+
+    useEffect(()=>{
+      getEducatorsByFranchisee(rowFranchiseId)
+      getParentsByFranchisee(rowFranchiseId)
+    },[rowFranchiseId])
 
     return (
         <>

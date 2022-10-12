@@ -916,9 +916,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="target_user"
-                                          value="guardian"
+                                          value="parent"
                                           checked={form?.target_user?.includes(
-                                            'guardian'
+                                            'parent'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(
@@ -936,9 +936,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="fill_access_users"
-                                          value="guardian"
+                                          value="parent"
                                           checked={form?.fill_access_users?.includes(
-                                            'guardian'
+                                            'parent'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(

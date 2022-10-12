@@ -22,11 +22,11 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
-          updatedAt: dt.updatedAt,
-          createdAt: dt.createdAt,
-          userID: dt.id,
-          creatorName: dt.ModifierName + "," + dt.updatedBy
+          name: `${dt.categoryName},${dt.count},${dt?.categoryId}`,
+          updatedAt: dt?.updatedAt,
+          createdAt: dt?.createdAt,
+          userID: dt?.id,
+          creatorName: dt?.ModifierName + "," + dt?.updatedBy
         }));
         setUserData(tempData);
         setfullLoaderStatus(false)
@@ -42,10 +42,10 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
   // }, []);
 
   useEffect(() => {
-    if(selectedFranchisee != null){
+    if (selectedFranchisee != null) {
       GetData();
     }
-  }, [selectedFranchisee,setUserData]);
+  }, [selectedFranchisee]);
 
 
   const GetSaachhData = async () => {
@@ -63,11 +63,11 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
       if (response.status === 200) {
         const users = response.data.dataDetails;
         let tempData = users.map((dt) => ({
-          name: `${dt.categoryName},${dt.count},${dt.categoryId}`,
-          updatedAt: dt.updatedAt,
-          createdAt: dt.createdAt,
-          userID: dt.id,
-          creatorName: dt.ModifierName + "," + dt.updatedBy
+          name: `${dt?.categoryName},${dt?.count},${dt?.categoryId}`,
+          updatedAt: dt?.updatedAt,
+          createdAt: dt?.createdAt,
+          userID: dt?.id,
+          creatorName: dt?.ModifierName + "," + dt?.updatedBy
         }));
         setUserData(tempData);
       }
@@ -81,7 +81,7 @@ const FileRepoShairWithme = ({ selectedFranchisee, SearchValue }) => {
 
 
   useEffect(() => {
-    if(selectedFranchisee != null){
+    if (selectedFranchisee != null) {
       GetSaachhData();
     }
   }, [SearchValue])

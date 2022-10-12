@@ -61,20 +61,20 @@ const RepoEdit = () => {
     const copyFetchedData = (data) => {
         setData(prevState => ({
             ...prevState,
-            id: data.id,
+            id: data?.id,
             createdAt: data?.createdAt,
             description: data?.description,
             title: data?.title,
-            categoryId: data?.repository_files[0].categoryId,
-            image: data?.repository_files[0].filesPath,
-            fileName: data?.repository_files[0].fileName,
-            franchise: data?.repository_shares[0].franchisee,
-            accessibleToRole: data?.repository_shares[0].accessibleToRole || 1,
-            accessibleToAll: data?.repository_shares[0].accessibleToAll,
-            assigned_users: data?.repository_shares[0].assigned_users,
-            user_roles: data?.repository_shares[0].assigned_roles,
-            assigned_childs: data?.repository_shares[0].assigned_childs,
-            file_type: data?.repository_files[0].fileType,
+            categoryId: data?.repository_files[0]?.categoryId,
+            image: data?.repository_files[0]?.filesPath,
+            fileName: data?.repository_files[0]?.fileName,
+            franchise: data?.repository_shares[0]?.franchisee,
+            accessibleToRole: data?.repository_shares[0]?.accessibleToRole || 1,
+            accessibleToAll: data?.repository_shares[0]?.accessibleToAll,
+            assigned_users: data?.repository_shares[0]?.assigned_users,
+            user_roles: data?.repository_shares[0]?.assigned_roles,
+            assigned_childs: data?.repository_shares[0]?.assigned_childs,
+            file_type: data?.repository_files[0]?.fileType,
         }));
         setCoverImage(data?.repository_files[0].filesPath);
         data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
@@ -153,6 +153,7 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
+        
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -440,8 +441,8 @@ const RepoEdit = () => {
                                                                         </Form.Select>
                                                                     </>)}
 
-                                                                {error && !data.categoryId && < span className="error"> File Category is required!</span>}
-                                                                {errors && errors.categoryId && <span className="error">{errors.categoryId}</span>}
+                                                                {error && !data?.categoryId && < span className="error"> File Category is required!</span>}
+                                                                {errors && errors?.categoryId && <span className="error">{errors?.categoryId}</span>}
                                                             </Form.Group>
                                                         </>}
                                                     </Col>
@@ -802,8 +803,11 @@ const RepoEdit = () => {
                                                                                             setData((prevState) => ({
                                                                                                 ...prevState,
                                                                                                 assigned_users: [...data.map(data => data.id + '')],
-                                                                                            }));
-                                                                                        }}
+                                                                                            }
+                                                                                            ));
+                                                                                            childList()
+                                                                                        }
+                                                                                        }
                                                                                         value={user && user.filter(c => data.assigned_users?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
                                                                                             setData((prevState) => ({
@@ -831,7 +835,8 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_childs: [...data.map(data => data.id + '')],
                                                                                             }));
-                                                                                        }}
+                                                                                        }
+                                                                                        }
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         value={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}
                                                                                         onSelect={(selectedOptions) => {
