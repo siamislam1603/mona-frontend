@@ -1,16 +1,10 @@
-import { isEmpty, uniq } from 'lodash';
+import { Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
-import { Col, Form } from 'react-bootstrap';
-import { FullLoader } from '../../components/Loader';
 
 let value = {};
 
 const Checkbox = (props) => {
   const { ...controls } = props;
-
-  // if (isEmpty(controls.field_data)) {
-  //   return <FullLoader />;
-  // }
 
   const [array, setArray] = useState([]);
   const [event, setEvent] = useState();
