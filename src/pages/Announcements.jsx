@@ -795,6 +795,24 @@ const Announcements = () => {
    }
 
   },[data])
+  useEffect(() =>{
+    let notifcationtab = localStorage.getItem("notification_tab")
+    if(notifcationtab === "Event"){
+      setTabLinkPath('/all-events');
+    }
+    else if (notifcationtab ==="Announcement"){
+      if (localStorage.getItem("user_role") === 'franchisor_admin') {
+        setTabLinkPath('/my-announcements');
+      }
+      else{
+        setTabLinkPath('/all-announcements');
+      }
+    }
+    setTimeout(() => {
+      localStorage.removeItem("notification_tab")
+    }, 1500);
+
+  },[])
   // useEffect(() =>{
   //   if(data){
   //     LoadMoreMyData()
