@@ -263,8 +263,8 @@ const FilerepoMyAdd = ({ filter }) => {
         };
 
         let franchiseeArr = formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee
-
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
+        let userIdd = localStorage.getItem('user_id')
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, request)
         if (response.status === 200) {
             let userList = response.data.users
             let formattedUserData = userList.map((d) => ({
@@ -641,7 +641,7 @@ const FilerepoMyAdd = ({ filter }) => {
                     </Modal.Header>
                     <Modal.Body>
                         <div className="form-settings-content">
-                            {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
+                            {getUser_Role !== "franchisor_admin" ? "" : (<Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
                                         <Form.Label>Give access to all Franchises</Form.Label>
@@ -982,8 +982,15 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                 selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
-                                                                // onSearch={function noRefCheck() {}}
+                                                                // onRemove={onRemoveUser}
+                                                                onRemove={(selectedOptions) => {
+                                                                    setFormSettings((prevState) => ({
+                                                                        ...prevState,
+                                                                        assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                        accessibleToRole: 0
+                                                                    }))
+                                                                }}
+                                                                onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
                                                                         ...prevState,

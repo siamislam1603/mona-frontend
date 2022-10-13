@@ -153,7 +153,7 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-        
+
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -230,8 +230,8 @@ const RepoEdit = () => {
         };
 
         let franchiseeArr = data.franchise.length == 0 ? "all" : data.franchise
-
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
+        let userIdd = localStorage.getItem('user_id')
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, request)
         if (response.status === 200) {
             let userList = response.data.users
             let formattedUserData = userList.map((d) => ({
@@ -255,6 +255,16 @@ const RepoEdit = () => {
         }
     };
 
+    const setFieldd = async (field, value) => {
+        setData({ ...data, categoryId: field[0] })
+        console.log({ image: field }, "data++++++++")
+        if (!!errors[field]) {
+            setErrors({
+                ...errors,
+                [field]: null,
+            });
+        }
+    };
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
         removedItem = removedItem.map((item) => {
@@ -428,7 +438,7 @@ const RepoEdit = () => {
                                                                         <Form.Select
                                                                             name="file_category"
                                                                             onChange={(e) => {
-                                                                                setField(e.target.name, e.target.value);
+                                                                                setFieldd(e.target.value);
                                                                             }}
                                                                             value={data?.categoryId}
                                                                         >
@@ -835,7 +845,6 @@ const RepoEdit = () => {
                                                                                                 ...prevState,
                                                                                                 assigned_childs: [...data.map(data => data.id + '')],
                                                                                             }));
-
                                                                                         }
                                                                                         }
                                                                                         selectedValues={child && child.filter(c => data.assigned_childs?.includes(c.id + ""))}

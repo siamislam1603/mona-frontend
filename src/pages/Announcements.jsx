@@ -192,6 +192,7 @@ const Announcements = () => {
 
   const myDataCount = async () => {
     try {
+      
       let api_url = ' '
       let franhiseAlias = "all"
       let userId = localStorage.getItem("user_id")
@@ -206,8 +207,9 @@ const Announcements = () => {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      //  console.log("THE COUNT OF MY DATA",response.data.data)
+       console.log("THE COUNT OF MY DATA",response)
       setMyCount(response.data.result.count)
+      
 
     } catch (error) {
       console.log("MY COUNT ERROR", error)
@@ -793,6 +795,24 @@ const Announcements = () => {
    }
 
   },[data])
+  useEffect(() =>{
+    let notifcationtab = localStorage.getItem("notification_tab")
+    if(notifcationtab === "Event"){
+      setTabLinkPath('/all-events');
+    }
+    else if (notifcationtab ==="Announcement"){
+      if (localStorage.getItem("user_role") === 'franchisor_admin') {
+        setTabLinkPath('/my-announcements');
+      }
+      else{
+        setTabLinkPath('/all-announcements');
+      }
+    }
+    setTimeout(() => {
+      localStorage.removeItem("notification_tab")
+    }, 1500);
+
+  },[])
   // useEffect(() =>{
   //   if(data){
   //     LoadMoreMyData()
@@ -802,7 +822,7 @@ const Announcements = () => {
 
   // console.log("USER ROLE",userRole)
   console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
+  console.log("MY COUNT AND MY data lenght",myCount ,"mt",myDataLength)
   console.log("Event count and event lenght",eventCount,eventLength)
   // console.log("tablink path", tabLinkPath)
   // console.log("All Annoucnement",allAnnouncement)

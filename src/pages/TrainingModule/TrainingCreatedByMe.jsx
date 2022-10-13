@@ -66,6 +66,8 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [page, setPage] = useState(6)
   const [noMore,setNoMore] = useState(true)
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [count,setCount] = useState(null)
+  const [checkCount,setCheckCount]= useState(null)
   const navigate = useNavigate();
 
   // const [trainingCategory, setTrainingCategory] = useState([]);
@@ -229,7 +231,11 @@ const TrainingCreatedByMe = ({ filter }) => {
 
   const CreatedByme = async () => {
     try {
+      console.log("TRAIING DATA", filterData.category_id,filterData.search)
+      
       setfullLoaderStatus(true)
+    
+      setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
@@ -237,13 +243,61 @@ const TrainingCreatedByMe = ({ filter }) => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log('Training created by me', response)
+      console.log('TRAIING DATA', response)
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data
         console.log("Searched Data", searchedData)
+        setCheckCount(searchedData?.length)
+        setCount(response.data.count)
+
         setMyTrainingData(searchedData)
         setfullLoaderStatus(false)
-     
+        if(searchedData?.length===0){
+          setCheckCount(searchedData?.length)
+          console.log('TRAIING DATA no data', response)
+          setCount(0)
+        }
+       if(filterData.category_id){
+        if(searchedData?.length>6){
+          setCheckCount(0)
+          setCount(0)
+        }
+       }
+      }
+    } catch (error) {
+      if (error.response.status === 404) {
+        setfullLoaderStatus(false)
+
+        setMyTrainingData([])
+        setNoMore(false)
+
+
+      }
+      console.log("error created by me", error)
+    }
+  }
+
+  const searchTraining = async () =>{
+    try {
+      console.log("TRAIING DATA search call", filterData.category_id,filterData.search)    
+      let user_id = localStorage.getItem('user_id');
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log('TRAIING DATA', response)
+      if (response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data
+        console.log("Searched Data", searchedData)
+
+
+        setMyTrainingData(searchedData)
+        setfullLoaderStatus(false)
+        setCount(0)
+        setCheckCount(0)
+
       }
     } catch (error) {
       if (error.response.status === 404) {
@@ -259,14 +313,28 @@ const TrainingCreatedByMe = ({ filter }) => {
   }
   useEffect(() => {
     fetchTrainingCategories()
-    console.log("Traingin created")
+
   }, []);
   useEffect(() => {
     if(selectedFranchisee){
       CreatedByme()
     }
+    // if( filterData.category_id){
+    //   setPage(6)
+    // }
+ 
 
-  }, [filterData.search, filterData.category_id, selectedFranchisee,page])
+  }, [filterData.category_id, selectedFranchisee,page])
+  useEffect(()=>{
+    if(filterData.search){
+      console.log("the search value",filterData.search)
+      searchTraining()
+    }
+    else{
+      setPage(6)
+      CreatedByme()
+    }
+  },[filterData.search])
 
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
@@ -293,10 +361,15 @@ const TrainingCreatedByMe = ({ filter }) => {
     }, 4000);
   }, [errorMessageToast]);
 
-  // console.log("TRAIING DATA", filterData.category_id)
+
+  const fetchMoreData = async ( ) =>{
+        setPage(page => page+6) 
+  }
   // console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
   console.log("Selected frnahise", selectedFranchisee)
   console.log("Data Rohan",myTrainingData)
+  console.log("TRAIING",count,checkCount)
+  console.log("Search",filterData.search)
 
   return (
     <>
@@ -405,24 +478,25 @@ const TrainingCreatedByMe = ({ filter }) => {
                     </div>
                     </div>
 
-                  <InfiniteScroll
+                  {/* <InfiniteScroll
                   style={{
                     overflow: "hidden"
                   }}
                         dataLength={myTrainingData?.length} //This is important field to render the next data
-                        next={() => setPage(page+6)}
-                        hasMore={true}
-                        // loader={<h4>Loading...</h4>}
-                        // endMessage={
-                        //   <p style={{ textAlign: 'center' }}>
-                        //     <b>Yay! You have seen it all</b>
-                        //   </p>
-                        // }
+                        next={() =>{
+                          fetchMoreData()
+                        }}
+                        hasMore={noMore}
+                        endMessage={
+                          <p style={{ textAlign: 'center' }}>
+                            <b>Yay! You have seen it all</b>
+                          </p>
+                        }
                        
-                      >
+                      > */}
                          <div className="training-column">
 
-                    <Row style={{ marginBottom: '40px' }}>
+                    <Row style={{ marginBottom: '40px' }} > 
 
                       {myTrainingData?.map((training) => {
                         return (
@@ -483,8 +557,14 @@ const TrainingCreatedByMe = ({ filter }) => {
                       })}
                       </Row>
                       </div>
-                     
-                      </InfiniteScroll>
+                {
+                  count !== checkCount &&  !fullLoaderStatus&& <div className="text-center">
+
+                  <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
+
+                 </div>
+                }
+                      {/* </InfiniteScroll> */}
            
 
                       {fullLoaderStatus && 
