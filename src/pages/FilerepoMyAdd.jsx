@@ -263,8 +263,8 @@ const FilerepoMyAdd = ({ filter }) => {
         };
 
         let franchiseeArr = formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee
-
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
+        let userIdd = localStorage.getItem('user_id')
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, request)
         if (response.status === 200) {
             let userList = response.data.users
             let formattedUserData = userList.map((d) => ({
