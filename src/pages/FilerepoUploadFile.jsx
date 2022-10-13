@@ -23,7 +23,7 @@ const FilerepoUploadFile = () => {
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [selectedChild, setSelectedChild] = useState([]);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
     const [franchiseeList, setFranchiseeList] = useState();
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
