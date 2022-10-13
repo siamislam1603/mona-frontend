@@ -61,7 +61,6 @@ function ViewFormBuilder(props) {
       toast.success(location?.state?.message);
       navigate('/form', { state: { message: null } });
     }
-    // getFormData(localStorage.getItem('franchisee_id'));
   }, []);
 
   const dateCheck = (start_date, start_time, end_date, end_time, form_name) => {
@@ -73,9 +72,6 @@ function ViewFormBuilder(props) {
     if (start_date) {
       let dataAndTime = start_date + ' ' + start_time;
       let startDate = new Date(dataAndTime);
-      // startDate = new Date(startDate).toLocaleString('en-ZA', {
-      //   timeZone: 'Australia/Perth',
-      // });
       startDate = new Date(startDate);
       if (todayDate.getTime() < startDate.getTime()) {
         toast.error(
@@ -89,9 +85,6 @@ function ViewFormBuilder(props) {
         if (end_date) {
           let dataAndTime = end_date + ' ' + end_time;
           let endDate = new Date(dataAndTime);
-          // endDate = new Date(endDate).toLocaleString('en-ZA', {
-          //   timeZone: 'Australia/Perth',
-          // });
           endDate = new Date(endDate);
           if (todayDate.getTime() > endDate.getTime()) {
             toast.error(
@@ -146,21 +139,6 @@ function ViewFormBuilder(props) {
       .then((response) => response.json())
       .then((result) => {
         toast.success(result?.message);
-
-        // let separatedCategoryData = formData.filter(d => d.category === formCategory);
-        // separatedCategoryData = separatedCategoryData[0].forms;
-        // let filteredFormArray = separatedCategoryData.filter(d => d.id !== id);
-
-        // let filteredData = formData.map(d => {
-        //   if(d.category === formCategory) {
-        //     return {
-        //       ...d,
-        //       forms: filteredFormArray
-        //     }
-        //   }
-        //   return d
-        // });
-        // setFormData(filteredData);
         getFormData('', localStorage.getItem('franchisee_id'));
       })
       .catch((error) => console.log('error', error));
@@ -215,8 +193,6 @@ function ViewFormBuilder(props) {
             delete others[index];
           }
         });
-        console.log('ME FORM DATA FORMAT:', me);
-        console.log('OTHER FORM DATA:', others);
         setMeFormData(me);
         setOthersFormData(others);
         if (result) {
@@ -319,8 +295,6 @@ function ViewFormBuilder(props) {
                         'franchisee_admin' ||
                         localStorage.getItem('user_role') ===
                           'franchisor_admin') && (
-                        // || localStorage.getItem('user_role') ===
-                        //   'coordinator'
                         <div className="forms-create">
                           <Button
                             variant="primary"
@@ -350,7 +324,7 @@ function ViewFormBuilder(props) {
                         title="Forms to complete"
                       >
                         <div className="forms-content-section">
-                          {formData?.map((item) => {
+                          {formData?.map((item, index) => {
                             return (
                               ((item.category === 'Talent Management' &&
                                 localStorage.getItem('user_role') !==
@@ -361,7 +335,7 @@ function ViewFormBuilder(props) {
                                   localStorage.getItem('user_role') ===
                                     'guardian')) && (
                                 <>
-                                  <Row>
+                                  <Row key={index + '1'}>
                                     {(item['title_flag'] = false)}
 
                                     {item?.forms?.map(
@@ -432,24 +406,6 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem(
-                                          //     'user_role'
-                                          //   ) === 'guardian'
-                                          //     ? 'parent'
-                                          //     : localStorage.getItem(
-                                          //         'user_role'
-                                          //       )
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -465,6 +421,7 @@ function ViewFormBuilder(props) {
 
                                             <Col
                                               lg={4}
+                                              key={inner_index + '2'}
                                               onClick={() => {
                                                 dateCheck(
                                                   inner_item.start_date,
@@ -588,24 +545,15 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem('user_role')
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
                                                 {(item['title_flag'] = true)}
                                                 {(no_record = true)}
-                                                <Col lg={12}>
+                                                <Col
+                                                  lg={12}
+                                                  key={inner_index + '3'}
+                                                >
                                                   <h2 className="page_title">
                                                     {item.category}
                                                   </h2>
@@ -614,15 +562,15 @@ function ViewFormBuilder(props) {
                                             )}
                                             <Col
                                               lg={4}
-                                              onClick={() => {
-                                                dateCheck(
-                                                  inner_item.start_date,
-                                                  inner_item.start_time,
-                                                  inner_item.end_date,
-                                                  inner_item.end_time,
-                                                  inner_item.form_name
-                                                );
-                                              }}
+                                              // onClick={() => {
+                                              //   dateCheck(
+                                              //     inner_item.start_date,
+                                              //     inner_item.start_time,
+                                              //     inner_item.end_date,
+                                              //     inner_item.end_time,
+                                              //     inner_item.form_name
+                                              //   );
+                                              // }}
                                             >
                                               <div className="forms-content create-other">
                                                 <div className="content-icon-section">
@@ -654,7 +602,13 @@ function ViewFormBuilder(props) {
                                                   />
                                                 </div>
                                                 <div className="content-title-section">
-                                                  <h6>
+                                                  <h6
+                                                    onClick={() => {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`
+                                                      );
+                                                    }}
+                                                  >
                                                     {inner_item.form_name}
                                                   </h6>
                                                   <h4>
@@ -665,6 +619,89 @@ function ViewFormBuilder(props) {
                                                       .utcOffset('+11:00')
                                                       .format('DD/MM/YYYY')}
                                                   </h4>
+                                                </div>
+                                                <div className="content-toogle">
+                                                  <Dropdown>
+                                                    <Dropdown.Toggle id="dropdown-basic1">
+                                                      <FontAwesomeIcon
+                                                        icon={
+                                                          faEllipsisVertical
+                                                        }
+                                                      />
+                                                    </Dropdown.Toggle>
+
+                                                    <Dropdown.Menu>
+                                                      <Dropdown.Item
+                                                        onClick={() => {
+                                                          if (
+                                                            inner_item.end_date
+                                                          ) {
+                                                            let todayDate =
+                                                              new Date();
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              ).toLocaleString(
+                                                                'en-ZA',
+                                                                {
+                                                                  timeZone:
+                                                                    'Australia/Perth',
+                                                                }
+                                                              );
+                                                            todayDate =
+                                                              new Date(
+                                                                todayDate
+                                                              );
+                                                            let dataAndTime =
+                                                              inner_item.end_date +
+                                                              ' ' +
+                                                              inner_item.end_time;
+                                                            let endDate =
+                                                              new Date(
+                                                                dataAndTime
+                                                              );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            ).toLocaleString(
+                                                              'en-ZA',
+                                                              {
+                                                                timeZone:
+                                                                  'Australia/Perth',
+                                                              }
+                                                            );
+                                                            endDate = new Date(
+                                                              endDate
+                                                            );
+                                                            if (
+                                                              todayDate.getTime() >
+                                                              endDate.getTime()
+                                                            )
+                                                              toast.error(
+                                                                'Your form was expired on ' +
+                                                                  moment(
+                                                                    inner_item.end_date
+                                                                  ).format(
+                                                                    'DD/MM/YYYY'
+                                                                  ) +
+                                                                  '.'
+                                                              );
+                                                            else
+                                                              navigate(
+                                                                `/form/dynamic/${inner_item.form_name}`
+                                                              );
+                                                          } else
+                                                            navigate(
+                                                              `/form/dynamic/${inner_item.form_name}`
+                                                            );
+                                                        }}
+                                                      >
+                                                        <FontAwesomeIcon
+                                                          icon={faPen}
+                                                        />{' '}
+                                                        Add Response
+                                                      </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                  </Dropdown>
                                                 </div>
                                               </div>
                                             </Col>
@@ -686,7 +723,7 @@ function ViewFormBuilder(props) {
                       </Tab>
                       <Tab eventKey="forms-history" title="Forms History">
                         <div className="forms-content-section">
-                          {formData?.map((item) => {
+                          {formData?.map((item, index) => {
                             return (
                               ((item.category === 'Talent Management' &&
                                 localStorage.getItem('user_role') !==
@@ -756,18 +793,6 @@ function ViewFormBuilder(props) {
                                                     'user_id'
                                                   )
                                             )) ? (
-                                          // ||
-                                          // (
-                                          //   inner_item.upper_role || []
-                                          // ).includes(
-                                          //   localStorage.getItem('user_role')
-                                          // ) ||
-                                          // inner_item.created_by ===
-                                          //   parseInt(
-                                          //     localStorage.getItem('user_id')
-                                          //   ) ||
-                                          // localStorage.getItem('user_role') ===
-                                          //   'franchisor_admin'
                                           <>
                                             {item.title_flag === false && (
                                               <>
@@ -775,14 +800,17 @@ function ViewFormBuilder(props) {
                                                 {
                                                   (form_history_no_record = true)
                                                 }
-                                                <div className="col-lg-12">
+                                                <div
+                                                  className="col-lg-12"
+                                                  key={inner_index + '5'}
+                                                >
                                                   <h2 className="page_title">
                                                     {item.category}
                                                   </h2>
                                                 </div>
                                               </>
                                             )}
-                                            <Col lg={4}>
+                                            <Col lg={4} key={inner_index + '6'}>
                                               <div className="forms-content create-other">
                                                 <div
                                                   className="content-icon-section"
@@ -980,14 +1008,14 @@ function ViewFormBuilder(props) {
                                     MeFormData?.map((item, index) => {
                                       return (
                                         <>
-                                          <Row>
+                                          <Row key={index + '7'}>
                                             <div className="col-lg-12">
                                               <h2 className="page_title">
                                                 {item.category}
                                               </h2>
                                             </div>
                                           </Row>
-                                          <Row>
+                                          <Row key={index + '8'}>
                                             {item?.forms?.map(
                                               (inner_item, inner_index) => {
                                                 return (
@@ -997,7 +1025,10 @@ function ViewFormBuilder(props) {
                                                         'user_id'
                                                       )
                                                     ) && (
-                                                    <Col lg={4}>
+                                                    <Col
+                                                      lg={4}
+                                                      key={inner_index + '9'}
+                                                    >
                                                       <div className="forms-content create-other">
                                                         <div className="content-icon-section">
                                                           <img
@@ -1142,6 +1173,7 @@ function ViewFormBuilder(props) {
                                                                     {
                                                                       state: {
                                                                         id: inner_item.id,
+                                                                        update: true,
                                                                       },
                                                                     }
                                                                   );
@@ -1229,7 +1261,7 @@ function ViewFormBuilder(props) {
                                     }
                                     return (
                                       <>
-                                        <Row>
+                                        <Row key={index + '10'}>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
                                               return (
@@ -1289,14 +1321,22 @@ function ViewFormBuilder(props) {
                                                             'title_flag'
                                                           ] = true)
                                                         }
-                                                        <Col lg={12}>
+                                                        <Col
+                                                          lg={12}
+                                                          key={
+                                                            inner_index + '11'
+                                                          }
+                                                        >
                                                           <h2 className="page_title">
                                                             {item.category}
                                                           </h2>
                                                         </Col>
                                                       </>
                                                     )}
-                                                    <Col lg={4}>
+                                                    <Col
+                                                      lg={4}
+                                                      key={inner_index + '12'}
+                                                    >
                                                       <div className="forms-content">
                                                         <div className="create-other">
                                                           <div className="content-icon-section">
@@ -1453,6 +1493,7 @@ function ViewFormBuilder(props) {
                                                                           state:
                                                                             {
                                                                               id: inner_item.id,
+                                                                              update: true,
                                                                             },
                                                                         }
                                                                       );
@@ -1612,7 +1653,6 @@ function ViewFormBuilder(props) {
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
                       return (
-                        // http://13.237.14.155:4000/form/response?search=&form_id=11&user_id=2&user_role=franchisor_admin
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
@@ -1668,15 +1708,18 @@ function ViewFormBuilder(props) {
                               </h4>
                               <button
                                 onClick={() => {
-                                  navigate('/form/response', {
-                                    state: {
-                                      id: MeFormData[Index]?.forms[innerIndex]
-                                        ?.id,
-                                      form_name:
-                                        MeFormData[Index]?.forms[innerIndex]
-                                          ?.form_name,
-                                    },
-                                  });
+                                  navigate(
+                                    `/form/response/${item[0]?.form_id}`,
+                                    {
+                                      state: {
+                                        id: MeFormData[Index]?.forms[innerIndex]
+                                          ?.id,
+                                        form_name:
+                                          MeFormData[Index]?.forms[innerIndex]
+                                            ?.form_name,
+                                      },
+                                    }
+                                  );
                                 }}
                               >
                                 View Response
@@ -1761,31 +1804,37 @@ function ViewFormBuilder(props) {
                                         : localStorage.getItem('user_role')
                                     )
                                   ) {
-                                    navigate('/form/response', {
-                                      state: {
-                                        id: OthersFormData[Index]?.forms[
-                                          innerIndex
-                                        ]?.id,
-                                        form_name:
-                                          OthersFormData[Index]?.forms[
+                                    navigate(
+                                      `/form/response/${item[0]?.form_id}`,
+                                      {
+                                        state: {
+                                          id: OthersFormData[Index]?.forms[
                                             innerIndex
-                                          ]?.form_name,
-                                        signature_access: true,
-                                      },
-                                    });
+                                          ]?.id,
+                                          form_name:
+                                            OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.form_name,
+                                          signature_access: true,
+                                        },
+                                      }
+                                    );
                                   } else {
-                                    navigate('/form/response', {
-                                      state: {
-                                        id: OthersFormData[Index]?.forms[
-                                          innerIndex
-                                        ]?.id,
-                                        form_name:
-                                          OthersFormData[Index]?.forms[
+                                    navigate(
+                                      `/form/response/${item[0]?.form_id}`,
+                                      {
+                                        state: {
+                                          id: OthersFormData[Index]?.forms[
                                             innerIndex
-                                          ]?.form_name,
-                                        signature_access: false,
-                                      },
-                                    });
+                                          ]?.id,
+                                          form_name:
+                                            OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.form_name,
+                                          signature_access: false,
+                                        },
+                                      }
+                                    );
                                   }
                                 }}
                               >

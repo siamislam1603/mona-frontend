@@ -15,7 +15,7 @@ import moment from 'moment';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
-import DropAllFile from "../components/DragDropMultiple";
+import DropAllFile from "../components/DropVideoAnnoucnement";
 import DropOneFile from '../components/DragDrop';
 import DropVideo from '../components/DragDropVideo';
 import {EditAnnouncementValidation} from '../helpers/validation';
@@ -97,6 +97,19 @@ const [docFileError, setDocFileError] = useState(null);
       });
     }
   };
+  const deleteCoverImage = async() =>{
+    let token = localStorage.getItem('token')
+    const deleteResponse = await axios.delete(`${BASE_URL}/announcement/announcementStatus/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    console.log("Delete cover image response",deleteResponse)
+    if(deleteResponse.status === 200 && deleteResponse.data.status === "success"){
+      copyFetchedData();
+      AnnouncementDetails()
+    }
+  }
   const handleAnnouncementsSettings = (event) => {
     const { name, value } = event.target;
     if (!!errors[name]) {
@@ -165,7 +178,7 @@ const [docFileError, setDocFileError] = useState(null);
     else{
       setErrors({})
       if(announcementCopyData ) {
-         
+         console.log("Annoucement copy",announcementCopyData)
          let data = new FormData();
       
          for(let [ key, values ] of Object.entries(announcementCopyData)) {
@@ -191,7 +204,12 @@ const [docFileError, setDocFileError] = useState(null);
       }
     });
     if(deleteResponse.status === 200){
+      let newData = fetchedVideoTutorialFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
+
       setFileDeleteResponse(!fileDeleteResponse)
+      setFetchedVideoTutorialFiles(newData)
+      
+      console.log("Delete response",deleteResponse)
 
     }
   }
@@ -201,6 +219,7 @@ const [docFileError, setDocFileError] = useState(null);
         try {
           const token = localStorage.getItem('token');
           setTheMessage("Uploading The Documents")
+          console.log("THe cover iamge inside Update",coverImage, typeof coverImage)
           
             const response = await axios.put(`${BASE_URL}/announcement/${id}`, data,{ 
             headers: {
@@ -210,6 +229,7 @@ const [docFileError, setDocFileError] = useState(null);
            
            if(response.status === 200 && response.data.status === "success" && coverImage){
               const id = announcementData.id;
+              console.log("THe cover iamge exit",coverImage, typeof coverImage)
          
               if(typeof coverImage === "string"){
                 setTheMessage("Uploading The Images and Videos")
@@ -221,7 +241,9 @@ const [docFileError, setDocFileError] = useState(null);
                     "Authorization": "Bearer " + token
                   }
                 })
+                console.log("Image response 111",imageFile)
                 if(imageFile.status === 200){
+                  console.log("THe image response",imageFile)
                   window.location.href="/announcements";    
       
                    
@@ -229,14 +251,19 @@ const [docFileError, setDocFileError] = useState(null);
               }
               
 
-              else if (typeof coverImage === "object" || coverImage === null || coverImage === "undefined"){
+              else if (typeof coverImage === "object" || coverImage === null || coverImage === "undefined" || coverImage?.length===0) {
+                
                 if(Object.keys(coverImage).length === 0){
+
+                console.log("THe cover iamge not exit",coverImage, typeof coverImage)
+                  
                     window.location.href="/announcements"; 
                     setCoverImage(null) 
                     setFetchedCoverImage(null)  
-
+               
                 }
                 else{
+                  console.log("Cover image is object but empty")
                 let data = new FormData()
                 data.append('id',id);
                 data.append('image', coverImage[0]);
@@ -253,7 +280,7 @@ const [docFileError, setDocFileError] = useState(null);
                    setTheMessage(" ")
       
                   setLoader(false)
-                  localStorage.setItem('success_msg', 'Announcement Created Successfully!');
+                  localStorage.setItem('success_msg', 'Announcement Updated Successfully!');
                   localStorage.setItem('active_tab', '/created-announcement');
                   window.location.href="/announcements";    
                 }
@@ -319,6 +346,7 @@ const [docFileError, setDocFileError] = useState(null);
      }
     })
     if(response.status === 200) {
+      console.log("The announcement response",response)
       setAnnouncementData(response.data.data.all_announcements)
 
 
@@ -353,8 +381,8 @@ const [docFileError, setDocFileError] = useState(null);
   }))
   setCoverImage(announcementData?.coverImage)
   setFetchedCoverImage(announcementData?.coverImage)
-  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4" || ".mkv"));
-  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && ".mkv"));
+  setFetchedVideoTutorialFiles(announcementData?.announcement_files?.filter(file => file.fileType === ".mp4" || file.fileType===".mkv"));
+  setFetchedRelatedFiles(announcementData?.announcement_files?.filter(file => file.fileType !== '.mp4' && file.fileType !== ".mkv"));
    
  }
  const getRelatedFileName = (str) => {
@@ -409,7 +437,8 @@ useEffect(() =>{
   console.log("My annoucnement",announcementCopyData)
   console.log("ALL FRANHISE",allFranchise)
 
-  console.log("THE ANNOUCNEMENt",announcementData?.meta_description,wordCount)
+  // console.log("THE ANNOUCNEMENt",fetchedVideoTutorialFiles)
+  console.log("The cover iamge",fetchedCoverImage)
   
   return (
     <>
@@ -715,7 +744,18 @@ useEffect(() =>{
                             setFetchedCoverImage={setFetchedCoverImage}
                           
                           />
-                            {fetchedCoverImage && <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />}
+                            {
+                              fetchedCoverImage && 
+                             <div>
+                               <img className="cover-image-style" src={fetchedCoverImage} alt="training cover image" />
+                              <img 
+                              onClick={() =>deleteCoverImage() }
+                              className="file-remove" 
+                              src="../img/removeIcon.svg" 
+                              alt="" />
+                             </div>
+                            
+                            }
                             <small className="fileinput">(png, jpg & jpeg)</small>
 
                            <span  className="error">
@@ -756,13 +796,16 @@ useEffect(() =>{
                                 )
                               })
                             }
+                            
                           <div className="media-container">
+                           
+                          
                               {
                                 fetchedVideoTutorialFiles &&
                                 fetchedVideoTutorialFiles.map((video, index) => (
-                                  !video.is_deleted
-                                  ?(
+                                 
                                   
+                                    
                                       <div className="file-container">
                                         <img className="file-thumbnail" src={`${video.thumbnail}`} alt={`${video.videoId}`} />
                                         <p className="file-text"><strong>{`Video ${videoTutorialFiles.length + (index + 1)}`}</strong></p>
@@ -773,7 +816,7 @@ useEffect(() =>{
                                           alt="" />
                                       </div>
                                     
-                                  ):(null)
+                                  
 
                                
                                 ))

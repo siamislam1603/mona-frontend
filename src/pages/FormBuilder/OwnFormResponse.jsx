@@ -55,20 +55,10 @@ function OwnFormResponse(props) {
   };
   const trim = (e, index) => {
     e.preventDefault();
-    console.log(
-      'index--->',
-      Index,
-      '-----',
-      JSON.parse(responseData[Index][0].fields)
-    );
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    console.log(
-      'sigpad--------->><<<<<<<<',
-      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    );
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
@@ -120,14 +110,9 @@ function OwnFormResponse(props) {
         if (result?.result.length > 0) {
           result?.result.map((item, index) => {
             item['signature_button'] = true;
-            console.log('item--->', item);
 
             result?.result[index]?.map((inner_item, inner_index) => {
-              // if(inner_item.fields)
-
-              console.log('inner_item--->first', inner_item);
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-                console.log('inner_item--->', field_item);
                 if (field_item === 'signature') {
                   item['signature_button'] = false;
                 }
@@ -189,7 +174,6 @@ function OwnFormResponse(props) {
                             type="date"
                             name="from_date"
                             value={dateFilter?.from_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -197,7 +181,6 @@ function OwnFormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
@@ -205,7 +188,6 @@ function OwnFormResponse(props) {
                             type="date"
                             name="to_date"
                             value={dateFilter?.to_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -213,7 +195,6 @@ function OwnFormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
@@ -234,7 +215,7 @@ function OwnFormResponse(props) {
                     <div className="forms-search me-0 ms-auto mt-3">
                       <Form.Group>
                         <div className="forms-icon">
-                          <img src="../img/search-icon-light.svg" alt="" />
+                          <img src="/img/search-icon-light.svg" alt="" />
                         </div>
                         <Form.Control
                           type="text"
@@ -253,7 +234,7 @@ function OwnFormResponse(props) {
                     <Accordion defaultActiveKey="0">
                       {responseData.map((item, index) => {
                         return (
-                          <Accordion.Item eventKey={index}>
+                          <Accordion.Item key={index} eventKey={index}>
                             <Accordion.Header>
                               <div className="responses-header-row">
                                 <div className="responses-header-left">
@@ -262,7 +243,7 @@ function OwnFormResponse(props) {
                                       src={
                                         item[0]?.filled_user?.profile_photo
                                           ? item[0]?.filled_user?.profile_photo
-                                          : '../img/small-user.png'
+                                          : '../img/upload.jpg'
                                       }
                                       alt=""
                                     />
@@ -271,6 +252,7 @@ function OwnFormResponse(props) {
                                     (inner_item, inner_index) => {
                                       return (
                                         <div
+                                          key={inner_index}
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
@@ -285,11 +267,6 @@ function OwnFormResponse(props) {
                                               : 'responses-header-detail response-header-left-line'
                                           }
                                         >
-                                          {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                          {console.log(
-                                            'iner_itemwdasdasddassd---->',
-                                            inner_item
-                                          )}
                                           <div className="d-flex">
                                             <h5>
                                               {inner_index > 0
@@ -304,13 +281,33 @@ function OwnFormResponse(props) {
                                                 : inner_item?.filled_user
                                                     ?.fullname}
                                             </h5>
-                                            {inner_index === 0 &&
+
+                                            {item[inner_index].isEditTime !=
+                                              null &&
+                                            moment(
+                                              item[inner_index].isEditTime
+                                            ).format() > moment().format() ? (
+                                              <span
+                                                style={{
+                                                  fontSize: '12px',
+                                                  paddingLeft: '12px',
+                                                }}
+                                              >
+                                                Currently in editing mode <br />
+                                                [Refresh the page after some
+                                                time]
+                                              </span>
+                                            ) : (
+                                              formData &&
+                                              inner_index === 0 &&
                                               (formData?.form_type ===
                                                 'editable' ||
                                                 formData?.form_type ===
                                                   'multi_submission') && (
                                                 <Link
-                                                  style={{ marginLeft: '5px' }}
+                                                  style={{
+                                                    marginLeft: '5px',
+                                                  }}
                                                   to={`/form/dynamic/${formData.form_name}`}
                                                   state={{
                                                     id: item[inner_index]?.id,
@@ -322,29 +319,29 @@ function OwnFormResponse(props) {
                                                     item[inner_index]
                                                   )}
                                                   {/* <div
-                                                    className="edit-icon-form"
-                                                    onClick={() => {
-                                                      alert(
-                                                        'Hello--->' +
-                                                          inner_index
-                                                      );
-                                                      navigate(
-                                                        `/form/dynamic/${formData.form_name}`,
-                                                        {
-                                                          state: {
-                                                            id: item[index].id,
-                                                            form_id: id,
-                                                          },
-                                                        }
-                                                      );
-                                                    }}
-                                                  > */}
+                                                  className="edit-icon-form"
+                                                  onClick={() => {
+                                                    alert(
+                                                      'Hello--->' +
+                                                        inner_index
+                                                    );
+                                                    navigate(
+                                                      `/form/dynamic/${formData.form_name}`,
+                                                      {
+                                                        state: {
+                                                          id: item[index].id,
+                                                          form_id: id,
+                                                        },
+                                                      }
+                                                    );
+                                                  }}
+                                                > */}
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                   />
-                                                  {/* </div> */}
                                                 </Link>
-                                              )}
+                                              )
+                                            )}
                                           </div>
                                           <h6>
                                             <span className="text-capitalize">
@@ -386,7 +383,41 @@ function OwnFormResponse(props) {
                                 </div>
 
                                 <div className="responses-header-right">
-                                  <p>
+                                  {item[0]?.updated ? (
+                                    <p>
+                                      Last Updated By :{' '}
+                                      {item[0]?.updatedByUsers[0]?.fullname}{' '}
+                                      <br />
+                                      Updated on: <br />
+                                      {moment(item[0].updatedAt)
+                                        .utcOffset('+11:00')
+                                        .format('DD/MM/YYYY') +
+                                        ', ' +
+                                        item[0].updatedAt
+                                          .split('T')[1]
+                                          .split('.')[0]
+                                          .split(':', 2)
+                                          .join(':') +
+                                        ' hrs'}
+                                    </p>
+                                  ) : (
+                                    <p>
+                                      Completed By :{' '}
+                                      {item[0]?.filled_user?.fullname} <br />
+                                      Completed on: <br />
+                                      {moment(item[0].createdAt)
+                                        .utcOffset('+11:00')
+                                        .format('DD/MM/YYYY') +
+                                        ', ' +
+                                        item[0].createdAt
+                                          .split('T')[1]
+                                          .split('.')[0]
+                                          .split(':', 2)
+                                          .join(':') +
+                                        ' hrs'}
+                                    </p>
+                                  )}
+                                  {/* <p>
                                     Completed on: <br />
                                     {moment(item[0].createdAt)
                                       .utcOffset('+11:00')
@@ -398,7 +429,7 @@ function OwnFormResponse(props) {
                                         .split(':', 2)
                                         .join(':') +
                                       ' hrs'}
-                                  </p>
+                                  </p> */}
                                 </div>
                               </div>
                             </Accordion.Header>
@@ -406,6 +437,7 @@ function OwnFormResponse(props) {
                               {responseData[index]?.map((item, index) => {
                                 return (
                                   <div
+                                    key={index}
                                     className={
                                       index === 0
                                         ? 'responses-content-wrap'
@@ -438,6 +470,8 @@ function OwnFormResponse(props) {
                                         }
                                         return (
                                           <div
+                                            key={inner_index}
+                                            sss
                                             className="responses-content-box"
                                             style={{ marginTop: '12px' }}
                                           >
@@ -723,9 +757,6 @@ function OwnFormResponse(props) {
                             </button>
                           </div>
                         </Form.Group>
-                        {/* <p style={{ color: 'red' }}>
-                                    {controls.error[controls.field_name]}
-                                  </p> */}
                       </Col>
                     )}
                   </Modal.Body>

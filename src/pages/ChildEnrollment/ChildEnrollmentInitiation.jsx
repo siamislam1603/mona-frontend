@@ -57,7 +57,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       setEducatorData(users?.map(user => ({
         id: user.id,
         value: user.fullname,
-        label: user.fullname
+        label: `${user.fullname} (${user.email})`
       })));
     }
   };
@@ -293,6 +293,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   ref={start_date}
+                                  min={new Date().toISOString().slice(0, 10)}
                                   // max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
@@ -452,27 +453,6 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
-                                <Form.Label>Child CRN *</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="child_crn"
-                                  ref={child_crn}
-                                  // ref={child_crn}
-                                  value={formOneChildData.child_crn || ""}
-                                  onChange={(e) => {
-                                    handleChildData(e);
-                                    setErrors(prevState => ({
-                                      ...prevState,
-                                      child_crn: null
-                                    }))
-                                  }} />
-
-                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
-                              </Form.Group>
-                            </Col>
-
-                            <Col md={12}>
-                              <Form.Group className="mb-3 relative">
                                 <div className="btn-radio inline-col">
                                   <Form.Label>School Status *</Form.Label>
                                   <Form.Check
@@ -521,6 +501,27 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 </Form.Group>
                               </Col>
                             }
+
+                            <Col md={6}>
+                              <Form.Group className="mb-3 relative">
+                                <Form.Label>Child CRN *</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="child_crn"
+                                  ref={child_crn}
+                                  // ref={child_crn}
+                                  value={formOneChildData.child_crn || ""}
+                                  onChange={(e) => {
+                                    handleChildData(e);
+                                    setErrors(prevState => ({
+                                      ...prevState,
+                                      child_crn: null
+                                    }))
+                                  }} />
+
+                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
+                              </Form.Group>
+                            </Col>
                           </Row>
                         </div>
                       </div>

@@ -4,12 +4,11 @@ import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 
 const FileUpload = (props) => {
-  useEffect(()=>{
-    if(props.errorFocus)
-    {
+  useEffect(() => {
+    if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
-  },[])
+  }, []);
   const { ...controls } = props;
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -19,9 +18,7 @@ const FileUpload = (props) => {
       reader.onerror = (error) => reject(error);
     });
   const uploadFiles = async (file) => {
-    console.log("file.type--->",file.name.split(".")[file.name.split(".").length-1]);
-    console.log("file.type--->",file.type);
-    let type=file.name.split(".")[file.name.split(".").length-1];
+    let type = file.name.split('.')[file.name.split('.').length - 1];
     if (
       !(
         type.includes('doc') ||
@@ -40,12 +37,10 @@ const FileUpload = (props) => {
     ) {
       toast.error('File must be DOC, PDF, TXT, XLS, or PPT.');
       return null;
-    }
-    else if (file.size > 2048 * 1024) {
+    } else if (file.size > 2048 * 1024) {
       toast.error('File is too large. File limit 2 MB.');
       return null;
-    }
-     else {
+    } else {
       const body = new FormData();
       const blob = await fetch(await toBase64(file)).then((res) => res.blob());
       body.append('image', blob, file.name);
@@ -74,7 +69,10 @@ const FileUpload = (props) => {
           type="file"
           name={controls.field_name}
           id={controls.field_name}
-          value={props.field_data && props.field_data.fields[`${controls.field_name}`]}
+          value={
+            props.field_data &&
+            props.field_data.fields[`${controls.field_name}`]
+          }
           onChange={async (e) => {
             let file = e.target.files[0];
             await uploadFiles(file).then((url) => {

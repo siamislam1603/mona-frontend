@@ -7,8 +7,8 @@ import './ImageCropPopup.css';
 
 let temp = () => { };
 
-const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
-
+const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
+    console.log('croppedImage', image, setCoverImage)
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -35,6 +35,20 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
         }));
         setPopupVisible(false);
     }
+
+    const onImageCancle = async () => {
+        setPopupVisible(false);
+
+        let croppedImageCanvas = await getCroppedImg(null, null);
+        let croppedImage = convertCanvasToImg(null);
+
+        setCroppedImage(croppedImage);
+        setFormErrors(prevState => ({
+            ...prevState,
+            images: null
+        }));
+    }
+
 
     const convertCanvasToImg = (canvas) => {
         let img = new Image();
@@ -67,7 +81,6 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                             onZoomChange={setZoom}
                             onCropComplete={onCropComplete} />
                     </div>
-
                     <div className="slider">
                         <Slider
                             min={1}
@@ -80,7 +93,7 @@ const ImageCropTraning = ({ image, setCroppedImage, setPopupVisible, setFormErro
                 </div>
 
                 <div className="container-buttons">
-                    <Button variant="contained" color="primary" className="me-3" onClick={() => setPopupVisible(false)}>
+                    <Button variant="contained" color="primary" className="me-3" onClick={onImageCancle}>
                         Cancel
                     </Button>
                     <Button variant="contained" color="primary" onClick={onImageCrop}>

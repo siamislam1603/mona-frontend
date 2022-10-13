@@ -41,6 +41,16 @@ const training = [
 ];
 const animatedComponents = makeAnimated();
 
+function isTrainingExpired(end_date) {
+  let due_date = moment(end_date).format();
+  let today = moment().format();
+
+  if(due_date < today)
+    return true
+
+  return false
+}
+
 const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   let location = useLocation();
   const navigate = useNavigate();
@@ -55,7 +65,10 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-  const [page,setPage] = useState(5)
+  const [page,setPage] = useState(6)
+
+  const [count,setCount] = useState(null)
+  const [checkCount,setCheckCount]= useState(null)
 //   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const [formSettings, setFormSettings] = useState({
@@ -97,7 +110,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       const { categoryList } = response.data;
       setTrainingCategory([
         {
-          id: 0,
+          id: 0, 
           value: 'all categories',
           label: 'All Categories'
         },
@@ -148,8 +161,9 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
       setfullLoaderStatus(false)
-
-      setOtherTrainingData(searchedData)
+      setCount(response.data.count)
+      setCheckCount(searchedData?.length)
+       setOtherTrainingData(searchedData)
 
       
     }
@@ -159,7 +173,34 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
    }
 
   }
+  const searchTraining= async() =>{
+    try {
 
+      let user_id = localStorage.getItem('user_id');
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      console.log('Training created by OTHER',response)
+      if(response.status===200 && response.data.status === "success"){
+        const {searchedData} = response.data
+        setfullLoaderStatus(false)
+            setCheckCount(0)
+            setCount(0)
+        setOtherTrainingData(searchedData)
+  
+        
+      }
+     } catch (error) {
+          setfullLoaderStatus(false)
+          setOtherTrainingData([])
+     }
+  }
+  const fetchMoreData = async ( ) =>{
+    setPage(page => page+6) 
+}
   const handleTrainingDelete = async (trainingId) => {
     console.log('DELETING THE TRAINING!');
     let token = localStorage.getItem('token');
@@ -236,7 +277,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: data.fullname
+          key: `${data.fullname} (${data.email})`
         })),
       ]);
     }
@@ -254,8 +295,17 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   }, []);
   useEffect(() =>{
     trainingCreatedByOther() 
-  },[filterData.search,filterData.category_id,page,selectedFranchisee])
 
+  },[filterData.category_id,page,selectedFranchisee])
+  useEffect(() =>{
+    if(filterData.search){
+      searchTraining()
+    }
+    else{
+      setPage(6)
+      trainingCreatedByOther()
+    }
+  },[filterData.search])
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
@@ -384,21 +434,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                       </Form.Group>
                     </div>
                   </div>
-                  <InfiniteScroll
-                  style={{
-                    overflow: "hidden"
-                  }}
-                        dataLength={otherTrainingData.length} //This is important field to render the next data
-                        next={() => setPage(page+5)}
-                        hasMore={true}
-                        // loader={<h4>Loading...</h4>}
-                        // endMessage={
-                        //   <p style={{ textAlign: 'center' }}>
-                        //     <b>Yay! You have seen it all</b>
-                        //   </p>
-                        // }
-                       
-                      >
+
                   <div className="training-column">
 
           <Row>
@@ -433,11 +469,19 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>
-                            <Dropdown.Item href="#" onClick={() => {
-                              setSaveTrainingId(training.id);
-                              setShowModal(true)
-                            }}>Share</Dropdown.Item>
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href={`/edit-training/${training.id}`}>
+                                Edit
+                              </Dropdown.Item>
+                            }
+                            {
+                              isTrainingExpired(training.end_date) === false &&
+                              <Dropdown.Item href="#" onClick={() => {
+                                setSaveTrainingId(training.id);
+                                setShowModal(true)
+                              }}>Share</Dropdown.Item>
+                            }
                             <Dropdown.Item onClick={() => {
                               if (window.confirm("Are you sure you want to delete this training?"))
                                 handleTrainingDelete(training.id)
@@ -460,7 +504,13 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
           </Row>
           </div>
 
-          </InfiniteScroll>
+          {
+                  count !== checkCount && !fullLoaderStatus && <div className="text-center">
+
+                  <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
+
+                 </div>
+                }
           {fullLoaderStatus && 
                               <div className="text-center">
                               <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>

@@ -16,16 +16,19 @@ const Select = (props) => {
             isInvalid={!!controls.error[controls.field_name]}
           >
             <option>Select {controls.label}</option>
-            {eval(controls.option)?.map((item2) => {
+            {eval(controls.option)?.map((item2,index) => {
               return (
                 <>
-                  {props.field_data ?
-                  props.field_data.fields[`${controls.field_name}`] ===
+                  {props.field_data ? (
+                    props.field_data.fields[`${controls.field_name}`] ===
                     Object.keys(item2)[0] ? (
-                    <option selected>{Object.keys(item2)[0]}</option>
+                      <option selected key={index}>{Object.keys(item2)[0]}</option>
+                    ) : (
+                      <option key={index}>{Object.keys(item2)[0]}</option>
+                    )
                   ) : (
-                    <option>{Object.keys(item2)[0]}</option>
-                  ): <option>{Object.keys(item2)[0]}</option>}
+                    <option key={index}>{Object.keys(item2)[0]}</option>
+                  )}
                 </>
               );
             })}

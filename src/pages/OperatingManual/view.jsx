@@ -48,6 +48,62 @@ const OperatingManual = () => {
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
   const loginuser = localStorage.getItem('user_role')
+
+  const manageCollpase=()=>{
+    var tree = document.getElementById('tree1');
+    if (tree) {
+      tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
+        var elm = el.parentNode;
+        elm.classList.add('branch');
+        var x = document.createElement('img');
+        el.classList.add('expand');
+        x.src = '../img/circle-minus.svg';
+        const childNode = elm.childNodes[0];
+        if (location.search) {
+          if (index === Index) {
+            childNode.classList.add('tree-title');
+          }
+        } else {
+          if (index === 0) {
+            childNode.classList.add('tree-title');
+          }
+        }
+        if (elm.firstChild.tagName !== x.tagName) {
+          console.log('tagName', x.tagName, elm.firstChild.tagName);
+          elm.insertBefore(x, elm.firstChild);
+        }
+
+        elm.addEventListener(
+          'click',
+          function (event) {
+            if (elm === event.target || elm === event.target.parentNode) {
+              if (el.classList.contains('collapse')) {
+                el.classList.add('expand');
+                el.classList.remove('collapse');
+                const childNode = el.parentNode.childNodes[1];
+                childNode.classList.add('tree-title');
+                x.src = '../img/circle-minus.svg';
+              } else {
+                el.classList.add('collapse');
+                el.classList.remove('expand');
+                const childNode = el.parentNode.childNodes[1];
+                childNode.classList.remove('tree-title');
+                x.src = '../img/plus-circle.svg';
+              }
+            }
+          },
+          false
+        );
+      });
+    }
+  }
+  
+  // useEffect(() => {
+  //   manageCollpase();
+  // },[]);
+  useEffect(() => {
+    manageCollpase();
+  }, [operatingManualdata]);
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
@@ -156,16 +212,43 @@ const OperatingManual = () => {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("The result",result)
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
           if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
-            setUser(result?.data);
-          else setUser(result?.users);
-        } else setUser(result?.data);
+          {
+            let formattedUserData = result?.data?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+
+              // charAt(0).toUpperCase() + string.slice(1);
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+          }
+          else {
+            let formattedUserData = result?.data?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+          }
+        } else {
+          let formattedUserData = result?.data?.map((d) => ({
+            id: d.id,
+            fullname: d.fullname,
+            email: d.email,
+            namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+          setUser(formattedUserData);
+        }
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => console.log('View OM error', error));
   };
 
   const checkDelete = async()=>{
@@ -191,64 +274,13 @@ const OperatingManual = () => {
     console.log(" the id The response check",response)
 
   }
-  useEffect(() => {
-    manageCollpase();
-  });
+ 
   useEffect(() =>{
     checkDelete()
   },[])
-  const manageCollpase=()=>{
-    var tree = document.getElementById('tree1');
-    if (tree) {
-      tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
-        var elm = el.parentNode;
-        elm.classList.add('branch');
-        var x = document.createElement('img');
-        el.classList.add('expand');
-        x.src = '../img/circle-minus.svg';
-        const childNode = elm.childNodes[0];
-        if (location.search) {
-          if (index === Index) {
-            childNode.classList.add('tree-title');
-          }
-        } else {
-          if (index === 0) {
-            childNode.classList.add('tree-title');
-          }
-        }
-        if (elm.firstChild.tagName !== x.tagName) {
-          console.log('tagName', x.tagName, elm.firstChild.tagName);
-          elm.insertBefore(x, elm.firstChild);
-        }
-
-        elm.addEventListener(
-          'click',
-          function (event) {
-            if (elm === event.target || elm === event.target.parentNode) {
-              if (el.classList.contains('collapse')) {
-                el.classList.add('expand');
-                el.classList.remove('collapse');
-                const childNode = el.parentNode.childNodes[1];
-                childNode.classList.add('tree-title');
-                x.src = '../img/circle-minus.svg';
-              } else {
-                el.classList.add('collapse');
-                el.classList.remove('expand');
-                const childNode = el.parentNode.childNodes[1];
-                childNode.classList.remove('tree-title');
-                x.src = '../img/plus-circle.svg';
-              }
-            }
-          },
-          false
-        );
-      });
-    }
-  }
   
-  useEffect(() => {
-    manageCollpase();
-  }, [operatingManualdata]);
+  
+  
   const getOneOperatingManual = async (id, category_name) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -418,6 +450,7 @@ const OperatingManual = () => {
         if (category_flag) {
           setCategory(result.result);
         }
+        manageCollpase();
         if (location.search) {
           result?.result?.map((item, index) => {
             item?.operating_manuals?.map((inner_item, inner_index) => {
@@ -495,6 +528,7 @@ const OperatingManual = () => {
     console.log('Skn');
   }, [operatingManualdata]);
   console.log('Rohan manual', operatingManualdata, formSettingData);
+  console.log("The users",user)
 
   return (
     <>
@@ -1238,7 +1272,7 @@ const OperatingManual = () => {
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
-                      displayValue="email"
+                      displayValue="namemail"
                       className="multiselect-box default-arrow-select"
                       selectedValues={selectedUser}
                       onRemove={onRemoveUser}

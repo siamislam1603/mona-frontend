@@ -192,6 +192,7 @@ const Announcements = () => {
 
   const myDataCount = async () => {
     try {
+      
       let api_url = ' '
       let franhiseAlias = "all"
       let userId = localStorage.getItem("user_id")
@@ -206,8 +207,9 @@ const Announcements = () => {
           authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      //  console.log("THE COUNT OF MY DATA",response.data.data)
+       console.log("THE COUNT OF MY DATA",response)
       setMyCount(response.data.result.count)
+      
 
     } catch (error) {
       console.log("MY COUNT ERROR", error)
@@ -613,8 +615,7 @@ const Announcements = () => {
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5`, {
+      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${selectedFranchisee}&isEvent=1&search=&offset=0&limit=5`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -623,7 +624,7 @@ const Announcements = () => {
       // console.log("ALL EVENTS",response)
       if (response.status === 200 && response.data.status === "success") {
         setEventCount(response.data.result.count)
-        setMyDataLength(response.data.result.searchedData.length)
+        // setEventLength(response.data.result.searchedData.length)
       }
     } catch (error) {
       if (error.response.status === 404) {
@@ -706,6 +707,9 @@ const Announcements = () => {
   useEffect(() => {
     if (selectedFranchisee && tabLinkPath === "/all-announcements") {
       onLoadAnnouncement()
+    }
+    else if(selectedFranchisee && tabLinkPath === "/all-events"){
+      OnLoadEvent()
     }
 
   }, [tabLinkPath])
@@ -791,6 +795,24 @@ const Announcements = () => {
    }
 
   },[data])
+  useEffect(() =>{
+    let notifcationtab = localStorage.getItem("notification_tab")
+    if(notifcationtab === "Event"){
+      setTabLinkPath('/all-events');
+    }
+    else if (notifcationtab ==="Announcement"){
+      if (localStorage.getItem("user_role") === 'franchisor_admin') {
+        setTabLinkPath('/my-announcements');
+      }
+      else{
+        setTabLinkPath('/all-announcements');
+      }
+    }
+    setTimeout(() => {
+      localStorage.removeItem("notification_tab")
+    }, 1500);
+
+  },[])
   // useEffect(() =>{
   //   if(data){
   //     LoadMoreMyData()
@@ -800,10 +822,12 @@ const Announcements = () => {
 
   // console.log("USER ROLE",userRole)
   console.log("THE COUNT AND COMMON",theCount,theCommon)
-  console.log("MY COUNT AND MY data lenght",myCount,myDataLength)
+  console.log("MY COUNT AND MY data lenght",myCount ,"mt",myDataLength)
   console.log("Event count and event lenght",eventCount,eventLength)
   // console.log("tablink path", tabLinkPath)
-  console.log("All Annoucnement",allAnnouncement)
+  // console.log("All Annoucnement",allAnnouncement)
+  console.log("ALL event",allEvent)
+  console.log("Pageevent",pageEvent)
 
   // console.log("THE LENGHT PLEASE", theLoadOffSet)
   // console.log("THE SEATCH VALUE",searchvalue)

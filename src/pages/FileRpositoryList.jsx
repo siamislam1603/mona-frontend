@@ -65,7 +65,6 @@ const FileRpositoryList = () => {
             let user_Role = localStorage.getItem('user_role');
             let URL = user_Role === "guardian" ? `${BASE_URL}/fileRepo/files-by-category/${Params.id}?childId=[${data}]` :
                 `${BASE_URL}/fileRepo/files-by-category/${Params.id}`
-
             if (URL) {
                 let response = await fetch(URL, requestOptions)
                 response = await response.json();
@@ -76,11 +75,11 @@ const FileRpositoryList = () => {
                 const users = response.result.files;
 
                 let tempData = users.map((dt) => ({
-                    name: `${dt.repository.repository_files[0].fileName},${dt.repository.repository_files[0].fileType} ,${dt.repository.repository_files[0].filesPath}`,
-                    createdAt: dt.createdAt,
-                    userID: dt.id,
-                    creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
-                    Shaired: dt.repository.repository_files[0].length,
+                    name: `${dt?.repository?.repository_files[0]?.fileName},${dt?.repository?.repository_files[0]?.fileType},${dt?.repository?.repository_files[0]?.filesPath}`,
+                    createdAt: dt?.createdAt,
+                    userID: dt?.id,
+                    creatorName: dt?.repository?.repository_files[0]?.creatorName + "," + dt.repository?.repository_files[0]?.creatorRole,
+                    Shaired: dt?.repository.repository_files[0]?.length,
                 }));
                 setUserData(tempData);
             }
@@ -114,13 +113,15 @@ const FileRpositoryList = () => {
                     setCount(response.result.count)
                     if (response) {
                         const users = response.result.files;
+
                         let tempData = users.map((dt) => ({
-                            name: `${dt.repository.repository_files[0].fileName},${dt.repository.repository_files[0].fileType} ,${dt.repository.repository_files[0].filesPath}`,
-                            createdAt: dt.createdAt,
-                            userID: dt.id,
-                            creatorName: dt.repository.repository_files[0].creatorName + "," + dt.repository.repository_files[0].creatorRole,
-                            Shaired: dt.repository.repository_files[0].length,
+                            name: `${dt?.repository?.repository_files[0]?.fileName},${dt?.repository?.repository_files[0]?.fileType},${dt?.repository?.repository_files[0]?.filesPath}`,
+                            createdAt: dt?.createdAt,
+                            userID: dt?.id,
+                            creatorName: dt?.repository?.repository_files[0]?.creatorName + "," + dt.repository?.repository_files[0]?.creatorRole,
+                            Shaired: dt?.repository.repository_files[0]?.length,
                         }));
+
                         setUserData(tempData);
                     }
                 }
@@ -130,18 +131,22 @@ const FileRpositoryList = () => {
         }
     }
     useEffect(() => {
-        GetSearchFile();
+        if (SearchValue) {
+            GetSearchFile();
+        }
     }, [SearchValue])
 
 
     useEffect(() => {
-        GetFile();
-    }, [selectedFranchisee])
+        if (selectedFranchisee) {
+            GetFile();
+        }
+    }, [selectedFranchisee,])
 
     const defaultSortedBy = [{
         dataField: "name",
         order: "asc"  // or desc
-      }];
+    }];
 
     const [columns, setColumns] = useState([
         {
@@ -150,10 +155,21 @@ const FileRpositoryList = () => {
             sort: true,
             formatter: (cell) => {
                 cell = cell.split(',');
+                var ret = cell[1].replace('application/', '')
+                var Text = cell[1].replace('text/', '')
+                var image = cell[1].replace('image/', '')
+
+                var tet2 = ""
+                if (ret === 'text/html' || ret === 'text/xml') {
+                    tet2 = Text
+                }
+                else {
+                    tet2 = ret
+                }
                 return (
                     <>
                         <div div className="user-list">
-                            {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" || cell[1] === "image" ?
+                            {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
                                         <a href={cell[2]} download>
@@ -161,7 +177,7 @@ const FileRpositoryList = () => {
                                         </a>
                                     </span>
                                     <span className="user-name">
-                                        {cell[0]}.img
+                                        {cell[0]}.{image}
                                     </span>
                                 </>
                                 :
@@ -176,6 +192,7 @@ const FileRpositoryList = () => {
                                             {cell[0]}.mp3
                                         </span>
                                     </>
+
                                     : cell[1] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>
@@ -187,28 +204,17 @@ const FileRpositoryList = () => {
                                                     fun={handleVideoClose}
                                                 />
                                             </div>
-
                                         </> :
-                                        cell[1] === "application/octet-stream" || cell[1] === "application/pdf" || cell[1] === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || cell[1] === "text/csv" || cell[1] === "text/html" || cell[1] === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ?
-                                            <>
-                                                <span className="user-pic-tow">
-                                                    <a href={cell[2]} download >
-                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                                    </a>
-                                                </span>
-                                                <span className="user-name">
-                                                    {cell[0]}.Doc
-                                                </span>
-                                            </> : <>
-                                                <span className="user-pic-tow">
-                                                    <a href={cell[2]} download >
-                                                        <img src="../img/abstract-ico.png" className="me-2" alt="" />
-                                                    </a>
-                                                </span>
-                                                <span className="user-name">
-                                                    {cell[0]}
-                                                </span>
-                                            </>
+                                        <>
+                                            <span className="user-pic-tow">
+                                                <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
+                                                    <img src="../img/abstract-ico.png" className="me-2" alt="" />
+                                                </a>
+                                            </span>
+                                            <span className="user-name">
+                                                {cell[0]}.{tet2}
+                                            </span>
+                                        </>
                             }
                         </div>
                     </>

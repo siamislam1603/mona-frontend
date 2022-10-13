@@ -17,6 +17,9 @@ import TopHeader from '../../components/TopHeader';
 import SignaturePad from 'react-signature-canvas';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 function FormResponse(props) {
   const Params = useParams();
@@ -36,6 +39,7 @@ function FormResponse(props) {
     from_date: '',
     to_date: '',
   });
+  const [fillPermission, setFillPermission] = useState([]);
   let hideFlag = false;
   let count = 0;
 
@@ -52,20 +56,10 @@ function FormResponse(props) {
   };
   const trim = (e, index) => {
     e.preventDefault();
-    // console.log(
-    //   'index--->',
-    //   Index,
-    //   '-----',
-    //   JSON.parse(responseData[Index][0].fields)
-    // );
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    // console.log(
-    //   'sigpad--------->><<<<<<<<',
-    //   sigPad.current.getTrimmedCanvas().toDataURL('image/png')
-    // );
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
@@ -93,8 +87,6 @@ function FormResponse(props) {
           hideFlag = true;
         }
       });
-
-    // props.onChange(controls.field_label.split(" ").join("_").toLowerCase(),sigPad.current.getTrimmedCanvas().toDataURL("image/png"),"signature");
   };
   const getAllForm = () => {
     var myHeaders = new Headers();
@@ -141,13 +133,12 @@ function FormResponse(props) {
         if (result) {
           setfullLoaderStatus(false);
         }
-
         if (result?.result?.length > 0) {
+          setFillPermission(result?.fillPermission?.fill_access_users);
           result?.result.map((item, index) => {
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
-              // if(inner_item.fields)
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
                 if (field_item === 'signature') {
                   item['signature_button'] = false;
@@ -189,7 +180,6 @@ function FormResponse(props) {
       body: JSON.stringify(seenData),
       redirect: 'follow',
     };
-    console.log('seen responceeeeeeeeeeeeeeeeeeeeeee', seenData);
     fetch(`${BASE_URL}/form/response/seen`, requestOptions)
       .then((response) => response.json())
       .then((result) => console.log(result?.message))
@@ -228,7 +218,6 @@ function FormResponse(props) {
       .catch((error) => console.log('error', error));
   };
 
-  // dateFilter && console.log('Filter Date:', dateFilter);
   return (
     <>
       <div id="main">
@@ -273,7 +262,6 @@ function FormResponse(props) {
                             type="date"
                             name="from_date"
                             value={dateFilter?.from_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -281,7 +269,6 @@ function FormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Form.Group className="me-3">
                           <Form.Label>To Date</Form.Label>
@@ -289,7 +276,6 @@ function FormResponse(props) {
                             type="date"
                             name="to_date"
                             value={dateFilter?.to_date}
-                            // min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => {
                               setDateFilter((prevState) => ({
                                 ...prevState,
@@ -297,7 +283,6 @@ function FormResponse(props) {
                               }));
                             }}
                           />
-                          {/* {trainingSettingErrors.start_date !== null && <span className="error">{trainingSettingErrors.start_date}</span>} */}
                         </Form.Group>
                         <Button
                           variant="primary"
@@ -317,7 +302,7 @@ function FormResponse(props) {
                     <div className="forms-search me-0 ms-auto mt-3">
                       <Form.Group>
                         <div className="forms-icon">
-                          <img src="../img/search-icon-light.svg" alt="" />
+                          <img src="/img/search-icon-light.svg" alt="" />
                         </div>
                         <Form.Control
                           type="text"
@@ -337,7 +322,7 @@ function FormResponse(props) {
                       <Accordion defaultActiveKey={Index_id}>
                         {responseData.map((item, index) => {
                           return (
-                            <Accordion.Item eventKey={index}>
+                            <Accordion.Item key={index} eventKey={index}>
                               <Accordion.Header>
                                 <div className="responses-header-row">
                                   <div className="responses-header-left">
@@ -347,7 +332,7 @@ function FormResponse(props) {
                                           item[0]?.filled_user?.profile_photo
                                             ? item[0]?.filled_user
                                                 ?.profile_photo
-                                            : '../img/small-user.png'
+                                            : '/img/upload.jpg'
                                         }
                                         alt=""
                                       />
@@ -356,6 +341,7 @@ function FormResponse(props) {
                                       (inner_item, inner_index) => {
                                         return (
                                           <div
+                                            key={inner_index}
                                             className={
                                               responseData[index].length - 1 ===
                                                 inner_index ||
@@ -370,12 +356,7 @@ function FormResponse(props) {
                                                 : 'responses-header-detail response-header-left-line'
                                             }
                                           >
-                                            {/* {console.log("iner_itemwdasdasddassd---->",responseData[index].length)} */}
-                                            {/* {console.log(
-                                            'iner_itemwdasdasddassd---->',
-                                            inner_item
-                                          )} */}
-                                            <h5>
+                                            {/* <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
                                                     inner_index - 1
@@ -387,7 +368,74 @@ function FormResponse(props) {
                                                     ?.fullname
                                                 : inner_item?.filled_user
                                                     ?.fullname}
-                                            </h5>
+                                            </h5> */}
+                                            <div className="d-flex">
+                                              <h5>
+                                                {inner_index > 0
+                                                  ? !responseData[index][
+                                                      inner_index - 1
+                                                    ].filled_user?.fullname?.includes(
+                                                      inner_item?.filled_user
+                                                        ?.fullname
+                                                    ) &&
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  : inner_item?.filled_user
+                                                      ?.fullname}
+                                              </h5>
+                                              {fillPermission.includes(
+                                                localStorage.getItem(
+                                                  'user_role'
+                                                ) === 'guardian'
+                                                  ? 'parent'
+                                                  : localStorage.getItem(
+                                                      'user_role'
+                                                    )
+                                              ) ? (
+                                                item[inner_index].isEditTime !=
+                                                  null &&
+                                                moment(
+                                                  item[inner_index].isEditTime
+                                                ).format() >
+                                                  moment().format() ? (
+                                                  <span
+                                                    style={{
+                                                      fontSize: '12px',
+                                                      paddingLeft: '12px',
+                                                    }}
+                                                  >
+                                                    Currently in editing mode{' '}
+                                                    <br />
+                                                    [Refresh the page after some
+                                                    time]
+                                                  </span>
+                                                ) : (
+                                                  formData &&
+                                                  inner_index === 0 &&
+                                                  (formData?.form_type ===
+                                                    'editable' ||
+                                                    formData?.form_type ===
+                                                      'multi_submission') && (
+                                                    <Link
+                                                      style={{
+                                                        marginLeft: '5px',
+                                                      }}
+                                                      to={`/form/dynamic/${formData.form_name}`}
+                                                    >
+                                                      {console.log(
+                                                        'item[index]?.id--->',
+                                                        item[inner_index]
+                                                      )}
+                                                      <FontAwesomeIcon
+                                                        icon={faPen}
+                                                      />
+                                                    </Link>
+                                                  )
+                                                )
+                                              ) : (
+                                                ''
+                                              )}
+                                            </div>
                                             <h6>
                                               <span className="text-capitalize">
                                                 {inner_index > 0
@@ -429,15 +477,45 @@ function FormResponse(props) {
                                     )}
                                   </div>
                                   <div className="responses-header-right">
-                                    {console.log(
-                                      'CREATED AT:',
-                                      item[0].createdAt
+                                    {item[0]?.updated ? (
+                                      <p>
+                                        Last Updated By :{' '}
+                                        {item[0]?.updatedByUsers[0]?.fullname}{' '}
+                                        <br />
+                                        Updated on: <br />
+                                        {moment(item[0].updatedAt)
+                                          .utcOffset('+11:00')
+                                          .format('DD/MM/YYYY') +
+                                          ', ' +
+                                          item[0].updatedAt
+                                            .split('T')[1]
+                                            .split('.')[0]
+                                            .split(':', 2)
+                                            .join(':') +
+                                          ' hrs'}
+                                      </p>
+                                    ) : (
+                                      <p>
+                                        Completed By :{' '}
+                                        {item[0]?.filled_user?.fullname} <br />
+                                        Completed on: <br />
+                                        {moment(item[0].createdAt)
+                                          .utcOffset('+11:00')
+                                          .format('DD/MM/YYYY') +
+                                          ', ' +
+                                          item[0].createdAt
+                                            .split('T')[1]
+                                            .split('.')[0]
+                                            .split(':', 2)
+                                            .join(':') +
+                                          ' hrs'}
+                                      </p>
                                     )}
-                                    <p>
+                                    {/* <p>
                                       Completed on: <br />
-                                      {moment(item[0].createdAt)
-                                        // .utcOffset('+10:00')
-                                        .format('DD/MM/YYYY') +
+                                      {moment(item[0].createdAt).format(
+                                        'DD/MM/YYYY'
+                                      ) +
                                         ', ' +
                                         item[0].createdAt
                                           .split('T')[1]
@@ -445,7 +523,7 @@ function FormResponse(props) {
                                           .split(':', 2)
                                           .join(':') +
                                         ' hrs'}
-                                    </p>
+                                    </p> */}
                                   </div>
                                 </div>
                               </Accordion.Header>
@@ -453,6 +531,7 @@ function FormResponse(props) {
                                 {responseData[index]?.map((item, index) => {
                                   return (
                                     <div
+                                      key={index}
                                       className={
                                         index === 0
                                           ? 'responses-content-wrap'
@@ -472,14 +551,6 @@ function FormResponse(props) {
                                       {Object.keys(JSON.parse(item.fields)).map(
                                         (inner_item, inner_index) => {
                                           {
-                                            console.log(
-                                              'field_type----',
-                                              Object.keys(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]
-                                            );
-                                          }
-                                          {
                                             (Object.keys(
                                               JSON.parse(item.fields)
                                             )[inner_index] === 'headings' ||
@@ -491,6 +562,7 @@ function FormResponse(props) {
                                           }
                                           return (
                                             <div
+                                              key={inner_index}
                                               className="responses-content-box"
                                               style={{ marginTop: '12px' }}
                                             >
@@ -788,9 +860,6 @@ function FormResponse(props) {
                             </button>
                           </div>
                         </Form.Group>
-                        {/* <p style={{ color: 'red' }}>
-                                    {controls.error[controls.field_name]}
-                                  </p> */}
                       </Col>
                     )}
                   </Modal.Body>
