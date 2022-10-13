@@ -663,6 +663,7 @@ const DynamicForm = () => {
                               onChange={(key, value, type) => {
                                 setField(item, key, value, type);
                               }}
+                              freshForm={true}
                             />
                           );
                         })

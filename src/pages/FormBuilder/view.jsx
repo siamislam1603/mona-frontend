@@ -257,7 +257,7 @@ function ViewFormBuilder(props) {
                       localStorage.getItem('user_role') === 'guardian'
                         ? localStorage.setItem('child_id', id)
                         : id;
-                    if (count === 0) {
+                    if (count === 0 && id) {
                       getFormData('', id);
                       count++;
                     }
