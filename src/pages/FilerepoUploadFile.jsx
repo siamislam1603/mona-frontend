@@ -47,7 +47,8 @@ const FilerepoUploadFile = () => {
     const getUser = async () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
+            let userIdd = localStorage.getItem('user_id')
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -565,7 +566,8 @@ const FilerepoUploadFile = () => {
                                                     <Form.Label>Select Franchise(s)</Form.Label>
                                                     <div className="select-with-plus">
                                                         <Multiselect
-                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                            isClearable={false}
+                                                            // disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
                                                             className="multiselect-box default-arrow-select"
@@ -597,7 +599,7 @@ const FilerepoUploadFile = () => {
                                         </Row>
                                         : ""
                                     }
-                                   
+
                                     {sendToAllFranchisee == "none" && formSettings.assigned_franchisee.length < 1 ? "" : (
                                         <Row className="mt-4">
                                             <Col lg={3} md={6}>

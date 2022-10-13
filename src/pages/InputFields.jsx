@@ -15,8 +15,8 @@ const InputFields = (props) => {
   let inputElement = null;
   const { ...controls } = props;
 
-  if (isEmpty(controls.field_data)) {
-    return <FullLoader />;
+  if (isEmpty(controls?.field_data)) {
+    if (!controls.freshForm) return <FullLoader />;
   }
 
   switch (controls?.field_type) {
