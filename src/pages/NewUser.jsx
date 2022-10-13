@@ -23,6 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
+  let assignedEducators = query.searchParams.get('educators').split(",");
   const navigate = useNavigate();
 
   // REF DECLARATIONS
@@ -102,11 +103,19 @@ const NewUser = () => {
       
       // SELECTIVE CREATION OF ENGAGEBAY CONTACTS
       if(query.searchParams.get('childId')) {
-        response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        if(query.searchParams.get('role') === 'guardian') {
+          response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+        } else if(query.searchParams.get('role') === 'educator') {
+          response =await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`,{educatorIds: [...assignedEducators, data.id], removedEducatorIds: []}, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+        }
         if (response.status === 201) {
           response = await axios.patch(`${BASE_URL}/auth/user/update/${data.id}`);
           if(response.status === 201 && response.data.status === "success") {
