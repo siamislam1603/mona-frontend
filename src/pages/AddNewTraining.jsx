@@ -120,7 +120,6 @@ const AddNewTraining = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
-  console.log('croppedImage', croppedImage)
 
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
