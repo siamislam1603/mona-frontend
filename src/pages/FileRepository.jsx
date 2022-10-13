@@ -37,7 +37,7 @@ const FileRepository = () => {
     category_name: "",
     id: ""
   })
-  
+
 
 
 
@@ -77,6 +77,7 @@ const FileRepository = () => {
   const Submiton = (e) => {
     e.preventDefault();
     addAndSaveCategory();
+    setCategory("")
   }
   const handleLinkClick = event => {
     let path = event.target.getAttribute('path');
@@ -149,7 +150,7 @@ const FileRepository = () => {
       localStorage.setItem('category_Update_Name', category.category_name)
 
     }
-  
+
   }
 
 
@@ -163,12 +164,21 @@ const FileRepository = () => {
       });
 
       if (response.status === 200) {
-        let { message } = response.data;
-        SetfileDeleteMessage(message)
-        getFileCategory();
-        setTimeout(() => {
-          SetfileDeleteMessage(null)
-        }, 3000)
+        if (response.data.status === "success") {
+          let { message } = response.data;
+          SetfileDeleteMessage(message)
+          getFileCategory();
+          setTimeout(() => {
+            SetfileDeleteMessage(null)
+          }, 3000)
+        } else if (response.data.status === "fail") {
+          let { message } = response.data;
+          SetCategoryNotCreated(message)
+          getFileCategory();
+          setTimeout(() => {
+            SetCategoryNotCreated(null)
+          }, 3000)
+        }
       }
     } catch (err) {
       SetfileDeleteMessage("You don't have permission to delete this file !");

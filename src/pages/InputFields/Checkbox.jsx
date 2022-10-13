@@ -1,11 +1,16 @@
-import { uniq } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Col, Form } from 'react-bootstrap';
+import { FullLoader } from '../../components/Loader';
 
 let value = {};
 
 const Checkbox = (props) => {
   const { ...controls } = props;
+
+  // if (isEmpty(controls.field_data)) {
+  //   return <FullLoader />;
+  // }
 
   const [array, setArray] = useState([]);
   const [event, setEvent] = useState();
@@ -20,14 +25,14 @@ const Checkbox = (props) => {
   }, []);
 
   useEffect(() => {
-    let a = props.field_data.fields[controls.field_name];
+    let fieldData = props?.field_data?.fields[controls?.field_name];
 
-    if (typeof a === 'object') {
-      a = a.join(',');
+    if (typeof fieldData === 'object') {
+      fieldData = fieldData?.join(',');
     }
 
     setArray(
-      a.split(',').map((item) => {
+      fieldData?.split(',').map((item) => {
         return item;
       })
     );
@@ -36,7 +41,7 @@ const Checkbox = (props) => {
   useEffect(() => {
     props.onChange(
       event,
-      value[controls.field_name] + array.join(','),
+      value[controls.field_name] + array?.join(',') + ',',
       'checkbox'
     );
   }, [array]);
@@ -63,24 +68,26 @@ const Checkbox = (props) => {
                     onClick={(e) => {
                       if (e.target.checked) {
                         setEvent(e.target.name);
-                        value[controls.field_name] =
-                          value[controls.field_name] + e.target.value + ',';
-
-                        setArray((oldData) => [
-                          ...oldData,
-                          Object.keys(item2)[0],
-                        ]);
+                        // value[controls.field_name] =
+                        //   value[controls.field_name] + e.target.value + ',';
+                        setArray((oldData) => {
+                          if (oldData) {
+                            return [...oldData, Object.keys(item2)[0]];
+                          } else {
+                            return [Object.keys(item2)[0]];
+                          }
+                        });
                       } else {
                         setEvent(e.target.name);
                         setArray((oldData) =>
-                          oldData.filter((item) => item !== e.target.value)
+                          oldData?.filter((item) => item !== e.target.value)
                         );
-                        value[controls.field_name] = value[
-                          controls.field_name
-                        ].replace(e.target.value + ',', '');
+                        // value[controls.field_name] = value[
+                        //   controls.field_name
+                        // ].replace(e.target.value + ',', '');
                       }
                     }}
-                    checked={array.includes(Object.keys(item2)[0])}
+                    checked={array?.includes(Object.keys(item2)[0])}
                   />
                   <span className="checkmark"></span>
                 </label>

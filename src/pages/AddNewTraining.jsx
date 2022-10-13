@@ -120,6 +120,8 @@ const AddNewTraining = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
+  console.log('croppedImage', croppedImage)
+
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
 
@@ -672,6 +674,7 @@ const AddNewTraining = () => {
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
+                            popupVisible={popupVisible}
                             setPopupVisible={setPopupVisible}
                             setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
@@ -681,6 +684,7 @@ const AddNewTraining = () => {
                             popupVisible &&
                             <ImageCropTraning
                               image={coverImage}
+                              popupVisible={popupVisible}
                               setCoverImage={setCoverImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
