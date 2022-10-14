@@ -15,7 +15,12 @@ let selectedFranchiseeId = '';
 
 const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
-    const handleClose = () => setShow(false);
+    // const handleClose = () => setShow(false);
+
+    const handleClose = () => {
+        setShow(false)
+        window.location.reload(false);
+    }
     const handleShow = () => setShow(true);
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
@@ -320,7 +325,6 @@ const FilerepoUploadFile = () => {
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                     window.location.reload();
                     setUpladFile("File Upload successfully");
-
                 }
             })
             .then((result) => {
