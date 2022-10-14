@@ -76,6 +76,7 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
 const UserManagement = () => {
 
   const Key = useParams()
+  console.log(Key, "Key")
 
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
@@ -262,7 +263,7 @@ const UserManagement = () => {
   }
 
   const importCSVToDB = async () => {
-    
+
   }
 
   const csvFileToArray = (csvTextData) => {
@@ -304,12 +305,12 @@ const UserManagement = () => {
     const fileReader = new FileReader();
     if (csvData) {
       fileReader.onload = function (event) {
-          const csvOutput = event.target.result;
-          csvFileToArray(csvOutput);
+        const csvOutput = event.target.result;
+        csvFileToArray(csvOutput);
       };
 
       fileReader.readAsText(csvData);
-  }
+    }
   };
 
   const handleCSVFileSave = (e) => {
@@ -347,6 +348,7 @@ const UserManagement = () => {
         action: `${dt.is_active},${dt.role}`
       }));
 
+      setEducator(tempData);
       setUserData(tempData);
       setIsLoading(false)
 
@@ -456,7 +458,7 @@ const UserManagement = () => {
   jsonCSVData && console.log('JSON CSV DATA:', jsonCSVData);
   return (
     <>
-      <div 
+      <div
         id="main"
         className="main-class">
         <section className="mainsection">
@@ -677,10 +679,10 @@ const UserManagement = () => {
             <div>
               <p>Choose a CSV file you want to extract and import the user data from.</p>
               <form>
-                  <input 
-                    type={"file"} 
-                    accept={".csv"}
-                    onChange={handleCSVFileSave} />
+                <input
+                  type={"file"}
+                  accept={".csv"}
+                  onChange={handleCSVFileSave} />
               </form>
             </div>
           </Modal.Body>
