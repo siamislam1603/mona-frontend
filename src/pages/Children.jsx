@@ -43,10 +43,11 @@ const Children = () => {
     // Modal start
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = (id, educators) =>{
+    const handleShow = async (id, educators) => {
         let defEducators = educators.map((edu) => {
             return edu.id 
         })
+        await fetchParents(id);
         localStorage.setItem("SelectedChild",id)
         localStorage.setItem("DefaultEducators",JSON.stringify(defEducators))
         setShow(true)
@@ -82,6 +83,7 @@ const Children = () => {
     const [topSuccessMessage, setTopSuccessMessage] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [rowFranchiseId,setRowFranchiseId] = useState(0);
+    const [assignedEducatorIDs, setAssignedEducatorIDs] = useState(null);
 
     const init = async() => {
         // Set Parents franchisee
@@ -234,6 +236,24 @@ const Children = () => {
         setParents(coordinators)
       }
     }
+
+    const fetchAndSaveEducatorData = async (passedChildId, passedParentId) => {
+      let response = await axios.get(`${BASE_URL}/enrollment/child/${passedChildId}?parentId=${passedParentId}`, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+      });
+  
+      console.log('FETCHED CHILD DATA:', response.data);
+      if(response.status === 200 && (await response).data.status === "success") {
+        let { child } = response.data;
+  
+        let { users } = child;
+        let educatorIds = users.map(d => d.id);
+  
+        setAssignedEducatorIDs([...educatorIds]);
+      }
+    }
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
@@ -249,6 +269,11 @@ const Children = () => {
                 let defEducators = row.educator.educators.map((edu)=>{
                     return edu.id 
                 })
+
+                // FETCHING AN SAVING EDUCATOR
+                fetchAndSaveEducatorData(row.id, paramsParentId);
+                // FETCHING AND SAVING ENDS 
+
                 handleShow(row.id,row.educator.educators || [])
             }
             if (e.target.text === 'Add Co-Parent'){
@@ -859,7 +884,13 @@ const Children = () => {
                     </Button>
                 </Modal.Footer>
             </Modal > */}
-            {show ? <EducatorAssignPopup educators={educators} handleClose={()=>handleClose()} show={show}/> : ""}
+            {show ? <EducatorAssignPopup 
+                      educators={educators} 
+                      franchise={childFranchise} 
+                      childId={enroledChildId}
+                      paramsParentId={paramsParentId}
+                      assignedEducators={assignedEducatorIDs}
+                      handleClose={()=>handleClose()} show={show}/> : ""}
             {cpShow ? <CoparentAssignPopup 
                         parents={parents} 
                         franchise={childFranchise} 
