@@ -110,11 +110,7 @@ const ChildrenEnrol = () => {
             educator.map((item, index) => {
               if (item.trim() !== "undefined" && item.trim() !== "null" && item.trim().split('.').pop() !== "blob") {
                 educatorArray[index] = " " + item.trim();
-
-
               }
-
-
             })
             console.log("Educator 123", educatorArray)
             data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";

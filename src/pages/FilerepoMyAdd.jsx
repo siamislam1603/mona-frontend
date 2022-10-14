@@ -400,7 +400,7 @@ const FilerepoMyAdd = ({ filter }) => {
                             {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
-                                        <a href={cell[2]} download>
+                                        <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
                                     </span>
@@ -989,7 +989,9 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                         assigned_users: [...selectedOptions.map(option => option.id + "")],
                                                                         accessibleToRole: 0
                                                                     }))
-                                                                }}
+                                                                    setUserCount(userCount - 1)
+                                                                }
+                                                                }
                                                                 onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
