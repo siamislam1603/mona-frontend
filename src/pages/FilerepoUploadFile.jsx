@@ -567,7 +567,7 @@ const FilerepoUploadFile = () => {
                                                     <div className="select-with-plus">
                                                         <Multiselect
                                                             isClearable={false}
-                                                            // disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
                                                             className="multiselect-box default-arrow-select"
