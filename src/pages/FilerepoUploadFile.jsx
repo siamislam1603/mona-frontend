@@ -23,7 +23,7 @@ const FilerepoUploadFile = () => {
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [selectedChild, setSelectedChild] = useState([]);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
     const [franchiseeList, setFranchiseeList] = useState();
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
@@ -39,6 +39,7 @@ const FilerepoUploadFile = () => {
         shared_role: '',
         accessible_to_role: 1
     });
+    console.log(userCount, "selectedUser")
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
@@ -47,7 +48,8 @@ const FilerepoUploadFile = () => {
     const getUser = async () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
+            let userIdd = localStorage.getItem('user_id')
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -129,7 +131,8 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item => item.id)
+        let selectedUserr = selectedUser.length === 0 ? [] : selectedUser.map(item => item.id)
+        
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -565,6 +568,7 @@ const FilerepoUploadFile = () => {
                                                     <Form.Label>Select Franchise(s)</Form.Label>
                                                     <div className="select-with-plus">
                                                         <Multiselect
+                                                            isClearable={false}
                                                             disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
@@ -597,7 +601,7 @@ const FilerepoUploadFile = () => {
                                         </Row>
                                         : ""
                                     }
-                                   
+
                                     {sendToAllFranchisee == "none" && formSettings.assigned_franchisee.length < 1 ? "" : (
                                         <Row className="mt-4">
                                             <Col lg={3} md={6}>

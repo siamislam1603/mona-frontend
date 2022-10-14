@@ -102,6 +102,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
           "Authorization": "Bearer " + token
         }
       });
+      console.log("Notification",response)
       if (response.status === 200 && response.data.status === "success") {
         setTopHeaderNotification(response.data.notification.rows);
         setTopHeaderNotificationCount(response.data.notification.count);
@@ -143,9 +144,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   // }
 
 
-  const handleLinkClick = async (notificationId,link) => {
+  const handleLinkClick = async (notificationId,link,type) => {
   
     if (notificationId, link) {
+      console.log("THe link",link,type)
       const response = await axios.put(
         `${BASE_URL}/notification/${notificationId}`, {}, {
         headers: {
@@ -153,7 +155,9 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
         }
       }
       );
-      // console.log("response response",response)
+      localStorage.setItem("notification_tab",type)
+
+      console.log("response response",response)
       if (response.status === 200) {
 
         window.location.href = link;
@@ -282,7 +286,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     // logout();
   };
 
-
   const selectFranchisee = (e) => {
     if (e === 'All') {
       setFranchiseeId({ franchisee_name: 'All' });
@@ -338,7 +341,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
                       <div className='title-xxs'>
                         
-                        <p onClick={() => handleLinkClick(details.id,fetchData(details.title).link)} style={{cursor:"pointer" }} >
+                        <p onClick={() => handleLinkClick(details.id ,fetchData(details.title).link,details.notification_type)} style={{cursor:"pointer" }} >
                           {/* {fetchData(details.title).text} */}
 
                           <div dangerouslySetInnerHTML={{
