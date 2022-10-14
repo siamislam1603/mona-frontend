@@ -172,7 +172,7 @@ const FileRpositoryList = () => {
                             {cell[1] === "image/jpeg" || cell[1] === "image/png" || cell[1] === "image/webp" ?
                                 <>
                                     <span className="user-pic-tow">
-                                        <a href={cell[2]} download>
+                                        <a href={cell[2]} target='_blank' rel='noopener noreferrer'>
                                             <img src="../img/abstract-ico.png" className="me-2" alt="" />
                                         </a>
                                     </span>
@@ -192,7 +192,6 @@ const FileRpositoryList = () => {
                                             {cell[0]}.mp3
                                         </span>
                                     </>
-
                                     : cell[1] === "video/mp4" ?
                                         <>
                                             <div style={{ width: "100%", display: "flex" }}>

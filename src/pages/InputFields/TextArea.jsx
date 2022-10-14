@@ -16,6 +16,7 @@ const TextArea = (props) => {
         <Form.Control
           as="textarea"
           rows={controls.row ? controls.row : 3}
+          disabled={props.isDisable ? props.isDisable : false}
           name={controls.field_name}
           maxLength={2000}
           className="child_input"

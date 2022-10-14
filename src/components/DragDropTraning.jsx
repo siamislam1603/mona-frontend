@@ -161,3 +161,4 @@ export default function DragDropTraning({ onSave, coverImage, popupVisible, setP
         </div>
     );
 }
+
