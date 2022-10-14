@@ -90,7 +90,7 @@ const AddNewTraining = () => {
     send_to_all_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? true : false,
     applicable_to: 'roles',
     assigned_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? ['all'] : [],
-    assigned_roles: localStorage.getItem('user_role') === 'franchisor_admin' ? ['franchisee_admin', 'coordinator', 'educator'] : ['coordinator', 'educator'],
+    assigned_roles: [],
     assigned_users: []
   });
   const [userRoles, setUserRoles] = useState([]);

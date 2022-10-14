@@ -38,10 +38,6 @@ const FileRepository = () => {
     id: ""
   })
 
-
-
-
-
   localStorage.setItem('selected_Franchisee', (selectedFranchisee))
 
   const addAndSaveCategory = async () => {

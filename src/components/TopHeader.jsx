@@ -307,7 +307,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     //   setSelectedFranchisee('all');
     // } else {
     setChildId({ ...childList?.filter(d => parseInt(d.id) === parseInt(e))[0] });
-    setSelectedFranchisee(e);
+    localStorage.setItem('selectedChild', e);
+    setSelectedFranchisee(localStorage.getItem('selectedChild'));
     // }
   }
 
@@ -465,12 +466,12 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   // }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
-    // if (localStorage.getItem('user_role') === 'guardian') {
-    // setSelectedFranchisee('All');
-    // setChildId({ name: 'All' });
-    // } else {
-    setSelectedFranchisee(childList[0]?.id);
-    // }
+    if(localStorage.getItem('selectedChild')) {
+      setSelectedFranchisee(localStorage.getItem('selectedChild'));
+    } else {
+      localStorage.setItem('selectedChild', childList[0]?.id)
+      setSelectedFranchisee(localStorage.getItem('selectedChild'));
+    }
   }, [childList]);
 
   useEffect(() => {
@@ -511,15 +512,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
   }, []);
 
-  // useEffect(() => {
-  //   savePermissionInState();
-  // }, []);
-
-  // console.log("local Storge ", localStorage.getItem('profile_photo'))
-
-  // notifData && console.log('DATA=>:', notifData);
-  // notifType && console.log('TYPE=>:', notifType);
-  // console.log("training search data", searchTraining) 
   return (
     <>
       <div className="topheader" style={{ position: 'relative' }}>
@@ -529,8 +521,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
               ? <div className="selectdropdown">
                 <Dropdown onSelect={selectChild}>
                   <Dropdown.Toggle id="dropdown-basic">
-                    {childId?.name ||
-                      childList[0]?.name ||
+                    {childList?.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('selectedChild')))[0]?.name ||
                       'No Child Available'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
