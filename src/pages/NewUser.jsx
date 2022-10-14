@@ -23,7 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
-  let assignedEducators = query.searchParams.get('educators').split(",");
+  let assignedEducators = query.searchParams.get('educators')?.split(",");
   const navigate = useNavigate();
 
   // REF DECLARATIONS

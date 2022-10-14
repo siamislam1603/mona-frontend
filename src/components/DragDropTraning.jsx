@@ -32,7 +32,7 @@ function fileSizeValidator(file) {
         console.log('FILE IS AN IMAGE');
         let fileSize = bytesToMegaBytes(file.size);
         console.log('FILE SIZE:', fileSize);
-        if (fileSize > 1) {
+        if (fileSize > 10) {
             return {
                 code: "file-too-large",
                 message: `Image should be less than ${10}MB`
