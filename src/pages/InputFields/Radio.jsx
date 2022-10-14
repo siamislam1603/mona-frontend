@@ -39,6 +39,7 @@ const Radio = (props) => {
                           type="radio"
                           key={index}
                           value={Object.keys(item)[0]}
+                          disabled={props.isDisable ? props.isDisable : false}
                           name={controls.field_name}
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
@@ -71,6 +72,7 @@ const Radio = (props) => {
                             type="radio"
                             value={Object.keys(item)[0]}
                             key={index}
+                            disabled={props.isDisable ? props.isDisable : false}
                             name={controls.field_name}
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {
@@ -125,6 +127,7 @@ const Radio = (props) => {
                               ]
                             }
                             key={index}
+                            disabled={props.isDisable ? props.isDisable : false}
                             value={Object.values(item)[0]}
                             name={
                               Object.values(eval(controls.option)[Index])[0][
