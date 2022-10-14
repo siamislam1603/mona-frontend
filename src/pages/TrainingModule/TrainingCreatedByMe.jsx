@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Multiselect from 'multiselect-react-dropdown';
 // import { Button, Container, Form, Dropdown } from "react-bootstrap";
 // import LeftNavbar from "../components/LeftNavbar";
@@ -12,7 +12,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 // import { verifyPermission } from '../helpers/roleBasedAccess';
-import { useEffect } from "react";
+// import { useEffect } from "react";
 // import makeAnimated from 'react-select/animated';
 
 import axios from 'axios';
@@ -48,7 +48,7 @@ function isTrainingExpired(end_date) {
   let due_date = moment(end_date).format();
   let today = moment().format();
 
-  if(due_date < today)
+  if (due_date < today)
     return true
 
   return false
@@ -64,10 +64,10 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page, setPage] = useState(6)
-  const [noMore,setNoMore] = useState(true)
+  const [noMore, setNoMore] = useState(true)
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
-  const [count,setCount] = useState(null)
-  const [checkCount,setCheckCount]= useState(null)
+  const [count, setCount] = useState(null)
+  const [checkCount, setCheckCount] = useState(null)
   const navigate = useNavigate();
 
   // const [trainingCategory, setTrainingCategory] = useState([]);
@@ -81,7 +81,7 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [successMessageToast, setSuccessMessageToast] = useState(null);
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [search, setSearch] = useState()
-  const [selectedFranchisee, setSelectedFranchisee] = useState("all");
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
 
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
@@ -110,7 +110,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       let { msg: successMessage } = response.data;
       setSuccessMessageToast(successMessage);
       setSuccessMessageToast('Training re-shared successfully.');
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       let { msg: failureMessage } = response.data;
       setErrorMessageToast(failureMessage);
     }
@@ -231,10 +231,10 @@ const TrainingCreatedByMe = ({ filter }) => {
 
   const CreatedByme = async () => {
     try {
-      console.log("TRAIING DATA", filterData.category_id,filterData.search)
-      
+      console.log("TRAIING DATA", filterData.category_id, filterData.search)
+
       setfullLoaderStatus(true)
-    
+
       setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
@@ -252,17 +252,17 @@ const TrainingCreatedByMe = ({ filter }) => {
 
         setMyTrainingData(searchedData)
         setfullLoaderStatus(false)
-        if(searchedData?.length===0){
+        if (searchedData?.length === 0) {
           setCheckCount(searchedData?.length)
           console.log('TRAIING DATA no data', response)
           setCount(0)
         }
-       if(filterData.category_id){
-        if(searchedData?.length>6){
-          setCheckCount(0)
-          setCount(0)
+        if (filterData.category_id) {
+          if (searchedData?.length > 6) {
+            setCheckCount(0)
+            setCount(0)
+          }
         }
-       }
       }
     } catch (error) {
       if (error.response.status === 404) {
@@ -277,9 +277,9 @@ const TrainingCreatedByMe = ({ filter }) => {
     }
   }
 
-  const searchTraining = async () =>{
+  const searchTraining = async () => {
     try {
-      console.log("TRAIING DATA search call", filterData.category_id,filterData.search)    
+      console.log("TRAIING DATA search call", filterData.category_id, filterData.search)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
@@ -313,31 +313,28 @@ const TrainingCreatedByMe = ({ filter }) => {
   }
   useEffect(() => {
     fetchTrainingCategories()
+  }, [selectedFranchisee]);
 
-  }, []);
   useEffect(() => {
-    if(selectedFranchisee){
+    if (selectedFranchisee) {
       CreatedByme()
     }
-    // if( filterData.category_id){
-    //   setPage(6)
-    // }
- 
 
-  }, [filterData.category_id, selectedFranchisee,page])
-  useEffect(()=>{
-    if(filterData.search){
-      console.log("the search value",filterData.search)
+  }, [filterData.category_id, selectedFranchisee, page])
+
+  useEffect(() => {
+    if (filterData.search) {
+      console.log("the search value", filterData.search)
       searchTraining()
     }
-    else{
+    else {
       setPage(6)
       CreatedByme()
     }
-  },[filterData.search])
+  }, [filterData.search , selectedFranchisee])
 
   useEffect(() => {
-    if(formSettings?.assigned_franchisee?.length > 0) {
+    if (formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
     } else {
       setFetchedFranchiseeUsers([]);
@@ -362,19 +359,20 @@ const TrainingCreatedByMe = ({ filter }) => {
   }, [errorMessageToast]);
 
 
-  const fetchMoreData = async ( ) =>{
-        setPage(page => page+6) 
+  const fetchMoreData = async () => {
+    setPage(page => page + 6)
   }
+
   // console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
   console.log("Selected frnahise", selectedFranchisee)
-  console.log("Data Rohan",myTrainingData)
-  console.log("TRAIING",count,checkCount)
-  console.log("Search",filterData.search)
+  console.log("Data Rohan", myTrainingData)
+  console.log("TRAIING", count, checkCount)
+  console.log("Search", filterData.search)
 
   return (
     <>
-        {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
-        {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
+      {successMessageToast && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{successMessageToast}</p>}
+      {errorMessageToast && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{errorMessageToast}</p>}
       <div id="main">
         {/* <FullLoader loading={fullLoaderStatus} /> */}
         <section className="mainsection">
@@ -390,20 +388,20 @@ const TrainingCreatedByMe = ({ filter }) => {
                 />
 
                 {/* <FullLoader loading={fullLoaderStatus} /> */}
-  
+
                 <div className="entry-container">
                   <header className="title-head mynewForm-heading mb-3">
-                  <Button className="me-3"
-                        onClick={() => {
-                          navigate('/training');
-                        }}
-                      >
-                        <img src="../../img/back-arrow.svg" />
-                      </Button>
+                    <Button className="me-3"
+                      onClick={() => {
+                        navigate('/training');
+                      }}
+                    >
+                      <img src="../../img/back-arrow.svg" />
+                    </Button>
                     <h1 className="title-lg mb-0">
-                    
+
                       Training created by me</h1>
-                 
+
                     <div className="othpanel">
                       <div className="extra-btn">
                         <div className="data-search ">
@@ -460,7 +458,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                   </header>
                   <div className="training-cat d-md-flex align-items-center mb-3">
 
-                  <div className="selectdropdown ms-auto d-flex align-items-center">
+                    <div className="selectdropdown ms-auto d-flex align-items-center">
                       <Form.Group className="d-flex align-items-center">
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
@@ -476,7 +474,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                         />
                       </Form.Group>
                     </div>
-                    </div>
+                  </div>
 
                   {/* <InfiniteScroll
                   style={{
@@ -494,9 +492,9 @@ const TrainingCreatedByMe = ({ filter }) => {
                         }
                        
                       > */}
-                         <div className="training-column">
+                  <div className="training-column">
 
-                    <Row style={{ marginBottom: '40px' }} > 
+                    <Row style={{ marginBottom: '40px' }} >
 
                       {myTrainingData?.map((training) => {
                         return (
@@ -513,13 +511,13 @@ const TrainingCreatedByMe = ({ filter }) => {
                               <div className="fixcol">
                                 <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                                 <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
-                                <div className="datecol">
-                                  {
-                                    training.end_date !== null &&
-                                    <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
-                                  }
-                                  <span className="time">{training.completion_time} {training.completion_in}</span>
-                                </div>
+                                  <div className="datecol">
+                                    {
+                                      training.end_date !== null &&
+                                      <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                                    }
+                                    <span className="time">{training.completion_time} {training.completion_in}</span>
+                                  </div>
                                 </div>
                                 <div className="cta-col">
                                   <Dropdown>
@@ -529,9 +527,9 @@ const TrainingCreatedByMe = ({ filter }) => {
                                     <Dropdown.Menu>
                                       {
                                         training.is_Training_completed === false &&
-                                         isTrainingExpired(training.end_date) === false && 
+                                        isTrainingExpired(training.end_date) === false &&
                                         <Dropdown.Item href={`/edit-training/${training.id}`}>
-                                        Edit
+                                          Edit
                                         </Dropdown.Item>
                                       }
                                       {
@@ -555,23 +553,23 @@ const TrainingCreatedByMe = ({ filter }) => {
                           </Col>
                         );
                       })}
-                      </Row>
-                      </div>
-                {
-                  count !== checkCount &&  !fullLoaderStatus&& <div className="text-center">
+                    </Row>
+                  </div>
+                  {
+                    count !== checkCount && !fullLoaderStatus && <div className="text-center">
 
-                  <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
+                      <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
 
-                 </div>
-                }
-                      {/* </InfiniteScroll> */}
-           
+                    </div>
+                  }
+                  {/* </InfiniteScroll> */}
 
-                      {fullLoaderStatus && 
-                              <div className="text-center">
-                              <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
-                            </div>
-                      }
+
+                  {fullLoaderStatus &&
+                    <div className="text-center">
+                      <img src="/img/loader.svg" style={{ maxWidth: "100px" }} alt="Loader"></img>
+                    </div>
+                  }
 
                   <div className="training-column">
 
@@ -581,7 +579,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                     {myTrainingData?.length > 0 ?
                       null
                       :
-                      fullLoaderStatus? null:  <div className="text-center mb-5 mt-5"> <strong>No training available</strong> </div>
+                      fullLoaderStatus ? null : <div className="text-center mb-5 mt-5"> <strong>No training available</strong> </div>
                     }
                   </div>
 
@@ -820,7 +818,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                                       checked={formSettings.assigned_roles.length === 3}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["franchisee_admin", "coordinator", "educator"]
@@ -1017,7 +1015,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                                       checked={formSettings.assigned_roles.length === 2}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["coordinator", "educator"]
