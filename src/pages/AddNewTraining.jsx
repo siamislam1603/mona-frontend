@@ -87,10 +87,10 @@ const AddNewTraining = () => {
   const [trainingSettings, setTrainingSettings] = useState({
     start_date: "",
     start_time: "",
-    send_to_all_franchisee: false,
+    send_to_all_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? true : false,
     applicable_to: 'roles',
-    assigned_franchisee: [],
-    assigned_roles: [],
+    assigned_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? ['all'] : [],
+    assigned_roles: localStorage.getItem('user_role') === 'franchisor_admin' ? ['franchisee_admin', 'coordinator', 'educator'] : ['coordinator', 'educator'],
     assigned_users: []
   });
   const [userRoles, setUserRoles] = useState([]);
@@ -98,7 +98,7 @@ const AddNewTraining = () => {
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [coverImage, setCoverImage] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -448,7 +448,12 @@ const AddNewTraining = () => {
   //   }
   // }, [trainingSettings?.start_time]);
 
-
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // useEffect(() => {
+  //   console.log('Cropped Image');
+  //   if(croppedImage === null)
+  //     setCoverImage(null);
+  // }, [coverImage]);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -671,6 +676,7 @@ const AddNewTraining = () => {
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
+                            coverImage={coverImage}
                             setPopupVisible={setPopupVisible}
                             setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
@@ -680,6 +686,8 @@ const AddNewTraining = () => {
                             popupVisible &&
                             <ImageCropTraning
                               image={coverImage}
+                              setCoverImage={setCoverImage}
+                              croppedImage={croppedImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }

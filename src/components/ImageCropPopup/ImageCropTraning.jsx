@@ -7,15 +7,14 @@ import './ImageCropPopup.css';
 
 let temp = () => { };
 
-const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
-    console.log('croppedImage', image, setCoverImage)
+const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage, croppedImage, setPopupVisible, setFormErrors = temp, type = "cover_img" }) => {
     const [croppedArea, setCroppedArea] = useState(null);
     const [tempImage, setTempImage] = useState(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
 
     const onCropComplete = (croppedAreaPercentage, croppedAreaPixels) => {
-        console.log(croppedAreaPercentage, croppedAreaPixels);
+        // console.log(croppedAreaPercentage, croppedAreaPixels);
 
         if (type === 'cover_img') {
             setCroppedArea(croppedAreaPixels);
@@ -37,12 +36,17 @@ const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage,
     }
 
     const onImageCancle = async () => {
+        // setClosePopup(true);
+        console.log('IMAGE CANCELLED:>>>>>>>>>>>>>>>>>>>>>');
         setPopupVisible(false);
 
-        let croppedImageCanvas = await getCroppedImg(null, null);
-        let croppedImage = convertCanvasToImg(null);
+        // let croppedImageCanvas = await getCroppedImg(null, null);
+        // let croppedImage = convertCanvasToImg(null);
 
         setCroppedImage(croppedImage);
+        // setCroppedImage(null);
+        setCoverImage([]);
+        setTempImage(null);
         setFormErrors(prevState => ({
             ...prevState,
             images: null
@@ -57,15 +61,23 @@ const ImageCropTraning = ({ image, popupVisible, setCoverImage, setCroppedImage,
     };
 
     useEffect(() => {
-        console.log('IMAGE:', image && image[0]);
+        // let defImage = image[0];
+        // setCoverImage([defImage]);
+        // console.log('IMAGE:', coverImage && image[0]);
+        let defImage = image[image.length - 1];
         if (image && image.length > 0) {
             const reader = new FileReader();
-            reader.readAsDataURL(image[0]);
+            reader.readAsDataURL(defImage);
             reader.addEventListener('load', () => {
                 setTempImage(reader.result);
             });
         }
-    }, [image])
+    }, [image]);
+
+    // console.log('CROPPED IMAGE [inside cropper]:', croppedImage);
+    // console.log('COVER IMAGE [inside cropper]:', coverImage);
+    // console.log('Temp Image:', tempImage);
+    console.log('IMAGE:', image)
 
     return (
         <div className="popup-container">
