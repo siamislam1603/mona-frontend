@@ -28,13 +28,13 @@ const Preview = (props) => {
     if (field === 'hobby') {
       values.includes(value) ? values.pop(value) : values.push(value);
       setForm({ ...form, [field]: values });
-
-      console.log('Values', values);
     }
   };
+
   useEffect(() => {
     getFormFields();
   }, []);
+
   const getFormFields = async () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -60,7 +60,6 @@ const Preview = (props) => {
         setFormData(res.result);
         setRole(res.created_by.role);
         setName(res.created_by.name);
-        console.log(res.result);
         if (result) {
           setfullLoaderStatus(false);
         }
@@ -116,13 +115,15 @@ const Preview = (props) => {
                 </Row>
                 <Form>
                   <Row>
-                    {formData?.map((item,index) => {
+                    {formData?.map((item, index) => {
                       return (
                         <InputFields
                           {...item}
                           signature_flag={true}
                           diff_index={index}
                           error={errors}
+                          freshForm={true}
+                          isDisable={true}
                           onChange={setField}
                         />
                       );

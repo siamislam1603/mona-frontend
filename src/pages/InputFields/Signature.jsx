@@ -50,7 +50,11 @@ const Signature = (props) => {
             ref={sigPad}
           />
           <div style={{ marginTop: '5px' }}>
-            <Button style={{ minWidth: '70px !important' }} onClick={trim}>
+            <Button
+              disabled={props.isDisable ? props.isDisable : false}
+              style={{ minWidth: '70px !important' }}
+              onClick={trim}
+            >
               Save
             </Button>
             <Button

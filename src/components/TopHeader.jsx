@@ -285,7 +285,6 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
     // logout();
   };
-console.log("Checn",)
 
   const selectFranchisee = (e) => {
     if (e === 'All') {
