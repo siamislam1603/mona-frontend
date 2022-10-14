@@ -27,6 +27,7 @@ const InputFields = (props) => {
           field_data={props?.field_data}
           diff_index={props?.diff_index}
           errorFocus={props?.errorFocus}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -40,8 +41,9 @@ const InputFields = (props) => {
       inputElement = (
         <Checkbox
           {...controls}
-          field_data={props.field_data}
-          errorFocus={props.errorFocus}
+          field_data={props?.field_data}
+          errorFocus={props?.errorFocus}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -51,6 +53,7 @@ const InputFields = (props) => {
           {...controls}
           field_data={props.field_data}
           errorFocus={props.errorFocus}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -60,6 +63,7 @@ const InputFields = (props) => {
           {...controls}
           field_data={props.field_data}
           errorFocus={props.errorFocus}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -69,6 +73,7 @@ const InputFields = (props) => {
           {...controls}
           signature_flag={props.signature_flag}
           errorFocus={props.errorFocus}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -76,8 +81,9 @@ const InputFields = (props) => {
       inputElement = (
         <FileUpload
           {...controls}
-          field_data={props.field_data}
-          errorFocus={props.errorFocus}
+          field_data={props?.field_data}
+          errorFocus={props?.errorFocus}
+          // isDisable={props.isDisable}
         />
       );
       break;
@@ -85,8 +91,9 @@ const InputFields = (props) => {
       inputElement = (
         <ImageUpload
           {...controls}
-          field_data={props.field_data}
-          errorFocus={props.errorFocus}
+          field_data={props?.field_data}
+          errorFocus={props?.errorFocus}
+          // isDisable={props.isDisable}
         />
       );
       break;
@@ -96,6 +103,7 @@ const InputFields = (props) => {
           {...controls}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
+          isDisable={props.isDisable}
         />
       );
   }
