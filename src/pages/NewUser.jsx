@@ -295,10 +295,10 @@ const NewUser = () => {
       fullname: data.name,
       city: data.city,
       postalCode: data.postalCode,
-      firstname: data.name.split(" ")[0],
-      lastname: data.name.split(" ")[1],
+      firstname: data.name?.split(" ")[0],
+      lastname: data.name?.split(" ")[1],
       address: data.address,
-      phone: data.phone.split("-")[1]
+      phone: data.phone?.split("-")[1]
     };
 
     // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
@@ -373,7 +373,7 @@ const NewUser = () => {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
         id: coordinator.id,
-        value: coordinator.fullname.split(" ").join("_"),
+        value: coordinator.fullname?.split(" ").join("_"),
         label: coordinator.fullname
       })));
     }
@@ -936,7 +936,7 @@ const NewUser = () => {
                                 onChange={(e) =>
                                   setFormData((prevState) => ({
                                     ...prevState,
-                                    telcode: e.value.split('\n')[1],
+                                    telcode: e.value?.split('\n')[1],
                                   }))
                                 }
                               />
