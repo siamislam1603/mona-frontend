@@ -251,7 +251,6 @@ const DynamicForm = () => {
         } else {
           setSignatureAccessFlag(true);
         }
-        console.log('formsData---->', formsData);
 
         setForm(formsData);
         setFormData(data);
