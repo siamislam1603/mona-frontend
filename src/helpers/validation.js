@@ -673,8 +673,8 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
-  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
-    errors.crn = 'Field should only contain digits';
+  // if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+  //   errors.crn = 'Field should only contain digits';
 
   if (!phone) errors.phone = 'Phone number is required';
 
@@ -740,8 +740,8 @@ export const editUserValidation = (
     errors.postalCode = 'Post code must only consist digits';
 
   if (role === 'guardian' && !crn) errors.crn = 'CRN number is required';
-  if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
-    errors.crn = 'Field should only contain digits';
+  // if (role === 'guardian' && crn?.length > 0 && !/^[0-9]+$/i.test(crn))
+  //   errors.crn = 'Field should only contain digits';
 
   if (email?.length > 0 && !regex.test(email)) {
     errors.email = 'Email format is invalid';

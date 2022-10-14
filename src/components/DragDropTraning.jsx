@@ -6,12 +6,9 @@ const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
     let fileType = file.type.split("/")[0];
-    console.log('FILE TYPE:', fileType);
 
     if (fileType === 'video') {
-        console.log('FILE IS A VIDEO!');
         let fileSize = bytesToMegaBytes(file.size);
-        console.log('FILE SIZE:', fileSize);
         if (fileSize > 1024) {
             return {
                 code: "file-too-large",
@@ -19,9 +16,7 @@ function fileSizeValidator(file) {
             };
         }
     } else if (fileType === 'application') {
-        console.log('FILE IS A DOCUMENT!');
         let fileSize = bytesToMegaBytes(file.size);
-        console.log('FILE SIZE:', fileSize);
         if (fileSize > 10) {
             return {
                 code: "file-too-large",
@@ -29,9 +24,7 @@ function fileSizeValidator(file) {
             };
         }
     } else if (fileType === "image") {
-        console.log('FILE IS AN IMAGE');
         let fileSize = bytesToMegaBytes(file.size);
-        console.log('FILE SIZE:', fileSize);
         if (fileSize > 10) {
             return {
                 code: "file-too-large",
@@ -45,26 +38,31 @@ function fileSizeValidator(file) {
 
 const temp = () => { };
 
-export default function DragDropTraning({ onSave, popupVisible, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp, setUploadError = () => { } }) {
-
+export default function DragDropTraning({ onSave, coverImage, popupVisible, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp, setUploadError = () => { } }) {
     const [data, setData] = useState([]);
     const [currentURI, setCurrentURI] = useState();
-    const empity = () => {
+    const empty = () => {
         if (popupVisible === false) {
+            console.log('POPUP ISN\'T VISIBLE');
             croppedImage = ""
             setCroppedImage("")
             setPopupVisible(false)
         }
     }
     useEffect(() => {
-        empity();
+        empty();
     })
-    empity();
+    empty();
 
     const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-        acceptedFiles.forEach(file => {
-            setData(prevState => [...prevState, file]);
-            setPopupVisible(true);
+        acceptedFiles.forEach((file, index) => {
+            console.log('FILE:>>>>>>>>>>>>>>>>>>>', file);
+            console.log('COVER IMAGE:>>>>>>>>>>', coverImage);
+            console.log('CROPPED IMAGE:>>>>>>>>>>', croppedImage);
+            if(acceptedFiles.length - 1 === index) {
+                setData(prevState => [file]);
+                setPopupVisible(true);
+            }
         });
     }, []);
 
@@ -146,18 +144,21 @@ export default function DragDropTraning({ onSave, popupVisible, setPopupVisible,
                                     </Link>
                                 </span>
                             </div>
-                            : data.map((file, index) => (
-                                <div className="imgcol" key={index}>
-                                    <img src={getBase64(file) || currentURI} alt="AAAAAAAAAA" />
-                                    <span className="ms-2">
-                                        <Link to="#" onClick={() => handleFileDelete(file)}>
-                                            <img src="../img/removeIcon.svg" alt="" />
-                                        </Link>
-                                    </span>
-                                </div>
-                            )) : <></>
+                            :<></>
+                            :<></>
+                            // : data.map((file, index) => (
+                            //     <div className="imgcol" key={index}>
+                            //         <img src={getBase64(file) || currentURI} alt="AAAAAAAAAA" />
+                            //         <span className="ms-2">
+                            //             <Link to="#" onClick={() => handleFileDelete(file)}>
+                            //                 <img src="../img/removeIcon.svg" alt="" />
+                            //             </Link>
+                            //         </span>
+                            //     </div>
+                            // )) : <></>
                 }
             </div>
         </div>
     );
 }
+

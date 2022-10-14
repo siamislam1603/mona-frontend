@@ -18,6 +18,7 @@ const FranchiseeDashboard = () => {
     newEnrollments: 0,
     auditForms: 0,
   });
+
   const [latest_announcement, setlatest_announcement] = useState([{}]);
   const [enrollments, setEnrollments] = useState([])
   const [topSuccessMessage, setTopSuccessMessage] = useState(null)
@@ -152,7 +153,8 @@ const FranchiseeDashboard = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1]} />
+              <img src={cell[1] === 'null' ? '../img/upload.jpg' : cell[1]} alt="" />
+                {/* <img src={cell[1]} /> */}
               </span>
               <span className="user-name">
                 {cell[0]}
@@ -163,7 +165,8 @@ const FranchiseeDashboard = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3]} />
+              <img src={cell[3] === 'null' ? '../img/upload.jpg' : cell[3]} alt="" />
+                {/* <img src={cell[3]} /> */}
               </span>
               <span className="user-name">
                 {cell[2]}
@@ -218,7 +221,8 @@ const FranchiseeDashboard = () => {
             cell[0] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} />
+              <img src={cell[1] === 'null' ? '../img/upload.jpg' : cell[1]} alt="" />
+                {/* <img src={cell[1] === "undefined" || cell[1].trim() === "null" ? "../img/upload.jpg" : cell[1]} /> */}
               </span>
               <span className="user-name">
                 {cell[0]}
@@ -229,7 +233,8 @@ const FranchiseeDashboard = () => {
             cell[2] != "undefined" &&
             <div className="user-list">
               <span className="user-pic">
-                <img src={cell[3]} />
+              <img src={cell[3] === 'null' ? '../img/upload.jpg' : cell[3]} alt="" />
+                {/* <img src={cell[3]} /> */}
               </span>
               <span className="user-name">
                 {cell[2]}
