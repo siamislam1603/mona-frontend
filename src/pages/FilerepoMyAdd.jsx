@@ -989,7 +989,9 @@ const FilerepoMyAdd = ({ filter }) => {
                                                                         assigned_users: [...selectedOptions.map(option => option.id + "")],
                                                                         accessibleToRole: 0
                                                                     }))
-                                                                }}
+                                                                    setUserCount(userCount - 1)
+                                                                }
+                                                                }
                                                                 onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({

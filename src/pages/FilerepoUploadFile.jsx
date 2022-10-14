@@ -39,6 +39,7 @@ const FilerepoUploadFile = () => {
         shared_role: '',
         accessible_to_role: 1
     });
+    console.log(userCount, "selectedUser")
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
@@ -130,7 +131,8 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item => item.id)
+        let selectedUserr = selectedUser.length === 0 ? [] : selectedUser.map(item => item.id)
+        
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -567,7 +569,7 @@ const FilerepoUploadFile = () => {
                                                     <div className="select-with-plus">
                                                         <Multiselect
                                                             isClearable={false}
-                                                            // disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
                                                             className="multiselect-box default-arrow-select"

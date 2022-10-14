@@ -153,7 +153,6 @@ const RepoEdit = () => {
 
     const childList = async () => {
         const token = localStorage.getItem('token');
-
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(data.assigned_users ? data.assigned_users : [])}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -815,6 +814,7 @@ const RepoEdit = () => {
                                                                                                 assigned_users: [...data.map(data => data.id + '')],
                                                                                             }
                                                                                             ));
+                                                                                            setUserCount(userCount - 1)
                                                                                             childList()
                                                                                         }
                                                                                         }
