@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import DropAllRelatedFile from '../../components/DragDropMultipleRelatedFiles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { includes } from 'lodash';
+import { includes, slice } from 'lodash';
 let selectedUserId = '';
 let upperRoleUser = '';
 const AddOperatingManual = () => {
@@ -74,22 +74,52 @@ const AddOperatingManual = () => {
     };
     let api_url = '';
     if (selectedFranchisee) {
-      if (selectedFranchisee === 'All' || selectedFranchisee === 'all') api_url = `${BASE_URL}/auth/users`;
+      if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
+       api_url = `${BASE_URL}/auth/usersListByCondition/?franchise`;
       else
-        api_url = `${BASE_URL}/user-group/users/franchisee/${selectedFranchisee}`;
+        api_url = `${BASE_URL}/auth/usersListByCondition/?franchise=${selectedFranchisee}`;
     } else {
-      api_url = `${BASE_URL}/auth/users`;
+      api_url = `${BASE_URL}/auth/usersListByCondition/?franchise`;
     }
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("The result",result)
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') setUser(result?.data);
-          else setUser(result?.users);
-        } else setUser(result?.data);
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') {
+            let formattedUserData = result?.users?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+          }
+          else{
+            let formattedUserData = result?.users?.map((d) => ({
+              id: d.id,
+              fullname: d.fullname,
+              email: d.email,
+              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+            setUser(formattedUserData);
+
+          }
+        } 
+        else{
+          let formattedUserData = result?.users?.map((d) => ({
+            id: d.id,
+            fullname: d.fullname,
+            email: d.email,
+            namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+          }));
+          setUser(formattedUserData);
+
+        }
       })
       .catch((error) => console.log('error', error));
   };
@@ -476,8 +506,11 @@ const AddOperatingManual = () => {
       })
       .catch((error) => console.log('error', error));
   };
-  console.log("Operating manual",operatingManualData)
+  // namemail: `${d.fullname.charAt(0).toUpperCase() +d.fullname.split(" ")[1].charAt(0).toUpperCase()+d.fullname.split(" ")[1].slice(1)}  (${d.email})`,
+  // console.log("Operating manual",operatingManualData)
 // console.log("Oepratiing",errors)
+
+console.log("The user",user)
 // console.log("PERMISSION SELECT",selectedUser,formSettingData)
   return (
     <>
@@ -1014,7 +1047,7 @@ const AddOperatingManual = () => {
                   <Form.Label>Select User</Form.Label>
                   <div className="select-with-plus">
                     <Multiselect
-                      displayValue="email"
+                      displayValue="namemail"
                       className="multiselect-box default-arrow-select"
                       selectedValues={selectedUser}
                       onRemove={onRemoveUser}

@@ -18,7 +18,6 @@ function fileSizeValidator(file) {
     }
   } else if(fileType === 'application') {
     let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
     if(fileSize > 10) {
       return {
         code: "file-too-large",

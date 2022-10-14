@@ -56,6 +56,7 @@ const TrainingDetail = () => {
   const [popupNotification, setPopupNotification] = useState(null);
   const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
   const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
+  const [trainingExpiredDate, setTrainingExpiredDate] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [videoFiles, setVideoFiles] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState(null);
@@ -88,6 +89,7 @@ const TrainingDetail = () => {
 
       if(due_date < today && parseInt(addedBy) !== parseInt(currentUserId) && currentUserRole !== 'franchisor_admin') {
         setTrainingExpiredPopup(true);
+        setTrainingExpiredDate(due_date);
       } else {
         setTrainingDetails(all_trainings);
         setUserDetails(user);
@@ -133,7 +135,11 @@ const TrainingDetail = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { userObj } = response.data;
-      let participants = userObj.slice(0, 6);
+      let filteredUser = [...userObj];
+      if(localStorage.getItem('user_role') === 'educator') {
+        filteredUser = filteredUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('user_id')));
+      }
+      let participants = filteredUser.slice(0, 6);
       setUsers(participants.map(user => ({
         id: user.id,
         name: user.fullname,
@@ -343,7 +349,7 @@ const TrainingDetail = () => {
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <h3 className="title-sm">Training Participants Attended</h3>
-                                {users.length > 4 && <Link to={`/training-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
+                                {users.length > 6 && <Link to={`/training-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
                               </div>
                               <div className="column-list files-list three-col">
                                 {
@@ -370,7 +376,7 @@ const TrainingDetail = () => {
                             <div className="training-participants-sec mb-5">
                               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <h3 className="title-sm">Training Participants Not Attended</h3>
-                                <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>
+                                {nonParticipants?.length > 6 && <Link to={`/training-non-participant/${trainingId}`} className="viewall" style={{ marginRight: '2.5rem' }}>View All</Link>}
                               </div>
                               <div className="column-list files-list three-col">
                                 {
@@ -530,7 +536,7 @@ const TrainingDetail = () => {
 
           <Modal.Body>
             <div>
-              <p>The training has been expired. You can no longer view or access the training material.</p>
+              <p>The training has been expired on {moment(trainingExpiredDate).format('DD/MM/YYYY')} at {moment(trainingExpiredDate).format('hh:mm A')}. You can no longer view or access the training material.</p>
             </div>
           </Modal.Body>
           <Modal.Footer>

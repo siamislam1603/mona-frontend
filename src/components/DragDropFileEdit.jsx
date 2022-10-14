@@ -62,6 +62,7 @@ export default function DragDropFileEdit({ onChange, setPopupVisible, imageToCro
                                 <div style={{ display: "flex", justifyContent: " center" }}>
                                     <FileRepoVideo
                                         data={URL.createObjectURL(file)}
+                                        name={file.name}
                                     />
                                 </div>
                             </>) :

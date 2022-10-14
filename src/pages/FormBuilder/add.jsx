@@ -6,6 +6,7 @@ import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import { createFormValidation } from '../../helpers/validation';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FullLoader } from '../../components/Loader';
+import { toast, ToastContainer } from 'react-toastify';
 
 function AddFormBuilder(props) {
   const [formData, setFormData] = useState([]);
@@ -84,6 +85,7 @@ function AddFormBuilder(props) {
     }
   };
   const OnSubmit = (e) => {
+    const formNameRegex = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     e.preventDefault();
     const newErrors = createFormValidation(form);
     if (Object.keys(newErrors).length > 0) {
@@ -98,6 +100,12 @@ function AddFormBuilder(props) {
       data['created_by'] = localStorage.getItem('user_id');
       data['upper_role'] = getUpperRoleUser();
       myHeaders.append('Content-Type', 'application/json');
+
+      if (formNameRegex.test(data.form_name)) {
+        toast.error('Special Character not valid in Form name');
+        return false;
+      }
+
       fetch(`${BASE_URL}/form/add`, {
         method: 'post',
         body: JSON.stringify(data),
@@ -111,7 +119,11 @@ function AddFormBuilder(props) {
             setErrors(errorData);
           } else {
             navigate('/form/setting', {
-              state: { id: res?.result?.id, form_name: res?.result?.form_name },
+              state: {
+                id: res?.result?.id,
+                form_name: res?.result?.form_name,
+                update: location?.state?.update ? true : false,
+              },
             });
           }
         });
@@ -269,86 +281,91 @@ function AddFormBuilder(props) {
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
-                    {!location?.state?.id && <><Col md={6}>
-                      <Form.Group>
-                        <Form.Label>
-                          Select Previous Form as a Template
-                        </Form.Label>
-                        <div className="new-form-radio">
-                          <div className="new-form-radio-box">
-                            <label for="yes">
-                              <input
-                                type="radio"
-                                value="Yes"
-                                name="form_template_select"
-                                id="yes"
-                                checked={
-                                  form?.form_template_select === 'Yes' ||
-                                  form?.form_template_select === true
-                                }
-                                onClick={(e) => {
+                    {!location?.state?.id && (
+                      <>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>
+                              Select Previous Form as a Template
+                            </Form.Label>
+                            <div className="new-form-radio">
+                              <div className="new-form-radio-box">
+                                <label htmlFor="yes">
+                                  <input
+                                    type="radio"
+                                    value="Yes"
+                                    name="form_template_select"
+                                    id="yes"
+                                    checked={
+                                      form?.form_template_select === 'Yes' ||
+                                      form?.form_template_select === true
+                                    }
+                                    onClick={(e) => {
+                                      setField(e.target.name, e.target.value);
+                                    }}
+                                  />
+                                  <span className="radio-round"></span>
+                                  <p>Yes, I want to select</p>
+                                </label>
+                              </div>
+                              <div className="new-form-radio-box">
+                                <label htmlFor="no">
+                                  <input
+                                    type="radio"
+                                    value="No"
+                                    name="form_template_select"
+                                    id="no"
+                                    onClick={(e) => {
+                                      setField(e.target.name, e.target.value);
+                                    }}
+                                    checked={
+                                      form?.form_template_select === 'No' ||
+                                      form?.form_template_select === false
+                                    }
+                                  />
+                                  <span className="radio-round"></span>
+                                  <p>No, I want to create a new form</p>
+                                </label>
+                              </div>
+                            </div>
+                          </Form.Group>
+                        </Col>
+                        {form?.form_template_select === 'Yes' ||
+                        form?.form_template_select === true ? (
+                          <Col md={6} className="mt-3 mt-md-0">
+                            <Form.Group>
+                              <Form.Label>Select Previous Form *</Form.Label>
+                              <Form.Select
+                                name="previous_form"
+                                id="previous_form"
+                                onChange={(e) => {
                                   setField(e.target.name, e.target.value);
                                 }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>Yes, I want to select</p>
-                            </label>
-                          </div>
-                          <div className="new-form-radio-box">
-                            <label for="no">
-                              <input
-                                type="radio"
-                                value="No"
-                                name="form_template_select"
-                                id="no"
-                                onClick={(e) => {
-                                  setField(e.target.name, e.target.value);
-                                }}
-                                checked={
-                                  form?.form_template_select === 'No' ||
-                                  form?.form_template_select === false
-                                }
-                              />
-                              <span className="radio-round"></span>
-                              <p>No, I want to create a new form</p>
-                            </label>
-                          </div>
-                        </div>
-                      </Form.Group>
-                    </Col>
-                    {form?.form_template_select === 'Yes' ||
-                    form?.form_template_select === true ? (
-                      <Col md={6} className="mt-3 mt-md-0">
-                        <Form.Group>
-                          <Form.Label>Select Previous Form *</Form.Label>
-                          <Form.Select
-                            name="previous_form"
-                            id="previous_form"
-                            onChange={(e) => {
-                              setField(e.target.name, e.target.value);
-                            }}
-                            isInvalid={!!errors.previous_form}
-                          >
-                            <option value="1">Select</option>
-                            {formData?.map((item) => {
-                              return (
-                                <option
-                                  value={item.form_name}
-                                  selected={
-                                    form?.previous_form === item.form_name
-                                  }
-                                >
-                                  {item.form_name}
-                                </option>
-                              );
-                            })}
-                          </Form.Select>
-                          <Form.Control.Feedback type="invalid">
-                            {errors.previous_form}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Col>
-                    ) : null} </>}
+                                isInvalid={!!errors.previous_form}
+                              >
+                                <option value="1">Select</option>
+                                {formData?.map((item, index) => {
+                                  return (
+                                    <option
+                                      key={index}
+                                      value={item.form_name}
+                                      selected={
+                                        form?.previous_form === item.form_name
+                                      }
+                                    >
+                                      {item.form_name}
+                                    </option>
+                                  );
+                                })}
+                              </Form.Select>
+                              <Form.Control.Feedback type="invalid">
+                                {errors.previous_form}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Col>
+                        ) : null}{' '}
+                      </>
+                    )}
                     <Col md={6} className="mt-3 mt-md-0">
                       <Form.Group>
                         <Form.Label>Select Category *</Form.Label>
@@ -361,9 +378,10 @@ function AddFormBuilder(props) {
                           }}
                         >
                           <option value="">Select</option>
-                          {formCategory?.map((item) => {
+                          {formCategory?.map((item, index) => {
                             return (
                               <option
+                                key={index}
                                 value={item.id}
                                 selected={form?.category_id === item.id}
                               >
@@ -399,6 +417,7 @@ function AddFormBuilder(props) {
           </Container>
         </section>
       </div>
+      <ToastContainer />
     </>
   );
 }

@@ -405,7 +405,7 @@ label.form-check-label{font-weight:400;font-size:14px;line-height:17px;color:var
 .training-column .item{background-color:var(--offwhite);overflow:none;border-radius:18px;margin-bottom:1rem}
 .training-column .item .pic{overflow:hidden;border-radius:18px;position:relative}
 .training-column .item .pic a,.training-column .item .pic img{width:100%;display:block}
-.training-column .item .pic .lthumb{position:absolute;right:25px;bottom:25px;z-index:2}
+.training-column .item .pic .lthumb{position:absolute;right:25px;bottom:25px;z-index:0}
 .training-column .item .fixcol{display:flex;padding:15px}
 .training-column .item .fixcol .icopic{margin-right:10px;flex:0 0 47px}
 .training-column .item .fixcol .iconame{font-weight:600;font-size:var(--fontlg);line-height:1.6;width:100%;min-height:72px}
@@ -724,6 +724,8 @@ canvas.react-pdf__Page__canvas{width:200px!important;height:200px!important}
 .parentName::-webkit-scrollbar-thumb{background:#9b9b9b;border-radius:10px}
 .parentName ::-webkit-scrollbar-thumb:hover{background:#3d3d3d}
 .wordcount { margin-top: -25px; position: relative; text-align: right; margin-bottom: 1.5rem; }
+.permissions-sec .d-flex { flex-flow:wrap; }
+.permissions-sec .head { cursor: pointer; }
 
 
 @media not all and (min-resolution: 326dpi) { 

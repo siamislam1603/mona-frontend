@@ -231,7 +231,6 @@ function Setting(props) {
         }
       })
       .catch((error) => {
-        console.log('error', error);
         setfullLoaderStatus(false);
       });
   };
@@ -484,13 +483,15 @@ function Setting(props) {
       .then((res) => res.json())
       .then((res) => {
         navigate('/form/field/add', {
-          state: { id: location?.state?.id, form_name: form?.form_name },
+          state: {
+            id: location?.state?.id,
+            form_name: form?.form_name,
+            update: location?.state?.update ? true : false,
+          },
         });
         props.onModelChange();
       });
   };
-
-  user && console.log('USERs>>>>>>>>>>>>>>>>>:', user);
   return (
     <>
       <Form>
@@ -592,7 +593,7 @@ function Setting(props) {
                         </Form.Label>
                         <div className="new-form-radio">
                           <div className="new-form-radio-box">
-                            <label for="user_role">
+                            <label htmlFor="user_role">
                               <input
                                 type="radio"
                                 value={1}
@@ -611,7 +612,7 @@ function Setting(props) {
                             </label>
                           </div>
                           <div className="new-form-radio-box">
-                            <label for="specific_user">
+                            <label htmlFor="specific_user">
                               <input
                                 type="radio"
                                 value={0}
@@ -955,9 +956,9 @@ function Setting(props) {
                                         <input
                                           type="checkbox"
                                           name="response_visibility"
-                                          value="parent"
+                                          value="guardian"
                                           checked={form?.response_visibility?.includes(
-                                            'parent'
+                                            'guardian'
                                           )}
                                           onChange={(e) => {
                                             setCheckBoxField(

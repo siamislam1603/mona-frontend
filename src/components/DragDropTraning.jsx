@@ -5,50 +5,61 @@ import { Link } from 'react-router-dom';
 const bytesToMegaBytes = bytes => bytes / (1024 ** 2);
 
 function fileSizeValidator(file) {
-  let fileType = file.type.split("/")[0];
-  console.log('FILE TYPE:', fileType);
+    let fileType = file.type.split("/")[0];
+    console.log('FILE TYPE:', fileType);
 
-  if(fileType === 'video') {
-    console.log('FILE IS A VIDEO!');
-    let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
-    if(fileSize > 1024) {
-      return {
-        code: "file-too-large",
-        message: `File should be less than ${1}GB`
-      };
+    if (fileType === 'video') {
+        console.log('FILE IS A VIDEO!');
+        let fileSize = bytesToMegaBytes(file.size);
+        console.log('FILE SIZE:', fileSize);
+        if (fileSize > 1024) {
+            return {
+                code: "file-too-large",
+                message: `File should be less than ${1}GB`
+            };
+        }
+    } else if (fileType === 'application') {
+        console.log('FILE IS A DOCUMENT!');
+        let fileSize = bytesToMegaBytes(file.size);
+        console.log('FILE SIZE:', fileSize);
+        if (fileSize > 10) {
+            return {
+                code: "file-too-large",
+                message: `File should be less than ${10}MB`
+            };
+        }
+    } else if (fileType === "image") {
+        console.log('FILE IS AN IMAGE');
+        let fileSize = bytesToMegaBytes(file.size);
+        console.log('FILE SIZE:', fileSize);
+        if (fileSize > 10) {
+            return {
+                code: "file-too-large",
+                message: `Image should be less than ${10}MB`
+            }
+        }
     }
-  } else if(fileType === 'application') {
-    console.log('FILE IS A DOCUMENT!');
-    let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
-    if(fileSize > 10) {
-      return {
-        code: "file-too-large",
-        message: `File should be less than ${10}MB`
-      };
-    }
-  } else if(fileType === "image") {
-    console.log('FILE IS AN IMAGE');
-    let fileSize = bytesToMegaBytes(file.size);
-    console.log('FILE SIZE:', fileSize);
-    if(fileSize > 1) {
-      return {
-        code: "file-too-large",
-        message: `Image should be less than ${10}MB`
-      }
-    }
-  }
 
-  return null
+    return null
 }
 
 const temp = () => { };
 
-export default function DragDropTraning({ onSave, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp, setUploadError=() => {} }) {
+export default function DragDropTraning({ onSave, popupVisible, setPopupVisible, croppedImage, setCroppedImage, fetchedPhoto = "", setFormErrors = temp, setUploadError = () => { } }) {
 
     const [data, setData] = useState([]);
     const [currentURI, setCurrentURI] = useState();
+    const empity = () => {
+        if (popupVisible === false) {
+            croppedImage = ""
+            setCroppedImage("")
+            setPopupVisible(false)
+        }
+    }
+    useEffect(() => {
+        empity();
+    })
+    empity();
 
     const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
         acceptedFiles.forEach(file => {
@@ -71,9 +82,9 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
         <li key={file.path}>
             {file.path} - {file.size} bytes
             <ul>
-            {errors.map(e => (
-                <li key={e.code}>{e.message}</li>
-            ))}
+                {errors.map(e => (
+                    <li key={e.code}>{e.message}</li>
+                ))}
             </ul>
         </li>
     ));
@@ -107,7 +118,7 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
 
     useEffect(() => {
         let rejectionArray = fileRejections.map(d => ({
-          error: d.errors.map(e => e)
+            error: d.errors.map(e => e)
         }));
         console.log(rejectionArray);
         setUploadError(rejectionArray);
@@ -150,4 +161,3 @@ export default function DragDropTraning({ onSave, setPopupVisible, croppedImage,
         </div>
     );
 }
-    

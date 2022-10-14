@@ -12,7 +12,7 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import VideoPopupfForFile from '../components/VideoPopupfForFile';
 import FilerepoUploadFile from './FilerepoUploadFile';
 import { FullLoader } from "../components/Loader";
-
+import _ from 'lodash'
 const getUser_Role = localStorage.getItem(`user_role`)
 const getFranchisee = localStorage.getItem(`franchisee_id`)
 
@@ -40,6 +40,7 @@ const FilerepoMyAdd = ({ filter }) => {
     const [selectedFranchisees, setSelectedFranchisee] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
     const [SearchValue, setSearchValue] = useState('');
+    const [userCount, setUserCount] = useState(0)
     const [formSettings, setFormSettings] = useState({
         assigned_role: [],
         franchisee: [],
@@ -77,7 +78,6 @@ const FilerepoMyAdd = ({ filter }) => {
         id: ""
     })
 
-    console.log("Updatecategory_name", Updatecategory_name)
 
     useEffect(() => {
         GetEditCategory()
@@ -85,7 +85,7 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         const selected_Franchisee = localStorage.getItem("selected_Franchisee");
         setselected_Franchisee(selected_Franchisee)
-        console.log(selected_Franchisee, "selected_Franchisee")
+
     }, [])
 
 
@@ -96,19 +96,19 @@ const FilerepoMyAdd = ({ filter }) => {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${franchiseeId}&search=${SearchValue}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
-                    console.log('FILE RESPONSE:', files);
+
                     let tempData = files.map((dt) => ({
-                        name: `${dt.fileName},${dt.fileType},${dt.filesPath}`,
-                        createdAt: dt.createdAt,
-                        userID: dt.id,
-                        creatorName: dt.creatorName + "," + dt.creatorRole,
-                        categoryId: dt.categoryId,
-                        Shaired: dt.repository_shares.length,
-                        // Shaired: dt.repository.repository_shares[0].length,
-                        filesId: dt.filesId,
+                        name: `${dt?.fileName},${dt?.fileType},${dt?.filesPath}`,
+                        createdAt: dt?.createdAt,
+                        userID: dt?.id,
+                        creatorName: dt?.creatorName + "," + dt?.creatorRole,
+                        categoryId: dt?.categoryId,
+                        Shaired: dt?.repository_shares.length,
+                        // Shaired: dt?.repository.repository_shares[0].length,
+                        filesId: dt?.filesId,
 
                     }));
-                    console.log('FILE DATA:', tempData);
+
                     setUserData(tempData);
                 }
             }
@@ -140,17 +140,18 @@ const FilerepoMyAdd = ({ filter }) => {
             createdAt: data?.createdAt,
             description: data?.description,
             title: data?.title,
-            categoryId: data?.repository_files[0].categoryId,
-            image: data?.repository_files[0].filesPath,
-            franchisee: data?.repository_shares[0].franchisee,
-            accessibleToRole: data?.repository_shares[0].accessibleToRole,
-            accessibleToAll: data?.repository_shares[0].accessibleToAll,
-            assigned_users: data?.repository_shares[0].assigned_users,
-            assigned_role: data?.repository_shares[0].assigned_roles,
-            assigned_childs: data?.repository_shares[0].assigned_childs,
-            file_type: data?.repository_files[0].fileType,
+            categoryId: data?.repository_files[0]?.categoryId,
+            image: data?.repository_files[0]?.filesPath,
+            franchisee: data?.repository_shares[0]?.franchisee,
+            accessibleToRole: data?.repository_shares[0]?.accessibleToRole,
+            accessibleToAll: data?.repository_shares[0]?.accessibleToAll,
+            assigned_users: data?.repository_shares[0]?.assigned_users,
+            assigned_role: data?.repository_shares[0]?.assigned_roles,
+            assigned_childs: data?.repository_shares[0]?.assigned_childs,
+            file_type: data?.repository_files[0]?.fileType,
         }));
-        data?.repository_shares[0].franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0]?.franchisee.length == 0 ? setSendToAllFranchisee("all") : setSendToAllFranchisee("none")
+        data?.repository_shares[0]?.assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
     const fetchFranchiseeList = async () => {
@@ -190,13 +191,37 @@ const FilerepoMyAdd = ({ filter }) => {
         }
     }
 
+
+    // function onRemoveUser(selectedList, removedItem) {
+    //     selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
+    //     const index = selectedUser.findIndex((object) => {
+    //         return object.id === removedItem.id;
+    //     });
+    //     selectedUser.splice(index, 1);
+    //     getChildren();
+    // }
+
     function onRemoveUser(selectedList, removedItem) {
         selectedUserId = selectedUserId.replace(removedItem.id + ',', '');
         const index = selectedUser.findIndex((object) => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
+        getChildren();
     }
+
+
+    function onRemoveChild(selectedList, removedItem) {
+        selectedUserId = selectedUserId.replace(
+            removedItem.id + ',',
+            ''
+        );
+        const index = child.findIndex((object) => {
+            return object.id === removedItem.id;
+        });
+        child.splice(index, 1);
+    }
+
 
     const GetFile = async () => {
         try {
@@ -205,7 +230,7 @@ const FilerepoMyAdd = ({ filter }) => {
 
             if (franchiseeId) {
                 let response = await axios.get(`${BASE_URL}/fileRepo/filesDetails-createdBy-category/${Params.id}?franchiseAlias=${selectedFranchisee}`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } })
-                console.log("DELETE RESPONSE", response)
+
                 if (response.status === 200 && response.data.status === "success") {
                     const { files } = response.data;
                     let tempData = files.map((dt) => ({
@@ -238,30 +263,46 @@ const FilerepoMyAdd = ({ filter }) => {
         };
 
         let franchiseeArr = formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee
-
-        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr }, request)
+        let userIdd = localStorage.getItem('user_id')
+        let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, request)
         if (response.status === 200) {
-            setUser(response.data.users)
+            let userList = response.data.users
+            let formattedUserData = userList.map((d) => ({
+                id: d.id,
+                fullname: d.fullname,
+                email: d.email,
+                namemail: `${d.fullname}(${d.email})`,
+            }));
+            setUser(formattedUserData)
         }
     };
 
 
     const getChildren = async () => {
-        var myHeaders = new Headers();
-        myHeaders.append(
-            'authorization',
-            'Bearer ' + localStorage.getItem('token')
-        );
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(formSettings.assigned_users ? formSettings.assigned_users : [])}`, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+        if (response.status === 200 && response.data.status === "success") {
+            let extraArr = []
+            let parents = response.data.parentData.map((item) => {
+                return item.children
+            })
 
-        let franchiseeArr = formSettings.franchisee.length == 0 ? ["all"] : formSettings.franchisee
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
+            })
 
-        var request = {
-            headers: myHeaders,
-        };
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+            });
 
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child`, { franchisee_id: franchiseeArr }, request)
-        if (response.status === 200) {
-            setChild(response.data.children)
+            setChild(uniqArr.map(data => ({
+                id: data.id,
+                name: data.fullname,
+                key: `${data.fullname}`
+            })));
         }
     }
 
@@ -273,8 +314,11 @@ const FilerepoMyAdd = ({ filter }) => {
     useEffect(() => {
         GetFile();
         getUser();
-        getChildren();
     }, [formSettings.franchisee, fileDeleteMessage]);
+
+    useEffect(() => {
+        getChildren();
+    }, [userCount]);
 
     useEffect(() => {
         if (selectedFranchisees) {
@@ -467,7 +511,7 @@ const FilerepoMyAdd = ({ filter }) => {
             }
         },
         {
-            dataField: 'userID',
+            dataField: 'filesId',
             text: '',
             formatter: (cell) => {
                 return (
@@ -597,7 +641,7 @@ const FilerepoMyAdd = ({ filter }) => {
                     </Modal.Header>
                     <Modal.Body>
                         <div className="form-settings-content">
-                            {getUser_Role !== "franchisor_admin" ? (<></>) : (<Row className="mt-4">
+                            {getUser_Role !== "franchisor_admin" ? "" : (<Row className="mt-4">
                                 <Col lg={3} md={6}>
                                     <Form.Group>
                                         <Form.Label>Give access to all Franchises</Form.Label>
@@ -932,20 +976,30 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         <Form.Label>Select User</Form.Label>
                                                         <div className="select-with-plus">
                                                             <Multiselect
-                                                                displayValue="email"
+                                                                displayValue="namemail"
                                                                 className="multiselect-box default-arrow-select"
                                                                 // placeholder="Select Franchisee"
                                                                 selectedValues={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 value={user && user.filter(c => formSettings.assigned_users?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
-                                                                // onSearch={function noRefCheck() {}}
+                                                                // onRemove={onRemoveUser}
+                                                                onRemove={(selectedOptions) => {
+                                                                    setFormSettings((prevState) => ({
+                                                                        ...prevState,
+                                                                        assigned_users: [...selectedOptions.map(option => option.id + "")],
+                                                                        accessibleToRole: 0
+                                                                    }))
+                                                                    setUserCount(userCount - 1)
+                                                                }
+                                                                }
+                                                                onSearch={function noRefCheck() { }}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({
                                                                         ...prevState,
                                                                         assigned_users: [...selectedOptions.map(option => option.id + "")],
                                                                         accessibleToRole: 0
                                                                     }))
+                                                                    setUserCount(userCount + 1)
                                                                 }}
                                                                 options={user}
                                                             />
@@ -955,13 +1009,13 @@ const FilerepoMyAdd = ({ filter }) => {
                                                         <Form.Label>Select Child</Form.Label>
                                                         <div className="select-with-plus">
                                                             <Multiselect
-                                                                displayValue="fullname"
+                                                                displayValue="name"
                                                                 className="multiselect-box default-arrow-select"
                                                                 // placeholder="Select Franchisee"
                                                                 selectedValues={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
                                                                 value={child && child.filter(c => formSettings.assigned_childs?.includes(c.id + ""))}
                                                                 // onKeyPressFn={function noRefCheck() {}}
-                                                                onRemove={onRemoveUser}
+                                                                onRemove={onRemoveChild}
                                                                 // onSearch={function noRefCheck() {}}
                                                                 onSelect={(selectedOptions) => {
                                                                     setFormSettings((prevState) => ({

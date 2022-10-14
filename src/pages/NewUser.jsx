@@ -23,6 +23,7 @@ const NewUser = () => {
   let childfranchise = query.searchParams.get('franchise');
   let childId = query.searchParams.get('childId');
   let queryRole = query.searchParams.get('role');
+  let assignedEducators = query.searchParams.get('educators')?.split(",");
   const navigate = useNavigate();
 
   // REF DECLARATIONS
@@ -102,11 +103,19 @@ const NewUser = () => {
       
       // SELECTIVE CREATION OF ENGAGEBAY CONTACTS
       if(query.searchParams.get('childId')) {
-        response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+        if(query.searchParams.get('role') === 'guardian') {
+          response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+        } else if(query.searchParams.get('role') === 'educator') {
+          response =await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`,{educatorIds: [...assignedEducators, data.id], removedEducatorIds: []}, {
+            headers: {
+                authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+        }
         if (response.status === 201) {
           response = await axios.patch(`${BASE_URL}/auth/user/update/${data.id}`);
           if(response.status === 201 && response.data.status === "success") {
@@ -692,6 +701,12 @@ const NewUser = () => {
                               placeholder="Select"
                               ref={role}
                               closeMenuOnSelect={true}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               options={userRoleData}
                               value={userRoleData?.filter(d => d.value ===  formData?.role)}
                               onChange={(e) => {
@@ -733,6 +748,12 @@ const NewUser = () => {
                               placeholder="Select"
                               closeMenuOnSelect={true}
                               options={stateData}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               ref={state}
                               value={stateData?.filter(d => d.label === formData?.state)}
                               onChange={(e) => {
@@ -755,6 +776,12 @@ const NewUser = () => {
                             <Select
                               placeholder="Select"
                               ref={city}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              styles={{
+                                menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                menu: (provided) => ({ ...provided, zIndex: 9999 })
+                              }}
                               closeMenuOnSelect={true}
                               options={cityData}
                               value={cityData?.filter(d => d.label === formData?.city)}
@@ -852,6 +879,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 components={animatedComponents}
                                 isMulti
                                 options={trainingCategoryData}
@@ -873,6 +906,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={false}
                                 placeholder="Select"
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 components={animatedComponents}
                                 isMulti
                                 options={pdcData}
@@ -958,6 +997,12 @@ const NewUser = () => {
                                 closeMenuOnSelect={true}
                                 isDisabled={childfranchise}
                                 ref={franchisee}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 options={franchiseeData}
                                 onChange={(e) => {
                                   setFormData((prevState) => ({
@@ -998,6 +1043,12 @@ const NewUser = () => {
                                 isDisabled={formData.role !== 'educator'}
                                 ref={coordinator}
                                 closeMenuOnSelect={true}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 // placeholder={(formData.role === 'educator' && formData.franchisee !== "") ? "Select" : "Not Applicable"}
                                 placeholder={"Select"}
                                 options={coordinatorData}
@@ -1026,6 +1077,12 @@ const NewUser = () => {
                                 components={animatedComponents}
                                 isMulti
                                 isClearable={false}
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                styles={{
+                                  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                                  menu: (provided) => ({ ...provided, zIndex: 9999 })
+                                }}
                                 placeholder="Select"
                                 options={businessAssetData}
                                 onChange={(selectedOptions) => {

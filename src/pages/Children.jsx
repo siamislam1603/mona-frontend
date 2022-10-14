@@ -14,16 +14,22 @@ import { FullLoader } from "../components/Loader";
 let DeleteId = [];
 
 function getFilteredChildren(children) {
+  console.log('Children:', children);
+  let  newFilteredList = null;
 
-    let loggedInUserEmail = localStorage.getItem('email');
-    console.log('CHILDREN:', children);
-    let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email === loggedInUserEmail));
-    console.log('EMAIL CHILDREN:', filteredChildrenByEmail)
-    filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
-    let newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
-    console.log('FILTERED LIST:', newFilteredList);
+  if(localStorage.getItem('user_role') !== 'franchisor_admin' && localStorage.getItem('user_role') !== 'guardian') {
+    if(localStorage.getItem('user_role') === 'educator') {
+      let loggedInUserEmail = localStorage.getItem('email');
+      let filteredChildrenByEmail = children.map(child => child.users.map(c => c.email === loggedInUserEmail));
+      filteredChildrenByEmail = filteredChildrenByEmail.map(t => t.includes(true));
+      newFilteredList = children.filter((child, index) => filteredChildrenByEmail[index] === true);
+    } else {
+      let franchisee_id = localStorage.getItem('franchisee_id');
+      newFilteredList = children.filter(children => children.franchisee_id === parseInt(franchisee_id));
+    }
+  }
 
-    return localStorage.getItem('user_role') === 'educator' ? newFilteredList : children;
+  return newFilteredList || children;
 }
 
 const Children = () => {
@@ -37,10 +43,11 @@ const Children = () => {
     // Modal start
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = (id, educators) =>{
+    const handleShow = async (id, educators) => {
         let defEducators = educators.map((edu) => {
             return edu.id 
         })
+        await fetchParents(id);
         localStorage.setItem("SelectedChild",id)
         localStorage.setItem("DefaultEducators",JSON.stringify(defEducators))
         setShow(true)
@@ -62,7 +69,7 @@ const Children = () => {
     const params = useParams();
     const [parentFullname, setParentFullname] = useState(null);
     const [userData, setUserData] = useState([]);
-    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchisee'));
+    const [selectedFranchisee, setSelectedFranchisee] = useState(localStorage.getItem('selectedFranchise'));
     const [deleteResponse, setDeleteResponse] = useState(null);
     const [childrenList, setChildrenList] = useState([]);
     const [franchiseId, setFranchiseId] = useState(null);
@@ -75,10 +82,12 @@ const Children = () => {
     const [reloadFlag, setReloadFlag] = useState(false);
     const [topSuccessMessage, setTopSuccessMessage] = useState(null);
     const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+    const [rowFranchiseId,setRowFranchiseId] = useState(0);
+    const [assignedEducatorIDs, setAssignedEducatorIDs] = useState(null);
 
     const init = async() => {
-        // Set Parents Franchisee
-        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id');
+        // Set Parents franchisee
+        const franchiseeId = location?.state?.franchisee_id || localStorage.getItem('franchisee_id')
           setFranchiseId(franchiseeId);
         
         // FETCHING PARENT DATA
@@ -113,29 +122,6 @@ const Children = () => {
              }
           }
           
-        //   Educators list
-        let eduResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchiseeId}/educator`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          if (eduResponse.status === 200) {
-            const {coordinators} = eduResponse.data;
-            // console.log(coordinators,"coordinatorrr")
-            setEducators(coordinators)
-          }
-
-        //   Parents list
-        let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/parents/${franchiseeId}`, {
-            headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          });
-          if (CpResponse.status === 200) {
-            const {coordinators} = CpResponse.data;
-            // console.log(coordinators,"coordinatorrr")
-            setParents(coordinators)
-          }
     }
 
     const sendInitiationMail = async (childId) => {
@@ -222,23 +208,76 @@ const Children = () => {
         }
 
     }
+
+    const getEducatorsByFranchisee = async (id) => {
+      //   Educators list
+      let eduResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${id}/educator`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (eduResponse.status === 200) {
+        const {coordinators} = eduResponse.data;
+        // console.log(coordinators,"coordinatorrr")
+        setEducators(coordinators)
+      }
+    }
+
+    const getParentsByFranchisee = async (id) => {
+      //   Parents list
+      let CpResponse =await  axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${id }/guardian`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      if (CpResponse.status === 200) {
+        const {coordinators} = CpResponse.data;
+        // console.log(coordinators,"coordinatorrr")
+        setParents(coordinators)
+      }
+    }
+
+    const fetchAndSaveEducatorData = async (passedChildId, passedParentId) => {
+      let response = await axios.get(`${BASE_URL}/enrollment/child/${passedChildId}?parentId=${passedParentId}`, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+      });
+  
+      console.log('FETCHED CHILD DATA:', response.data);
+      if(response.status === 200 && (await response).data.status === "success") {
+        let { child } = response.data;
+  
+        let { users } = child;
+        let educatorIds = users.map(d => d.id);
+  
+        setAssignedEducatorIDs([...educatorIds]);
+      }
+    }
     
     const rowEvents = {
         onClick: (e, row, rowIndex) => {
             if (e.target.text === 'Delete') {
                 // CODE TO DELETE THE USER 
             }
-            if (e.target.text === "Edit") {
+            if (e.target.text === "Edit" || e.target.text === "View") {
                 navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
             }
             if (e.target.text === 'Add Educator'){
+                setRowFranchiseId(row.Franchisee)
                 console.log(row,"educatorRow")
                 let defEducators = row.educator.educators.map((edu)=>{
                     return edu.id 
                 })
+
+                // FETCHING AN SAVING EDUCATOR
+                fetchAndSaveEducatorData(row.id, paramsParentId);
+                // FETCHING AND SAVING ENDS 
+
                 handleShow(row.id,row.educator.educators || [])
             }
             if (e.target.text === 'Add Co-Parent'){
+                setRowFranchiseId(row.Franchisee)
                 handleCpShow(row.id)
                 // addCoparentToChild()
             }
@@ -293,7 +332,8 @@ const Children = () => {
         action: { enrollFlag: child.isChildEnrolled, active: child.is_active },
         parents: {parents:child.parents, childId:child.id},
         Parents: `${childrenList[index]?.parents[0]?.parent_family_name}, ${childrenList[index]?.parents[1]?.parent_family_name},${childrenList[index]?.parents[2]?.parent_family_name},${childrenList[index]?.parents[3]?.parent_family_name},${childrenList[index]?.parents[4]?.parent_family_name},${childrenList[index]?.parents[5]?.parent_family_name},${childrenList[index]?.parents[6]?.parent_family_name},${childrenList[index]?.parents[7]?.parent_family_name},${childrenList[index]?.parents[8]?.parent_family_name},${childrenList[index]?.parents[9]?.parent_family_name},${childrenList[index]?.parents[0]?.profile_pic},${childrenList[index]?.parents[1]?.profile_pic},${childrenList[index]?.parents[2]?.user?.profile_pic},${childrenList[index]?.parents[3]?.user?.profile_pic},${childrenList[index]?.parents[4]?.user?.profile_pic},${childrenList[index]?.parents[5]?.user?.profile_pic},${childrenList[index]?.parents[6]?.user?.profile_pic},${childrenList[index]?.parents[7]?.user?.profile_pic},${childrenList[index]?.parents[8]?.user?.profile_pic},${childrenList[index]?.parents[9]?.user?.profile_pic},${child.id}`,
-        status: child.is_active
+        status: child.is_active,
+        Franchisee : child.franchisee_id
     }));
 
     const   PColumns = [
@@ -691,12 +731,12 @@ const Children = () => {
                                         {
                                             cell.active === 1 &&
                                             <>
-                                                <Dropdown.Item href="#">Edit</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Educator</Dropdown.Item>
-                                                <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>
+                                                <Dropdown.Item href="#">{localStorage.getItem('user_role') === "guardian" ? "View" : "Edit"}</Dropdown.Item>
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Educator</Dropdown.Item>}
+                                                { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#">Add Co-Parent</Dropdown.Item>}
                                             </>
                                         }
-                                        <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>
+                                        { localStorage.getItem('user_role') !== "guardian" && <Dropdown.Item href="#" style={{"color":"red"}}>{Button}</Dropdown.Item>}
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </div>
@@ -725,6 +765,11 @@ const Children = () => {
     useEffect(() => {
         init();
     }, [reloadFlag]);
+
+    useEffect(()=>{
+      getEducatorsByFranchisee(rowFranchiseId)
+      getParentsByFranchisee(rowFranchiseId)
+    },[rowFranchiseId])
 
     return (
         <>
@@ -839,7 +884,13 @@ const Children = () => {
                     </Button>
                 </Modal.Footer>
             </Modal > */}
-            {show ? <EducatorAssignPopup educators={educators} handleClose={()=>handleClose()} show={show}/> : ""}
+            {show ? <EducatorAssignPopup 
+                      educators={educators} 
+                      franchise={childFranchise} 
+                      childId={enroledChildId}
+                      paramsParentId={paramsParentId}
+                      assignedEducators={assignedEducatorIDs}
+                      handleClose={()=>handleClose()} show={show}/> : ""}
             {cpShow ? <CoparentAssignPopup 
                         parents={parents} 
                         franchise={childFranchise} 

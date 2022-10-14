@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpFromBracket } from '@fortawesome/free-solid-svg-icons';
 import DragDropFileEdit from '../components/DragDropFileEdit';
+import _ from 'lodash'
 
 
 let selectedUserId = '';
@@ -22,7 +23,7 @@ const FilerepoUploadFile = () => {
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [selectedChild, setSelectedChild] = useState([]);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
     const [franchiseeList, setFranchiseeList] = useState();
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
@@ -30,17 +31,56 @@ const FilerepoUploadFile = () => {
     const [user, setUser] = useState([]);
     const [selectedAll, setSelectedAll] = useState(false);
     const [generalCategory, setGeneralCategory] = useState("")
+
     const getUser_Role = localStorage.getItem(`user_role`)
     const getFranchisee = localStorage.getItem('franchisee_id')
+    const [userCount, setUserCount] = useState(0)
     const [formSettingData, setFormSettingData] = useState({
         shared_role: '',
         accessible_to_role: 1
     });
+    console.log(userCount, "selectedUser")
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
-    console.log(formSettingData, "formSettingData", formSettings)
-    console.log('selected_item---->1selectedFranchisee', formSettings.assigned_franchisee.length);
+
+
+    const getUser = async () => {
+        try {
+            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
+            let userIdd = localStorage.getItem('user_id')
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, {
+                headers: {
+                    authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            })
+
+            if (response.status === 200) {
+                let userList = response.data.users
+
+
+                if (getUser_Role == 'franchisee_admin') {
+                    userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'coordinator') {
+                    userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
+                } else if (getUser_Role == 'educator') {
+                    userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
+                }
+                let formattedUserData = userList.map((d) => ({
+                    id: d.id,
+                    fullname: d.fullname,
+                    email: d.email,
+                    namemail: `${d.fullname} (${d.email})`,
+                }));
+
+                setUser(formattedUserData)
+            }
+
+        } catch (err) {
+
+        }
+    };
+
 
     //======================== GET FILE CATAGOREY==================
 
@@ -52,15 +92,13 @@ const FilerepoUploadFile = () => {
         })
             .then((res) => {
                 setCategory(res.data.category)
-
                 let general = res.data.category.filter((item) => {
                     if (item.category_name == "General") {
                         return item.id
                     }
                 })
-                console.log(general[0].id, "General")
-                setGeneralCategory(general[0].id)
 
+                setGeneralCategory(general[0].id)
             })
             .catch((error) => {
                 console.error(error)
@@ -93,67 +131,59 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let franchiseeArr = formSettings.assigned_franchisee
-        let response = await axios.post(`${BASE_URL}/enrollment/franchisee/child/`, { franchisee_id: franchiseeArr }, {
+        let selectedUserr = selectedUser.length === 0 ? [] : selectedUser.map(item => item.id)
+        
+        let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
         if (response.status === 200 && response.data.status === "success") {
-            setChild(response.data.children.map(data => ({
+            let extraArr = []
+
+            // let parents = response.data.parentData
+
+            // let formattedUserData = parents.map((d) => ({
+            //     // id: d?.id,
+            //     // fullname: d?.fullname,
+            //     // email: d?.email,
+            //     namemail: `${d?.ParentName} (${d?.children.map((item) => {
+            //         return item.fullname
+            //     })})`,
+            // }));
+            // console.log(parents, "parents", formattedUserData)
+            let parents = response.data.parentData.map((item) => {
+                return item.children
+            })
+            parents.forEach((item) => {
+                extraArr = [...item, ...extraArr]
+            })
+
+            let uniqArr = _.uniqBy(extraArr, function (e) {
+                return e.id;
+            });
+
+            setChild(uniqArr.map(data => ({
                 id: data.id,
                 name: data.fullname,
                 key: `${data.fullname}`
             })));
         }
     }
+
     //======================== GET User List==================
-    const getUser = async () => {
-        try {
-            let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr || [] }, {
-                headers: {
-                    authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            })
 
-            if (response.status === 200) {
-                let userList = response.data.users
-                if (getUser_Role == 'franchisee_admin') {
-                    userList = response.data.users.filter(c => ['coordinator', 'educator', 'guardian']?.includes(c.role + ""))
-                } else if (getUser_Role == 'coordinator') {
-                    userList = response.data.users.filter(c => ['educator', 'guardian']?.includes(c.role + ""))
-                } else if (getUser_Role == 'educator') {
-                    userList = response.data.users.filter(c => ['guardian']?.includes(c.role + ""))
-                }
-                setUser(userList)
-            }
-
-        } catch (err) {
-
-        }
-    };
-
-
-    function onSelectChild(selectedItem) {
-        let selectedchildarr = selectedItem
-        selectedItem = selectedItem.map((item) => {
-            return item.id
-        })
-        setFormSettings(prevState => ({
-            ...prevState,
-            assigned_childs: selectedItem
-        }));
-
-        setSelectedChild(selectedchildarr)
-    }
 
     useEffect(() => {
         getFileCategory();
-        getChildren();
+        // getChildren();
         getUser();
         fetchFranchiseeList();
     }, [formSettings.franchisee])
+
+    useEffect(() => {
+        getChildren()
+    }, [userCount])
 
 
     const setField = (field, value) => {
@@ -205,13 +235,13 @@ const FilerepoUploadFile = () => {
 
         const blob = await fetch(await toBase64(file)).then((res) => res.blob());
         var formdata = new FormData();
-        formdata.append('image', blob, file.name);
-        formdata.append('description', formSettingData.meta_description);
-        formdata.append('title', formSettingData.meta_description);
+        formdata.append('image', blob, file?.name);
+        formdata.append('description', formSettingData?.meta_description);
+        formdata.append('title', formSettingData?.meta_description);
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
-        formdata.append('categoryId', formSettingData.file_category);
-        formdata.append('franchisee', franchiseeArr.length == 0 ? [] : franchiseeArr);
+        formdata.append('categoryId', formSettingData?.file_category);
+        formdata.append('franchisee', franchiseeArr?.length == 0 ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -305,9 +335,22 @@ const FilerepoUploadFile = () => {
         selectedUserId += selectedItem.id + ',';
         selectedUser.push({
             id: selectedItem.id,
-            email: selectedItem.email,
+            fullname: selectedItem.fullname,
         });
+        setSelectedUser(selectedUser)
+        setUserCount(userCount + 1)
+    }
 
+    function onSelectChild(selectedItem) {
+        let selectedchildarr = selectedItem
+        selectedItem = selectedItem.map((item) => {
+            return item.id
+        })
+        setFormSettings(prevState => ({
+            ...prevState,
+            assigned_childs: selectedItem
+        }));
+        setSelectedChild(selectedchildarr)
     }
 
 
@@ -317,8 +360,9 @@ const FilerepoUploadFile = () => {
             return object.id === removedItem.id;
         });
         selectedUser.splice(index, 1);
-
+        getChildren();
     }
+
 
     function onRemoveChild(removedItem) {
         let removedchildarr = removedItem
@@ -430,40 +474,40 @@ const FilerepoUploadFile = () => {
                                     </div>
                                 </Col>
                                 <Col lg={12}>
-                                    <Form.Group>
-                                        <Form.Label>File Category*</Form.Label>
-                                        {getUser_Role === "guardian" ? (
-                                            <>
-                                                <Form.Select
-                                                    name="file_category"
-                                                    onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
-                                                    }}
-                                                    disabled={true}
-                                                >
-                                                    {/* <option value="8">Select</option> */}
-                                                    <option value={generalCategory} selected={true}>General</option>
-                                                </Form.Select>
-                                            </>) : (
-                                            <>
-                                                <Form.Select
-                                                    name="file_category"
-                                                    onChange={(e) => {
-                                                        setField(e.target.name, e.target.value);
-                                                    }}
-                                                >
-                                                    <option value="">Select</option>
-                                                    {category?.map((item) => {
-                                                        return (
-                                                            <option value={item.id}>{item.category_name}</option>
-                                                        );
-                                                    })}
-                                                </Form.Select>
-                                            </>)}
-
-
-                                        {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
-                                    </Form.Group>
+                                    {getUser_Role === "guardian" ? "" :
+                                        <Form.Group>
+                                            <Form.Label>File Category*</Form.Label>
+                                            {getUser_Role === "guardian" ? (
+                                                <>
+                                                    <Form.Select
+                                                        name="file_category"
+                                                        onChange={(e) => {
+                                                            setField(e.target.name, e.target.value);
+                                                        }}
+                                                        disabled={true}
+                                                    >
+                                                        {/* <option value="8">Select</option> */}
+                                                        <option value={generalCategory} selected={true}>General</option>
+                                                    </Form.Select>
+                                                </>) : (
+                                                <>
+                                                    <Form.Select
+                                                        name="file_category"
+                                                        onChange={(e) => {
+                                                            setField(e.target.name, e.target.value);
+                                                        }}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        {category?.map((item) => {
+                                                            return (
+                                                                <option value={item.id}>{item.category_name}</option>
+                                                            );
+                                                        })}
+                                                    </Form.Select>
+                                                </>)}
+                                            {error && !formSettingData.file_category && < span className="error">File Category is required!</span>}
+                                        </Form.Group>
+                                    }
                                 </Col>
                             </Row>
                             {getUser_Role === "guardian" ? "" : (
@@ -524,6 +568,7 @@ const FilerepoUploadFile = () => {
                                                     <Form.Label>Select Franchise(s)</Form.Label>
                                                     <div className="select-with-plus">
                                                         <Multiselect
+                                                            isClearable={false}
                                                             disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
@@ -556,6 +601,7 @@ const FilerepoUploadFile = () => {
                                         </Row>
                                         : ""
                                     }
+
                                     {sendToAllFranchisee == "none" && formSettings.assigned_franchisee.length < 1 ? "" : (
                                         <Row className="mt-4">
                                             <Col lg={3} md={6}>
@@ -629,7 +675,6 @@ const FilerepoUploadFile = () => {
                                                                         }
                                                                         setFormSettingData(data);
                                                                     }}
-
                                                                 />
                                                                 <span className="checkmark"></span>
                                                             </label>) : null}
@@ -792,18 +837,15 @@ const FilerepoUploadFile = () => {
                                                 {formSettingData.accessible_to_role === 0 ? (
                                                     <>
                                                         <Form.Group>
-
-
                                                             <Form.Label>Select User</Form.Label>
                                                             <div className="select-with-plus">
                                                                 <Multiselect
-                                                                    displayValue="email"
+                                                                    displayValue="namemail"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedUser}
-                                                                    // onKeyPressFn={function noRefCheck() {}}
+                                                                    onKeyPressFn={function noRefCheck() { }}
                                                                     onRemove={onRemoveUser}
-                                                                    // onSearch={function noRefCheck() {}}
+                                                                    onSearch={function noRefCheck() { }}
                                                                     onSelect={onSelectUser}
                                                                     options={user}
                                                                 />
@@ -812,16 +854,12 @@ const FilerepoUploadFile = () => {
                                                         </Form.Group>
                                                         <Form.Group>
                                                             <Form.Label>Select Child</Form.Label>
-
                                                             <div className="select-with-plus">
                                                                 <Multiselect
                                                                     displayValue="name"
                                                                     className="multiselect-box default-arrow-select"
-                                                                    // placeholder="Select Franchisee"
                                                                     selectedValues={selectedChild}
-                                                                    // onKeyPressFn={function noRefCheck() {}}
                                                                     onRemove={onRemoveChild}
-                                                                    // onSearch={function noRefCheck() {}}
                                                                     onSelect={onSelectChild}
                                                                     options={child}
                                                                 />
