@@ -33,11 +33,13 @@ const Checkbox = (props) => {
   }, []);
 
   useEffect(() => {
-    props.onChange(
-      event,
-      value[controls.field_name] + array?.join(',') + ',',
-      'checkbox'
-    );
+    if (window.location.pathname.split('/')[2] !== 'preview') {
+      props.onChange(
+        event,
+        value[controls.field_name] + array?.join(',') + ',',
+        'checkbox'
+      );
+    }
   }, [array]);
 
   return (
@@ -58,6 +60,7 @@ const Checkbox = (props) => {
                     key={index}
                     name={controls.field_name}
                     id={Object.keys(item2)[0]}
+                    disabled={props.isDisable ? props.isDisable : false}
                     value={Object.keys(item2)[0]}
                     onClick={(e) => {
                       if (e.target.checked) {

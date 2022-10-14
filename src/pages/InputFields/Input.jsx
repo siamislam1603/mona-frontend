@@ -18,8 +18,8 @@ const Input = (props) => {
           id={controls?.field_name}
           name={controls?.field_name}
           maxLength={255}
+          disabled={props.isDisable ? props.isDisable : false}
           onChange={(e) => {
-            console.log(e.target);
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
           value={
