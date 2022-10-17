@@ -126,7 +126,6 @@ const TrainingCreatedByMe = ({ filter }) => {
       }
     }
     );
-    console.log("Response catrogy", response)
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategory([
@@ -142,13 +141,11 @@ const TrainingCreatedByMe = ({ filter }) => {
         })),
       ]);
 
-      console.log('TRAINING CATEGORY:', trainingCategory);
     }
   };
 
   // FETCH TRAINING DATA
   const fetchTrainingData = async (trainingId) => {
-    console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
@@ -157,16 +154,13 @@ const TrainingCreatedByMe = ({ filter }) => {
       }
     });
 
-    console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
 
   const copyDataToStates = (training) => {
-    console.log('COPYING DATA TO STATES:');
     localStorage.getItem('user_role') === 'franchisor_admin'
       ? setFormSettings(prevState => ({
         ...prevState,
@@ -193,7 +187,6 @@ const TrainingCreatedByMe = ({ filter }) => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    console.log('F_ID_ID:', f_id);
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
@@ -209,7 +202,6 @@ const TrainingCreatedByMe = ({ filter }) => {
   };
 
   const handleTrainingDelete = async (trainingId) => {
-    console.log('DELETING THE TRAINING!');
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -232,7 +224,6 @@ const TrainingCreatedByMe = ({ filter }) => {
 
   const CreatedByme = async () => {
     try {
-      console.log("TRAIING DATA", filterData.category_id, filterData.search)
       setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
@@ -241,18 +232,15 @@ const TrainingCreatedByMe = ({ filter }) => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log('TRAIING DATA', response)
 
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data
-        console.log("Searched Data", searchedData)
         setCheckCount(searchedData?.length)
         setCount(response.data.count)
         setMyTrainingData(searchedData)
         setfullLoaderStatus(false)
         if (searchedData?.length === 0) {
           setCheckCount(searchedData?.length)
-          console.log('TRAIING DATA no data', response)
           setCount(0)
         }
         if (filterData.category_id) {
@@ -269,13 +257,11 @@ const TrainingCreatedByMe = ({ filter }) => {
         setNoMore(false)
 
       }
-      console.log("error created by me", error)
     }
   }
 
   const searchTraining = async () => {
     try {
-      console.log("TRAIING DATA search call", filterData.category_id, filterData.search)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
@@ -283,7 +269,6 @@ const TrainingCreatedByMe = ({ filter }) => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log('TRAIING DATA', response)
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data
         console.log("Searched Data", searchedData)
@@ -304,7 +289,6 @@ const TrainingCreatedByMe = ({ filter }) => {
 
 
       }
-      console.log("error created by me", error)
     }
   }
   useEffect(() => {
@@ -338,7 +322,6 @@ const TrainingCreatedByMe = ({ filter }) => {
 
   useEffect(() => {
     fetchTrainingData(saveTrainingId);
-    console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
   useEffect(() => {
@@ -361,11 +344,6 @@ const TrainingCreatedByMe = ({ filter }) => {
     setPage(page => page + 6)
   }
 
-  // console.log("Rohan", fullLoaderStatus, !fullLoaderStatus)
-  console.log("Selected frnahise", selectedFranchisee)
-  console.log("Data Rohan", myTrainingData)
-  console.log("TRAIING", count, checkCount)
-  console.log("Search", filterData.search)
 
   return (
     <>

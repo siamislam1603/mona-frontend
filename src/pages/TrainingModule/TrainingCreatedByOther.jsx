@@ -95,7 +95,6 @@ const TrainingCreatedByOther = ({filter}) => {
       }
     }
     );
-   console.log("Response catrogy",response)
     if(response)
     //   setfullLoaderStatus(false)
 
@@ -115,7 +114,6 @@ const TrainingCreatedByOther = ({filter}) => {
         })),
       ]);
 
-      console.log('TRAINING CATEGORY:', trainingCategory);
     }
   };
 
@@ -151,7 +149,6 @@ const TrainingCreatedByOther = ({filter}) => {
         "Authorization": "Bearer " + token
       }
     });
-    console.log('Training created by OTHER',response)
     if(response.status===200 && response.data.status === "success"){
       const {searchedData} = response.data
       setfullLoaderStatus(false)
@@ -177,7 +174,6 @@ const TrainingCreatedByOther = ({filter}) => {
           "Authorization": "Bearer " + token
         }
       });
-      console.log('Training created by OTHER',response)
       if(response.status===200 && response.data.status === "success"){
         const {searchedData} = response.data
         setfullLoaderStatus(false)
@@ -196,7 +192,6 @@ const TrainingCreatedByOther = ({filter}) => {
     setPage(page => page+6) 
 }
   const handleTrainingDelete = async (trainingId) => {
-    console.log('DELETING THE TRAINING!');
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
     const response = await axios.delete(`${BASE_URL}/training/deleteTraining/${trainingId}/${userId}`, {
@@ -218,7 +213,6 @@ const TrainingCreatedByOther = ({filter}) => {
 
    // FETCH TRAINING DATA
    const fetchTrainingData = async (trainingId) => {
-    console.log('TRAINING ID:', trainingId);
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
@@ -227,16 +221,13 @@ const TrainingCreatedByOther = ({filter}) => {
       }
     });
 
-    console.log('RESPONSE EDIT TRAINING:', response);
     if (response.status === 200 && response.data.status === "success") {
       const { training } = response.data;
-      console.log('TRAINING:', training);
       copyDataToStates(training);
     }
   };
 
   const copyDataToStates = (training) => {
-    console.log('COPYING DATA TO STATES:');
     localStorage.getItem('user_role') === 'franchisor_admin'
       ? setFormSettings(prevState => ({
         ...prevState,
@@ -263,7 +254,6 @@ const TrainingCreatedByOther = ({filter}) => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    console.log('F_ID_ID:', f_id);
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
@@ -281,7 +271,6 @@ const TrainingCreatedByOther = ({filter}) => {
 
   useEffect(() => {
     fetchTrainingCategories()
-    console.log("Traingin created")
   }, []);
   useEffect(() =>{
 
@@ -310,7 +299,6 @@ const TrainingCreatedByOther = ({filter}) => {
 
   useEffect(() => {
     fetchTrainingData(saveTrainingId);
-    console.log('SAVE TRAINING ID:', saveTrainingId);
   }, [saveTrainingId]);
 
   useEffect(() => {
@@ -327,7 +315,6 @@ const TrainingCreatedByOther = ({filter}) => {
   useEffect(() => {
     setSelectedFranchise(localStorage.getItem('selectedFranchise'));
   }, [localStorage.getItem('selectedFranchise')]);
-  console.log("The selected Franchsie",filterData.category_id)
 
   return (
     <>

@@ -18,7 +18,6 @@ const AllEvent = (props) => {
 
   let Active_acordian = Number(props.Rarams);
 
-  console.log(typeof Active_acordian, "Active_acordian")
   const [allEventData, setAllEventData] = useState([])
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -31,7 +30,6 @@ const AllEvent = (props) => {
 
 
   const  relatedFile = (file) =>{
-    console.log("File",file)
     for (let i = 0; i < file?.length; i++) {
       if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
          return true

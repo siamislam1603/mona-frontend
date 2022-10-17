@@ -38,17 +38,14 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
         "Authorization": "Bearer " + token
       }
      })
-     console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
         setmyAnnouncement(response.data.result.searchedData)
         setIsLoading(true)
-        console.log("The response",response)
 
      }
     } catch (error) {
        setmyAnnouncement([])
        setIsLoading(false)
-       console.log("THe err myanno",error)
 
     }
   }
@@ -56,13 +53,11 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
 
   const deleteAnnouncementAlert = (id) =>{
     if (window.confirm('Are you sure you want to delete ?')) {
-      console.log("Console yes")
       deleteAnnouncement(id)
 
 
     }
     else{
-      console.log("Console no")
     }
   }
   const deleteAnnouncement = async (id) =>{
@@ -73,7 +68,6 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
           "Authorization": "Bearer " + token
         }
       }); 
-      console.log("The response after delete",response)
       if(response.status === 200){
           setTopMessage("Delete succussfully")
           // myAnnouncementData()
@@ -84,7 +78,6 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
         },3000)
       }
     } catch (error) {
-      console.log("The response after delete",error)
     }
   }
 
@@ -136,7 +129,6 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
   },[])
   useEffect(() =>{
     if(myLoadData?.length>0){
-      console.log("MY LOAD MORE DATA")
       setmyAnnouncement(myLoadData)
     }
     else{

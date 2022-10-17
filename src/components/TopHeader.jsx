@@ -649,7 +649,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
                                       <li>
                                         <a href={`/operatingmanual/?selected=${operatingData.id}`} className="d-flex">
                                           {/* <img alt="" src={operatingData?.cover_image?operatingData.cover_image:'/img/notification-ico1.png'} className="logo-circle rounded-circle" /> */}
-                                          <span className="sec-cont"><strong className="text-capitalize">{operatingData?.operating_manual?.title}</strong></span>
+                                          <span className="sec-cont"><strong className="text-capitalize">{operatingData?.title}</strong></span>
                                         </a>
                                       </li>
                                     ))}
