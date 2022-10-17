@@ -51,19 +51,15 @@ function isTrainingExpired(end_date) {
   return false
 }
 
-const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
+const TrainingCreatedByOther = ({filter}) => {
   let location = useLocation();
   const navigate = useNavigate();
 
   const [otherTrainingData, setOtherTrainingData] = useState([]);
-  const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
-  const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
-  const [shareType, setShareType] = useState("roles");
-  const [userList, setUserList] = useState();
-  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
+  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('all');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page,setPage] = useState(6)
 
@@ -78,13 +74,11 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   });
   const [successMessageToast, setSuccessMessageToast] = useState(null);
   const [myTrainingData, setMyTrainingData] = useState([]);
-  const [search,setSearch]= useState()
 
-  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
   const [errorMessageToast, setErrorMessageToast] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
-  // const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
-  const [trainingCategory, setTrainingCategory] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFranchise'));
+   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: 0,
     search: ""
@@ -152,7 +146,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -286,24 +280,24 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
 
 
   useEffect(() => {
-  
-    // trainingCreatedByMe()
-    // CreatedByme()
-    trainingCreatedByOther()
     fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() =>{
+
     trainingCreatedByOther() 
 
-  },[filterData.category_id,page,selectedFranchisee])
+  },[selectedFranchise,page,filterData.category_id])
   useEffect(() =>{
     if(filterData.search){
       searchTraining()
     }
     else{
       setPage(6)
+    if(typeof selectedFranchisee !== "undefined") {
+
       trainingCreatedByOther()
+      }
     }
   },[filterData.search])
   useEffect(() => {
@@ -330,6 +324,10 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
       setErrorMessageToast(null);
     }, 4000);
   }, [errorMessageToast]);
+  useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
+  console.log("The selected Franchsie",filterData.category_id)
 
   return (
     <>
@@ -343,10 +341,10 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader
+              <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  // setSelectedFranchisee={setSelectedFranchisee} 
-                  />
+                  setSelectedFranchisee={setSelectedFranchisee}
+                />
 
                   {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
@@ -411,8 +409,6 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                           </Dropdown>
                         }
                         
-
-                      
                       </div>
                     </div>
                   </header>
@@ -428,7 +424,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id: e.id === 0 ? null : e.id
+                            category_id: e.id
                           }))}
                         />
                       </Form.Group>
@@ -516,7 +512,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                               <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
                             </div>
                       }
-                  {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
+                  {otherTrainingData?.length>0 ?
                   null
                     :     
                     fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No training available</strong> </div>

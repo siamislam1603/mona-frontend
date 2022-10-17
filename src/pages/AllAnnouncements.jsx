@@ -107,14 +107,14 @@ const getAddedTime = (str) =>{
   // return Added
 
 }
-const realtedFile1 = ( )=>{
-  announcementDetails?.map((data)=>{
-
-    if(data.announcement_files.fileType != ".mp4"){
-       setRelatedFile(true)
-    }
-})
-}
+const  relatedFile = (file) =>{
+  console.log("File",file)
+  for (let i = 0; i < file?.length; i++) {
+    if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
+       return true
+      break; }
+  }
+}  
 useEffect(() => {
   const user_role = localStorage.getItem("user_role")
   setUserRole(user_role)
@@ -154,6 +154,7 @@ console.log("Announcemen detal",announcementDetails)
 
   return (
     <div className="announcement-accordion">
+
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                     <Accordion defaultActiveKey={theKey}>
@@ -241,36 +242,25 @@ console.log("Announcemen detal",announcementDetails)
                                    </div>
    
                                                         
-               {details?.announcement_files?.length>0 ? <>
-                    { details?.announcement_files[0]?.fileType === ".mp4" || details?.announcement_files[0]?.fileType === ".flv" ||details?.announcement_files[0].fileType === ".mkv" ? 
-                                  (
-                                    null
-                                    // <div className="head">Related Files :</div>
-
-                                  ):
-                                  (
-                                    <div className="head">Related Files :</div>
-                                  )}
-                                               
-                                            </>
-                                          :(
-                                            null
-                                          )
-
-                                          }    
-                                     <div className="cont">
+                                   {relatedFile(details?.announcement_files) && 
+                                  <div className="head">Related Files :</div>}
+                                    
+                                    {relatedFile(details?.announcement_files) &&  <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(
                                               <>
                                                
                                               {detail.fileType != ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ?(
+                                           
+                                                <div className="item">
 
-                                                <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                                                  <a href={detail.file} target='_blank' rel='noopener noreferrer'  ><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
                                                  
                                                  </small></span></a></div>
+                                                 
                                               ):(
                                                null
                                               )}
@@ -279,7 +269,9 @@ console.log("Announcemen detal",announcementDetails)
                                        ))}
                  
                                      </div>
-                                   </div>
+                                   </div> }
+                                    
+                                   
                                  </Col>
                                </Row>
                              </Accordion.Body>

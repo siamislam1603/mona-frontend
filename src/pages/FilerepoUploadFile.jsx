@@ -543,7 +543,6 @@ const FilerepoUploadFile = () => {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_franchisee: [],
-                                                                    
                                                                             franchisee: []
                                                                         }));
                                                                         setSendToAllFranchisee('all')
