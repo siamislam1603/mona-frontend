@@ -565,7 +565,6 @@ const Children = () => {
                       <img src={cell[10].trim() === "undefined" || cell[10].trim() === "null" || cell[10].trim() === "" ? "../img/upload.jpg" : cell[10]} />
                     </span>
                     <span className="user-name">
-                    
                       {cell[0] === "undefined" ? null : cell[0][0]?.toUpperCase() + cell[0].slice(1)}
                     </span>
                   </div>
