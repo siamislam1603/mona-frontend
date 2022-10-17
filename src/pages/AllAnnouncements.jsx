@@ -107,14 +107,14 @@ const getAddedTime = (str) =>{
   // return Added
 
 }
-const realtedFile1 = ( )=>{
-  announcementDetails?.map((data)=>{
-
-    if(data.announcement_files.fileType != ".mp4"){
-       setRelatedFile(true)
-    }
-})
-}
+const  relatedFile = (file) =>{
+  console.log("File",file)
+  for (let i = 0; i < file?.length; i++) {
+    if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
+       return true
+      break; }
+  }
+}  
 useEffect(() => {
   const user_role = localStorage.getItem("user_role")
   setUserRole(user_role)
@@ -242,24 +242,10 @@ console.log("Announcemen detal",announcementDetails)
                                    </div>
    
                                                         
-               {details?.announcement_files?.length>0 ? <>
-                    { details?.announcement_files[0]?.fileType === ".mp4" || details?.announcement_files[0]?.fileType === ".flv" ||details?.announcement_files[0].fileType === ".mkv" ? 
-                                  (
-                                    null
-                                    // <div className="head">Related Files :</div>
-
-                                  ):
-                                  (
-                                    <div className="head">Related Files :</div>
-                                  )}
-                                               
-                                            </>
-                                          :(
-                                            null
-                                          )
-
-                                          }    
-                                     <div className="cont">
+                                   {relatedFile(details?.announcement_files) && 
+                                  <div className="head">Related Files :</div>}
+                                    
+                                    {relatedFile(details?.announcement_files) &&  <div className="cont">
                                      <div className="related-files">
                                        {details?.announcement_files?.map((detail,index) =>(
                                               <>
@@ -283,7 +269,9 @@ console.log("Announcemen detal",announcementDetails)
                                        ))}
                  
                                      </div>
-                                   </div>
+                                   </div> }
+                                    
+                                   
                                  </Col>
                                </Row>
                              </Accordion.Body>
