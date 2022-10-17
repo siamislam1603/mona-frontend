@@ -8,6 +8,7 @@ import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
+import { useParams } from "react-router-dom";
 import { verifyPermission } from "../helpers/roleBasedAccess";
 import { type } from "jquery";
 
@@ -15,10 +16,9 @@ import { type } from "jquery";
 
 
 const AllEvent = (props) => {
+  const Params = useParams()
+  let Active_acordian = Number(Params.key);
 
-  let Active_acordian = Number(props.Rarams);
-
-  console.log(typeof Active_acordian, "Active_acordian")
   const [allEventData, setAllEventData] = useState([])
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -31,7 +31,6 @@ const AllEvent = (props) => {
 
 
   const allEvent = async () => {
-
     try {
       // console.log("Announcement detial API")
       const token = localStorage.getItem('token');
@@ -134,7 +133,7 @@ const AllEvent = (props) => {
       setTopErrorMessage(null);
     }, 3000)
   }, [topErrorMessage])
-  console.log("Event data",allEventData)
+  console.log("Event data", allEventData)
 
   return (
     <div className="announcement-accordion">
@@ -208,7 +207,7 @@ const AllEvent = (props) => {
                     }
 
                     {data?.announcement_files?.length > 0 ? <>
-                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv"  || data?.announcement_files[0].fileType === ".flv" ?
+                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv" || data?.announcement_files[0].fileType === ".flv" ?
                         (
                           null
                         ) :
@@ -231,7 +230,7 @@ const AllEvent = (props) => {
                       <div className="related-files">
                         {data?.announcement_files && data?.announcement_files?.map((detail, index) => (
                           <>
-                            {detail.fileType !== ".mp4" &&  detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
+                            {detail.fileType !== ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
                               <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt="" /> <span className="name">
                                 <p>{getRelatedFileName(detail.file)}</p>
                                 <small>{getAddedTime(detail.createdAt)}</small></span></a></div>

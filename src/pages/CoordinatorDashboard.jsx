@@ -46,7 +46,7 @@ const columns = [
     dataField: 'educatorname',
     text: 'Educator Name',
     formatter: (cell) => {
-      console.log("THE ECUTOR", cell)
+     
       cell = cell.split(",");
       return (
         <>
@@ -159,10 +159,10 @@ const CoordinatorDashboard = () => {
       }
     }).then((response) => {
       setlatest_announcement(response.data.recentAnnouncement);
-      console.log("response ", response.data)
+
     }).catch((e) => {
       setlatest_announcement([])
-      console.log("Error", e);
+
 
     })
   }
@@ -174,9 +174,7 @@ const CoordinatorDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-    //  const date1 = new Date(datae);
-    //  const date2 = new Date(str);
-    // console.log("THE Date1", Added, datae)
+
     if (datae === Added) {
       return "Added today"
     }
@@ -205,9 +203,8 @@ const CoordinatorDashboard = () => {
 
     let response = await fetch(`${BASE_URL}/dashboard/coordinator/children-enrolled`, requestOptions)
     response = await response.json();
-    console.log("Response chikd", response)
+
     if (response.status === "pass") {
-      console.log(" data repsonse", response)
 
       let data = response.childrenEnrolled;
       let tempData = data.map((dt) => ({
@@ -215,7 +212,7 @@ const CoordinatorDashboard = () => {
         educatorname: `${dt?.users[0]?.fullname},${dt?.users[1]?.fullname},${dt?.users[0]?.profile_photo},${dt?.users[1]?.profile_photo}`,
         action: `${dt.id},${dt.parents[0].id}`
       }))
-      console.log("THE TEMPDATA", tempData)
+  
       setUserData(tempData);
     }
     if (response.status === "success") {
@@ -263,7 +260,7 @@ const CoordinatorDashboard = () => {
     })
   }
 
-  console.log(count)
+
 
 
   useEffect(() => {
@@ -289,7 +286,7 @@ const CoordinatorDashboard = () => {
     count_Api();
     announcement()
   }, []);
-  console.log("USERDATA", userData)
+
   return (
     <>
       {

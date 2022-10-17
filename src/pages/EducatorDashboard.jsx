@@ -16,7 +16,7 @@ const columns = [
     text: 'Child Name',
 
     formatter: (cell) => {
-      console.log("The cell", cell)
+
       cell = cell?.split(",");
       return (<><div className="user-list">
         <span className="user-pic">
@@ -85,7 +85,7 @@ const EducatorDashboard = () => {
       }
     } catch (error) {
       setannouncements([])
-      console.log("error", error)
+
     }
   };
   const Children = async () => {
@@ -98,17 +98,16 @@ const EducatorDashboard = () => {
 
     if (response.status === 200) {
       let data = response.data.childrenWithSpecialNeeds;
-      console.log(data, "responseresponseresponse")
+
       let tempData = data.map((dt) => ({
         name: `${dt?.fullname}`,
         specialneed: `${dt?.has_special_needs}`,
         action: `${dt?.id},${dt?.parents[0]?.id}`,
 
       }))
-      console.log("THE TEM", tempData)
+
       setChildrenData(tempData)
     }
-    console.log("THE CHILDER REPONSE", response)
 
   }
 
@@ -121,13 +120,13 @@ const EducatorDashboard = () => {
       }
     });
 
-    console.log(response, "responseresponseresponse")
+
     if (response.status === 200 && response.data.status === "pass") {
       const Result = response.data.primaryCoordinator;
       setCoordinator(Result);
     }
   };
-  console.log("coordinator", coordinator)
+
 
   const Training = async () => {
     const token = localStorage.getItem('token');
@@ -139,7 +138,7 @@ const EducatorDashboard = () => {
 
     setTraining(response.data.trainingQuickAccess)
   }
-  console.log(training, "response")
+
 
 
   const getAddedTime = (str) => {
@@ -150,9 +149,7 @@ const EducatorDashboard = () => {
     let day = d.getDate().toString().padStart(2, '0');
     let year = d.getFullYear();
     let datae = [day, month, year].join('/');
-    //  const date1 = new Date(datae);
-    //  const date2 = new Date(str);
-    // console.log("THE Date1", Added, datae)
+
     if (datae === Added) {
       return "Added today"
     }
@@ -162,7 +159,7 @@ const EducatorDashboard = () => {
     else {
       return Added
     }
-    // return Added
+
 
   }
 
@@ -197,7 +194,6 @@ const EducatorDashboard = () => {
     Children();
   }, [])
 
-  console.log("Childeren data", childrenData)
   return (
     <>
       {
