@@ -103,7 +103,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
     try {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${localStorage.getItem('selectedFranchise')}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -236,14 +236,6 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
     }
   }, [formSettings?.assigned_franchisee])
 
-  // useEffect(() => {
-  //   if(typeof selectedFranchisee !== "undefined") {
-  //     trainingCreatedByMe();
-  //     console.log('SELECTED FRANCHISE:', selectedFranchisee);
-
-  //   }
-  // }, [filter.search, filter.category_id]);
-
   useEffect(() => {
     if (selectedFranchise) {
       trainingCreatedByMe();
@@ -255,18 +247,19 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
+    if(typeof selectedFranchisee !== "undefined") {
     trainingCreatedByOther()
-  }, [filter.search, filter.category, page, trainingDeleteMessage])
-
+    }
+  }, [filter.search, filter.category_id, trainingDeleteMessage,selectedFranchisee])
+ 
+  useEffect(() =>{
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByOther()
+    }
+  },[selectedFranchisee])
   useEffect(() => {
     fetchFranchiseeList();
-    // if (typeof selectedFranchisee !== "undefined") {
-    //   trainingCreatedByMe();
-    //   console.log('SELECTED FRANCHISE:', selectedFranchisee);
 
-    // }
-    // trainingCreatedByMe();
-    // trainingCreatedByOther();
   }, [])
 
   useEffect(() => {
@@ -440,7 +433,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
           {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
             null
             :
-            !otherTrainingData || !myTrainingData && <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
+             !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
           }
           {/* {
 
