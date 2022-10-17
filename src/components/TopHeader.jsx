@@ -287,6 +287,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   };
 
   const selectFranchisee = (e) => {
+    console.log('E>>>>>>>>>>>>>>>>>>>', e);
     if (e === 'All') {
       setFranchiseeId({ franchisee_name: 'All' });
       localStorage.setItem('selectedFranchise', 'all');
@@ -442,7 +443,8 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
 
 
   useEffect(() => {
-    if(localStorage.getItem('selectedFranchise')) {
+    let selectedFranchiseId = localStorage.getItem('selectedFranchise');
+    if(selectedFranchiseId !== "undefined" && selectedFranchiseId !== null) {
       if(localStorage.getItem('selectedFranchise') === 'all') {
         let selectedFID = localStorage.getItem('selectedFranchise');
         setSelectedFranchisee(selectedFID);
@@ -452,11 +454,13 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
         setSelectedFranchisee(selectedFID);
         setFranchiseeId(franchiseeList.filter(d => parseInt(d.id) === parseInt(selectedFID))[0]);
       }
-    } else {
+    } else if(selectedFranchiseId === "undefined" || selectedFranchiseId === null) {
       if (localStorage.getItem('user_role') === 'franchisor_admin') {
+        localStorage.setItem('selectedFranchise', 'all');
         setSelectedFranchisee('All');
         setFranchiseeId({ franchisee_name: 'All' });
       } else {
+        localStorage.setItem('selectedFranchise', franchiseeList[0]?.id);
         setSelectedFranchisee(franchiseeList[0]?.id);
       }
     }
