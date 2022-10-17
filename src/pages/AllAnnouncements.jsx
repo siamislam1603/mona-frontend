@@ -154,6 +154,7 @@ console.log("Announcemen detal",announcementDetails)
 
   return (
     <div className="announcement-accordion">
+
        
                   {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
                     <Accordion defaultActiveKey={theKey}>
@@ -264,13 +265,16 @@ console.log("Announcemen detal",announcementDetails)
                                               <>
                                                
                                               {detail.fileType != ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ?(
+                                           
+                                                <div className="item">
 
-                                                <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                                                  <a href={detail.file} target='_blank' rel='noopener noreferrer'  ><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                                                  <p>{getRelatedFileName(detail.file)}</p>
                                                  <small>
                                                  {getAddedTime(detail.createdAt)}
                                                  
                                                  </small></span></a></div>
+                                                 
                                               ):(
                                                null
                                               )}

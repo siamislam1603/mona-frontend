@@ -51,7 +51,7 @@ function isTrainingExpired(end_date) {
   return false
 }
 
-const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
+const TrainingCreatedByOther = ({filter}) => {
   let location = useLocation();
   const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
   const [shareType, setShareType] = useState("roles");
   const [userList, setUserList] = useState();
-  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
+  const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('all');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page,setPage] = useState(6)
 
@@ -78,12 +78,9 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   });
   const [successMessageToast, setSuccessMessageToast] = useState(null);
   const [myTrainingData, setMyTrainingData] = useState([]);
-  const [search,setSearch]= useState()
 
-  const [topSuccessMessage, setTopSuccessMessage] = useState(null);
   const [errorMessageToast, setErrorMessageToast] = useState(null);
-  const [tabLinkPath, setTabLinkPath] = useState("/available-training");
-  // const [selectedFranchisee, setSelectedFranchisee] = useState("Alphabet Kids, Sydney");
+  const [selectedFranchisee, setSelectedFranchisee] = useState('');
   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: 0,
@@ -152,7 +149,8 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}`, {
+    console.log("Training created by OTHER",selectedFranchisee)
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -288,24 +286,33 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
   useEffect(() => {
   
     // trainingCreatedByMe()
-    // CreatedByme()
+    if(typeof selectedFranchisee !== "undefined") {
+      // CreatedByme()
+
     trainingCreatedByOther()
+    }
     fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() =>{
-    trainingCreatedByOther() 
+    if(typeof selectedFranchisee !== "undefined") {
 
-  },[filterData.category_id,page,selectedFranchisee])
-  useEffect(() =>{
-    if(filterData.search){
-      searchTraining()
+    trainingCreatedByOther() 
     }
-    else{
-      setPage(6)
-      trainingCreatedByOther()
-    }
-  },[filterData.search])
+
+  },[selectedFranchisee])
+  // useEffect(() =>{
+  //   if(filterData.search){
+  //     searchTraining()
+  //   }
+  //   else{
+  //     setPage(6)
+  //   if(typeof selectedFranchisee !== "undefined") {
+
+  //     trainingCreatedByOther()
+  //     }
+  //   }
+  // },[filterData.search])
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
@@ -343,10 +350,9 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader
+              <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  // setSelectedFranchisee={setSelectedFranchisee} 
-                  />
+                  setSelectedFranchisee={setSelectedFranchisee} />
 
                   {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
@@ -516,7 +522,7 @@ const TrainingCreatedByOther = ({filter, selectedFranchisee}) => {
                               <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
                             </div>
                       }
-                  {otherTrainingData?.length>0 || myTrainingData?.length>0 ?
+                  {otherTrainingData?.length>0 ?
                   null
                     :     
                     fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No training available</strong> </div>
