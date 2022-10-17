@@ -34,15 +34,15 @@ const NewFranchisees = () => {
         postcode: "",
         contact: "",
     });
-    const [australianStatesData, setAustralianStatesData] = useState();
     // const [cityData, setCityData] = useState([]);
-  const [cityData, setCityData] = useState(suburbData);
+    const [cityData, setCityData] = useState([]);
 
     const [selectedFranchisee, setSelectedFranchisee] = useState();
     const [topErrorMessage, setTopErrorMessage] = useState(null);
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
     const [suburbSearchString, setSuburbSearchString] = useState("");
+    const [stateData, setStateData] = useState(null);
 
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
@@ -76,8 +76,8 @@ const NewFranchisees = () => {
         }
     }
 
-    const fetchSuburbData = () => {
-        const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+    const fetchSuburbData = (state) => {
+        const suburbAPI = `${BASE_URL}/api/suburbs/data/${state}`;
         const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
         axios.all([getSuburbList]).then(
           axios.spread((...data) => {
@@ -92,29 +92,32 @@ const NewFranchisees = () => {
         )
       }
     // FETCHES AUSTRALIAN STATES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-    const fetchAustralianStates = async () => {
-        const response = await axios.get(`${BASE_URL}/api/australian-states`);
+    const fetchStateList = async () => {
+        let response = await axios.get(`${BASE_URL}/api/state/data`);
+    
         if(response.status === 200 && response.data.status === "success") {
-            setAustralianStatesData(response.data.stateList.map(dt => ({
-                value: dt.name,
-                label: dt.name
-            })));
-        } 
-    };
+          let { states } = response.data;
+          setStateData(states.map(d => ({
+            id: d.id,
+            value: d.name,
+            label: d.name
+          })));
+        }
+      }
 
     // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-    const fetchCities = async () => {
-        const response = await axios.get(`${BASE_URL}/api/cities`);
-        if (response.status === 200) {
-        const { cityList } = response.data;
-        setCityData(
-            cityList.map((city) => ({
-                value: city.name,
-                label: city.name
-            }))
-        );
-        }
-    };
+    // const fetchCities = async () => {
+    //     const response = await axios.get(`${BASE_URL}/api/cities`);
+    //     if (response.status === 200) {
+    //     const { cityList } = response.data;
+    //     setCityData(
+    //         cityList.map((city) => ({
+    //             value: city.name,
+    //             label: city.name
+    //         }))
+    //     );
+    //     }
+    // };
 
     const setAutoFocus = (errObj) => {
         const errArray = Object.keys(errObj);
@@ -169,12 +172,12 @@ const NewFranchisees = () => {
         window.location.href="/all-franchisees";
     }
     useEffect(() => {
-        fetchAustralianStates();
-        fetchCities();
+        fetchStateList();
     }, []);
+
     useEffect(() => {
-        fetchSuburbData();
-      }, [suburbSearchString])
+        fetchSuburbData(franchiseeData?.state);
+      }, [franchiseeData?.state])
 
     franchiseeData && console.log('FRANCHISEE DATA:', franchiseeData);
 
@@ -199,10 +202,10 @@ const NewFranchisees = () => {
                                     </div>
                                 </div>
                                 {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
-                                <Form onSubmit={handleFranchiseeDataSubmission}>
+                                <Form onSubmit={handleFranchiseeDataSubmission} className="error-sec">
                                     <Row>
                                         <Col sm={6} md={6} lg={6}>
-                                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicEmail">
                                                 <Form.Label>Franchise Name</Form.Label>
                                                 <Form.Control
                                                     name="franchisee_name" 
@@ -218,7 +221,7 @@ const NewFranchisees = () => {
                                                 { formErrors.franchisee_name !== null && <span className="error">{formErrors.franchisee_name}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>ABN</Form.Label>
                                                 <Form.Control
                                                     name="abn" 
@@ -237,7 +240,27 @@ const NewFranchisees = () => {
                                                 { formErrors.abn !== null && <span className="error">{formErrors.abn}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3">
+                                            <Form.Group className="mb-3 relative">
+                                                <Form.Label>State</Form.Label>
+                                                <Select
+                                                placeholder="Select"
+                                                ref={state}
+                                                closeMenuOnSelect={true}
+                                                options={stateData}
+                                                onChange={(e) => {
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        state: e.value,
+                                                    }));
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        state: null
+                                                    }));
+                                                }} />
+                                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                                            </Form.Group>
+                                            
+                                            <Form.Group className="mb-3 relative">
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
                                                 placeholder="Select"
@@ -259,29 +282,8 @@ const NewFranchisees = () => {
                                                 }} />
                                             { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                                             </Form.Group>
-
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>State</Form.Label>
-                                                <Select
-                                                placeholder="Select"
-                                                ref={state}
-                                                closeMenuOnSelect={true}
-                                                options={australianStatesData}
-                                                onChange={(e) => {
-                                                    setFranchiseeData((prevState) => ({
-                                                        ...prevState,
-                                                        state: e.value,
-                                                    }));
-                                                    setFormErrors(prevState => ({
-                                                        ...prevState,
-                                                        state: null
-                                                    }));
-                                                }} />
-                                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
-                                            </Form.Group>
-
                                             
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label> Contact Number</Form.Label>
                                                 <Form.Control 
                                                     name="contact"
@@ -316,7 +318,7 @@ const NewFranchisees = () => {
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
-                                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicEmail">
                                                 <Form.Label>Franchise Number</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_number"
@@ -332,7 +334,7 @@ const NewFranchisees = () => {
                                                 { formErrors.franchisee_number !== null && <span className="error">{formErrors.franchisee_number}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>ACN</Form.Label>
                                                 <Form.Control
                                                     name="acn" 
@@ -351,7 +353,7 @@ const NewFranchisees = () => {
                                                 { formErrors.acn !== null && <span className="error">{formErrors.acn}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>Street Address</Form.Label>
                                                 <Form.Control 
                                                     name="address"
@@ -367,7 +369,7 @@ const NewFranchisees = () => {
                                                 { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>Post Code</Form.Label>
                                                 <Form.Control
                                                     name="postcode" 

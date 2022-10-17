@@ -409,8 +409,6 @@ const TrainingCreatedByOther = ({filter}) => {
                           </Dropdown>
                         }
                         
-
-                      
                       </div>
                     </div>
                   </header>
