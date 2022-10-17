@@ -30,37 +30,14 @@ const AllEvent = (props) => {
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
 
-  const allEvent = async () => {
-
-    try {
-      // console.log("Announcement detial API")
-      const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      // console.log("The All Announcement",response.data.result);
-      console.log("ALL EVENTS", response)
-      if (response.status === 200 && response.data.status === "success") {
-        setAllEventData(response.data.result.searchedData);
-        setIsLoading(true)
-
-
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        console.log("The code is 404")
-        setIsLoading(false)
-        setAllEventData([])
-
-        // setAnnouncementDetail([])
-      }
-
+  const  relatedFile = (file) =>{
+    console.log("File",file)
+    for (let i = 0; i < file?.length; i++) {
+      if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
+         return true
+        break; }
     }
-
-  }
+  } 
   const userName = localStorage.getItem("user_name");
   const getRelatedFileName = (str) => {
     let arr = str.split("/");
@@ -134,7 +111,9 @@ const AllEvent = (props) => {
       setTopErrorMessage(null);
     }, 3000)
   }, [topErrorMessage])
-  console.log("Event data",allEventData)
+  useEffect(() =>{
+    setIsLoading(true)
+  },[])
 
   return (
     <div className="announcement-accordion">
@@ -207,27 +186,11 @@ const AllEvent = (props) => {
                       </div>
                     }
 
-                    {data?.announcement_files?.length > 0 ? <>
-                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv"  || data?.announcement_files[0].fileType === ".flv" ?
-                        (
-                          null
-                        ) :
-                        (
-                          <div className="head">Related Files :</div>
-                        )}
-
-                    </>
-
-                      : (
-                        null
-                      )
-
-                    }
+                  {relatedFile(data?.announcement_files) && 
+                              <div className="head">Related Files :</div>}
 
 
-
-
-                    <div className="cont">
+                  {relatedFile(data?.announcement_files) &&  <div className="cont">
                       <div className="related-files">
                         {data?.announcement_files && data?.announcement_files?.map((detail, index) => (
                           <>
@@ -238,7 +201,9 @@ const AllEvent = (props) => {
                             ) : (null)} </>
                         ))}
                       </div>
-                    </div>
+                    </div>}
+
+                   
                   </Col>
                 </Row>
               </Accordion.Body>
