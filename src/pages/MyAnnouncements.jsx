@@ -330,7 +330,7 @@ useEffect(() =>{
                   {data.announcement_files && data.announcement_files.map((detail,index) =>(
                       <>
                         {detail.fileType != ".mp4" &&  detail.fileType !== ".flv"  && detail.fileType != ".mkv" && !detail.is_deleted ?(
-                            <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                            <div className="item"><a  href={detail.file} target='_blank' rel='noopener noreferrer'  ><img src="../img/abstract-ico.png" alt=""/> <span className="name">
                               <p>{getRelatedFileName(detail.file)}</p>
                              <small>{getAddedTime(detail.createdAt)}</small></span></a></div>
                               ):(null)} </>

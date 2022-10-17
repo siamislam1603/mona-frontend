@@ -11,6 +11,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [otherTrainingData, setOtherTrainingData] = useState([]);
   const [applicableToAll, setApplicableToAll] = useState(false);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFrachise'))
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
@@ -26,7 +27,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
     let due_date = moment(end_date).format();
     let today = moment().format();
 
-    if(due_date < today)
+    if (due_date < today)
       return true
 
     return false
@@ -74,18 +75,19 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       let { msg: successMessage } = response.data;
       setSuccessMessageToast(successMessage);
       setSuccessMessageToast('Training re-shared successfully.');
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       let { msg: failureMessage } = response.data;
       setErrorMessageToast(failureMessage);
     }
   }
 
   const trainingCreatedByMe = async () => {
-    console.log("THe training created by me call",selectedFranchisee)
+    console.log("THe training created by me call", selectedFranchisee)
     let user_id = localStorage.getItem('user_id');
 
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${(selectedFranchisee === "all" || selectedFranchisee === "All"  || typeof selectedFranchisee === "undefined") ? "all" : parseInt(selectedFranchisee)}`, {
+    // let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee === "undefined" ? "all" : selectedFranchisee
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${localStorage.getItem('selectedFranchise')}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -96,12 +98,12 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
       setfullLoaderStatus(false);
     }
   }
-  
+
   const trainingCreatedByOther = async () => {
     try {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${localStorage.getItem('selectedFranchise')}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -146,20 +148,20 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
     // HANDLING THE RESPONSE GENEREATED AFTER DELETING THE TRAINING
     if (response.status === 200 && response.data.status === "success") {
-      if(stateName === "others") {
-        
+      if (stateName === "others") {
+
         let tempData = otherTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
         setOtherTrainingData(tempData);
         setTrainingDeleteMessage(response.data.message);
         // trainingCreatedByOther();
 
-      } else if(stateName === "me") {
-        
+      } else if (stateName === "me") {
+
         let tempData = myTrainingData.filter(d => parseInt(d.id) !== parseInt(trainingId));
         setMyTrainingData(tempData);
         setTrainingDeleteMessage(response.data.message);
         // trainingCreatedByMe();
-      
+
       }
     } else if (response.status === 200 && response.data.status === "fail") {
       setTrainingDeleteMessage(response.data.message);
@@ -227,7 +229,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   // }, [selectedFranchisee]);
 
   useEffect(() => {
-    if(formSettings?.assigned_franchisee?.length > 0) {
+    if (formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
     } else {
       setFetchedFranchiseeUsers([]);
@@ -235,34 +237,29 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [formSettings?.assigned_franchisee])
 
   useEffect(() => {
-    if(typeof selectedFranchisee !== "undefined") {
+    if (selectedFranchise) {
       trainingCreatedByMe();
-      console.log('SELECTED FRANCHISE:', selectedFranchisee);
-
     }
-  }, [filter.search, filter.category_id]);
-  
-  useEffect(() => {
-    if(typeof selectedFranchisee !== "undefined") {
-      trainingCreatedByMe();
-      console.log('SELECTED FRANCHISE:', selectedFranchisee);
-
-    }
-  }, [selectedFranchisee])
+  }, [selectedFranchise, filter.search, filter.category_id])
 
   useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
+
+  useEffect(() => {
+    if(typeof selectedFranchisee !== "undefined") {
     trainingCreatedByOther()
-  }, [filter.search, filter.category, page, trainingDeleteMessage])
-
+    }
+  }, [filter.search, filter.category_id, trainingDeleteMessage,selectedFranchisee])
+ 
+  useEffect(() =>{
+    if(typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByOther()
+    }
+  },[selectedFranchisee])
   useEffect(() => {
     fetchFranchiseeList();
-    if(typeof selectedFranchisee !== "undefined") {
-      trainingCreatedByMe();
-      console.log('SELECTED FRANCHISE:', selectedFranchisee);
 
-    }
-    // trainingCreatedByMe();
-    trainingCreatedByOther();
   }, [])
 
   useEffect(() => {
@@ -287,20 +284,20 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
             {/* {myTrainingData?.length > 0 && <h1></h1>} */}
             {
               localStorage.getItem('user_role') === "franchisor_admin"
-              ?<header className="title-head mb-4 justify-content-between">
-                {
-                  myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
-                  <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
-                }
-                {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
-              </header>
-              :<header className="title-head mt-4 mb-0" style={{ display: "flex", justifyContent: "right" }}>
-                {
-                  myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
-                  <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
-                }
-                {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
-              </header>
+                ? <header className="title-head mb-4 justify-content-between">
+                  {
+                    myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
+                    <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+                  }
+                  {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+                </header>
+                : <header className="title-head mt-4 mb-0" style={{ display: "flex", justifyContent: "right" }}>
+                  {
+                    myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
+                    <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
+                  }
+                  {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+                </header>
             }
             {myTrainingData?.map((training) => {
               return (
@@ -317,13 +314,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                       <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
-                      <div className="datecol">
-                            {
-                              training.end_date !== null &&
-                              <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
-                            }
-                            <span className="time">{training.completion_time} {training.completion_in}</span>
-                          </div>
+                        <div className="datecol">
+                          {
+                            training.end_date !== null &&
+                            <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                          }
+                          <span className="time">{training.completion_time} {training.completion_in}</span>
+                        </div>
                       </div>
                       <div className="cta-col">
                         <Dropdown>
@@ -332,10 +329,10 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             {isTrainingExpired(training.end_date) === false && training.is_Training_completed === false && <Dropdown.Item href={`/edit-training/${training.id}`}>Edit</Dropdown.Item>}
-                            { isTrainingExpired(training.end_date) === false &&
+                            {isTrainingExpired(training.end_date) === false &&
                               <Dropdown.Item href="#" onClick={() => {
-                              setSaveTrainingId(training.id);
-                              setShowModal(true)
+                                setSaveTrainingId(training.id);
+                                setShowModal(true)
                               }}>Share</Dropdown.Item>
                             }
                             <Dropdown.Item onClick={() => {
@@ -383,13 +380,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                     <div className="fixcol">
                       <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
                       <div className="iconame"><a href={`/training-detail/${training.id}`}>{training.title}</a>
-                      <div className="datecol">
-                        {
-                          training.end_date !== null &&
-                          <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
-                        }
-                        <span className="time">{training.completion_time} {training.completion_in}</span>
-                      </div>
+                        <div className="datecol">
+                          {
+                            training.end_date !== null &&
+                            <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                          }
+                          <span className="time">{training.completion_time} {training.completion_in}</span>
+                        </div>
                       </div>
                       <div className="cta-col">
                         <Dropdown>
@@ -403,12 +400,12 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                                 Edit
                               </Dropdown.Item>
                             }
-                            
+
                             {
                               isTrainingExpired(training.end_date) === false &&
                               <Dropdown.Item href="#" onClick={() => {
-                              setSaveTrainingId(training.id);
-                              setShowModal(true)
+                                setSaveTrainingId(training.id);
+                                setShowModal(true)
                               }}>
                                 Share
                               </Dropdown.Item>
@@ -436,7 +433,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
           {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
             null
             :
-            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
+             !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
           }
           {/* {
 
@@ -678,7 +675,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                                       checked={formSettings.assigned_roles.length === 3}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["franchisee_admin", "coordinator", "educator"]
@@ -875,7 +872,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                                       checked={formSettings.assigned_roles.length === 2}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["coordinator", "educator"]
