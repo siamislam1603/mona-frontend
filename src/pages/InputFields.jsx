@@ -83,7 +83,7 @@ const InputFields = (props) => {
           {...controls}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
-          // isDisable={props.isDisable}
+          isDisable={props.isDisable}
         />
       );
       break;
@@ -93,7 +93,7 @@ const InputFields = (props) => {
           {...controls}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
-          // isDisable={props.isDisable}
+          isDisable={props.isDisable}
         />
       );
       break;
