@@ -23,18 +23,7 @@ const Input = (props) => {
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
           value={
-            (props !== {} &&
-              props?.field_data &&
-              controls?.field_name === 'date_of_birth') ||
-            controls?.field_name === 'signature_date' ||
-            controls?.field_name === 'date' ||
-            controls?.field_name === 'date_of_illness' ||
-            controls?.field_name === 'date_of_record_was_made' ||
-            controls?.field_name === 'parents_notification_date' ||
-            controls?.field_name ===
-              'regulatory_authority_(if_applicable)_notification_date' ||
-            controls?.field_name ===
-              'regulatory_authority_(if_applicable)_notification_date'
+            props !== {} && props?.field_data && controls?.field_type === 'date'
               ? moment(
                   props?.field_data?.fields[`${controls?.field_name}`],
                   'DD-MM-YYYY'
