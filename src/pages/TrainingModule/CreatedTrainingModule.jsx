@@ -11,6 +11,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [otherTrainingData, setOtherTrainingData] = useState([]);
   const [applicableToAll, setApplicableToAll] = useState(false);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFrachise'))
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
@@ -85,8 +86,8 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
     let user_id = localStorage.getItem('user_id');
 
     let token = localStorage.getItem('token');
-    let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee === "undefined" ? "all" : selectedFranchisee
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${selectedFranchiseee}`, {
+    // let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee === "undefined" ? "all" : selectedFranchisee
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filter.search}&category_id=${filter.category_id}&franchiseeAlias=${localStorage.getItem('selectedFranchise')}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -244,10 +245,14 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   // }, [filter.search, filter.category_id]);
 
   useEffect(() => {
-    if (selectedFranchisee) {
+    if (selectedFranchise) {
       trainingCreatedByMe();
     }
-  }, [selectedFranchisee, filter.search, filter.category_id])
+  }, [selectedFranchise, filter.search, filter.category_id])
+
+  useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
     trainingCreatedByOther()

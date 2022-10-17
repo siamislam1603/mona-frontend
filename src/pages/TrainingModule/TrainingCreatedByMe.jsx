@@ -82,6 +82,7 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [search, setSearch] = useState()
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFranchise'));
 
 
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
@@ -236,7 +237,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
       let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchiseee}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -278,7 +279,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       console.log("TRAIING DATA search call", filterData.category_id, filterData.search)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -316,7 +317,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       CreatedByme()
     // }
 
-  }, [filterData.category_id, selectedFranchisee, page])
+  }, [filterData.category_id, selectedFranchise, page])
 
   useEffect(() => {
     if (filterData.search) {
@@ -353,6 +354,9 @@ const TrainingCreatedByMe = ({ filter }) => {
     }, 4000);
   }, [errorMessageToast]);
 
+  useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
 
   const fetchMoreData = async () => {
     setPage(page => page + 6)
