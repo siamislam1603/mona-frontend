@@ -5,6 +5,7 @@ import {
   Dropdown,
   DropdownButton,
   Form,
+  Modal,
 } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -75,13 +76,16 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
 const UserManagement = () => {
 
   const Key = useParams()
+  console.log(Key, "Key")
 
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
   const [userEducator, setEducator] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [csvDownloadFlag, setCsvDownloadFlag] = useState(false);
+  const [csvUploadFlag, setCsvUploadFlag] = useState(false);
   const [csvData, setCsvData] = useState([]);
+  const [jsonCSVData, setJsonCSVData] = useState([]);
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
@@ -258,6 +262,62 @@ const UserManagement = () => {
     return `${firstName}\n${secondName}`
   }
 
+  const importCSVToDB = async () => {
+
+  }
+
+  const csvFileToArray = (csvTextData) => {
+    const csvHeader = csvTextData.slice(0, csvTextData.indexOf("\n")).split(",");
+    const csvRows = csvTextData.slice(csvTextData.indexOf("\n") + 1).split("\n");
+
+    let array = csvRows.map(i => {
+      const values = i.split(",");
+      const obj = csvHeader.reduce((object, header, index) => {
+        object[header] = values[index];
+        return object;
+      }, {});
+      return obj;
+    });
+
+    array = array.map(d => {
+      return {
+        address: d.address,
+        city: d.city,
+        crn: d.city,
+        email: d.email,
+        franchisee_id: d.franchisee_id,
+        fullname: d.fullname,
+        postalCode: d.postalCode,
+        role: d.role,
+        state: d.state,
+        phone: `+61-${d.phone}`,
+      }
+    });
+
+    array = array.slice(0, array.length - 1);
+    setJsonCSVData(array);
+  };
+
+  const handleCSVImport = (e) => {
+    e.preventDefault();
+
+    setCsvUploadFlag(false);
+    const fileReader = new FileReader();
+    if (csvData) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+        csvFileToArray(csvOutput);
+      };
+
+      fileReader.readAsText(csvData);
+    }
+  };
+
+  const handleCSVFileSave = (e) => {
+    setCsvData(null);
+    setCsvData(e.target.files[0]);
+  }
+
   const fetchUserDetails = async () => {
     let api_url = '';
     // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
@@ -273,7 +333,6 @@ const UserManagement = () => {
     }
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
-      console.log('USERS FILTERED>>>>>>>>>>>>>>', users);
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
@@ -289,6 +348,7 @@ const UserManagement = () => {
         action: `${dt.is_active},${dt.role}`
       }));
 
+      setEducator(tempData);
       setUserData(tempData);
       setIsLoading(false)
 
@@ -365,6 +425,10 @@ const UserManagement = () => {
   }, [filter]);
 
   useEffect(() => {
+    setCsvData(null);
+  }, []);
+
+  useEffect(() => {
     if (localStorage.getItem('success_msg')) {
       setTopSuccessMessage(localStorage.getItem('success_msg'));
       localStorage.removeItem('success_msg');
@@ -385,13 +449,16 @@ const UserManagement = () => {
     trimRoleList();
   }, [userRoleData]);
 
+  useEffect(() => {
+    importCSVToDB();
+  }, [jsonCSVData]);
+
 
   const csvLink = useRef();
-  // const container = useRef();
-  openFilter && console.log('OPEN FILTER:', openFilter);
+  jsonCSVData && console.log('JSON CSV DATA:', jsonCSVData);
   return (
     <>
-      <div 
+      <div
         id="main"
         className="main-class">
         <section className="mainsection">
@@ -541,6 +608,9 @@ const UserManagement = () => {
                                     </CSVDownload>
                                   )}
                                 </Dropdown.Item>
+                                <Dropdown.Item onClick={() => setCsvUploadFlag(true)}>
+                                  Import CSV
+                                </Dropdown.Item>
                                 {/* <Dropdown.Item onClick={() => { onDeleteAll() }}>
                                   Delete All Row
                                 </Dropdown.Item> */}
@@ -597,6 +667,32 @@ const UserManagement = () => {
           </Container>
         </section>
       </div>
+      {
+        csvUploadFlag &&
+        <Modal
+          show={csvUploadFlag}
+          onHide={() => setCsvUploadFlag(false)}>
+          <Modal.Header>
+            <Modal.Title>Upload User Data</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <p>Choose a CSV file you want to extract and import the user data from.</p>
+              <form>
+                <input
+                  type={"file"}
+                  accept={".csv"}
+                  onChange={handleCSVFileSave} />
+              </form>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="modal-button"
+              onClick={handleCSVImport}>Import CSV</button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };

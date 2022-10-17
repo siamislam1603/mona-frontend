@@ -10,19 +10,22 @@ const Select = (props) => {
           <Form.Select
             className="form-input-section"
             name={controls.field_name}
+            disabled={props.isDisable ? props.isDisable : false}
             onChange={(e) => {
               props.onChange(e.target.name, e.target.value, 'select');
             }}
             isInvalid={!!controls.error[controls.field_name]}
           >
             <option>Select {controls.label}</option>
-            {eval(controls.option)?.map((item2,index) => {
+            {eval(controls.option)?.map((item2, index) => {
               return (
                 <>
                   {props.field_data ? (
                     props.field_data.fields[`${controls.field_name}`] ===
                     Object.keys(item2)[0] ? (
-                      <option selected key={index}>{Object.keys(item2)[0]}</option>
+                      <option selected key={index}>
+                        {Object.keys(item2)[0]}
+                      </option>
                     ) : (
                       <option key={index}>{Object.keys(item2)[0]}</option>
                     )

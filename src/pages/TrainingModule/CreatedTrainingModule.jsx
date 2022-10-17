@@ -300,14 +300,14 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                   myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
                   <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
                 }
-                {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+                {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
               </header>
               :<header className="title-head mt-4 mb-0" style={{ display: "flex", justifyContent: "right" }}>
                 {
                   myTrainingData?.length > 0 && localStorage.getItem('user_role') === 'franchisor_admin' &&
                   <h3 className="title-sm mb-0"><strong>Created by me</strong></h3>
                 }
-                {myTrainingData?.length > 0 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
+                {myTrainingData?.length > 5 && <Link to="/training-createdby-me" className="viewall">View All</Link>}
               </header>
             }
             {myTrainingData?.map((training) => {

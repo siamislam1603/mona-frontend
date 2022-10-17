@@ -698,6 +698,7 @@ const EditTraining = () => {
                               croppedImage={croppedImage}
                               setCroppedImage={setCroppedImage}
                               onSave={setImage}
+                              coverImage={image}
                               setPopupVisible={setPopupVisible}
                               setFetchedCoverImage={setFetchedCoverImage}
                               fetchedPhoto={""}
@@ -707,6 +708,8 @@ const EditTraining = () => {
                               popupVisible &&
                               <ImageCropTraning
                                 image={image}
+                                setCoverImage={setImage}
+                                croppedImage={croppedImage}
                                 setCroppedImage={setCroppedImage}
                                 setPopupVisible={setPopupVisible} />
                             }

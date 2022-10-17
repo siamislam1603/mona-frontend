@@ -251,7 +251,6 @@ const DynamicForm = () => {
         } else {
           setSignatureAccessFlag(true);
         }
-        console.log('formsData---->', formsData);
 
         setForm(formsData);
         setFormData(data);
@@ -312,6 +311,7 @@ const DynamicForm = () => {
           body: JSON.stringify({
             form_id: formData[Object.keys(formData)[0]][0]?.form_id,
             user_id: localStorage.getItem('user_id'),
+            franchisee_id: localStorage.getItem('franchisee_id') || undefined,
             behalf_of:
               localStorage.getItem('user_role') === 'guardian'
                 ? !behalfOfFlag
@@ -494,21 +494,21 @@ const DynamicForm = () => {
                                   {targetUser?.map((item, index) => {
                                     return (
                                       <>
-                                        {item.id === fieldData.behalf_of ? (
+                                        {item?.id === fieldData?.behalf_of ? (
                                           <option
                                             value={item.id}
                                             selected
                                             key={index}
                                           >
-                                            {item.child
-                                              ? item.fullname
-                                              : `${item.fullname} (${item.email})`}
+                                            {item?.child
+                                              ? item?.fullname
+                                              : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         ) : (
                                           <option value={item.id} key={index}>
-                                            {item.child
-                                              ? item.fullname
-                                              : `${item.fullname} (${item.email})`}
+                                            {item?.child
+                                              ? item?.fullname
+                                              : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         )}
                                       </>
@@ -537,7 +537,9 @@ const DynamicForm = () => {
                                           localStorage.getItem('franchisee_id')
                                         ) === item.franchisee_id ||
                                           localStorage.getItem('user_role') ===
-                                            'franchisor_admin') && (
+                                            'franchisor_admin' ||
+                                          localStorage.getItem('user_role') ===
+                                            'educator') && (
                                           <option value={item.id} key={index}>
                                             {item.child
                                               ? item.fullname

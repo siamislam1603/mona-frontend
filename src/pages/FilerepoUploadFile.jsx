@@ -15,7 +15,11 @@ let selectedFranchiseeId = '';
 
 const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
-    const handleClose = () => setShow(false);
+    // const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false)
+        window.location.reload(false);
+    }
     const handleShow = () => setShow(true);
     const [show, setShow] = useState(false);
     const [error, setError] = useState(false);
@@ -23,7 +27,17 @@ const FilerepoUploadFile = () => {
     const [category, setCategory] = useState([]);
     const [selectedUser, setSelectedUser] = useState([]);
     const [selectedChild, setSelectedChild] = useState([]);
-    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("all");
+    const [sendToAllFranchisee, setSendToAllFranchisee] = useState("");
+    const hideShairSection = () => {
+        if (localStorage.getItem("user_role") === "franchisor_admin") {
+            setSendToAllFranchisee("none")
+        } else {
+            setSendToAllFranchisee("all")
+        }
+    }
+    useEffect(() => {
+        hideShairSection();
+    }, [])
     const [franchiseeList, setFranchiseeList] = useState();
     const [child, setChild] = useState([]);
     const [UpladFile, setUpladFile] = useState('');
@@ -39,16 +53,17 @@ const FilerepoUploadFile = () => {
         shared_role: '',
         accessible_to_role: 1
     });
+
     const [formSettings, setFormSettings] = useState({
         assigned_franchisee: [],
     });
-
-
     const getUser = async () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
             let userIdd = localStorage.getItem('user_id')
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, {
+            let franchiseeArrr = franchiseeArr == ["all"] ? "all" : franchiseeArr
+            console.log(franchiseeArrr, "franchiseeArrr")
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArrr, userId: userIdd || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -130,7 +145,8 @@ const FilerepoUploadFile = () => {
     //======================== GET Children List==================
 
     const getChildren = async () => {
-        let selectedUserr = selectedUser.length == 0 ? [] : selectedUser.map(item => item.id)
+        let selectedUserr = selectedUser.length === 0 ? [] : selectedUser.map(item => item.id)
+
         let response = await axios.get(`${BASE_URL}/enrollment/listOfChildren?childId=${JSON.stringify(selectedUserr)}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -207,6 +223,7 @@ const FilerepoUploadFile = () => {
         });
 
     //========================Submit Form==================
+    // console.log(franchiseeArr, "franchiseeArr");
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -221,8 +238,7 @@ const FilerepoUploadFile = () => {
             return false
         }
         setLoaderFlag(true);
-        let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : [getFranchisee]
-
+        let franchiseeArr = getUser_Role == 'franchisor_admin' ? formSettings.franchisee : []
         var myHeaders = new Headers();
 
         myHeaders.append(
@@ -239,14 +255,14 @@ const FilerepoUploadFile = () => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData?.file_category);
-        formdata.append('franchisee', franchiseeArr?.length == 0 ? [] : franchiseeArr);
+        formdata.append('franchisee', !franchiseeArr ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
         ) {
             formdata.append(
                 'accessibleToRole',
-                ""
+                "all"
             );
             formdata.append(
                 'accessibleToAll',
@@ -526,7 +542,8 @@ const FilerepoUploadFile = () => {
                                                                     onChange={() => {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
-                                                                            assigned_franchisee: ['all'],
+                                                                            assigned_franchisee: [],
+                                                                    
                                                                             franchisee: []
                                                                         }));
                                                                         setSendToAllFranchisee('all')
@@ -567,7 +584,7 @@ const FilerepoUploadFile = () => {
                                                     <div className="select-with-plus">
                                                         <Multiselect
                                                             isClearable={false}
-                                                            // disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
+                                                            disable={sendToAllFranchisee === 'all' || getUser_Role !== 'franchisor_admin'}
                                                             placeholder={"Select"}
                                                             displayValue="key"
                                                             className="multiselect-box default-arrow-select"

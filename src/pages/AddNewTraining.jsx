@@ -47,22 +47,14 @@ const validateTrainingSettings = (trainingSettings) => {
   let errors = {};
   let {
     start_date,
-    start_time,
-    end_date,
-    end_time
+    start_time
   } = trainingSettings;
 
   if (!start_date)
-    errors.start_date = "Choose a start date";
+    errors.start_date = "Choose a start date!";
 
   if (!start_time)
-    errors.start_time = "Choose a start time";
-
-  if (end_date && end_date < start_date)
-    errors.end_date = "End date must be greater than start date";
-
-  if (start_date && start_time && end_date && end_time && start_date === end_date && start_time > end_time)
-    errors.end_time = "End time must be greater than start time"
+    errors.start_time = "Choose a start time!";
 
   return errors;
 }
@@ -95,9 +87,9 @@ const AddNewTraining = () => {
   const [trainingSettings, setTrainingSettings] = useState({
     start_date: "",
     start_time: "",
-    send_to_all_franchisee: false,
+    send_to_all_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? true : false,
     applicable_to: 'roles',
-    assigned_franchisee: [],
+    assigned_franchisee: localStorage.getItem('user_role') === 'franchisor_admin' ? ['all'] : [],
     assigned_roles: [],
     assigned_users: []
   });
@@ -106,7 +98,7 @@ const AddNewTraining = () => {
   const [settingsModalPopup, setSettingsModalPopup] = useState(false);
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [trainingCategory, setTrainingCategory] = useState([]);
-  const [coverImage, setCoverImage] = useState({});
+  const [coverImage, setCoverImage] = useState(null);
   const [videoTutorialFiles, setVideoTutorialFiles] = useState([]);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedFranchisee, setSelectedFranchisee] = useState("Special DayCare, Sydney");
@@ -119,8 +111,6 @@ const AddNewTraining = () => {
 
   const [popupVisible, setPopupVisible] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-
-
   // LOG MESSAGES
   const [errors, setErrors] = useState({});
 
@@ -228,12 +218,11 @@ const AddNewTraining = () => {
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
-      console.log('USERS:', users);
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
           id: data.id,
           cat: data.fullname.toLowerCase().split(" ").join("_"),
-          key: `${data.fullname} (${data.email})`
+          key: data.fullname
         })),
       ]);
     }
@@ -450,7 +439,21 @@ const AddNewTraining = () => {
     )));
   }, [imageFileErrorMessage])
 
-  fetchedFranchiseeUsers && console.log('FETCHED FRANCHISEE USERS:', fetchedFranchiseeUsers);
+  // useEffect(() => {
+  //   if(trainingSettings?.start_time && trainingSettings?.start_time < moment().format('HH:mm')) {
+  //     setTrainingSettingErrors(prevState => ({
+  //       ...prevState,
+  //       start_time: 'Choose valid time'
+  //     }));
+  //   }
+  // }, [trainingSettings?.start_time]);
+
+  trainingSettings && console.log('TRAINING SETTINGS:', trainingSettings);
+  // useEffect(() => {
+  //   console.log('Cropped Image');
+  //   if(croppedImage === null)
+  //     setCoverImage(null);
+  // }, [coverImage]);
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <div id="main">
@@ -673,7 +676,7 @@ const AddNewTraining = () => {
                             croppedImage={croppedImage}
                             setCroppedImage={setCroppedImage}
                             onSave={setCoverImage}
-                            popupVisible={popupVisible}
+                            coverImage={coverImage}
                             setPopupVisible={setPopupVisible}
                             setUploadError={setImageFileErrorMessage}
                             fetchedPhoto={""}
@@ -683,11 +686,13 @@ const AddNewTraining = () => {
                             popupVisible &&
                             <ImageCropTraning
                               image={coverImage}
-                              popupVisible={popupVisible}
                               setCoverImage={setCoverImage}
+                              croppedImage={croppedImage}
                               setCroppedImage={setCroppedImage}
                               setPopupVisible={setPopupVisible} />
                           }
+                          {/* <small className="fileinput mt-1 mb-1">(png, jpg & jpeg)</small>
+                          <small className="fileinput mt-1 mb-1">(1162 x 402 resolution, less than 10MB)</small> */}
                           {
                             imageFileError &&
                             getUniqueErrors(imageFileError).map(errorObj => {
@@ -711,6 +716,8 @@ const AddNewTraining = () => {
                             setUploadError={setVideoFileErrorMessage}
                             onSave={setVideoTutorialFiles}
                           />
+                          {/* <small className="fileinput">(mp4, flv & mkv)</small>
+                          <small className="fileinput">(max. 5 video files, less than 1GB each)</small> */}
                           {
                             videoFileError &&
                             getUniqueErrors(videoFileError).map(errorObj => {
@@ -730,11 +737,13 @@ const AddNewTraining = () => {
                             setUploadError={setDocErrorMessage}
                             onSave={setRelatedFiles}
                           />
+                          {/* <small className="fileinput">(pdf, doc, ppt, xlsx and other documents)</small>
+                          <small className="fileinput">(max. 5 documents, less than 10MB each)</small> */}
                           {
                             docFileError &&
                             getUniqueErrors(docFileError).map(errorObj => {
                               return (
-                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed" : errorObj}</p>
+                                <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj}</p>
                               )
                             })
                           }
@@ -844,11 +853,10 @@ const AddNewTraining = () => {
                           handleTrainingSettings(e);
                           setTrainingSettingErrors(prevState => ({
                             ...prevState,
-                            end_date: null
+                            start_time: null
                           }));
                         }}
                       />
-                      {trainingSettingErrors.end_date !== null && <span className="error">{trainingSettingErrors.end_date}</span>}
                     </Form.Group>
                   </Col>
                   <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -858,15 +866,8 @@ const AddNewTraining = () => {
                         type="time"
                         name="end_time"
                         value={trainingSettings?.end_time}
-                        onChange={(e) => {
-                          handleTrainingSettings(e);
-                          setTrainingSettingErrors(prevState => ({
-                            ...prevState,
-                            end_time: null
-                          }));
-                        }}
+                        onChange={handleTrainingSettings}
                       />
-                      {trainingSettingErrors.end_time !== null && <span className="error">{trainingSettingErrors.end_time}</span>}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -954,8 +955,8 @@ const AddNewTraining = () => {
                   <Col lg={3} md={6}>
                     <Form.Group>
                       <Form.Label>Accessible to</Form.Label>
-                      <div className="new-form-radio d-block">
-                        <div className="new-form-radio-box mb-3">
+                      <div>
+                        <div className="new-form-radio-box">
                           <label htmlFor="yes1">
                             <input
                               type="radio"
@@ -980,7 +981,7 @@ const AddNewTraining = () => {
                             <p>User Roles</p>
                           </label>
                         </div>
-                        <div className="new-form-radio-box mb-3">
+                        <div className="new-form-radio-box" style={{ marginLeft: 0, marginTop: '10px' }}>
                           <label htmlFor="no1">
                             <input
                               type="radio"
@@ -1152,13 +1153,6 @@ const AddNewTraining = () => {
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  setTrainingSettingErrors(prevState => ({
-                    ...prevState,
-                    start_date: null,
-                    end_date: null,
-                    start_time: null,
-                    end_time: null
-                  }));
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);
@@ -1237,12 +1231,11 @@ const AddNewTraining = () => {
                           handleTrainingSettings(e);
                           setTrainingSettingErrors(prevState => ({
                             ...prevState,
-                            end_date: null
-                          }))
+                            start_time: null
+                          }));
                         }}
                         min={trainingSettings?.start_date}
                       />
-                      {trainingSettingErrors.end_date !== null && <span className="error">{trainingSettingErrors.end_date}</span>}
                     </Form.Group>
                   </Col>
                   <Col lg={3} sm={6} className="mt-3 mt-lg-0">
@@ -1252,15 +1245,8 @@ const AddNewTraining = () => {
                         type="time"
                         name="end_time"
                         value={trainingSettings?.end_time}
-                        onChange={(e) => {
-                          handleTrainingSettings(e);
-                          setTrainingSettingErrors(prevState => ({
-                            ...prevState,
-                            end_time: null
-                          }));
-                        }}
+                        onChange={handleTrainingSettings}
                       />
-                      {trainingSettingErrors.end_time !== null && <span className="error">{trainingSettingErrors.end_time}</span>}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -1503,20 +1489,10 @@ const AddNewTraining = () => {
                 Cancel
               </Button>
               <Button variant="primary" onClick={() => {
-                // if(trainingSettings?.end_time && trainingSettings?.end_date) {
-                //   if(moment.)
-                // }
                 let settingErrors = validateTrainingSettings(trainingSettings);
                 if (Object.keys(settingErrors).length > 0) {
                   setTrainingSettingErrors(settingErrors);
                 } else {
-                  setTrainingSettingErrors(prevState => ({
-                    ...prevState,
-                    start_date: null,
-                    end_date: null,
-                    start_time: null,
-                    end_time: null
-                  }));
                   setAllowSubmit(true);
                   setSaveSettingsToast('Settings saved successfully.');
                   setSettingsModalPopup(false);
