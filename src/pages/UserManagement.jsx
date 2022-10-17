@@ -322,6 +322,7 @@ const UserManagement = () => {
     let api_url = '';
     // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
     api_url = `${BASE_URL}/role/user/list/${selectedFranchisee}?search=${search}&filter=${filter}`;
+
     let response = await axios.get(api_url, {
       headers: {
         authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -347,8 +348,6 @@ const UserManagement = () => {
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: `${dt.is_active},${dt.role}`
       }));
-
-      setEducator(tempData);
       setUserData(tempData);
       setIsLoading(false)
 
@@ -367,6 +366,63 @@ const UserManagement = () => {
     }
   };
 
+  const Show_eduactor = async () => {
+    let api_url = '';
+    let filter = Key.key
+    let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+    if (filter) {
+      // api_url = `${BASE_URL}/role/user/${id}?filter=${filter}`;
+      api_url = `${BASE_URL}/role/user/list/${selectedFranchisee}?search=${search}&filter=${filter}`;
+    }
+
+    let response = await axios.get(api_url, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')} `,
+      },
+    });
+
+    if (response) {
+      setfullLoaderStatus(false)
+    }
+
+    if (response.status === 200 && response.data.status === "success") {
+      const { users } = response.data;
+      let tempData = users.map((dt) => ({
+        name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
+          .split('_')
+          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+          .join(' ')}, ${dt.is_active}, ${dt.id}`,
+        email: dt.email,
+        number: (dt.phone !== null ? dt.phone.slice(1) : null),
+        location: dt.city,
+        role: dt.role,
+        is_deleted: dt.is_deleted,
+        userID: dt.id,
+        roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
+        action: `${dt.is_active},${dt.role}`
+      }));
+      setEducator(tempData);
+      setIsLoading(false)
+
+      let temp = tempData;
+      let csv_data = [];
+      temp.map((item, index) => {
+        delete item.is_deleted;
+        csv_data.push(item);
+        let data = { ...csv_data[index] };
+        data["name"] = data.name.split(",")[1];
+        delete data.action
+        delete data.roleDetail
+        csv_data[index] = data;
+      });
+      setCsvData(csv_data);
+    }
+  }
+  useEffect(() => {
+    if (Key) {
+      Show_eduactor()
+    }
+  }, [selectedFranchisee])
   const handleApplyFilter = async () => {
     if (openFilter === true) {
       setOpenFilter(false);
