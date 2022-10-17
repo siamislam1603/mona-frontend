@@ -200,10 +200,10 @@ const DynamicForm = () => {
             if (inner_item.form_field_permissions.length > 0) {
               inner_item?.form_field_permissions?.map((permission) => {
                 if (
-                  permission?.fill_access_users.includes(
+                  permission?.fill_access_users?.includes(
                     localStorage.getItem('user_role')
                   ) ||
-                  permission?.fill_access_users.includes(
+                  permission?.fill_access_users?.includes(
                     localStorage.getItem('user_id')
                   )
                 ) {
@@ -562,30 +562,33 @@ const DynamicForm = () => {
                         </Col>
                       )}
                     {Object.keys(formData)?.map((item, index) => {
+                      {
+                        console.log('1233333', item);
+                      }
                       return item ? (
                         <>
                           {formData[item]?.map((inner_item, inner_index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
-                              (
-                                inner_item.form_field_permissions[0]
-                                  .fill_access_users || []
-                              ).includes(
+                              inner_item.form_field_permissions[0].fill_access_users?.includes(
                                 localStorage.getItem('user_role') === 'guardian'
                                   ? 'parent'
                                   : localStorage.getItem('user_role')
-                              ) && location?.state?.id ? (
-                                <InputFields
-                                  {...inner_item}
-                                  signature_flag={signatureAccessFlag}
-                                  diff_index={inner_index}
-                                  field_data={fieldData}
-                                  error={errors}
-                                  errorFocus={errorFocus}
-                                  onChange={(key, value, type) => {
-                                    setField('', key, value, type);
-                                  }}
-                                />
+                              ) || location?.state?.id ? (
+                                <>
+                                  <InputFields
+                                    {...inner_item}
+                                    signature_flag={signatureAccessFlag}
+                                    diff_index={inner_index}
+                                    field_data={fieldData}
+                                    error={errors}
+                                    errorFocus={errorFocus}
+                                    onChange={(key, value, type) => {
+                                      setField('', key, value, type);
+                                    }}
+                                    freshForm={true}
+                                  />
+                                </>
                               ) : (
                                 (
                                   inner_item.form_field_permissions[0]

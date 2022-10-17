@@ -1,9 +1,24 @@
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { Form, Col } from 'react-bootstrap';
 
 const Input = (props) => {
-  const { ...controls } = props;
+  let { ...controls } = props;
+  if (controls.field_data == {} || controls.field_data == undefined) {
+    delete controls.field_data;
+  }
+  let value;
+  if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+    if (controls?.field_type === 'date') {
+      value = moment(
+        props?.field_data?.fields[`${controls?.field_name}`],
+        'DD-MM-YYYY'
+      ).format('YYYY-MM-DD');
+    } else {
+      value = props?.field_data?.fields[`${controls?.field_name}`];
+    }
+  }
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
@@ -22,14 +37,7 @@ const Input = (props) => {
           onChange={(e) => {
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
-          value={
-            props !== {} && props?.field_data && controls?.field_type === 'date'
-              ? moment(
-                  props?.field_data?.fields[`${controls?.field_name}`],
-                  'DD-MM-YYYY'
-                ).format('YYYY-MM-DD')
-              : props?.field_data?.fields[`${controls?.field_name}`]
-          }
+          value={value}
           isInvalid={!!controls.error[controls?.field_name]}
         />
         {controls?.field_type === 'text' && (
