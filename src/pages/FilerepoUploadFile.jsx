@@ -542,8 +542,8 @@ const FilerepoUploadFile = () => {
                                                                     onChange={() => {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
-                                                                            assigned_franchisee: ['all'],
-                                                                            franchisee: ["all"]
+                                                                            assigned_franchisee: [],
+                                                                            franchisee: []
                                                                         }));
                                                                         setSendToAllFranchisee('all')
                                                                     }}
