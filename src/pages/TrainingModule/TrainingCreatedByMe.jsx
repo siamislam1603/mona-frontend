@@ -82,6 +82,7 @@ const TrainingCreatedByMe = ({ filter }) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
   const [search, setSearch] = useState()
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFranchise'));
 
 
   const [topSuccessMessage, setTopSuccessMessage] = useState(null);
@@ -232,24 +233,22 @@ const TrainingCreatedByMe = ({ filter }) => {
   const CreatedByme = async () => {
     try {
       console.log("TRAIING DATA", filterData.category_id, filterData.search)
-
-      setfullLoaderStatus(true)
-
       setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+      let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
       });
       console.log('TRAIING DATA', response)
+
       if (response.status === 200 && response.data.status === "success") {
         const { searchedData } = response.data
         console.log("Searched Data", searchedData)
         setCheckCount(searchedData?.length)
         setCount(response.data.count)
-
         setMyTrainingData(searchedData)
         setfullLoaderStatus(false)
         if (searchedData?.length === 0) {
@@ -267,10 +266,8 @@ const TrainingCreatedByMe = ({ filter }) => {
     } catch (error) {
       if (error.response.status === 404) {
         setfullLoaderStatus(false)
-
         setMyTrainingData([])
         setNoMore(false)
-
 
       }
       console.log("error created by me", error)
@@ -282,7 +279,7 @@ const TrainingCreatedByMe = ({ filter }) => {
       console.log("TRAIING DATA search call", filterData.category_id, filterData.search)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee === "All" ? "all" : selectedFranchisee}`, {
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -316,22 +313,21 @@ const TrainingCreatedByMe = ({ filter }) => {
   }, [selectedFranchisee]);
 
   useEffect(() => {
-    if (selectedFranchisee) {
+    // if (selectedFranchisee) {
       CreatedByme()
-    }
+    // }
 
-  }, [filterData.category_id, selectedFranchisee, page])
+  }, [filterData.category_id, selectedFranchise, page])
 
   useEffect(() => {
     if (filterData.search) {
-      console.log("the search value", filterData.search)
       searchTraining()
     }
     else {
       setPage(6)
-      CreatedByme()
+      // CreatedByme()
     }
-  }, [filterData.search , selectedFranchisee])
+  }, [filterData.search])
 
   useEffect(() => {
     if (formSettings?.assigned_franchisee?.length > 0) {
@@ -358,6 +354,9 @@ const TrainingCreatedByMe = ({ filter }) => {
     }, 4000);
   }, [errorMessageToast]);
 
+  useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
 
   const fetchMoreData = async () => {
     setPage(page => page + 6)

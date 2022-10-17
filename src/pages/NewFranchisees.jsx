@@ -64,11 +64,11 @@ const NewFranchisees = () => {
             setLoader(false);
             setCreateFranchiseeModal(false);
             // setTopErrorMessage(response.data.msg);
-            let { errorObject } = response.data;
-            errorObject.map(error => setFormErrors(prevState => ({
+            let { message } = response.data;
+            setFormErrors(prevState => ({
                 ...prevState,
-                [error.error_field]: error.error_msg
-            })));
+                franchisee_name: message
+            }))
 
             setTimeout(() => {
                 setTopErrorMessage(null);

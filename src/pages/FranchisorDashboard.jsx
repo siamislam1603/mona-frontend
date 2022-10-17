@@ -174,7 +174,7 @@ const FranchisorDashboard = () => {
 
 
   }, []);
-  
+
   React.useEffect(() => {
     if (selectedFranchisee) {
       count_Api();

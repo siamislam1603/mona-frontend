@@ -312,6 +312,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
     // }
   }
 
+  childList && console.log('Child List:>>>>>>>>>>>>>>>>>>>>>>>', childList);
   const popover = (
     <Popover id="popover-basic" className={`notificationpopup ${topHeaderNotificationMarkAllRead ?"marked-read" : ""} ${topHeaderNotificationCountClass ? "" : "no-notification"}`} >
       {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
@@ -466,9 +467,10 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   // }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
-    if(localStorage.getItem('selectedChild')) {
+    let selectedChildData = localStorage.getItem('selectedChild');
+    if(selectedChildData !== "undefined" && selectedChildData !== null) {
       setSelectedFranchisee(localStorage.getItem('selectedChild'));
-    } else {
+    } else if(selectedChildData === "undefined" || selectedChildData === null) {
       localStorage.setItem('selectedChild', childList[0]?.id)
       setSelectedFranchisee(localStorage.getItem('selectedChild'));
     }
@@ -486,6 +488,7 @@ const TopHeader = ({ setSelectedFranchisee = temp, setChild = Child, notificatio
   useEffect(() => {
 
     if (localStorage.getItem('user_role') === 'guardian') {
+      console.log('Fecthing child list');
       fetchChildList();
     } else {
       fetchFranchiseeList();
