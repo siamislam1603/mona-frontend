@@ -58,7 +58,7 @@ const FranchiseeDashboard = () => {
           action: `${dt.id},${dt.parents[0].id}`
         }
       ))
-      console.log("tempData", tempData)
+   
       setUserData(tempData);
     }
   }
@@ -98,7 +98,7 @@ const FranchiseeDashboard = () => {
       setcountUser(response.data);
       setfullLoaderStatus(false)
     }).catch((e) => {
-      console.log("Error", e);
+     
       setfullLoaderStatus(false)
     })
   }

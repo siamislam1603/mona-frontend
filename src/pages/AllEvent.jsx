@@ -8,6 +8,7 @@ import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
+import { useParams } from "react-router-dom";
 import { verifyPermission } from "../helpers/roleBasedAccess";
 import { type } from "jquery";
 
@@ -15,8 +16,8 @@ import { type } from "jquery";
 
 
 const AllEvent = (props) => {
-
-  let Active_acordian = Number(props.Rarams);
+  const Params = useParams()
+  let Active_acordian = Number(Params.key);
 
   const [allEventData, setAllEventData] = useState([])
   const [show, setShow] = useState(false);
@@ -192,7 +193,7 @@ const AllEvent = (props) => {
                       <div className="related-files">
                         {data?.announcement_files && data?.announcement_files?.map((detail, index) => (
                           <>
-                            {detail.fileType !== ".mp4" &&  detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
+                            {detail.fileType !== ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
                               <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt="" /> <span className="name">
                                 <p>{getRelatedFileName(detail.file)}</p>
                                 <small>{getAddedTime(detail.createdAt)}</small></span></a></div>

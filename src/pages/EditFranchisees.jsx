@@ -37,6 +37,7 @@ const EditFranchisees = () => {
     const [loader, setLoader] = useState(false);
     const [createFranchiseeModal, setCreateFranchiseeModal] = useState(false);
     const [editFranchiseeData, setEditFranchiseeData] = useState();
+    const [stateData, setStateData] = useState([]);
     
     // ERROR STATES
     const [formErrors, setFormErrors] = useState({});
@@ -110,8 +111,8 @@ const EditFranchisees = () => {
     }
 
 
-    const fetchSuburbData = () => {
-        const suburbAPI = `${BASE_URL}/api/suburbs/data/${suburbSearchString}`;
+    const fetchSuburbData = (state) => {
+        const suburbAPI = `${BASE_URL}/api/suburbs/data/${state}`;
         const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
         axios.all([getSuburbList]).then(
           axios.spread((...data) => {
@@ -140,18 +141,18 @@ const EditFranchisees = () => {
     };
 
     // FETCHES AUSTRALIAN CITIES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-    const fetchCities = async () => {
-        const response = await axios.get(`${BASE_URL}/api/cities`);
-        if (response.status === 200) {
-        const { cityList } = response.data;
-        setCityData(
-            cityList.map((city) => ({
-                value: city.name,
-                label: city.name
-            }))
-        );
+    const fetchStateList = async () => {
+        let response = await axios.get(`${BASE_URL}/api/state/data`);
+    
+        if(response.status === 200 && response.data.status === "success") {
+          let { states } = response.data;
+          setStateData(states.map(d => ({
+            id: d.id,
+            value: d.name,
+            label: d.name
+          })));
         }
-    };
+      }
 
     // FETCHES FRANCHISEE ADMINS FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
     const fetchFranchiseeAdmins = async () => {
@@ -197,7 +198,7 @@ const EditFranchisees = () => {
 
     useEffect(() => {
         fetchAustralianStates();
-        fetchCities();
+        fetchStateList();
         fetchFranchiseeAdmins();
         fetchEditFranchiseData(); 
     }, []);
@@ -210,8 +211,8 @@ const EditFranchisees = () => {
 
 
     useEffect(() => {
-        fetchSuburbData();
-      }, [suburbSearchString])
+        fetchSuburbData(franchiseeData?.state);
+      }, [franchiseeData?.state])
 
 
 
@@ -239,10 +240,10 @@ const EditFranchisees = () => {
                                     </div>
                                 </div>
                                 {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
-                                <Form onSubmit={handleFranchiseeDataSubmission}>
+                                <Form onSubmit={handleFranchiseeDataSubmission} className="error-sec">
                                     <Row>
                                         <Col sm={6} md={6} lg={6}>
-                                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicEmail">
                                                 <Form.Label>Franchise Name</Form.Label>
                                                 <Form.Control
                                                     name="franchisee_name" 
@@ -258,7 +259,7 @@ const EditFranchisees = () => {
                                                 { formErrors.franchisee_name !== null && <span className="error">{formErrors.franchisee_name}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>ABN</Form.Label>
                                                 <Form.Control
                                                     name="abn" 
@@ -277,7 +278,27 @@ const EditFranchisees = () => {
                                                 { formErrors.abn !== null && <span className="error">{formErrors.abn}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3">
+                                            <Form.Group className="mb-3 relative" defaultValue={franchiseeData.state} >
+                                                <Form.Label>State</Form.Label>
+                                                <Select
+                                                value={{ label: franchiseeData.state, value: franchiseeData.state }}
+                                                placeholder={franchiseeData?.state || "State"}
+                                                closeMenuOnSelect={true}
+                                                options={stateData}
+                                                onChange={(e) => {
+                                                    setFranchiseeData((prevState) => ({
+                                                        ...prevState,
+                                                        state: e.value,
+                                                    }));
+                                                    setFormErrors(prevState => ({
+                                                        ...prevState,
+                                                        state: null
+                                                    }));
+                                                }} />
+                                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                                            </Form.Group>
+
+                                            <Form.Group className="mb-3 relative">
                                                 <Form.Label>Suburb</Form.Label>
                                                 <Select
                                                 placeholder={franchiseeData?.city || "Select"}
@@ -300,26 +321,7 @@ const EditFranchisees = () => {
                                             { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" defaultValue={franchiseeData.state} >
-                                                <Form.Label>State</Form.Label>
-                                                <Select
-                                                value={{ label: franchiseeData.state, value: franchiseeData.state }}
-                                                placeholder={franchiseeData?.state || "State"}
-                                                closeMenuOnSelect={true}
-                                                options={australianStatesData }
-                                                onChange={(e) => {
-                                                    setFranchiseeData((prevState) => ({
-                                                        ...prevState,
-                                                        state: e.value,
-                                                    }));
-                                                    setFormErrors(prevState => ({
-                                                        ...prevState,
-                                                        state: null
-                                                    }));
-                                                }} />
-                                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
-                                            </Form.Group>
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label> Contact Number</Form.Label>
                                                 <Form.Control 
                                                     name="contact"
@@ -359,7 +361,7 @@ const EditFranchisees = () => {
                                         </Col>
 
                                         <Col sm={6} md={6} lg={6}>
-                                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicEmail">
                                                 <Form.Label>Franchise Number</Form.Label>
                                                 <Form.Control 
                                                     name="franchisee_number"
@@ -375,7 +377,7 @@ const EditFranchisees = () => {
                                                 { formErrors.franchisee_number !== null && <span className="error">{formErrors.franchisee_number}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>ACN</Form.Label>
                                                 <Form.Control
                                                     name="acn" 
@@ -394,7 +396,7 @@ const EditFranchisees = () => {
                                                 { formErrors.acn !== null && <span className="error">{formErrors.acn}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>Street Address</Form.Label>
                                                 <Form.Control 
                                                     name="address"
@@ -410,7 +412,7 @@ const EditFranchisees = () => {
                                                 { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
                                             </Form.Group>
 
-                                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                                            <Form.Group className="mb-3 relative" controlId="formBasicPassword">
                                                 <Form.Label>Post Code</Form.Label>
                                                 <Form.Control
                                                     name="postcode" 
