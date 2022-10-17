@@ -389,32 +389,30 @@ function OwnFormResponse(props) {
                                       {item[0]?.updatedByUsers[0]?.fullname}{' '}
                                       <br />
                                       Updated on: <br />
-                                      {moment(item[0].updatedAt)
-                                        .utcOffset('+11:00')
-                                        .format('DD/MM/YYYY') +
+                                      {moment(item[0].updatedAt).format(
+                                        'DD/MM/YYYY'
+                                      ) +
                                         ', ' +
-                                        item[0].updatedAt
-                                          .split('T')[1]
-                                          .split('.')[0]
-                                          .split(':', 2)
-                                          .join(':') +
-                                        ' hrs'}
+                                        moment(item[0].updatedAt)
+                                          .subtract(13, 'hours')
+                                          .utc()
+                                          .format('HH:mm')}
+                                      hrs
                                     </p>
                                   ) : (
                                     <p>
                                       Completed By :{' '}
                                       {item[0]?.filled_user?.fullname} <br />
                                       Completed on: <br />
-                                      {moment(item[0].createdAt)
-                                        .utcOffset('+11:00')
-                                        .format('DD/MM/YYYY') +
+                                      {moment(item[0].createdAt).format(
+                                        'DD/MM/YYYY'
+                                      ) +
                                         ', ' +
-                                        item[0].createdAt
-                                          .split('T')[1]
-                                          .split('.')[0]
-                                          .split(':', 2)
-                                          .join(':') +
-                                        ' hrs'}
+                                        moment(item[0].createdAt)
+                                          .subtract(13, 'hours')
+                                          .utc()
+                                          .format('HH:mm')}
+                                      hrs{' '}
                                     </p>
                                   )}
                                   {/* <p>
