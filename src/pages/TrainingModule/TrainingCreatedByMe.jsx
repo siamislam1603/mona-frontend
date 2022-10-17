@@ -236,7 +236,6 @@ const TrainingCreatedByMe = ({ filter }) => {
       setNoMore(true)
       let user_id = localStorage.getItem('user_id');
       let token = localStorage.getItem('token');
-      let selectedFranchiseee = selectedFranchisee === "All" ? "all" : selectedFranchisee
       const response = await axios.get(`${BASE_URL}/training/trainingCreatedByMeOnly/${user_id}/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
         headers: {
           "Authorization": "Bearer " + token
@@ -462,13 +461,20 @@ const TrainingCreatedByMe = ({ filter }) => {
                         <Form.Label className="d-block me-2">Choose Category</Form.Label>
                         <Select
                           closeMenuOnSelect={true}
+                          placeholder={"Select"}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
+                          styles={{
+                            menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+                            menu: (provided) => ({ ...provided, zIndex: 9999 })
+                          }}
                           components={animatedComponents}
-                          value={trainingCategory.filter(d => d.id === filterData?.category_id)}
+                          value={trainingCategory.filter(d => parseInt(d.id) === parseInt(filterData.category_id))}
                           options={trainingCategory}
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id: e.id === 0 ? null : e.id
+                            category_id:  e.id
                           }))}
                         />
                       </Form.Group>

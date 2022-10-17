@@ -56,13 +56,9 @@ const TrainingCreatedByOther = ({filter}) => {
   const navigate = useNavigate();
 
   const [otherTrainingData, setOtherTrainingData] = useState([]);
-  const [applicableToAll, setApplicableToAll] = useState(false);
   const [franchiseeList, setFranchiseeList] = useState();
   const [showModal, setShowModal] = useState(false);
   const [saveTrainingId, setSaveTrainingId] = useState(null);
-  const [sendToAllFranchisee, setSendToAllFranchisee] = useState("none");
-  const [shareType, setShareType] = useState("roles");
-  const [userList, setUserList] = useState();
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('all');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
   const [page,setPage] = useState(6)
@@ -80,8 +76,9 @@ const TrainingCreatedByOther = ({filter}) => {
   const [myTrainingData, setMyTrainingData] = useState([]);
 
   const [errorMessageToast, setErrorMessageToast] = useState(null);
-  const [selectedFranchisee, setSelectedFranchisee] = useState('');
-  const [trainingCategory, setTrainingCategory] = useState([]);
+  const [selectedFranchisee, setSelectedFranchisee] = useState(null);
+  const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFranchise'));
+   const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: 0,
     search: ""
@@ -149,8 +146,7 @@ const TrainingCreatedByOther = ({filter}) => {
     setfullLoaderStatus(true)
     let user_id = localStorage.getItem('user_id');
     let token = localStorage.getItem('token');
-    console.log("Training created by OTHER",selectedFranchisee)
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchisee}`, {
+    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -284,35 +280,26 @@ const TrainingCreatedByOther = ({filter}) => {
 
 
   useEffect(() => {
-  
-    // trainingCreatedByMe()
-    if(typeof selectedFranchisee !== "undefined") {
-      // CreatedByme()
-
-    trainingCreatedByOther()
-    }
     fetchTrainingCategories()
     console.log("Traingin created")
   }, []);
   useEffect(() =>{
-    if(typeof selectedFranchisee !== "undefined") {
 
     trainingCreatedByOther() 
+
+  },[selectedFranchise,page,filterData.category_id])
+  useEffect(() =>{
+    if(filterData.search){
+      searchTraining()
     }
+    else{
+      setPage(6)
+    if(typeof selectedFranchisee !== "undefined") {
 
-  },[selectedFranchisee])
-  // useEffect(() =>{
-  //   if(filterData.search){
-  //     searchTraining()
-  //   }
-  //   else{
-  //     setPage(6)
-  //   if(typeof selectedFranchisee !== "undefined") {
-
-  //     trainingCreatedByOther()
-  //     }
-  //   }
-  // },[filterData.search])
+      trainingCreatedByOther()
+      }
+    }
+  },[filterData.search])
   useEffect(() => {
     if(formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
@@ -337,6 +324,10 @@ const TrainingCreatedByOther = ({filter}) => {
       setErrorMessageToast(null);
     }, 4000);
   }, [errorMessageToast]);
+  useEffect(() => {
+    setSelectedFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
+  console.log("The selected Franchsie",filterData.category_id)
 
   return (
     <>
@@ -352,7 +343,8 @@ const TrainingCreatedByOther = ({filter}) => {
               <div className="sec-column">
               <TopHeader
                   selectedFranchisee={selectedFranchisee}
-                  setSelectedFranchisee={setSelectedFranchisee} />
+                  setSelectedFranchisee={setSelectedFranchisee}
+                />
 
                   {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
@@ -434,7 +426,7 @@ const TrainingCreatedByOther = ({filter}) => {
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id: e.id === 0 ? null : e.id
+                            category_id: e.id
                           }))}
                         />
                       </Form.Group>
