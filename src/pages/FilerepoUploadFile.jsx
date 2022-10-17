@@ -16,7 +16,6 @@ let selectedFranchiseeId = '';
 const FilerepoUploadFile = () => {
     const Navigate = useNavigate();
     // const handleClose = () => setShow(false);
-
     const handleClose = () => {
         setShow(false)
         window.location.reload(false);
@@ -62,7 +61,9 @@ const FilerepoUploadFile = () => {
         try {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
             let userIdd = localStorage.getItem('user_id')
-            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArr, userId: userIdd || [] }, {
+            let franchiseeArrr = franchiseeArr == ["all"] ? "all" : franchiseeArr
+            console.log(franchiseeArrr, "franchiseeArrr")
+            let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArrr, userId: userIdd || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -254,7 +255,7 @@ const FilerepoUploadFile = () => {
         formdata.append('createdBy', localStorage.getItem('user_name'));
         formdata.append('userId', localStorage.getItem('user_id'));
         formdata.append('categoryId', formSettingData?.file_category);
-        formdata.append('franchisee', []);
+        formdata.append('franchisee', !franchiseeArr ? [] : franchiseeArr);
         if (
             formSettingData.accessible_to_role === null ||
             formSettingData.accessible_to_role === undefined
@@ -325,6 +326,7 @@ const FilerepoUploadFile = () => {
                     Navigate(`/file-repository-List-me/${formSettingData.file_category}`);
                     window.location.reload();
                     setUpladFile("File Upload successfully");
+
                 }
             })
             .then((result) => {
@@ -475,7 +477,6 @@ const FilerepoUploadFile = () => {
                                             <Form.Label>Meta Description*</Form.Label>
                                             <Form.Control
                                                 as="textarea"
-                                                maxLength={1000}
                                                 rows={2}
                                                 name="meta_description"
                                                 onChange={(e) => {
@@ -483,7 +484,6 @@ const FilerepoUploadFile = () => {
                                                 }}
                                             />
                                             {error && !formSettingData.meta_description && < span className="error"> Meta Description is required!</span>}
-
                                         </Form.Group>
                                     </div>
                                 </Col>
@@ -543,6 +543,7 @@ const FilerepoUploadFile = () => {
                                                                         setFormSettings(prevState => ({
                                                                             ...prevState,
                                                                             assigned_franchisee: [],
+                                                                    
                                                                             franchisee: []
                                                                         }));
                                                                         setSendToAllFranchisee('all')
