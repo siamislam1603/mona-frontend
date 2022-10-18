@@ -38,9 +38,6 @@ function ViewFormBuilder(props) {
   const [meformDataStatus, setMeformDataStatus] = useState(false);
   const [otherformDataStatus, setOtherformDataStatus] = useState(false);
 
-
-
-
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     localStorage.getItem('franchisee_id')
   );
@@ -346,18 +343,24 @@ function ViewFormBuilder(props) {
 
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
-
                                         // console.log("inner_item inner_item inner_item inner_item inner_item", inner_item.form_permissions)
-
 
                                         return inner_item?.end_date &&
                                           ((
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.fill_access_users || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.fill_access_users) ||
+                                            []
                                           ).includes('parent') &&
                                           (
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions!='undefined' && inner_item?.form_permissions[0]
-                                              ?.target_user || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions !=
+                                                'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.target_user) ||
+                                            []
                                           ).includes('parent')
                                             ? !(
                                                 inner_item?.form_filled_user ||
@@ -388,8 +391,11 @@ function ViewFormBuilder(props) {
                                                     )
                                               )) &&
                                           ((
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.fill_access_users || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.fill_access_users) ||
+                                            []
                                           ).includes(
                                             localStorage.getItem(
                                               'user_role'
@@ -400,8 +406,11 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                ?.fill_access_users || []
+                                              (typeof inner_item?.form_permissions !==
+                                                'undefined' &&
+                                                inner_item?.form_permissions[0]
+                                                  ?.fill_access_users) ||
+                                              []
                                             ).includes(
                                               localStorage.getItem(
                                                 'user_role'
@@ -494,12 +503,18 @@ function ViewFormBuilder(props) {
                                       (inner_item, inner_index) => {
                                         return inner_item?.end_date === null &&
                                           ((
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.fill_access_users || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.fill_access_users) ||
+                                            []
                                           ).includes('parent') &&
                                           (
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.target_user || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.target_user) ||
+                                            []
                                           ).includes('parent')
                                             ? !(
                                                 inner_item?.form_filled_user ||
@@ -530,8 +545,11 @@ function ViewFormBuilder(props) {
                                                     )
                                               )) &&
                                           ((
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.fill_access_users || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.fill_access_users) ||
+                                            []
                                           ).includes(
                                             localStorage.getItem(
                                               'user_role'
@@ -542,8 +560,11 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                ?.fill_access_users || []
+                                              (typeof inner_item?.form_permissions !==
+                                                'undefined' &&
+                                                inner_item?.form_permissions[0]
+                                                  ?.fill_access_users) ||
+                                              []
                                             ).includes(
                                               localStorage.getItem(
                                                 'user_role'
@@ -749,12 +770,18 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         return ((
-                                          typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                            ?.fill_access_users || []
+                                          (typeof inner_item?.form_permissions !==
+                                            'undefined' &&
+                                            inner_item?.form_permissions[0]
+                                              ?.fill_access_users) ||
+                                          []
                                         ).includes('parent') &&
                                         (
-                                          typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                            ?.target_user || []
+                                          (typeof inner_item?.form_permissions !==
+                                            'undefined' &&
+                                            inner_item?.form_permissions[0]
+                                              ?.target_user) ||
+                                          []
                                         ).includes('parent')
                                           ? (
                                               inner_item?.form_filled_user || []
@@ -775,8 +802,11 @@ function ViewFormBuilder(props) {
                                                   )
                                             )) &&
                                           ((
-                                            typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                              ?.fill_access_users || []
+                                            (typeof inner_item?.form_permissions !==
+                                              'undefined' &&
+                                              inner_item?.form_permissions[0]
+                                                ?.fill_access_users) ||
+                                            []
                                           ).includes(
                                             localStorage.getItem(
                                               'user_role'
@@ -787,8 +817,11 @@ function ViewFormBuilder(props) {
                                                 )
                                           ) ||
                                             (
-                                              typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                ?.fill_access_users || []
+                                              (typeof inner_item?.form_permissions !==
+                                                'undefined' &&
+                                                inner_item?.form_permissions[0]
+                                                  ?.fill_access_users) ||
+                                              []
                                             ).includes(
                                               localStorage.getItem(
                                                 'user_role'
@@ -1014,8 +1047,7 @@ function ViewFormBuilder(props) {
                                 title="Created by me"
                               >
                                 <div className="forms-content-section">
-                                {MeFormData?.length > 0 &&
-
+                                  {MeFormData?.length > 0 &&
                                     MeFormData?.map((item, index) => {
                                       return (
                                         <>
@@ -1029,11 +1061,17 @@ function ViewFormBuilder(props) {
                                           <Row key={index + '8'}>
                                             {item?.forms?.map(
                                               (inner_item, inner_index) => {
-
-                                                if(inner_item?.created_by == parseInt(localStorage.getItem('user_id')) && meformDataStatus == false){
-                                                  setMeformDataStatus(true)
+                                                if (
+                                                  inner_item?.created_by ==
+                                                    parseInt(
+                                                      localStorage.getItem(
+                                                        'user_id'
+                                                      )
+                                                    ) &&
+                                                  meformDataStatus == false
+                                                ) {
+                                                  setMeformDataStatus(true);
                                                 }
-
 
                                                 return (
                                                   inner_item.created_by ===
@@ -1256,14 +1294,11 @@ function ViewFormBuilder(props) {
                                           </Row>
                                         </>
                                       );
-                                    })
+                                    })}
 
-                                  }
-
-                                {(meformDataStatus == true)?'':'No Form Created by You '}
-
-
-                                  
+                                  {meformDataStatus == true
+                                    ? ''
+                                    : 'No Form Created by You '}
                                 </div>
                               </Tab>
                             )}
@@ -1273,8 +1308,7 @@ function ViewFormBuilder(props) {
                               title="Created by others"
                             >
                               <div className="forms-content-section">
-                              {OthersFormData?.length > 0 &&
-
+                                {OthersFormData?.length > 0 &&
                                   OthersFormData?.map((item, index) => {
                                     {
                                       item['title_flag'] = false;
@@ -1284,9 +1318,16 @@ function ViewFormBuilder(props) {
                                         <Row key={index + '10'}>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
-
-                                              if(inner_item?.created_by !== parseInt(localStorage.getItem('user_id')) && otherformDataStatus == false){
-                                                setOtherformDataStatus(true)
+                                              if (
+                                                inner_item?.created_by !==
+                                                  parseInt(
+                                                    localStorage.getItem(
+                                                      'user_id'
+                                                    )
+                                                  ) &&
+                                                otherformDataStatus == false
+                                              ) {
+                                                setOtherformDataStatus(true);
                                               }
 
                                               return (
@@ -1297,16 +1338,23 @@ function ViewFormBuilder(props) {
                                                     )
                                                   ) &&
                                                 ((
-                                                  typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                    ?.response_visibility || []
+                                                  (typeof inner_item?.form_permissions !==
+                                                    'undefined' &&
+                                                    inner_item
+                                                      ?.form_permissions[0]
+                                                      ?.response_visibility) ||
+                                                  []
                                                 ).includes(
                                                   localStorage.getItem(
                                                     'user_id'
                                                   )
                                                 ) ||
                                                   (
-                                                    typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                      ?.response_visibility ||
+                                                    (typeof inner_item?.form_permissions !==
+                                                      'undefined' &&
+                                                      inner_item
+                                                        ?.form_permissions[0]
+                                                        ?.response_visibility) ||
                                                     []
                                                   ).includes(
                                                     localStorage.getItem(
@@ -1314,16 +1362,24 @@ function ViewFormBuilder(props) {
                                                     )
                                                   ) ||
                                                   (
-                                                    typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                      ?.signatories_role || []
+                                                    (typeof inner_item?.form_permissions !==
+                                                      'undefined' &&
+                                                      inner_item
+                                                        ?.form_permissions[0]
+                                                        ?.signatories_role) ||
+                                                    []
                                                   ).includes(
                                                     localStorage.getItem(
                                                       'user_id'
                                                     )
                                                   ) ||
                                                   (
-                                                    typeof inner_item?.form_permissions !== "undefined" && inner_item?.form_permissions[0]
-                                                      ?.signatories_role || []
+                                                    (typeof inner_item?.form_permissions !==
+                                                      'undefined' &&
+                                                      inner_item
+                                                        ?.form_permissions[0]
+                                                        ?.signatories_role) ||
+                                                    []
                                                   ).includes(
                                                     localStorage.getItem(
                                                       'user_role'
@@ -1623,14 +1679,11 @@ function ViewFormBuilder(props) {
                                         </Row>
                                       </>
                                     );
-                                  })
+                                  })}
 
-                                }
-
-                                {(otherformDataStatus == true)?'':'No Form Created by Other '}
-
-
-
+                                {otherformDataStatus == true
+                                  ? ''
+                                  : 'No Form Created by Other '}
                               </div>
                             </Tab>
                           </Tabs>
@@ -1813,7 +1866,8 @@ function ViewFormBuilder(props) {
                               <button
                                 onClick={() => {
                                   if (
-                                    OthersFormData[Index]?.forms[innerIndex]?.form_permissions[0]?.signatories_role ||
+                                    OthersFormData[Index]?.forms[innerIndex]
+                                      ?.form_permissions[0]?.signatories_role ||
                                     [].includes(
                                       localStorage.getItem('user_id')
                                     ) ||

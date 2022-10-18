@@ -201,7 +201,9 @@ const DynamicForm = () => {
               inner_item?.form_field_permissions?.map((permission) => {
                 if (
                   permission?.fill_access_users?.includes(
-                    localStorage.getItem('user_role')
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role')
                   ) ||
                   permission?.fill_access_users?.includes(
                     localStorage.getItem('user_id')
@@ -251,7 +253,6 @@ const DynamicForm = () => {
         } else {
           setSignatureAccessFlag(true);
         }
-
         setForm(formsData);
         setFormData(data);
         if (result) {
