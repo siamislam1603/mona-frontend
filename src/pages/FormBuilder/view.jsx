@@ -589,15 +589,15 @@ function ViewFormBuilder(props) {
                                             )}
                                             <Col
                                               lg={4}
-                                              onClick={() => {
-                                                dateCheck(
-                                                  inner_item.start_date,
-                                                  inner_item.start_time,
-                                                  inner_item.end_date,
-                                                  inner_item.end_time,
-                                                  inner_item.form_name
-                                                );
-                                              }}
+                                              // onClick={() => {
+                                              //   dateCheck(
+                                              //     inner_item.start_date,
+                                              //     inner_item.start_time,
+                                              //     inner_item.end_date,
+                                              //     inner_item.end_time,
+                                              //     inner_item.form_name
+                                              //   );
+                                              // }}
                                             >
                                               <div className="forms-content create-other">
                                                 <div className="content-icon-section">
@@ -1676,10 +1676,6 @@ function ViewFormBuilder(props) {
                                       </>
                                     );
                                   })}
-
-                                {otherformDataStatus == true
-                                  ? ''
-                                  : 'No Form Created by Other '}
 
                                 {otherformDataStatus == true
                                   ? ''
