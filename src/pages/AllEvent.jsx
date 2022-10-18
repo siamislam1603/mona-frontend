@@ -30,37 +30,7 @@ const AllEvent = (props) => {
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
 
-  const allEvent = async () => {
 
-    try {
-      // console.log("Announcement detial API")
-      const token = localStorage.getItem('token');
-      let franhiseAlias = "all"
-      const response = await axios.get(`${BASE_URL}/announcement/?franchiseeAlias=${franhiseAlias}&isEvent=1&search=&offset=0&limit=5`, {
-        headers: {
-          "Authorization": "Bearer " + token
-        }
-      });
-      // console.log("The All Announcement",response.data.result);
-      console.log("ALL EVENTS", response)
-      if (response.status === 200 && response.data.status === "success") {
-        setAllEventData(response.data.result.searchedData);
-        setIsLoading(true)
-
-
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        console.log("The code is 404")
-        setIsLoading(false)
-        setAllEventData([])
-
-        // setAnnouncementDetail([])
-      }
-
-    }
-
-  }
   const userName = localStorage.getItem("user_name");
   const getRelatedFileName = (str) => {
     let arr = str.split("/");
@@ -134,7 +104,9 @@ const AllEvent = (props) => {
       setTopErrorMessage(null);
     }, 3000)
   }, [topErrorMessage])
-  console.log("Event data",allEventData)
+  useEffect(() =>{
+    setIsLoading(true)
+  },[])
 
   return (
     <div className="announcement-accordion">

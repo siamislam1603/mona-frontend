@@ -41,6 +41,8 @@ const training = [
 let DeleteId = [];
 
 function isLoggedInRoleSmaller(detailRole, loggedInRole) {
+  console.log('DETAIL ROLE:', detailRole);
+  console.log('LoggedIn ROLE:', loggedInRole);
   let roleObj = [
     {
       id: 1,
@@ -65,10 +67,11 @@ function isLoggedInRoleSmaller(detailRole, loggedInRole) {
   ];
 
   let detailRoleId = roleObj.filter(d => d.role_name === detailRole);
-  detailRoleId = detailRoleId[0].id;
-
+  console.log('DDDDDDDD', detailRoleId);
+  detailRoleId = detailRoleId[0]?.id;
+  
   let loggedInRoleId = roleObj.filter(d => d.role_name === loggedInRole)
-  loggedInRoleId = loggedInRoleId[0].id;
+  loggedInRoleId = loggedInRoleId[0]?.id;
 
   return parseInt(loggedInRoleId) < parseInt(detailRoleId);
 }
