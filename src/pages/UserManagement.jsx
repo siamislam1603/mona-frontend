@@ -95,6 +95,7 @@ const UserManagement = () => {
   const [userRoleData, setUserRoleData] = useState(userRoles);
   const [displayRoles, setDisplayRoles] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
+  const [currentFranchise, setCurrentFranchise] = useState(null);
 
 
   const rowEvents = {
@@ -321,7 +322,7 @@ const UserManagement = () => {
   const fetchUserDetails = async () => {
     let api_url = '';
     // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    api_url = `${BASE_URL}/role/user/list/${selectedFranchisee}?search=${search}&filter=${filter}`;
+    api_url = `${BASE_URL}/role/user/list/${currentFranchise}?search=${search}&filter=${filter}`;
 
     let response = await axios.get(api_url, {
       headers: {
@@ -329,9 +330,9 @@ const UserManagement = () => {
       },
     });
 
-    if (response) {
-      setfullLoaderStatus(false)
-    }
+    // if (response) {
+    //   setfullLoaderStatus(false)
+    // }
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       let tempData = users.map((dt) => ({
@@ -348,7 +349,11 @@ const UserManagement = () => {
         roleDetail: dt.role + "," + dt.isChildEnrolled + "," + dt.franchisee_id + "," + dt.id,
         action: `${dt.is_active},${dt.role}`
       }));
+
       setUserData(tempData);
+
+      if(userData !== null)
+        setfullLoaderStatus(false);
       setIsLoading(false)
 
       let temp = tempData;
@@ -509,6 +514,9 @@ const UserManagement = () => {
     importCSVToDB();
   }, [jsonCSVData]);
 
+  useEffect(() => {
+    setCurrentFranchise(localStorage.getItem('selectedFranchise'));
+  }, [localStorage.getItem('selectedFranchise')]);
 
   const csvLink = useRef();
   jsonCSVData && console.log('JSON CSV DATA:', jsonCSVData);
