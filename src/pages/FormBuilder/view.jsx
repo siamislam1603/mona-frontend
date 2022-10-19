@@ -893,8 +893,7 @@ function ViewFormBuilder(props) {
                                                   className="content-title-section"
                                                   onClick={() => {
                                                     navigate(
-                                                      `/form/dynamic/${inner_item.form_name}`
-                                                      // `/form/response/${inner_item.id}`
+                                                      `/form/response/${inner_item.id}`
                                                     );
                                                   }}
                                                 >
@@ -977,20 +976,18 @@ function ViewFormBuilder(props) {
                                                               );
                                                             else
                                                               navigate(
-                                                                // `/form/dynamic/${inner_item.form_name}`
-                                                                `/form/response/${inner_item.id}`
+                                                                `/form/dynamic/${inner_item.form_name}`
                                                               );
                                                           } else
                                                             navigate(
-                                                              `/form/response/${inner_item.id}`
-                                                              // `/form/dynamic/${inner_item.form_name}`
+                                                              `/form/dynamic/${inner_item.form_name}`
                                                             );
                                                         }}
                                                       >
                                                         <FontAwesomeIcon
-                                                          icon={faEye}
+                                                          icon={faPen}
                                                         />{' '}
-                                                        View Response
+                                                        Add Response
                                                       </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                   </Dropdown>
