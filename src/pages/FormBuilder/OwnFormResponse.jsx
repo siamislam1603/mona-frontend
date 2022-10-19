@@ -69,6 +69,7 @@ function OwnFormResponse(props) {
         form_id: responseData[Index][0].form_id,
         user_id: responseData[Index][0].user_id,
         behalf_of: responseData[Index][0].behalf_of,
+        franchisee_id: responseData[Index][0]?.filled_user?.franchisee_id,
         data: fields,
         edit_signature: true,
         id: responseData[Index][0].id,
