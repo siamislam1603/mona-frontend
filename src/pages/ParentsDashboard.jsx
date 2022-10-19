@@ -28,7 +28,6 @@ const ParentsDashboard = () => {
     if (response.status === 200 && response.data.status === "success") {
       const training = response.data.recentAnnouncement;
 
-      console.log("The event", training)
       setEvent(training);
     }
   };
@@ -48,7 +47,7 @@ const ParentsDashboard = () => {
       }
     } catch (error) {
       setannouncements([])
-      console.log("error", error)
+  
     }
   };
 
@@ -59,19 +58,19 @@ const ParentsDashboard = () => {
         "Authorization": "Bearer " + token
       }
     });
-    console.log(response, "response??????????????")
+   
     if (response.status === 200 && response.data.status === "pass") {
       const result = response.data.assignedEducatorData.users;
 
       setEditTrainingData(result);
     }
   }
-  console.log(selectedFranchisee, "selectedFranchisee")
+
 
 
   const getAddedTime = (str) => {
     const Added = moment(str).format('DD/MM/YYYY')
-    console.log(Added, "Added")
+
     var today = new Date();
     let d = new Date(today);
     let month = (d.getMonth() + 1).toString().padStart(2, '0');
@@ -110,7 +109,7 @@ const ParentsDashboard = () => {
 
     if (response.status === 200 && response.data.status === "success") {
       let { parentData } = response.data;
-      console.log('PARENT DATA', parentData === null);
+
       if (parentData === null) {
         setLogUserOutDialog(true);
       }

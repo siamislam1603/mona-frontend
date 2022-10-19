@@ -8,6 +8,7 @@ import AnnouncementVideo from "./AnnouncementVideo";
 import { debounce } from 'lodash';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import moment from 'moment';
+import { useParams } from "react-router-dom";
 import { verifyPermission } from "../helpers/roleBasedAccess";
 import { type } from "jquery";
 
@@ -15,10 +16,9 @@ import { type } from "jquery";
 
 
 const AllEvent = (props) => {
+  const Params = useParams()
+  let Active_acordian = Number(Params.key);
 
-  let Active_acordian = Number(props.Rarams);
-
-  console.log(typeof Active_acordian, "Active_acordian")
   const [allEventData, setAllEventData] = useState([])
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -30,7 +30,13 @@ const AllEvent = (props) => {
   const [topErrorMessage, setTopErrorMessage] = useState(null);
 
 
-
+  const  relatedFile = (file) =>{
+    for (let i = 0; i < file?.length; i++) {
+      if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
+         return true
+        break; }
+    }
+  } 
   const userName = localStorage.getItem("user_name");
   const getRelatedFileName = (str) => {
     let arr = str.split("/");
@@ -179,38 +185,24 @@ const AllEvent = (props) => {
                       </div>
                     }
 
-                    {data?.announcement_files?.length > 0 ? <>
-                      {data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0].fileType === ".mkv"  || data?.announcement_files[0].fileType === ".flv" ?
-                        (
-                          null
-                        ) :
-                        (
-                          <div className="head">Related Files :</div>
-                        )}
-
-                    </>
-
-                      : (
-                        null
-                      )
-
-                    }
+                  {relatedFile(data?.announcement_files) && 
+                              <div className="head">Related Files :</div>}
 
 
-
-
-                    <div className="cont">
+                  {relatedFile(data?.announcement_files) &&  <div className="cont">
                       <div className="related-files">
                         {data?.announcement_files && data?.announcement_files?.map((detail, index) => (
                           <>
-                            {detail.fileType !== ".mp4" &&  detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
+                            {detail.fileType !== ".mp4" && detail.fileType != '.mkv' && detail.fileType != '.flv' && !detail.is_deleted ? (
                               <div className="item"><a href={detail.file}><img src="../img/abstract-ico.png" alt="" /> <span className="name">
                                 <p>{getRelatedFileName(detail.file)}</p>
                                 <small>{getAddedTime(detail.createdAt)}</small></span></a></div>
                             ) : (null)} </>
                         ))}
                       </div>
-                    </div>
+                    </div>}
+
+                   
                   </Col>
                 </Row>
               </Accordion.Body>

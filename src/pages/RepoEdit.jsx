@@ -81,7 +81,7 @@ const RepoEdit = () => {
         data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
-    console.log(data, "data")
+  
 
     const onChange = (e) => {
         const files = data.image;
@@ -256,7 +256,7 @@ const RepoEdit = () => {
 
     const setFieldd = async (field, value) => {
         setData({ ...data, categoryId: field[0] })
-        console.log({ image: field }, "data++++++++")
+     
         if (!!errors[field]) {
             setErrors({
                 ...errors,

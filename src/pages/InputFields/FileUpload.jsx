@@ -68,6 +68,7 @@ const FileUpload = (props) => {
         <Form.Control
           type="file"
           name={controls.field_name}
+          disabled={props.isDisable ? props.isDisable : false}
           id={controls.field_name}
           value={
             props.field_data &&

@@ -71,7 +71,7 @@ const SearchResult = (props) => {
     GlobalSearch()
 
   },[term])
-  console.log("Form data",formData)
+  console.log("Form data",operatingMannual)
 
   return (
     <div className="announcement-accordion">
@@ -354,7 +354,7 @@ const SearchResult = (props) => {
                                  </a>
                                </div>
                                <div className="search-user-detail">
-                                 <h2 className="title-md text-capitalize"><a href={`/operatingmanual/?selected=${data.id}`}>{data?.operating_manual?.title}</a></h2>
+                                 <h2 className="title-md text-capitalize"><a href={`/operatingmanual/?selected=${data.id}`}>{data?.title}</a></h2>
                                  <div className="totalview mb-2">
                               <span className="style-scope meta-block">
                                 <strong>Created At:</strong> <time>
