@@ -353,7 +353,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
                               </Form.Group>
                             </Col>
-
+                            
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
                                 <Form.Label>Select An Educator *</Form.Label>

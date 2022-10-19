@@ -406,6 +406,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   isMulti
                                   isDisabled={formOneChildData?.franchisee_id === null}
                                   ref={educator}
+                                  isDisabled={formOneChildData?.franchisee_id === null}
                                   options={educatorData}
                                   onChange={(e) => {
                                     setFormOneChildData((prevState) => ({
