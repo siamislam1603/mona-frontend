@@ -98,9 +98,8 @@ function OwnFormResponse(props) {
 
     const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem(
       'user_id'
-    )}&user_role=${localStorage.getItem('user_role')}&from_date=${
-      dateFilter.from_date
-    }&to_date=${dateFilter.to_date}`;
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date
+      }&to_date=${dateFilter.to_date}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -276,7 +275,7 @@ function OwnFormResponse(props) {
                                       src={
                                         item[0]?.filled_user?.profile_photo
                                           ? item[0]?.filled_user?.profile_photo
-                                          : '../img/upload.jpg'
+                                          : '/img/upload.jpg'
                                       }
                                       alt=""
                                     />
@@ -289,13 +288,13 @@ function OwnFormResponse(props) {
                                           className={
                                             responseData[index].length - 1 ===
                                               inner_index ||
-                                            (inner_index > 0 &&
-                                              responseData[index][
-                                                inner_index - 1
-                                              ]?.filled_user?.fullname?.includes(
-                                                inner_item?.filled_user
-                                                  ?.fullname
-                                              ))
+                                              (inner_index > 0 &&
+                                                responseData[index][
+                                                  inner_index - 1
+                                                ]?.filled_user?.fullname?.includes(
+                                                  inner_item?.filled_user
+                                                    ?.fullname
+                                                ))
                                               ? 'responses-header-detail'
                                               : 'responses-header-detail response-header-left-line'
                                           }
@@ -304,22 +303,22 @@ function OwnFormResponse(props) {
                                             <h5>
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                    inner_index - 1
-                                                  ].filled_user?.fullname?.includes(
-                                                    inner_item?.filled_user
-                                                      ?.fullname
-                                                  ) &&
+                                                  inner_index - 1
+                                                ].filled_user?.fullname?.includes(
                                                   inner_item?.filled_user
                                                     ?.fullname
+                                                ) &&
+                                                inner_item?.filled_user
+                                                  ?.fullname
                                                 : inner_item?.filled_user
-                                                    ?.fullname}
+                                                  ?.fullname}
                                             </h5>
 
                                             {item[inner_index].isEditTime !=
                                               null &&
-                                            moment(
-                                              item[inner_index].isEditTime
-                                            ).format() > moment().format() ? (
+                                              moment(
+                                                item[inner_index].isEditTime
+                                              ).format() > moment().format() ? (
                                               <span
                                                 style={{
                                                   fontSize: '12px',
@@ -336,7 +335,7 @@ function OwnFormResponse(props) {
                                               (formData?.form_type ===
                                                 'editable' ||
                                                 formData?.form_type ===
-                                                  'multi_submission') && (
+                                                'multi_submission') && (
                                                 <Link
                                                   style={{
                                                     marginLeft: '5px',
@@ -380,34 +379,34 @@ function OwnFormResponse(props) {
                                             <span className="text-capitalize">
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                    inner_index - 1
-                                                  ]?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ')
-                                                    .includes(
-                                                      inner_item?.filled_user?.role
-                                                        .split('_')
-                                                        .join(' ')
-                                                    ) &&
-                                                  inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','
+                                                  inner_index - 1
+                                                ]?.filled_user?.role
+                                                  .split('_')
+                                                  .join(' ')
+                                                  .includes(
+                                                    inner_item?.filled_user?.role
+                                                      .split('_')
+                                                      .join(' ')
+                                                  ) &&
+                                                inner_item?.filled_user?.role
+                                                  .split('_')
+                                                  .join(' ') + ','
                                                 : inner_item?.filled_user?.role
-                                                    .split('_')
-                                                    .join(' ') + ','}
+                                                  .split('_')
+                                                  .join(' ') + ','}
                                             </span>{' '}
                                             {inner_index > 0
                                               ? !responseData[index][
-                                                  inner_index - 1
-                                                ].filled_user?.franchisee?.franchisee_name.includes(
-                                                  inner_item?.filled_user
-                                                    ?.franchisee
-                                                    ?.franchisee_name
-                                                ) &&
+                                                inner_index - 1
+                                              ].filled_user?.franchisee?.franchisee_name.includes(
                                                 inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name
+                                                  ?.franchisee
+                                                  ?.franchisee_name
+                                              ) &&
+                                              inner_item?.filled_user
+                                                ?.franchisee?.franchisee_name
                                               : inner_item?.filled_user
-                                                  ?.franchisee?.franchisee_name}
+                                                ?.franchisee?.franchisee_name}
                                           </h6>
                                         </div>
                                       );
@@ -495,7 +494,7 @@ function OwnFormResponse(props) {
                                               Object.keys(
                                                 JSON.parse(item.fields)
                                               )[inner_index] ===
-                                                'text_headings') &&
+                                              'text_headings') &&
                                               count++;
                                           }
                                         }
@@ -514,12 +513,12 @@ function OwnFormResponse(props) {
                                                 Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index] ===
-                                                  'text_headings'
+                                                'text_headings'
                                               ) && (
-                                                <span>
-                                                  {inner_index + 1 - count}
-                                                </span>
-                                              )}
+                                                  <span>
+                                                    {inner_index + 1 - count}
+                                                  </span>
+                                                )}
                                               {Object.keys(
                                                 JSON.parse(item.fields)
                                               )[inner_index] === 'headings' ? (
@@ -537,8 +536,8 @@ function OwnFormResponse(props) {
                                                   }
                                                 </h6>
                                               ) : Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] ===
+                                                JSON.parse(item.fields)
+                                              )[inner_index] ===
                                                 'text_headings' ? (
                                                 <h6
                                                   className="text-capitalize"
@@ -569,52 +568,51 @@ function OwnFormResponse(props) {
                                                 Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index] ===
-                                                  'text_headings'
+                                                'text_headings'
                                               ) && (
-                                                <img
-                                                  src="/img/bx_right-arrow-alt.svg"
-                                                  alt=""
-                                                />
-                                              )}
+                                                  <img
+                                                    src="/img/bx_right-arrow-alt.svg"
+                                                    alt=""
+                                                  />
+                                                )}
 
                                               {Object.values(
                                                 JSON.parse(item.fields)
                                               )[inner_index]?.includes(
                                                 'data:image'
                                               ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.png'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpg'
-                                              ) ||
-                                              Object.values(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                '.jpeg'
-                                              ) ? (
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.png'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpg'
+                                                ) ||
+                                                Object.values(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index]?.includes(
+                                                  '.jpeg'
+                                                ) ? (
                                                 <>
                                                   <img
                                                     style={{
                                                       height: '40px',
                                                       width: '51px',
                                                     }}
-                                                    src={`${
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }`}
+                                                    src={`${Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]
+                                                      }`}
                                                   ></img>
                                                 </>
                                               ) : Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.doc'
-                                                ) ||
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                '.doc'
+                                              ) ||
                                                 Object.values(
                                                   JSON.parse(item.fields)
                                                 )[inner_index]?.includes(
@@ -684,13 +682,13 @@ function OwnFormResponse(props) {
                                                       Object.values(
                                                         JSON.parse(item.fields)
                                                       )[inner_index].split('/')[
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index].split(
-                                                          '/'
-                                                        ).length - 1
+                                                      Object.values(
+                                                        JSON.parse(
+                                                          item.fields
+                                                        )
+                                                      )[inner_index].split(
+                                                        '/'
+                                                      ).length - 1
                                                       ]
                                                     }
                                                   </p>
@@ -700,11 +698,11 @@ function OwnFormResponse(props) {
                                                   Object.keys(
                                                     JSON.parse(item.fields)
                                                   )[inner_index] ===
-                                                    'headings' ||
+                                                  'headings' ||
                                                   Object.keys(
                                                     JSON.parse(item.fields)
                                                   )[inner_index] ===
-                                                    'text_headings'
+                                                  'text_headings'
                                                 ) && (
                                                   <p>
                                                     {
