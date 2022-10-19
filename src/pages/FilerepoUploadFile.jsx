@@ -62,7 +62,7 @@ const FilerepoUploadFile = () => {
             let franchiseeArr = getUser_Role == 'franchisor_admin' ? (formSettings.franchisee.length == 0 ? "all" : formSettings.franchisee) : [getFranchisee]
             let userIdd = localStorage.getItem('user_id')
             let franchiseeArrr = franchiseeArr == ["all"] ? "all" : franchiseeArr
-            console.log(franchiseeArrr, "franchiseeArrr")
+           
             let response = await axios.post(`${BASE_URL}/auth/users/franchisee-list`, { franchisee_id: franchiseeArrr, userId: userIdd || [] }, {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -155,17 +155,7 @@ const FilerepoUploadFile = () => {
         if (response.status === 200 && response.data.status === "success") {
             let extraArr = []
 
-            // let parents = response.data.parentData
-
-            // let formattedUserData = parents.map((d) => ({
-            //     // id: d?.id,
-            //     // fullname: d?.fullname,
-            //     // email: d?.email,
-            //     namemail: `${d?.ParentName} (${d?.children.map((item) => {
-            //         return item.fullname
-            //     })})`,
-            // }));
-            // console.log(parents, "parents", formattedUserData)
+          
             let parents = response.data.parentData.map((item) => {
                 return item.children
             })
@@ -223,7 +213,7 @@ const FilerepoUploadFile = () => {
         });
 
     //========================Submit Form==================
-    // console.log(franchiseeArr, "franchiseeArr");
+  
 
     const onSubmit = async (e) => {
         e.preventDefault();

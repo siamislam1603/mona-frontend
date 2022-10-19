@@ -61,6 +61,7 @@ const ImageUpload = (props) => {
           type="file"
           id={controls.field_name}
           name={controls.field_name}
+          disabled={props.isDisable ? props.isDisable : false}
           value={
             props.field_data &&
             props.field_data.fields[`${controls.field_name}`]
