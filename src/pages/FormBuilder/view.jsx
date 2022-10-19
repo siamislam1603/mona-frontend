@@ -1686,10 +1686,6 @@ function ViewFormBuilder(props) {
                                 {otherformDataStatus == true
                                   ? ''
                                   : 'No Form Created by Other '}
-
-                                {otherformDataStatus == true
-                                  ? ''
-                                  : 'No Form Created by Other '}
                               </div>
                             </Tab>
                           </Tabs>
