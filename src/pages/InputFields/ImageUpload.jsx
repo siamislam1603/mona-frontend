@@ -56,24 +56,39 @@ const ImageUpload = (props) => {
     <Col sm={6}>
       <Form.Group className="form-input-section">
         <Form.Label>{controls.field_label}</Form.Label>
-
-        <Form.Control
-          type="file"
-          id={controls.field_name}
-          name={controls.field_name}
-          disabled={props.isDisable ? props.isDisable : false}
-          value={
-            props.field_data &&
-            props.field_data.fields[`${controls.field_name}`]
-          }
-          onChange={async (e) => {
-            let file = e.target.files[0];
-            await uploadFiles(file).then((url) => {
-              props.onChange(e.target.name, url, 'image');
-            });
-          }}
-          isInvalid={!!controls.error[controls.field_name]}
-        />
+        {props.field_data.fields[`${controls.field_name}`] ? (
+          <Form.Control
+            type="file"
+            id={controls.field_name}
+            name={controls.field_name}
+            disabled={props.isDisable ? props.isDisable : false}
+            onChange={async (e) => {
+              let file = e.target.files[0];
+              await uploadFiles(file).then((url) => {
+                props.onChange(e.target.name, url, 'image');
+              });
+            }}
+            isInvalid={!!controls.error[controls.field_name]}
+          />
+        ) : (
+          <Form.Control
+            type="file"
+            id={controls.field_name}
+            name={controls.field_name}
+            disabled={props.isDisable ? props.isDisable : false}
+            value={
+              props.field_data &&
+              props.field_data.fields[`${controls.field_name}`]
+            }
+            onChange={async (e) => {
+              let file = e.target.files[0];
+              await uploadFiles(file).then((url) => {
+                props.onChange(e.target.name, url, 'image');
+              });
+            }}
+            isInvalid={!!controls.error[controls.field_name]}
+          />
+        )}
         <Form.Control.Feedback type="invalid">
           {controls.error[controls.field_name]}
         </Form.Control.Feedback>
