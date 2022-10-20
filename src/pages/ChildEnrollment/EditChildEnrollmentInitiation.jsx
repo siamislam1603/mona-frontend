@@ -263,7 +263,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   name="start_date"
                                   disabled={localStorage.getItem('user_role') === "guardian"}
                                   // max={new Date().toISOString().slice(0, 10)}
-                                  min={new Date().toISOString().slice(0, 10)}
+                                  // min={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
                                     handleChildData(e);
@@ -286,7 +286,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     id="malecheck"
                                     label="Male"
                                     disabled={localStorage.getItem('user_role') === "guardian"}
-                                    checked={formOneChildData?.gender === "M"}
+                                    checked={formOneChildData?.sex === "M"}
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -297,7 +297,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="gender"
                                     disabled={localStorage.getItem('user_role') === "guardian"}
                                     id="femalecheck"
-                                    checked = {formOneChildData?.gender === "F"}
+                                    checked = {formOneChildData?.sex === "F"}
                                     label="Female"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -353,7 +353,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
                               </Form.Group>
                             </Col>
-
+                            
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
                                 <Form.Label>Select An Educator *</Form.Label>

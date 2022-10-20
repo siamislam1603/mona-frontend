@@ -13,7 +13,7 @@ import { ThemeConsumer } from "react-bootstrap/esm/ThemeProvider";
 const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoad,removeItem}) => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const[myAnnoncementCheck,setMyAnnoncementCheck]= useState([])
+  const[relatedFileCheck,setRelatedFileCheck]= useState(false)
   const [topErrorMessage, setTopErrorMessage] = useState(null);
   const [topMessage,setTopMessage] = useState(null);
   const [myAnnouncement,setmyAnnouncement] = useState([]);
@@ -38,30 +38,26 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
         "Authorization": "Bearer " + token
       }
      })
-     console.log("The repsonse mY anncounce,",response)
      if(response.status === 200) {
         setmyAnnouncement(response.data.result.searchedData)
         setIsLoading(true)
-        console.log("The response",response)
 
      }
     } catch (error) {
        setmyAnnouncement([])
        setIsLoading(false)
-       console.log("THe err myanno",error)
 
     }
   }
   
+
   const deleteAnnouncementAlert = (id) =>{
     if (window.confirm('Are you sure you want to delete ?')) {
-      console.log("Console yes")
       deleteAnnouncement(id)
 
 
     }
     else{
-      console.log("Console no")
     }
   }
   const deleteAnnouncement = async (id) =>{
@@ -72,7 +68,6 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
           "Authorization": "Bearer " + token
         }
       }); 
-      console.log("The response after delete",response)
       if(response.status === 200){
           setTopMessage("Delete succussfully")
           // myAnnouncementData()
@@ -83,10 +78,16 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
         },3000)
       }
     } catch (error) {
-      console.log("The response after delete",error)
     }
   }
 
+  const  relatedFile = (file) =>{
+    for (let i = 0; i < file?.length; i++) {
+      if (file[i].fileType !== ".mp4" || file[i].fileType !== ".flv" || file[i].fileType!==".mkv") { 
+         return true
+        break; }
+    }
+  }  
   const getRelatedFileName = (str) => {
     let arr = str.split("/");
     let fileName = arr[arr.length - 1].split("_")[0];
@@ -128,7 +129,6 @@ const MyAnnouncements = ({theMyAnnouncement,myLoadData,selectedFranchisee,theLoa
   },[])
   useEffect(() =>{
     if(myLoadData?.length>0){
-      console.log("MY LOAD MORE DATA")
       setmyAnnouncement(myLoadData)
     }
     else{
@@ -155,14 +155,7 @@ useEffect(() =>{
   }, 6000)
 },[topErrorMessage])
 
-useEffect(() =>{
-  console.log("select rohan",selectedFranchisee)
-},[])
-useEffect(() =>{
-  if(selectedFranchisee){
 
-  }
-},[selectedFranchisee])
 
 
 
@@ -174,13 +167,13 @@ useEffect(() =>{
     {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
    {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
 
-    <Accordion defaultActiveKey="0">
+    <Accordion defaultActiveKey="0" >
       { myAnnouncement &&
        myAnnouncement.length !== 0 ? (
         myAnnouncement.map((data,index) => 
         (
 
-          <Accordion.Item eventKey={index} key={index}>
+          <Accordion.Item eventKey={index} key={index} >
           <Accordion.Header>
             <div className="head-title">
               <div className="ico"><img src="../img/announcements-ico.png" alt=""/></div>
@@ -308,35 +301,25 @@ useEffect(() =>{
                     </div>
                   </div>
               }
-              {data?.announcement_files?.length>0 ? <>
-                { data?.announcement_files[0]?.fileType === ".mp4" || data?.announcement_files[0]?.fileType === ".flv"  ||data?.announcement_files[0].fileType === ".mkv" ? 
-                                  (
-                                    null
-                                  ):
-                                  (
-                                    <div className="head">Related Files :</div>
-                                  )}
-           
-               
-              </>
-            :(
-              null
-            )
-
-             }  
-              {/* {data.announcement_files.length>0 ? ( <div className="head">Related Files :</div> ):(null)}                      */}
-                <div className="cont">
-                  <div className="related-files">
-                  {data.announcement_files && data.announcement_files.map((detail,index) =>(
-                      <>
-                        {detail.fileType != ".mp4" &&  detail.fileType !== ".flv"  && detail.fileType != ".mkv" && !detail.is_deleted ?(
-                            <div className="item"><a  href={detail.file} target='_blank' rel='noopener noreferrer'  ><img src="../img/abstract-ico.png" alt=""/> <span className="name">
-                              <p>{getRelatedFileName(detail.file)}</p>
-                             <small>{getAddedTime(detail.createdAt)}</small></span></a></div>
-                              ):(null)} </>
-                        ))}
-                  </div>
-                </div>
+              {relatedFile(data?.announcement_files) && 
+                              <div className="head">Related Files :</div>
+              
+              }
+              
+             {relatedFile(data?.announcement_files) &&
+                             <div className="cont">
+                             <div className="related-files">
+                             {data.announcement_files && data.announcement_files.map((detail,index) =>(
+                                 <>
+                                   {detail.fileType != ".mp4" &&  detail.fileType !== ".flv"  && detail.fileType != ".mkv" && !detail.is_deleted ?(
+                                       <div className="item"><a  href={detail.file} target='_blank' rel='noopener noreferrer'  ><img src="../img/abstract-ico.png" alt=""/> <span className="name">
+                                         <p>{getRelatedFileName(detail.file)}</p>
+                                        
+                                        <small>{getAddedTime(detail.createdAt)}</small></span></a></div>
+                                         ):(null)} </>
+                                   ))}
+                             </div>
+                           </div>}
               </Col>
             </Row>
           </Accordion.Body>

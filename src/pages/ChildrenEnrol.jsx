@@ -25,7 +25,7 @@ const ChildrenEnrol = () => {
   const [topSuccessMessage, setTopSuccessMessage] = useState();
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [chidlEnroll, setChildEnroll] = useState([])
-  console.log("chidlEnroll", chidlEnroll)
+
   const [Filters, setFilters] = useState(null);
   const [AppyFilter, setApplyFilte] = useState();
   const [csvData, setCsvData] = useState([]);
@@ -59,7 +59,7 @@ const ChildrenEnrol = () => {
         if (response) {
           setfullLoaderStatus(false)
         }
-        console.log("CHild Response", response.data)
+    
 
         if (response.status === 200 && response.data.status === "success") {
           let data = response.data.childrenEnrolled;
@@ -103,7 +103,7 @@ const ChildrenEnrol = () => {
               if (item.trim() != "undefined" && item.trim() != "null" && item.trim().split('.').pop() != "blob") {
 
                 parent[index] = " " + item.trim();
-                console.log("THe item  ", item)
+            
 
               }
             })
@@ -112,7 +112,7 @@ const ChildrenEnrol = () => {
                 educatorArray[index] = " " + item.trim();
               }
             })
-            console.log("Educator 123", educatorArray)
+           
             data["specailneed"] = data.specailneed == 0 ? "No" : "Yes";
             data["enrolldate"] = moment(data.enrolldate).format('DD/MM/YYYY')
             data["parentName"] = parent
