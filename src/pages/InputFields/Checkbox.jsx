@@ -1,5 +1,6 @@
 import { Col } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import { isEmpty } from 'lodash';
 
 let value = {};
 
@@ -19,17 +20,18 @@ const Checkbox = (props) => {
   }, []);
 
   useEffect(() => {
-    let fieldData = props?.field_data?.fields[controls?.field_name];
+    if (!isEmpty(props?.field_data) || !props?.field_data || props?.field_data == 'undefined') {
+      let fieldData = props?.field_data?.fields[controls?.field_name];
+      if (typeof fieldData === 'object') {
+        fieldData = fieldData?.join(',');
+      }
 
-    if (typeof fieldData === 'object') {
-      fieldData = fieldData?.join(',');
+      setArray(
+        fieldData?.split(',').map((item) => {
+          return item;
+        })
+      );
     }
-
-    setArray(
-      fieldData?.split(',').map((item) => {
-        return item;
-      })
-    );
   }, []);
 
   useEffect(() => {
