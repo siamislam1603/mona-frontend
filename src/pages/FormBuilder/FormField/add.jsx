@@ -58,7 +58,7 @@ const AddFormField = (props) => {
   const [newOptionAddIndex, setNewOptionAddIndex] = useState(-1);
   const [newConditionOptionAddIndex, setNewConditionOptionAddIndex] =
     useState(-1);
-  const [selectedCheckBox, setSelectedCheckBox] = useState([])
+  const [selectedCheckBox, setSelectedCheckBox] = useState({})
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -83,6 +83,15 @@ const AddFormField = (props) => {
   useEffect(() => {
     getUser();
   }, [selectedFranchisee]);
+
+  // useEffect(() => {
+  //   if (form[Index].section_name) {
+  //     let obj = selectedCheckBox
+  //     obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
+  //     setSelectedCheckBox(obj)
+  //   }
+  // }, [form])
+
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -114,23 +123,32 @@ const AddFormField = (props) => {
       })
       .catch((error) => console.log('error', error));
   };
-
   const setCheckBoxField = (name, value, checked, index) => {
     let tempArr = [...form];
     const tempObj = tempArr[index];
+
+    let obj = selectedCheckBox
+
     if (checked) {
       if (tempObj[name]) {
-        tempObj[name] = selectedCheckBox.join(',') + ',' + value + ',';
+        tempObj[name] = selectedCheckBox[tempObj.section_name].join(',') + ',' + value + ',';
       } else {
-        tempObj[name] = selectedCheckBox.join(',') + ',' + value + ',';
+        tempObj[name] = selectedCheckBox[tempObj.section_name].join(',') + ',' + value + ',';
       }
-      setSelectedCheckBox([...selectedCheckBox, ...tempObj[name]?.split(',')?.filter(item => item != '')])
+
+      obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')]
+
+      setSelectedCheckBox(obj)
     } else {
-      tempObj[name] = (selectedCheckBox.join(',') + ',')?.replace(value + ',', '');
-      setSelectedCheckBox(selectedCheckBox.filter(item => item != value))
+      tempObj[name] = (selectedCheckBox[tempObj.section_name].join(',') + ',')?.replace(value + ',', '')
+
+      obj[tempObj.section_name] = selectedCheckBox[tempObj.section_name].filter(item => item != value)
+      setSelectedCheckBox(obj)
     }
 
-    setSelectedCheckBox(tempObj[name].split(','))
+    obj[tempObj.section_name] = tempObj[name].split(',')
+
+    setSelectedCheckBox(obj)
     tempArr[Index] = tempObj;
     setForm(tempArr);
   };
@@ -510,27 +528,29 @@ const AddFormField = (props) => {
         data?.map((item) => {
           data['accessible_to_role'] = item.accessible_to_role;
           data['signatories'] = item.signatories;
-          if (
-            item.form_field_permissions[0].accessible_to_role === '1' ||
-            item.form_field_permissions[0].accessible_to_role === true
-          ) {
-            item['signatories_role'] = item.signatories_role
-              ? item.signatories_role.slice(0, -1)
-              : null;
-            item['fill_access_users'] = item.fill_access_users
-              ? item.fill_access_users.slice(0, -1)
-              : null;
-          }
-          if (
-            item.form_field_permissions[0].accessible_to_role === '0' ||
-            item.form_field_permissions[0].accessible_to_role === false
-          ) {
-            item['signatories_role'] = selectedSignatoriesUserId
-              ? selectedSignatoriesUserId.slice(0, -1)
-              : null;
-            item['fill_access_users'] = selectedFillAccessUserId
-              ? selectedFillAccessUserId.slice(0, -1)
-              : null;
+          if (item.form_field_permissions) {
+            if (
+              item?.form_field_permissions[0]?.accessible_to_role === '1' ||
+              item?.form_field_permissions[0]?.accessible_to_role === true
+            ) {
+              item['signatories_role'] = item.signatories_role
+                ? item.signatories_role.slice(0, -1)
+                : null;
+              item['fill_access_users'] = item.fill_access_users
+                ? item.fill_access_users.slice(0, -1)
+                : null;
+            }
+            if (
+              item?.form_field_permissions[0]?.accessible_to_role === '0' ||
+              item?.form_field_permissions[0]?.accessible_to_role === false
+            ) {
+              item['signatories_role'] = selectedSignatoriesUserId
+                ? selectedSignatoriesUserId.slice(0, -1)
+                : null;
+              item['fill_access_users'] = selectedFillAccessUserId
+                ? selectedFillAccessUserId.slice(0, -1)
+                : null;
+            }
           }
           if (item.section_name) {
             item['franchisee_id'] = localStorage.getItem('f_id');
@@ -1601,7 +1621,9 @@ const AddFormField = (props) => {
                                                     name="accessible_to_role"
                                                     id="user_role"
                                                     onChange={(e) => {
-                                                      setSelectedCheckBox(form[Index].form_field_permissions[0].fill_access_users?.filter(item => item !== '') || [])
+                                                      let obj = selectedCheckBox
+                                                      obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
+                                                      setSelectedCheckBox(obj)
                                                       setField(
                                                         e.target.name,
                                                         e.target.value,
@@ -1669,7 +1691,7 @@ const AddFormField = (props) => {
                                                       name="fill_access_users"
                                                       value="franchisor_admin"
                                                       checked={
-                                                        selectedCheckBox?.join(',')?.includes('franchisor_admin')
+                                                        selectedCheckBox[form[Index].section_name]?.join(',')?.includes('franchisor_admin')
                                                         // form[
                                                         // Index
                                                         // ]?.fill_access_users?.includes(
@@ -1694,7 +1716,7 @@ const AddFormField = (props) => {
                                                       name="fill_access_users"
                                                       value="franchisee_admin"
                                                       checked={
-                                                        selectedCheckBox?.join(',')?.includes('franchisee_admin')
+                                                        selectedCheckBox[form[Index].section_name]?.join(',')?.includes('franchisee_admin')
                                                         // form[
                                                         // Index
                                                         // ]?.fill_access_users?.includes(
@@ -1719,7 +1741,7 @@ const AddFormField = (props) => {
                                                       name="fill_access_users"
                                                       value="coordinator"
                                                       checked={
-                                                        selectedCheckBox?.join(',')?.includes('coordinator')
+                                                        selectedCheckBox[form[Index].section_name]?.join(',')?.includes('coordinator')
                                                         // form[
                                                         // Index
                                                         // ]?.fill_access_users?.includes(
@@ -1744,7 +1766,7 @@ const AddFormField = (props) => {
                                                       name="fill_access_users"
                                                       value="educator"
                                                       checked={
-                                                        selectedCheckBox?.join(',')?.includes('educator')
+                                                        selectedCheckBox[form[Index].section_name]?.join(',')?.includes('educator')
                                                         // form[
                                                         // Index
                                                         // ]?.fill_access_users?.includes(
@@ -1769,7 +1791,7 @@ const AddFormField = (props) => {
                                                       name="fill_access_users"
                                                       value="parent"
                                                       checked={
-                                                        selectedCheckBox?.join(',')?.includes('parent')
+                                                        selectedCheckBox[form[Index].section_name]?.join(',')?.includes('parent')
                                                         // form[
                                                         // Index
                                                         // ]?.fill_access_users?.includes(
