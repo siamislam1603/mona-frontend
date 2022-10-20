@@ -52,6 +52,8 @@ const ImageUpload = (props) => {
       return data?.url;
     }
   };
+  console.log("ddddddddddddddddddddddddddd",controls)
+  console.log("propesssssssssssssssssssssssssss",props)
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
@@ -61,10 +63,10 @@ const ImageUpload = (props) => {
           type="file"
           id={controls.field_name}
           name={controls.field_name}
-          value={
-            props.field_data &&
-            props.field_data.fields[`${controls.field_name}`]
-          }
+          // value={
+          //   props.field_data &&
+          //   props.field_data.fields[`${controls.field_name}`]
+          // }
           onChange={async (e) => {
             let file = e.target.files[0];
             await uploadFiles(file).then((url) => {
