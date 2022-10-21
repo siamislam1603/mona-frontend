@@ -7,7 +7,6 @@ import  {useNavigate} from 'react-router';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 
 const CoparentAssignPopup = (props) => {
-    console.log('PROPS PARAMS PARENT ID:', props.paramsParentId);
     const navigate = useNavigate();
     const { SearchBar } = Search;
 //   const [show, setShow] = useState(false);
@@ -16,7 +15,6 @@ const CoparentAssignPopup = (props) => {
   const handleClose = () => props.handleClose();
     
   const assignParents = async() => {
-        console.log(selectedParents,"selPar")
         let childId = localStorage.getItem("SelectedChild")
         let clearMapping =await axios.post(`${BASE_URL}/enrollment/child/assign-parents/${childId}`,{parentIds: []}, {
             headers: {
@@ -66,7 +64,6 @@ const selectRow = {
             setSelectedParents(arr)
         }
         else {
-            console.log(row,"row")
             let arr = selectedParents
             let index = arr.indexOf(row.parentId)
             let removed = arr.splice(index, 1);

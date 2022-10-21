@@ -348,6 +348,14 @@ const OperatingManual = () => {
   //     })
   //     .catch((error) => console.log('error', error));
   // };
+  const deleteOperatingManualAlert = (id) =>{
+    if (window.confirm('Are you sure you want to delete this category that already contains files?')) {
+      deleteOperatingManualCategory(id)
+
+    }
+    else{
+    }
+  }
   const deleteOperatingManualCategory = async (id) => {
     try {
       var myHeaders = new Headers();
@@ -720,7 +728,7 @@ const OperatingManual = () => {
                                                   <Dropdown.Item
                                                     className="tab-trash"
                                                     onClick={() => {
-                                                      deleteOperatingManualCategory(
+                                                      deleteOperatingManualAlert(
                                                         item.id
                                                       );
                                                     }}
@@ -819,7 +827,7 @@ const OperatingManual = () => {
                                                   <Dropdown.Item
                                                     className="tab-trash"
                                                     onClick={() => {
-                                                      deleteOperatingManualCategory(
+                                                      deleteOperatingManualAlert(
                                                         item.id
                                                       );
                                                     }}

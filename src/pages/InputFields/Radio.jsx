@@ -313,29 +313,38 @@ const Radio = (props) => {
             </Form.Group>
           </Col>
         ) : (
-          <Col sm={6}>
-            <Form.Group>
-              <Form.Label>
-                {Object.values(eval(controls.option)[Index])[0].field_label}
-              </Form.Label>
+          <>
+            {Object.values(eval(controls.option)[Index])[0]?.field_name && (
+              <Col sm={6}>
+                <Form.Group>
+                  <Form.Label>
+                    {Object.values(eval(controls.option)[Index])[0].field_label}
+                  </Form.Label>
 
-              <Form.Control
-                type={Object.values(eval(controls.option)[Index])[0].field_type}
-                name={Object.values(eval(controls.option)[Index])[0].field_name}
-                onChange={(e) => {
-                  props.onChange(e.target.name, e.target.value);
-                }}
-                value={
-                  props.field_data &&
-                  props.field_data.fields[
-                    `${
+                  <Form.Control
+                    type={
+                      Object.values(eval(controls.option)[Index])[0].field_type
+                    }
+                    name={
                       Object.values(eval(controls.option)[Index])[0].field_name
-                    }`
-                  ]
-                }
-              />
-            </Form.Group>
-          </Col>
+                    }
+                    onChange={(e) => {
+                      props.onChange(e.target.name, e.target.value);
+                    }}
+                    value={
+                      props.field_data &&
+                      props.field_data.fields[
+                        `${
+                          Object.values(eval(controls.option)[Index])[0]
+                            .field_name
+                        }`
+                      ]
+                    }
+                  />
+                </Form.Group>
+              </Col>
+            )}
+          </>
         )
       ) : null}
     </>
