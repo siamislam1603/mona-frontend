@@ -87,13 +87,6 @@ const AddFormField = (props) => {
     getUser();
   }, [selectedFranchisee]);
 
-  // useEffect(() => {
-  //   if (form[Index].form_field_permissions) {
-  //     let obj = selectedCheckBox
-  //     obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
-  //     setSelectedCheckBox(obj)
-  //   }
-  // }, [])
 
   const getUser = () => {
     var myHeaders = new Headers();
@@ -128,23 +121,22 @@ const AddFormField = (props) => {
   };
   const setCheckBoxField = (name, value, checked, index) => {
     let tempArr = [...form];
-    const tempObj = tempArr[index];
+    let tempObj = tempArr[index];
 
     let obj = selectedCheckBox
 
     if (checked) {
       if (tempObj[name]) {
         tempObj[name] = selectedCheckBox[tempObj.section_name].join(',') + ',' + value + ',';
+        obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')].filter(data => data != '')
+        setSelectedCheckBox(obj)
       } else {
         tempObj[name] = selectedCheckBox[tempObj.section_name].join(',') + ',' + value + ',';
+        obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')].filter(data => data != '')
+        setSelectedCheckBox(obj)
       }
-
-      obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')].filter(data => data != '')
-
-      setSelectedCheckBox(obj)
     } else {
       tempObj[name] = (selectedCheckBox[tempObj.section_name].join(',') + ',')?.replace(value + ',', '')
-
       obj[tempObj.section_name] = selectedCheckBox[tempObj.section_name].filter(item => item != value)
       setSelectedCheckBox(obj)
     }
@@ -363,6 +355,17 @@ const AddFormField = (props) => {
               signature_count++;
             }
             setForm(res?.result);
+
+            res.result?.map(item => {
+              if (item.form_field_permissions) {
+                let obj = selectedCheckBox
+                obj[item.section_name] = item.form_field_permissions[0].fill_access_users || []
+                setSelectedCheckBox(obj)
+
+                item.fill_access_users = item.form_field_permissions[0].fill_access_users?.join(',') + ','
+              }
+            })
+
             setGroupModelData(res?.result);
             counter++;
             setCount(counter);
