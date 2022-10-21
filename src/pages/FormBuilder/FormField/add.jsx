@@ -58,10 +58,19 @@ const AddFormField = (props) => {
   const [newOptionAddIndex, setNewOptionAddIndex] = useState(-1);
   const [newConditionOptionAddIndex, setNewConditionOptionAddIndex] =
     useState(-1);
+  const [selectedCheckBox, setSelectedCheckBox] = useState({});
+
+  console.log(selectedCheckBox);
+
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
     : null;
+
+  useEffect(() => {
+    console.log(selectedCheckBox);
+  }, [selectedCheckBox]);
+
   useEffect(() => {
     if (form_name) {
       getFormField();
@@ -77,6 +86,7 @@ const AddFormField = (props) => {
   useEffect(() => {
     getUser();
   }, [selectedFranchisee]);
+
   const getUser = () => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -110,13 +120,44 @@ const AddFormField = (props) => {
   };
   const setCheckBoxField = (name, value, checked, index) => {
     let tempArr = [...form];
-    const tempObj = tempArr[index];
+    let tempObj = tempArr[index];
+
+    console.log(tempObj, '----------------');
+
+    let obj = selectedCheckBox;
+    console.log(selectedCheckBox, '-=-=-===');
+
     if (checked) {
-      tempObj[name] = tempObj[name].replace('undefined', '');
-      tempObj[name] += value + ',';
+      if (tempObj[name]) {
+        tempObj[name] =
+          selectedCheckBox[tempObj.section_name]?.join(',') + ',' + value + ',';
+        obj[tempObj.section_name] = [
+          ...selectedCheckBox[tempObj.section_name],
+          ...tempObj[name]?.split(',')?.filter((item) => item != ''),
+        ].filter((data) => data != '');
+        setSelectedCheckBox(obj);
+      } else {
+        tempObj[name] =
+          selectedCheckBox[tempObj.section_name]?.join(',') + ',' + value + ',';
+        obj[tempObj.section_name] = [
+          ...selectedCheckBox[tempObj.section_name],
+          ...tempObj[name]?.split(',')?.filter((item) => item != ''),
+        ].filter((data) => data != '');
+        setSelectedCheckBox(obj);
+      }
     } else {
-      tempObj[name] = tempObj[name].replace(value + ',', '');
+      tempObj[name] = (
+        selectedCheckBox[tempObj.section_name]?.join(',') + ','
+      )?.replace(value + ',', '');
+      obj[tempObj.section_name] = selectedCheckBox[tempObj.section_name].filter(
+        (item) => item != value
+      );
+      setSelectedCheckBox(obj);
     }
+
+    obj[tempObj.section_name] = tempObj[name]?.split(',');
+
+    setSelectedCheckBox(obj);
     tempArr[Index] = tempObj;
     setForm(tempArr);
   };
@@ -330,6 +371,21 @@ const AddFormField = (props) => {
               signature_count++;
             }
             setForm(res?.result);
+
+            res.result?.map((item) => {
+              if (item.form_field_permissions) {
+                let obj = selectedCheckBox;
+                obj[item.section_name] =
+                  item?.form_field_permissions[0]?.fill_access_users || [];
+                setSelectedCheckBox(obj);
+
+                item.fill_access_users =
+                  item?.form_field_permissions[0]?.fill_access_users?.join(
+                    ','
+                  ) + ',';
+              }
+            });
+
             setGroupModelData(res?.result);
             counter++;
             setCount(counter);
@@ -498,27 +554,29 @@ const AddFormField = (props) => {
         data?.map((item) => {
           data['accessible_to_role'] = item.accessible_to_role;
           data['signatories'] = item.signatories;
-          if (
-            item.accessible_to_role === '1' ||
-            item.accessible_to_role === true
-          ) {
-            item['signatories_role'] = item.signatories_role
-              ? item.signatories_role.slice(0, -1)
-              : null;
-            item['fill_access_users'] = item.fill_access_users
-              ? item.fill_access_users.slice(0, -1)
-              : null;
-          }
-          if (
-            item.accessible_to_role === '0' ||
-            item.accessible_to_role === false
-          ) {
-            item['signatories_role'] = selectedSignatoriesUserId
-              ? selectedSignatoriesUserId.slice(0, -1)
-              : null;
-            item['fill_access_users'] = selectedFillAccessUserId
-              ? selectedFillAccessUserId.slice(0, -1)
-              : null;
+          if (item.form_field_permissions) {
+            if (
+              item?.form_field_permissions[0]?.accessible_to_role === '1' ||
+              item?.form_field_permissions[0]?.accessible_to_role === true
+            ) {
+              item['signatories_role'] = item.signatories_role
+                ? item.signatories_role.slice(0, -1)
+                : null;
+              item['fill_access_users'] = item.fill_access_users
+                ? item.fill_access_users.slice(0, -1)
+                : null;
+            }
+            if (
+              item?.form_field_permissions[0]?.accessible_to_role === '0' ||
+              item?.form_field_permissions[0]?.accessible_to_role === false
+            ) {
+              item['signatories_role'] = selectedSignatoriesUserId
+                ? selectedSignatoriesUserId.slice(0, -1)
+                : null;
+              item['fill_access_users'] = selectedFillAccessUserId
+                ? selectedFillAccessUserId.slice(0, -1)
+                : null;
+            }
           }
           if (item.section_name) {
             item['franchisee_id'] = localStorage.getItem('f_id');
@@ -1589,6 +1647,21 @@ const AddFormField = (props) => {
                                                   name="accessible_to_role"
                                                   id="user_role"
                                                   onChange={(e) => {
+                                                    if (
+                                                      form[Index]
+                                                        .form_field_permissions
+                                                    ) {
+                                                      let obj =
+                                                        selectedCheckBox;
+                                                      obj[
+                                                        form[Index].section_name
+                                                      ] =
+                                                        form[Index]
+                                                          .form_field_permissions[0]
+                                                          .fill_access_users ||
+                                                        [];
+                                                      setSelectedCheckBox(obj);
+                                                    }
                                                     setField(
                                                       e.target.name,
                                                       e.target.value,
@@ -1655,11 +1728,20 @@ const AddFormField = (props) => {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="franchisor_admin"
-                                                    checked={form[
-                                                      Index
-                                                    ]?.fill_access_users?.includes(
-                                                      'franchisor_admin'
-                                                    )}
+                                                    checked={
+                                                      selectedCheckBox[
+                                                        form[Index].section_name
+                                                      ]
+                                                        ?.join(',')
+                                                        ?.includes(
+                                                          'franchisor_admin'
+                                                        )
+                                                      // form[
+                                                      // Index
+                                                      // ]?.fill_access_users?.includes(
+                                                      // 'franchisor_admin'
+                                                      // )
+                                                    }
                                                     onChange={(e) => {
                                                       setCheckBoxField(
                                                         e.target.name,
@@ -1677,11 +1759,20 @@ const AddFormField = (props) => {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="franchisee_admin"
-                                                    checked={form[
-                                                      Index
-                                                    ]?.fill_access_users?.includes(
-                                                      'franchisee_admin'
-                                                    )}
+                                                    checked={
+                                                      selectedCheckBox[
+                                                        form[Index].section_name
+                                                      ]
+                                                        ?.join(',')
+                                                        ?.includes(
+                                                          'franchisee_admin'
+                                                        )
+                                                      // form[
+                                                      // Index
+                                                      // ]?.fill_access_users?.includes(
+                                                      // 'franchisee_admin'
+                                                      // )
+                                                    }
                                                     onChange={(e) => {
                                                       setCheckBoxField(
                                                         e.target.name,
@@ -1699,11 +1790,20 @@ const AddFormField = (props) => {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="coordinator"
-                                                    checked={form[
-                                                      Index
-                                                    ]?.fill_access_users?.includes(
-                                                      'coordinator'
-                                                    )}
+                                                    checked={
+                                                      selectedCheckBox[
+                                                        form[Index].section_name
+                                                      ]
+                                                        ?.join(',')
+                                                        ?.includes(
+                                                          'coordinator'
+                                                        )
+                                                      // form[
+                                                      // Index
+                                                      // ]?.fill_access_users?.includes(
+                                                      // 'coordinator'
+                                                      // )
+                                                    }
                                                     onChange={(e) => {
                                                       setCheckBoxField(
                                                         e.target.name,
@@ -1721,11 +1821,18 @@ const AddFormField = (props) => {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="educator"
-                                                    checked={form[
-                                                      Index
-                                                    ]?.fill_access_users?.includes(
-                                                      'educator'
-                                                    )}
+                                                    checked={
+                                                      selectedCheckBox[
+                                                        form[Index].section_name
+                                                      ]
+                                                        ?.join(',')
+                                                        ?.includes('educator')
+                                                      // form[
+                                                      // Index
+                                                      // ]?.fill_access_users?.includes(
+                                                      // 'educator'
+                                                      // )
+                                                    }
                                                     onChange={(e) => {
                                                       setCheckBoxField(
                                                         e.target.name,
@@ -1743,11 +1850,18 @@ const AddFormField = (props) => {
                                                     type="checkbox"
                                                     name="fill_access_users"
                                                     value="parent"
-                                                    checked={form[
-                                                      Index
-                                                    ]?.fill_access_users?.includes(
-                                                      'parent'
-                                                    )}
+                                                    checked={
+                                                      selectedCheckBox[
+                                                        form[Index].section_name
+                                                      ]
+                                                        ?.join(',')
+                                                        ?.includes('parent')
+                                                      // form[
+                                                      // Index
+                                                      // ]?.fill_access_users?.includes(
+                                                      // 'parent'
+                                                      // )
+                                                    }
                                                     onChange={(e) => {
                                                       setCheckBoxField(
                                                         e.target.name,
@@ -2115,6 +2229,13 @@ const AddFormField = (props) => {
                                     setSection(sectionData);
                                     setSectionTitle('');
                                     setCreateSectionFlag(false);
+                                    let obj = selectedCheckBox;
+
+                                    if (sectionTitle) {
+                                      obj[sectionTitle] =
+                                        obj[sectionTitle.toLowerCase()] || [];
+                                    }
+                                    setSelectedCheckBox(obj);
                                   }}
                                 >
                                   Done
