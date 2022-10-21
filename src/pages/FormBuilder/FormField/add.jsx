@@ -59,6 +59,9 @@ const AddFormField = (props) => {
   const [newConditionOptionAddIndex, setNewConditionOptionAddIndex] =
     useState(-1);
   const [selectedCheckBox, setSelectedCheckBox] = useState({})
+
+  console.log(selectedCheckBox)
+
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -85,12 +88,12 @@ const AddFormField = (props) => {
   }, [selectedFranchisee]);
 
   // useEffect(() => {
-  //   if (form[Index].section_name) {
+  //   if (form[Index].form_field_permissions) {
   //     let obj = selectedCheckBox
   //     obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
   //     setSelectedCheckBox(obj)
   //   }
-  // }, [form])
+  // }, [])
 
   const getUser = () => {
     var myHeaders = new Headers();
@@ -136,7 +139,7 @@ const AddFormField = (props) => {
         tempObj[name] = selectedCheckBox[tempObj.section_name].join(',') + ',' + value + ',';
       }
 
-      obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')]
+      obj[tempObj.section_name] = [...selectedCheckBox[tempObj.section_name], ...tempObj[name]?.split(',')?.filter(item => item != '')].filter(data => data != '')
 
       setSelectedCheckBox(obj)
     } else {
@@ -1621,9 +1624,11 @@ const AddFormField = (props) => {
                                                     name="accessible_to_role"
                                                     id="user_role"
                                                     onChange={(e) => {
-                                                      let obj = selectedCheckBox
-                                                      obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
-                                                      setSelectedCheckBox(obj)
+                                                      if (form[Index].form_field_permissions) {
+                                                        let obj = selectedCheckBox
+                                                        obj[form[Index].section_name] = form[Index].form_field_permissions[0].fill_access_users || []
+                                                        setSelectedCheckBox(obj)
+                                                      }
                                                       setField(
                                                         e.target.name,
                                                         e.target.value,
