@@ -563,9 +563,6 @@ const DynamicForm = () => {
                         </Col>
                       )}
                     {Object.keys(formData)?.map((item, index) => {
-                      {
-                        console.log('1233333', item);
-                      }
                       return item ? (
                         <>
                           {formData[item]?.map((inner_item, inner_index) => {

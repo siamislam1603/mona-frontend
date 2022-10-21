@@ -13,12 +13,14 @@ import { FullLoader } from '../components/Loader';
 
 const InputFields = (props) => {
   let inputElement = null;
-  const { ...controls } = props;
+  let { ...controls } = props;
 
   if (isEmpty(controls?.field_data)) {
     if (!controls.freshForm) return <FullLoader />;
   }
-
+  let { field_data: { fields = {} } = {} } = controls;
+  delete fields.undefined;
+  console.log(controls?.field_type, '------controls?.field_type');
   switch (controls?.field_type) {
     case 'radio':
       inputElement = (

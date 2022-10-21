@@ -632,7 +632,8 @@ function ViewFormBuilder(props) {
                                                   <h6
                                                     onClick={() => {
                                                       navigate(
-                                                        `/form/response/${inner_item.id}`
+                                                        `/form/dynamic/${inner_item.form_name}`
+                                                        // `/form/response/${inner_item.id}`
                                                       );
                                                     }}
                                                   >
@@ -714,18 +715,20 @@ function ViewFormBuilder(props) {
                                                               );
                                                             else
                                                               navigate(
-                                                                `/form/dynamic/${inner_item.form_name}`
+                                                                `/form/response/${inner_item.id}`
+                                                                // `/form/dynamic/${inner_item.form_name}`
                                                               );
                                                           } else
                                                             navigate(
-                                                              `/form/dynamic/${inner_item.form_name}`
+                                                              `/form/response/${inner_item.id}`
+                                                              // `/form/dynamic/${inner_item.form_name}`
                                                             );
                                                         }}
                                                       >
                                                         <FontAwesomeIcon
-                                                          icon={faPen}
+                                                          icon={faEye}
                                                         />{' '}
-                                                        Add Response
+                                                        View Response
                                                       </Dropdown.Item>
                                                     </Dropdown.Menu>
                                                   </Dropdown>
