@@ -61,7 +61,7 @@ function OwnFormResponse(props) {
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    fields['signature'] = sigPad.current
+    fields['signature_1'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
       
