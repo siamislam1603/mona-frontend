@@ -53,6 +53,8 @@ function OwnFormResponse(props) {
     e.preventDefault();
     sigPad.current.clear();
   };
+
+
   const trim = (e, index) => {
     e.preventDefault();
     var myHeaders = new Headers();
@@ -62,6 +64,7 @@ function OwnFormResponse(props) {
     fields['signature'] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
+      
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -69,7 +72,6 @@ function OwnFormResponse(props) {
         form_id: responseData[Index][0].form_id,
         user_id: responseData[Index][0].user_id,
         behalf_of: responseData[Index][0].behalf_of,
-        franchisee_id: responseData[Index][0]?.filled_user?.franchisee_id,
         data: fields,
         edit_signature: true,
         id: responseData[Index][0].id,
@@ -88,6 +90,8 @@ function OwnFormResponse(props) {
         }
       });
   };
+
+
   const getResponse = (search) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -744,6 +748,7 @@ function OwnFormResponse(props) {
                     </h4>
                   )}
                 </div>
+
                 <Modal
                   className="responses_model"
                   show={signatureModel}
@@ -791,6 +796,8 @@ function OwnFormResponse(props) {
                     )}
                   </Modal.Body>
                 </Modal>
+              
+
               </div>
             </div>
           </Container>
