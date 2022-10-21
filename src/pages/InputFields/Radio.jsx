@@ -50,7 +50,7 @@ const Radio = (props) => {
                         <input
                           type="radio"
                           key={index}
-                          va lue={Object.keys(item)[0]}
+                          value={Object.keys(item)[0]}
                           disabled={props.isDisable ? props.isDisable : false}
                           name={controls.field_name}
                           id={Object.keys(item)[0] + props?.diff_index}
