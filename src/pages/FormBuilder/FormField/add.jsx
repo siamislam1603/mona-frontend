@@ -359,10 +359,10 @@ const AddFormField = (props) => {
             res.result?.map(item => {
               if (item.form_field_permissions) {
                 let obj = selectedCheckBox
-                obj[item.section_name] = item.form_field_permissions[0].fill_access_users || []
+                obj[item.section_name] = item?.form_field_permissions[0]?.fill_access_users || []
                 setSelectedCheckBox(obj)
 
-                item.fill_access_users = item.form_field_permissions[0].fill_access_users?.join(',') + ','
+                item.fill_access_users = item?.form_field_permissions[0]?.fill_access_users?.join(',') + ','
               }
             })
 
@@ -1623,7 +1623,7 @@ const AddFormField = (props) => {
                                                 <label for="user_role">
                                                   <input
                                                     type="radio"
-                                                    value={1}
+                                                    value={0}
                                                     name="accessible_to_role"
                                                     id="user_role"
                                                     onChange={(e) => {
@@ -1641,7 +1641,7 @@ const AddFormField = (props) => {
                                                     checked={
                                                       form[Index]
                                                         ?.accessible_to_role ===
-                                                      '1' ||
+                                                      '0' ||
                                                       form[Index]
                                                         ?.accessible_to_role ===
                                                       true
@@ -1655,7 +1655,7 @@ const AddFormField = (props) => {
                                                 <label for="specific_user">
                                                   <input
                                                     type="radio"
-                                                    value={0}
+                                                    value={1}
                                                     name="accessible_to_role"
                                                     id="specific_user"
                                                     onChange={(e) => {
@@ -1668,7 +1668,7 @@ const AddFormField = (props) => {
                                                     checked={
                                                       form[Index]
                                                         ?.accessible_to_role ===
-                                                      '0' ||
+                                                      '1' ||
                                                       form[Index]
                                                         ?.accessible_to_role ===
                                                       false
@@ -1682,7 +1682,7 @@ const AddFormField = (props) => {
                                           </Form.Group>
                                         </Col>
                                         {form[Index]?.accessible_to_role ===
-                                          '1' ||
+                                          '0' ||
                                           form[Index]?.accessible_to_role ===
                                           true ? (
                                           <>
