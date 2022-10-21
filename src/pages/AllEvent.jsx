@@ -114,6 +114,8 @@ const AllEvent = (props) => {
     setIsLoading(true)
   },[])
 
+  
+
   return (
     <div className="announcement-accordion">
       {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>}

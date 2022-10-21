@@ -1,7 +1,6 @@
 export const DynamicFormValidation = (form,data) => {
     let newErrors = {};
     data.map((item)=>{
-      console.log("item.required",item.required);
       if(item.required)
       {
         if(!form[`${item.field_name}`])
