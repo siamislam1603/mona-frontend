@@ -728,7 +728,8 @@ function OwnFormResponse(props) {
                                 );
                               })}
                               {location?.state?.signature_access &&
-                                item.signature_button && (
+                                item.signature_button &&
+                                !hideFlag && (
                                   <Button
                                     onClick={() => {
                                       setSignatureModel(true);
