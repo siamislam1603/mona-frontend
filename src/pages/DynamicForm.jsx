@@ -11,18 +11,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import { FullLoader } from '../components/Loader';
 
-function copyOneStateToAnother(formObj) {
-  let keyNames = Object.keys(formObj);
-  let miscelleneousObj = {};
+// function copyOneStateToAnother(formObj) {
+//   let keyNames = Object.keys(formObj);
+//   let miscelleneousObj = {};
 
-  for(let i = 0; i < keyNames.length; i++) {
-    if(keyNames[i]) {
-      let data = formObj[keyNames[i]];
-      miscelleneousObj = {...miscelleneousObj, ...data};
-    }
-  }
-  return formObj;
-}
+//   for(let i = 0; i < keyNames.length; i++) {
+//     if(keyNames[i]) {
+//       let data = formObj[keyNames[i]];
+//       miscelleneousObj = {...miscelleneousObj, ...data};
+//     }
+//   }
+//   return formObj;
+// }
 
 let values = [];
 let behalfOfFlag = false;
@@ -305,10 +305,10 @@ const DynamicForm = () => {
           });
         });
     } else {
-      let newFormObj = copyOneStateToAnother(form);
+      // let newFormObj = copyOneStateToAnother(form);
 
       const newErrors = DynamicFormValidation(
-        newFormObj,
+        form,
         formData,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
         behalfOfFlag,
@@ -394,6 +394,9 @@ const DynamicForm = () => {
     }
   };
 
+  selectedUserValue && console.log('SELECTED USER VALUE:', selectedUserValue);
+  behalfOf && console.log('Behalf Of:', behalfOf);
+  targetUser && console.log('Target User:', targetUser);
   return (
     <>
       <div id="main">
