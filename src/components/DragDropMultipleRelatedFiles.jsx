@@ -63,7 +63,6 @@ export default function DropAllRelatedFile({ relatedFilesData, onSave }) {
 
   return (
     <>
-      {console.log('props---->', relatedFiles)}
       {relatedFiles.length > 0 && (
         <Row>
           {relatedFiles.map((file, index) => (

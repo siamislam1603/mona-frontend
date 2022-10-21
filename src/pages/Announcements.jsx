@@ -696,7 +696,10 @@ const Announcements = () => {
     setUserRole(user_role)
 
     // EventCount()
-    LoadMoreEvent()
+    
+    OnLoadEvent()
+
+    // LoadMoreEvent()
   }, [])
 
   useEffect(() => {

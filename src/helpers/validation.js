@@ -7,47 +7,44 @@ export const DynamicFormValidation = (
   behalf_of_flag,
   signature_access_flag
 ) => {
-  console.log('form------->sdfdsfdsfdsfdsfs', form);
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
       newErrors.behalf_of = 'Behalf of is required';
   }
-  Object.keys(data)?.map((item) => {
-    // console.log('inner_item_item--->', item);
-    console.log('data[item]---->', data[item]);
-    data[item].map((inner_item) => {
-      // console.log('inner_item', form[item]);
-      if (inner_item.required) {
-        if (!form[item]) {
-          if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
-            newErrors[
-              `${inner_item.field_name}`
-            ] = `${inner_item.field_label} is required`;
-        } else {
-          if (
-            inner_item.field_type === 'signature' &&
-            signature_access_flag === true &&
-            !form[item][`${inner_item.field_name}`]
-          ) {
-            if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
-              newErrors[
-                `${inner_item.field_name}`
-              ] = `${inner_item.field_label} is required`;
-          } else {
-            if (
-              inner_item.field_type !== 'signature' &&
-              !form[item][`${inner_item.field_name}`]
-            ) {
-              if(!(inner_item.field_type==='headings' || inner_item.field_type==='text_headings'))
-                newErrors[
-                  `${inner_item.field_name}`
-                ] = `${inner_item.field_label} is required`;
-            }
-          }
+
+  let formFields = form[""];
+  // console.log('FORM>>>>>>>>>>>>>>>', form);
+  // console.log('FORM FIELDS:?.>>>>>', formFields);
+  // let field = Object.keys(data);
+  // console.log('KEYS OF FORM:', field);
+  // console.log('DATA>>>>>>>>>>>>>>>>', data);
+  // let errorFields = field.map(d => data[d]);
+  let errorFields = [];
+  for(let key of Object.keys(data)) {
+    console.log(data[key]);
+    let temp = data[key].map(d => ({
+      field_type: d.field_type,
+      field_name: d.field_name,
+      field_label: d.field_label,
+      required: d.required
+    }));
+
+    errorFields = [...errorFields, ...temp];
+  }
+
+  // console.log('ERROR FIELDS:', errorFields);
+
+  errorFields.map((item) => {
+    if (item.required && item.type !== "headings" && item.type !== "text_headings") {
+      if (Object.keys(formFields).length !== 0) {
+        if(!formFields[item.field_name]) {
+          newErrors[
+            `${item.field_name}`
+          ] = `${item.field_label} is required`;
         }
       }
-    });
+    }
   });
 
   return newErrors;
