@@ -54,12 +54,23 @@ function OwnFormResponse(props) {
     sigPad.current.clear();
   };
   const trim = (e, index) => {
+    
+
     e.preventDefault();
+
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
     let fields = JSON.parse(responseData[Index][0].fields);
-    fields['signature'] = sigPad.current
+
+    let fieldsArray = Object.keys(fields);
+    let signature_field = fieldsArray[1];
+
+    console.log("ddddddddddddddddddddddddddddddd",fields)
+
+
+
+    fields[`${signature_field}`] = sigPad.current
       .getTrimmedCanvas()
       .toDataURL('image/png');
     var requestOptions = {

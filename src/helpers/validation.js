@@ -647,7 +647,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
 
   if (!email) errors.email = 'Email address is required';
 
-  if (email.length > 0 && !regex.test(email)) {
+  if (email?.length > 0 && !regex.test(email)) {
     errors.email = 'Email format is invalid';
   }
 
@@ -655,7 +655,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
 
   if (!fullname) errors.fullname = 'Full name is required';
 
-  if (fullname.length > 0 && !/^[a-zA-Z ]+$/i.test(fullname))
+  if (fullname?.length > 0 && !/^[a-zA-Z- ]+$/i.test(fullname))
     errors.fullname = "Field shouldn't contain numbers & special characters";
 
   if (!state) errors.state = 'State is required';
@@ -666,7 +666,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
 
   if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (postalCode.length > 0 && postalCode.length < 4)
+  if (postalCode?.length > 0 && postalCode?.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
   if (postalCode?.length === 4 && isNaN(postalCode))
@@ -678,7 +678,7 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
 
   if (!phone) errors.phone = 'Phone number is required';
 
-  if (phone.length > 0 && phone.length < 4)
+  if (phone?.length > 0 && phone?.length < 4)
     errors.phone = 'Phone number must have atleast 4 digits';
 
   if (!franchisee) errors.franchisee = 'Franchise is required';
@@ -718,7 +718,7 @@ export const editUserValidation = (
 
   if (!fullname) errors.fullname = 'Full name is required';
 
-  if (fullname.length > 0 && !/^[a-zA-Z ]+$/i.test(fullname))
+  if (fullname?.length > 0 && !/^[a-zA-Z- ]+$/i.test(fullname))
     errors.fullname = "Field shouldn't contain numbers & special characters";
 
   if (!email) errors.email = 'Email address is required';
@@ -733,7 +733,7 @@ export const editUserValidation = (
 
   if (!postalCode) errors.postalCode = 'Post code is required';
 
-  if (postalCode?.length > 0 && postalCode.length < 4)
+  if (postalCode?.length > 0 && postalCode?.length < 4)
     errors.postalCode = 'Post code must be 4-digit long';
 
   if (postalCode?.length === 4 && isNaN(postalCode))
