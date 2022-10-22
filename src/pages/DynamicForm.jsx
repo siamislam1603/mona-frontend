@@ -461,11 +461,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setBehalfOf(e.target.value.split(' ')[0]);
                                     setSelectedUserValue({
-                                      id: e.target.value.split(" ")[0],
-                                      role: e.target.value.split(" ")[1]
-                                    })
+                                      id: e.target.value.split(' ')[0],
+                                      role: e.target.value.split(' ')[1],
+                                    });
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -494,9 +494,12 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
-                                          <option 
-                                          value={`${item.id} ${item.role || "child"}`} 
-                                            key={index}>
+                                          <option
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
+                                            key={index}
+                                          >
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -511,11 +514,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setBehalfOf(e.target.value.split(' ')[0]);
                                     setSelectedUserValue({
-                                      id: e.target.value.split(" ")[0],
-                                      role: e.target.value.split(" ")[1]
-                                    })
+                                      id: e.target.value.split(' ')[0],
+                                      role: e.target.value.split(' ')[1],
+                                    });
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -544,9 +547,12 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         ) : (
-                                          <option 
-                                          value={`${item.id} ${item.role || "child"}`} 
-                                            key={index}>
+                                          <option
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
+                                            key={index}
+                                          >
                                             {item?.child
                                               ? item?.fullname
                                               : `${item?.fullname} (${item?.email})`}
@@ -561,11 +567,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setBehalfOf(e.target.value.split(' ')[0]);
                                     setSelectedUserValue({
-                                      id: e.target.value.split(" ")[0],
-                                      role: e.target.value.split(" ")[1]
-                                    })
+                                      id: e.target.value.split(' ')[0],
+                                      role: e.target.value.split(' ')[1],
+                                    });
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -585,9 +591,12 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             'franchisor_admin' ||
                                           localStorage.getItem('user_role') ===
                                             'educator') && (
-                                          <option 
-                                            value={`${item.id} ${item.role || "child"}`} 
-                                            key={index}>
+                                          <option
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
+                                            key={index}
+                                          >
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -618,7 +627,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 localStorage.getItem('user_role') === 'guardian'
                                   ? 'parent'
                                   : localStorage.getItem('user_role')
-                              ) || location?.state?.id ? (
+                              ) ? (
                                 <>
                                   <InputFields
                                     {...inner_item}
