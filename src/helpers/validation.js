@@ -17,13 +17,23 @@ export const DynamicFormValidation = (
   let errorFields = [];
   for (let key of Object.keys(data)) {
     let temp = data[key].map((d) => {
-      if (!d.field_name.includes('signature')) {
-        return {
-          field_type: d.field_type,
-          field_name: d.field_name,
-          field_label: d.field_label,
-          required: d.required,
-        };
+      if (
+        d?.form_field_permissions[0]?.fill_access_users
+          ?.join(',')
+          .includes(
+            localStorage.getItem('user_role') == 'guardian'
+              ? 'parent'
+              : localStorage.getItem('user_role')
+          )
+      ) {
+        if (!d.field_name.includes('signature')) {
+          return {
+            field_type: d.field_type,
+            field_name: d.field_name,
+            field_label: d.field_label,
+            required: d.required,
+          };
+        }
       }
     });
 

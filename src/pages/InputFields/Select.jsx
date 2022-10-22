@@ -1,6 +1,13 @@
+import { isEmpty } from 'lodash';
 import { Col, Form } from 'react-bootstrap';
+import { FullLoader } from '../../components/Loader';
 const Select = (props) => {
   const { ...controls } = props;
+
+  if (isEmpty(controls)) {
+    return <FullLoader />;
+  }
+
   return (
     <Col sm={6}>
       <div className="child_info_field sex">
@@ -19,8 +26,15 @@ const Select = (props) => {
             <option>Select {controls.label}</option>
             {eval(controls.option)?.map((item2, index) => {
               return (
+                <option selected key={index}>
+                  {Object.keys(item2)}
+                </option>
+              );
+            })}
+            {/* {eval(controls.option)?.map((item2, index) => {
+              return (
                 <>
-                  {props.field_data ? (
+                  {props !== {} && props.field_data !== {} ? (
                     props.field_data.fields[`${controls.field_name}`] ===
                     Object.keys(item2)[0] ? (
                       <option selected key={index}>
@@ -34,7 +48,7 @@ const Select = (props) => {
                   )}
                 </>
               );
-            })}
+            })} */}
           </Form.Select>
         </div>
         <p>{controls.error[controls.field_name]}</p>
