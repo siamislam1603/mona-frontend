@@ -11,6 +11,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import { FullLoader } from '../components/Loader';
 
+// function copyOneStateToAnother(formObj) {
+//   let keyNames = Object.keys(formObj);
+//   let miscelleneousObj = {};
+
+//   for(let i = 0; i < keyNames.length; i++) {
+//     if(keyNames[i]) {
+//       let data = formObj[keyNames[i]];
+//       miscelleneousObj = {...miscelleneousObj, ...data};
+//     }
+//   }
+//   return formObj;
+// }
+
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -26,6 +39,7 @@ const DynamicForm = () => {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [targetUser, setTargetUser] = useState([]);
   const [behalfOf, setBehalfOf] = useState('');
+  const [selectedUserValue, setSelectedUserValue] = useState({});
   const [childId, setChildId] = useState();
   const [errorFocus, setErrorFocus] = useState('');
   const token = localStorage.getItem('token');
@@ -295,6 +309,8 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
           });
         });
     } else {
+      // let newFormObj = copyOneStateToAnother(form);
+
       const newErrors = DynamicFormValidation(
         form,
         formData,
@@ -306,6 +322,8 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
+        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors).length);
+        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors));
         document.getElementById(Object.keys(newErrors)[0]).focus();
       } else {
         var myHeaders = new Headers();
@@ -328,6 +346,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                 : behalfOf
                 ? behalfOf
                 : localStorage.getItem('user_id'),
+            selectedUserData: selectedUserValue,
             data: form,
           }),
           redirect: 'follow',
@@ -379,6 +398,10 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       }
     }
   };
+
+  selectedUserValue && console.log('SELECTED USER VALUE:', selectedUserValue);
+  behalfOf && console.log('Behalf Of:', behalfOf);
+  targetUser && console.log('Target User:', targetUser);
   return (
     <>
       <div id="main">
@@ -438,7 +461,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value);
+                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setSelectedUserValue({
+                                      id: e.target.value.split(" ")[0],
+                                      role: e.target.value.split(" ")[1]
+                                    })
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -467,7 +494,9 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
-                                          <option value={item.id} key={index}>
+                                          <option 
+                                          value={`${item.id} ${item.role || "child"}`} 
+                                            key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
@@ -482,7 +511,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value);
+                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setSelectedUserValue({
+                                      id: e.target.value.split(" ")[0],
+                                      role: e.target.value.split(" ")[1]
+                                    })
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -511,7 +544,9 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         ) : (
-                                          <option value={item.id} key={index}>
+                                          <option 
+                                          value={`${item.id} ${item.role || "child"}`} 
+                                            key={index}>
                                             {item?.child
                                               ? item?.fullname
                                               : `${item?.fullname} (${item?.email})`}
@@ -526,7 +561,11 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                   name={'behalf_of'}
                                   id="behalf_of"
                                   onChange={(e) => {
-                                    setBehalfOf(e.target.value);
+                                    setBehalfOf(e.target.value.split(" ")[0]);
+                                    setSelectedUserValue({
+                                      id: e.target.value.split(" ")[0],
+                                      role: e.target.value.split(" ")[1]
+                                    })
                                     if (e.target.value !== '') {
                                       let errorData = { ...errors };
                                       errorData['behalf_of'] = null;
@@ -546,7 +585,9 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             'franchisor_admin' ||
                                           localStorage.getItem('user_role') ===
                                             'educator') && (
-                                          <option value={item.id} key={index}>
+                                          <option 
+                                            value={`${item.id} ${item.role || "child"}`} 
+                                            key={index}>
                                             {item.child
                                               ? item.fullname
                                               : `${item.fullname} (${item.email})`}
