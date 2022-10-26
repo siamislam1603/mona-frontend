@@ -18,13 +18,12 @@ const Radio = (props) => {
 
   let checked;
   if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-    eval(controls.option)?.foreach((item) => {
+    eval(controls.option)?.forEach((item) => {
       checked =
         props.field_data &&
-        props.field_data.fields[
-        `${controls.field_name}`
-        ] === Object.keys(item)[0]
-    })
+        props.field_data.fields[`${controls.field_name}`] ===
+          Object.keys(item)[0];
+    });
   }
   useEffect(() => {
     if (props.errorFocus) {
@@ -44,7 +43,7 @@ const Radio = (props) => {
               return (
                 <>
                   {Object.keys(eval(controls.option)[index])[0] ===
-                    Object.values(eval(controls.option)[index])[0] ? (
+                  Object.values(eval(controls.option)[index])[0] ? (
                     <div className="new-form-radio-box">
                       <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
                         <input
@@ -64,12 +63,12 @@ const Radio = (props) => {
                             setIndex(index);
                           }}
                           checked={checked}
-                        // checked={
-                        //   props.field_data &&
-                        //   props.field_data.fields[
-                        //   `${controls.field_name}`
-                        //   ] === Object.keys(item)[0]
-                        // }
+                          // checked={
+                          //   props.field_data &&
+                          //   props.field_data.fields[
+                          //   `${controls.field_name}`
+                          //   ] === Object.keys(item)[0]
+                          // }
                         />
                         <span className="radio-round"></span>
                         <p>{Object.keys(item)[0]}</p>
@@ -98,12 +97,12 @@ const Radio = (props) => {
                               setIndex(index);
                             }}
                             checked={checked}
-                          // checked={
-                          //   props.field_data &&
-                          //   props.field_data.fields[
-                          //     `${controls.field_name}`
-                          //   ] === Object.keys(item)[0]
-                          // }
+                            // checked={
+                            //   props.field_data &&
+                            //   props.field_data.fields[
+                            //     `${controls.field_name}`
+                            //   ] === Object.keys(item)[0]
+                            // }
                           />
                           <span className="radio-round"></span>
                           <p>{Object.keys(item)[0]}</p>
@@ -119,10 +118,10 @@ const Radio = (props) => {
         </Form.Group>
       </Col>
       {props.field_data ||
-        optionValue ===
+      optionValue ===
         Object.values(eval(controls.option)[Index])[0]['option_key'] ? (
         Object.values(eval(controls.option)[Index])[0]['field_type'] ===
-          'radio' ? (
+        'radio' ? (
           <Col sm={6}>
             <Form.Group>
               <Form.Label>
@@ -137,7 +136,7 @@ const Radio = (props) => {
                           <input
                             type={
                               Object.values(eval(controls.option)[Index])[0][
-                              'field_type'
+                                'field_type'
                               ]
                             }
                             key={index}
@@ -145,7 +144,7 @@ const Radio = (props) => {
                             value={Object.values(item)[0]}
                             name={
                               Object.values(eval(controls.option)[Index])[0][
-                              'field_name'
+                                'field_name'
                               ]
                             }
                             id={Object.keys(item)[0]}
@@ -155,10 +154,11 @@ const Radio = (props) => {
                             checked={
                               props.field_data &&
                               props.field_data.fields[
-                              `${Object.values(
-                                eval(controls.option)[Index]
-                              )[0]['field_name']
-                              }`
+                                `${
+                                  Object.values(
+                                    eval(controls.option)[Index]
+                                  )[0]['field_name']
+                                }`
                               ] === Object.values(item)[0]
                             }
                           />
@@ -231,8 +231,9 @@ const Radio = (props) => {
                           checked={
                             props.field_data &&
                             props.field_data.fields[
-                              `${Object.values(eval(controls.option)[Index])[0]
-                                .field_name
+                              `${
+                                Object.values(eval(controls.option)[Index])[0]
+                                  .field_name
                               }`
                             ].includes(Object.keys(item)[0])
                           }
@@ -261,8 +262,9 @@ const Radio = (props) => {
                 value={
                   props.field_data &&
                   props.field_data.fields[
-                  `${Object.values(eval(controls.option)[Index])[0].field_name
-                  }`
+                    `${
+                      Object.values(eval(controls.option)[Index])[0].field_name
+                    }`
                   ]
                 }
                 className="child_input"
@@ -305,9 +307,9 @@ const Radio = (props) => {
             </Form.Group>
           </Col>
         ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
-          'image_upload' ||
+            'image_upload' ||
           Object.values(eval(controls.option)[Index])[0]['field_type'] ===
-          'document_attachment' ? (
+            'document_attachment' ? (
           <Col sm={6}>
             <Form.Group>
               <Form.Label>
@@ -345,9 +347,10 @@ const Radio = (props) => {
                     value={
                       props.field_data &&
                       props.field_data.fields[
-                      `${Object.values(eval(controls.option)[Index])[0]
-                        .field_name
-                      }`
+                        `${
+                          Object.values(eval(controls.option)[Index])[0]
+                            .field_name
+                        }`
                       ]
                     }
                   />
