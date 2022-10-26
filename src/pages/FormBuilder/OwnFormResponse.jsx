@@ -122,9 +122,6 @@ function OwnFormResponse(props) {
 
             result?.result[index]?.map((inner_item, inner_index) => {
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-                console.log("signature field check", field_item)
-
-
 
                 if (field_item === 'signature_1') {
                   item['signature_button'] = false;
