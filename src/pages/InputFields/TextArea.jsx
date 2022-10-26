@@ -1,13 +1,24 @@
+import { isEmpty } from 'lodash';
 import { useEffect } from 'react';
 import { Col, Form } from 'react-bootstrap';
 
 const TextArea = (props) => {
+  const { ...controls } = props;
+
+  let value;
+  if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+    value =
+      props?.field_data &&
+      props?.field_data?.fields[`${controls.field_name}`]
+
+  }
+
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-  const { ...controls } = props;
+
   return (
     <Col sm={6}>
       <div className="child_info_field">
@@ -21,10 +32,7 @@ const TextArea = (props) => {
           maxLength={2000}
           className="child_input"
           placeholder={controls.placeholder}
-          value={
-            props.field_data &&
-            props.field_data.fields[`${controls.field_name}`]
-          }
+          value={value}
           onChange={(e) => {
             e.preventDefault();
             props.onChange(e.target.name, e.target.value, 'textarea');

@@ -13,22 +13,29 @@ export const DynamicFormValidation = (
       newErrors.behalf_of = 'Behalf of is required';
   }
 
-  let formFields = form[""];
-  // console.log('FORM>>>>>>>>>>>>>>>', form);
-  // console.log('FORM FIELDS:?.>>>>>', formFields);
-  // let field = Object.keys(data);
-  // console.log('KEYS OF FORM:', field);
-  // console.log('DATA>>>>>>>>>>>>>>>>', data);
-  // let errorFields = field.map(d => data[d]);
+  let formFields = form[''];
   let errorFields = [];
-  for(let key of Object.keys(data)) {
-    console.log(data[key]);
-    let temp = data[key].map(d => ({
-      field_type: d.field_type,
-      field_name: d.field_name,
-      field_label: d.field_label,
-      required: d.required
-    }));
+  for (let key of Object.keys(data)) {
+    let temp = data[key].map((d) => {
+      if (
+        d?.form_field_permissions[0]?.fill_access_users
+          ?.join(',')
+          .includes(
+            localStorage.getItem('user_role') == 'guardian'
+              ? 'parent'
+              : localStorage.getItem('user_role')
+          )
+      ) {
+        if (!d.field_name.includes('signature')) {
+          return {
+            field_type: d.field_type,
+            field_name: d.field_name,
+            field_label: d.field_label,
+            required: d.required,
+          };
+        }
+      }
+    });
 
     errorFields = [...errorFields, ...temp];
   }
@@ -36,12 +43,14 @@ export const DynamicFormValidation = (
   // console.log('ERROR FIELDS:', errorFields);
 
   errorFields.map((item) => {
-    if (item.required && item.type !== "headings" && item.type !== "text_headings") {
+    if (
+      item?.required &&
+      item?.type !== 'headings' &&
+      item?.type !== 'text_headings'
+    ) {
       if (Object.keys(formFields).length !== 0) {
-        if(!formFields[item.field_name]) {
-          newErrors[
-            `${item.field_name}`
-          ] = `${item.field_label} is required`;
+        if (!formFields[item.field_name]) {
+          newErrors[`${item.field_name}`] = `${item.field_label} is required`;
         }
       }
     }
@@ -768,7 +777,6 @@ export const editUserValidation = (
 
   return errors;
 };
-
 
 export const personValidation = (personValidationForm) => {
   let errors = {};
