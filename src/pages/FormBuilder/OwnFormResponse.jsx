@@ -33,6 +33,7 @@ function OwnFormResponse(props) {
   const token = localStorage.getItem('token');
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
+  const [indexToHide, setIndexToHide] = useState(-1);
   const [Index, setIndex] = useState(0);
   const [hideFlag, setHideFlag] = useState(false);
   const [dateFilter, setDateFilter] = useState({
@@ -56,6 +57,10 @@ function OwnFormResponse(props) {
 
   const trim = (e, index) => {
     e.preventDefault();
+
+
+
+    console.log("vvvvvvvvvvvvvvvvvvvvvvvv",indexToHide)
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -466,6 +471,8 @@ function OwnFormResponse(props) {
                             </Accordion.Header>
                             <Accordion.Body>
                               {responseData[index]?.map((item, index) => {
+
+                                console.log("index index index index ", index)
                                 return (
                                   <div
                                     key={index}
@@ -733,11 +740,12 @@ function OwnFormResponse(props) {
                               })}
                               {location?.state?.signature_access &&
                                 item.signature_button &&
-                                !hideFlag && (
+                                index !== indexToHide  && (
                                   <Button
                                     onClick={() => {
                                       setSignatureModel(true);
                                       setIndex(index);
+                                      setIndexToHide(index);
                                     }}
                                   >
                                     Add Signature
