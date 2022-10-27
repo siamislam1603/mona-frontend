@@ -394,9 +394,17 @@ const DynamicForm = () => {
     }
   };
 
-  selectedUserValue && console.log('SELECTED USER VALUE:', selectedUserValue);
-  behalfOf && console.log('Behalf Of:', behalfOf);
-  targetUser && console.log('Target User:', targetUser);
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === "guardian") {
+      let userObj = targetUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('selectedChild')));
+      setSelectedUserValue({
+        id: userObj[0]?.id,
+        role: "child"
+      })
+    }
+  }, [targetUser, localStorage.getItem('selectedChild')]);
+
+  selectedUserValue && console.log('Selected User Value:', selectedUserValue);
   return (
     <>
       <div id="main">
@@ -480,7 +488,7 @@ const DynamicForm = () => {
                                       <>
                                         {item.id === parseInt(childId) ? (
                                           <option
-                                            value={item.id}
+                                            value={`${item.id} ${item.role || "child"}`} 
                                             selected
                                             key={index}
                                           >
@@ -533,7 +541,7 @@ const DynamicForm = () => {
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
                                           <option
-                                            value={item.id}
+                                            value={`${item.id} ${item.role || "child"}`} 
                                             selected
                                             key={index}
                                           >
