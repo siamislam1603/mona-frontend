@@ -1,4 +1,3 @@
-import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
@@ -15,7 +14,6 @@ const Radio = (props) => {
     e.preventDefault();
     props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
   };
-
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
@@ -92,16 +90,12 @@ const Radio = (props) => {
                               setOptionValue(e.target.value);
                               setIndex(index);
                             }}
-                            checked={
-                              (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) ?
-                                props?.field_data &&
-                                props?.field_data?.fields[
-                                `${controls?.field_name}`
-                                ] === Object.keys(item)[0] : props?.field_data &&
-                                props?.field_data?.fields[
-                                `${controls?.field_name}`
-                                ] === Object.keys(item)[0]
-                            }
+                            // checked={
+                            //   props.field_data &&
+                            //   props.field_data.fields[
+                            //     `${controls.field_name}`
+                            //   ] === Object.keys(item)[0]
+                            // }
                           />
                           <span className="radio-round"></span>
                           <p>{Object.keys(item)[0]}</p>

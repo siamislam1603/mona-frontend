@@ -114,10 +114,14 @@ function OwnFormResponse(props) {
       .then((response) => response.json())
       .then((result) => {
         if (result) {
+          console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
           setfullLoaderStatus(false);
         }
         if (result?.result.length > 0) {
           result?.result.map((item, index) => {
+            // if(item['signature_button'] === true) {
+              
+            // }
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
@@ -474,6 +478,7 @@ function OwnFormResponse(props) {
                               </div>
                             </Accordion.Header>
                             <Accordion.Body>
+                              {console.log('RESPONSE DATA:', responseData)}
                               {responseData[index]?.map((item, index) => {
 
                                 console.log("index index index index ", index)
@@ -617,11 +622,17 @@ function OwnFormResponse(props) {
                                                 '.jpeg'
                                               ) ? (
                                                 <>
+                                                  {console.log('INNER INDEX:', inner_index)}
+                                                  {console.log('ITEM FIELDS:', item.fields)}
+                                                  {console.log('>>>>><<<<<', Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index])}
                                                   <img
                                                     style={{
                                                       height: '40px',
                                                       width: '51px',
                                                     }}
+                                                    alt="img"
                                                     src={`${
                                                       Object.values(
                                                         JSON.parse(item.fields)
