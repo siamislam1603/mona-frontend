@@ -121,9 +121,10 @@ function OwnFormResponse(props) {
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
-              Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+              let parsedJSON = JSON.parse(inner_item.fields);
 
-                if (field_item === 'signature_1') {
+              Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
+                if (field_item === 'signature_1' && parsedJSON[field_item] !== null) {
                   item['signature_button'] = false;
                 }
               });
