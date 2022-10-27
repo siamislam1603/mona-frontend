@@ -28,13 +28,15 @@ const Radio = (props) => {
             {controls.field_label}
           </Form.Label>
           <div className="new-form-radio flex_wrap_radio">
-            {eval(controls.option)?.map((item, index) => {
+            {eval(controls?.option)?.map((item, index) => {
               return (
                 <>
-                  {Object.keys(eval(controls.option)[index])[0] ===
-                  Object.values(eval(controls.option)[index])[0] ? (
+                  {console.log('ITEM:>>>>>>>>>>>>>>>', item)}
+                  {console.log('CONTROLS:>>>>>>>>>>>>>>>', controls)}
+                  {typeof controls.field_data !== "undefined" && (Object.keys(controls.field_data).length !== 0 && Object.keys(item)[0] === "yes") ? (
                     <div className="new-form-radio-box">
                       <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
+
                         <input
                           type="radio"
                           key={index}
@@ -51,12 +53,13 @@ const Radio = (props) => {
                             setOptionValue(e.target.value);
                             setIndex(index);
                           }}
-                          checked={
-                            props?.field_data &&
-                            props?.field_data?.fields[
-                              `${controls?.field_name}`
-                            ] === Object.keys(item)[0]
-                          }
+                          checked={typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0 && controls?.field_data?.fields[`${controls?.field_name}`] === 'yes'}
+                          // checked={
+                          //   props?.field_data &&
+                          //   props?.field_data?.fields[
+                          //     `${controls?.field_name}`
+                          //   ] === Object.keys(item)[0]
+                          // }
                         />
                         <span className="radio-round"></span>
                         <p>{Object.keys(item)[0]}</p>
@@ -84,6 +87,7 @@ const Radio = (props) => {
                               setOptionValue(e.target.value);
                               setIndex(index);
                             }}
+                            checked={typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0 && controls?.field_data?.fields[`${controls?.field_name}`] === 'no'}
                             // checked={
                             //   props.field_data &&
                             //   props.field_data.fields[

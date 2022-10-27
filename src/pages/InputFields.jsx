@@ -20,7 +20,7 @@ const InputFields = (props) => {
   }
   let { field_data: { fields = {} } = {} } = controls;
   delete fields.undefined;
-  console.log(controls?.field_type, '------controls?.field_type');
+  // console.log(controls?.field_type, '------controls?.field_type');
   switch (controls?.field_type) {
     case 'radio':
       inputElement = (
