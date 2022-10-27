@@ -12,11 +12,13 @@ export const DynamicFormValidation = (
     if (!behalf_of || behalf_of === '')
        newErrors.behalf_of = 'Behalf of is required';
    }
-  
+   
+   
    let formFields = form[""];
+   console.log('FORM FIELDS:>>>>>>>>>>>>>>>>>', formFields);
    let emptyFields = [];
    for(let key of Object.keys(formFields)) {
-    if(formFields[key] === null || formFields[key] === "null") {
+    if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
       emptyFields = [...emptyFields, key];
     }
    }
@@ -31,6 +33,7 @@ export const DynamicFormValidation = (
       }
   });
 
+  console.log('NEW ERRORS:>>>>>>>>>>>>>>', newErrors);
   return newErrors;
 };
 

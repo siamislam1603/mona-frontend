@@ -27,6 +27,7 @@ const InputFields = (props) => {
         <Radio
           {...controls}
           field_data={props?.field_data}
+          setFieldData={props.setFieldData}
           diff_index={props?.diff_index}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
