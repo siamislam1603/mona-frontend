@@ -109,6 +109,10 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
           [section]: { ...form[`${section}`], [field]: value },
         });
       } else {
+        console.log('Selecting radio');
+        console.log('SECTION>>>>>>>>', section);
+        console.log('FORM>>>>>>>', form);
+        console.log('FIELD>>>>>>>', field);
         setForm({
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
@@ -322,8 +326,6 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
-        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors).length);
-        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors));
         document.getElementById(Object.keys(newErrors)[0]).focus();
       } else {
         var myHeaders = new Headers();
@@ -408,8 +410,6 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       })
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
-
-  selectedUserValue && console.log('Selected User Value:', selectedUserValue);
   return (
     <>
       <div id="main">
@@ -642,6 +642,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                     signature_flag={signatureAccessFlag}
                                     diff_index={inner_index}
                                     field_data={fieldData}
+                                    setFieldData={setFieldData}
                                     error={errors}
                                     errorFocus={errorFocus}
                                     onChange={(key, value, type) => {
@@ -685,6 +686,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 signature_flag={signatureAccessFlag}
                                 diff_index={inner_index}
                                 field_data={fieldData}
+                                setFieldData={setFieldData}
                                 error={errors}
                                 errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
@@ -712,6 +714,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
                               field_data={fieldData}
+                              setFieldData={setFieldData}
                               diff_index={inner_index}
                               error={errors}
                               errorFocus={errorFocus}
