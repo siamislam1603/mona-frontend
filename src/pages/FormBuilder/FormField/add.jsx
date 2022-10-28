@@ -766,9 +766,9 @@ const AddFormField = (props) => {
                                   <Form.Control
                                     type="text"
                                     name="field_label"
-                                    disabled={
-                                      updateFlag && newFieldAddIndex !== index
-                                    }
+                                    // disabled={
+                                    //   updateFlag && newFieldAddIndex !== index
+                                    // }
                                     id={'field_label' + index}
                                     maxLength={255}
                                     value={form[index]?.field_label}
@@ -801,9 +801,9 @@ const AddFormField = (props) => {
                                         index
                                       );
                                     }}
-                                    disabled={
-                                      updateFlag && newFieldAddIndex !== index
-                                    }
+                                    // disabled={
+                                    //   updateFlag && newFieldAddIndex !== index
+                                    // }
                                   >
                                     <option
                                       value="text_headings"
@@ -936,12 +936,12 @@ const AddFormField = (props) => {
                                             <Form.Control
                                               type="text"
                                               name="option"
-                                              disabled={
-                                                updateFlag &&
-                                                newFieldAddIndex !== index &&
-                                                inner_index !==
-                                                newOptionAddIndex
-                                              }
+                                              // disabled={
+                                              //   updateFlag &&
+                                              //   newFieldAddIndex !== index &&
+                                              //   inner_index !==
+                                              //   newOptionAddIndex
+                                              // }
                                               id={
                                                 'option' + index + inner_index
                                               }
@@ -1131,12 +1131,12 @@ const AddFormField = (props) => {
                                           index
                                         );
                                       }}
-                                      disabled={
-                                        form[index]?.field_type ===
-                                        'headings' ||
-                                        form[index]?.field_type ===
-                                        'text_headings'
-                                      }
+                                      // disabled={
+                                      //   form[index]?.field_type ===
+                                      //   'headings' ||
+                                      //   form[index]?.field_type ===
+                                      //   'text_headings'
+                                      // }
                                     />
                                   </div>
                                 </div>
@@ -1192,7 +1192,6 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
-                          setUpdateFlag(true);
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1229,7 +1228,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
-                                      disabled={updateFlag}
+                                      // disabled={updateFlag}
                                       id={'field_label' + index}
                                       name="field_label"
                                       value={
@@ -1252,7 +1251,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
-                                        disabled={updateFlag}
+                                        // disabled={updateFlag}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
@@ -1405,11 +1404,11 @@ const AddFormField = (props) => {
                                                 <Form.Control
                                                   type="text"
                                                   name="option"
-                                                  disabled={
-                                                    updateFlag &&
-                                                    newConditionOptionAddIndex !==
-                                                    inner_index
-                                                  }
+                                                  // disabled={
+                                                  //   updateFlag &&
+                                                  //   newConditionOptionAddIndex !==
+                                                  //   inner_index
+                                                  // }
                                                   value={
                                                     inner_item[
                                                     Object.keys(inner_item)[0]
@@ -1513,9 +1512,10 @@ const AddFormField = (props) => {
                             onClick={() => {
                               setConditionFlag(false);
                               // getFormField();
+                              setUpdateFlag(false);
                             }}
                           >
-                            Back
+                            Remove Condtion
                           </Button>
                           <Button
                             className="done"
@@ -2218,7 +2218,7 @@ const AddFormField = (props) => {
                                     backgroundColor: '#455C58',
                                     width: '80px',
                                   }}
-                                  disabled={sectionTitle === '' ? true : false}
+                                  // disabled={sectionTitle === '' ? true : false}
                                   onClick={() => {
                                     counter++;
                                     setCount(counter);

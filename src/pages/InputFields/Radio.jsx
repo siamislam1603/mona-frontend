@@ -20,6 +20,23 @@ const Radio = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if(typeof controls?.field_data !== "undefined" && Object.keys(controls?.field_data).length > 0) {
+      setOptionValue(prevState => ({
+        [controls?.field_name]: controls?.field_data?.fields[`${controls?.field_name}`]
+      }));
+    }
+  }, [controls?.field_name])
+
+  useEffect(() => {
+    if(typeof props.setFieldData !== "undefined") {
+      props?.setFieldData(prevState => ({
+        ...prevState,
+        fields: {...controls.field_data.fields, [controls?.field_name]: optionValue[`${controls.field_name}`]}
+      }))
+    }
+  }, [optionValue]);
+
   return (
     <>
       <Col sm={6}>
@@ -31,29 +48,33 @@ const Radio = (props) => {
             {eval(controls?.option)?.map((item, index) => {
               return (
                 <>
-                  {console.log('ITEM:>>>>>>>>>>>>>>>', item)}
                   {console.log('CONTROLS:>>>>>>>>>>>>>>>', controls)}
-                  {typeof controls.field_data !== "undefined" && (Object.keys(controls.field_data).length !== 0 && Object.keys(item)[0] === "yes") ? (
+                  {Object.keys(item)[0] === Object.keys(JSON.parse(controls?.option)[0])[0] ? (
                     <div className="new-form-radio-box">
                       <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
-
                         <input
                           type="radio"
                           key={index}
                           value={Object.keys(item)[0]}
                           disabled={props.isDisable ? props.isDisable : false}
-                          name={controls.field_name}
+                          name={Object.keys(JSON.parse(controls.option)[0])[0]}
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
+                            console.log('NAME:', e.target.name);
+                            console.log('VALUE:', e.target.value);
                             props.onChange(
+                              controls?.field_name,
                               e.target.name,
                               e.target.value,
                               'radio'
                             );
-                            setOptionValue(e.target.value);
+                            setOptionValue(prevState => ({
+                              [controls?.field_name]: e.target.value
+                            }));
                             setIndex(index);
                           }}
-                          checked={typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0 && controls?.field_data?.fields[`${controls?.field_name}`] === 'yes'}
+                          checked={optionValue[`${controls?.field_name}`] === Object.keys(JSON.parse(controls?.option)[0])[0]}
+                          // typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0 && 
                           // checked={
                           //   props?.field_data &&
                           //   props?.field_data?.fields[
@@ -76,18 +97,21 @@ const Radio = (props) => {
                             value={Object.keys(item)[0]}
                             key={index}
                             disabled={props.isDisable ? props.isDisable : false}
-                            name={controls.field_name}
+                            name={Object.keys(JSON.parse(controls.option)[1])[0]}
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {
                               props.onChange(
+                                controls?.field_name,
                                 e.target.name,
                                 e.target.value,
                                 'radio'
                               );
-                              setOptionValue(e.target.value);
+                              setOptionValue(prevState => ({
+                                [controls?.field_name]: e.target.value
+                              }));
                               setIndex(index);
                             }}
-                            checked={typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0 && controls?.field_data?.fields[`${controls?.field_name}`] === 'no'}
+                            checked={optionValue[`${controls?.field_name}`] === Object.keys(JSON.parse(controls?.option)[1])[0]}
                             // checked={
                             //   props.field_data &&
                             //   props.field_data.fields[
