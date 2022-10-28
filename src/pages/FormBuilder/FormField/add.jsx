@@ -1228,7 +1228,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
-                                      // disabled={updateFlag}
+                                      disabled={updateFlag}
                                       id={'field_label' + index}
                                       name="field_label"
                                       value={
@@ -1251,7 +1251,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
-                                        // disabled={updateFlag}
+                                        disabled={updateFlag}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
