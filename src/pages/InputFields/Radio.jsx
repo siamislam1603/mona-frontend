@@ -48,7 +48,6 @@ const Radio = (props) => {
             {eval(controls?.option)?.map((item, index) => {
               return (
                 <>
-                  {console.log('CONTROLS:>>>>>>>>>>>>>>>', controls)}
                   {Object.keys(item)[0] === Object.keys(JSON.parse(controls?.option)[0])[0] ? (
                     <div className="new-form-radio-box">
                       <label htmlFor={Object.keys(item)[0] + props?.diff_index}>

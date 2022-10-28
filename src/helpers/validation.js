@@ -13,9 +13,19 @@ export const DynamicFormValidation = (
        newErrors.behalf_of = 'Behalf of is required';
    }
    
-   
-   let formFields = form[""];
-   console.log('FORM FIELDS:>>>>>>>>>>>>>>>>>', formFields);
+   console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
+   console.log('DATA:>>>>>>>>>>>>>>>>>', data);
+
+   let dataTemp = {"": []};
+   for(let values of Object.values(data)) {
+    dataTemp = {"": [...dataTemp[""], ...values]}
+   }
+
+   let formFields = {};
+   for(let value of Object.values(form)) {
+    formFields = {...formFields, ...value}
+   }
+
    let emptyFields = [];
    for(let key of Object.keys(formFields)) {
     if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
@@ -23,7 +33,7 @@ export const DynamicFormValidation = (
     }
    }
 
-  let errorFields = emptyFields.map(d => data[""].filter(t => t.field_name === d)[0]);
+  let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
   errorFields.map((item) => {
     if (item.required && item.type !== "headings" && item.type !== "text_headings") {
         newErrors[
@@ -33,7 +43,6 @@ export const DynamicFormValidation = (
       }
   });
 
-  console.log('NEW ERRORS:>>>>>>>>>>>>>>', newErrors);
   return newErrors;
 };
 
