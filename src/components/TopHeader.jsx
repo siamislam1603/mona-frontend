@@ -790,7 +790,7 @@ const TopHeader = ({
                         id="user-pic"
                         src={
                           localStorage.getItem('profile_photo') === 'null'
-                            ? '../img/upload.jpg'
+                            ? '/img/upload.jpg'
                             : localStorage.getItem('profile_photo')
                         }
                       />
