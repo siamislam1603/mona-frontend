@@ -1,19 +1,29 @@
 import { isEmpty } from 'lodash';
 import moment from 'moment';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 
 const Input = (props) => {
+  let [dateValue, setDateValue] = useState(null);
   let { ...controls } = props;
+  console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
   let value;
   if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+    let v;
+    if(typeof props?.field_data?.fields[`${controls?.field_name}`] == 'undefined') {
+      v = dateValue;
+      console.log('V1>>>>>>>>>>>', v);
+    } else {
+      v = props?.field_data?.fields[`${controls?.field_name}`];
+      console.log('V2>>>>>>>>>>>', v);
+    }
+
     if (controls?.field_type === 'date') {
       value = moment(
-        props?.field_data?.fields[`${controls?.field_name}`],
-        'DD-MM-YYYY'
+        v
       ).format('YYYY-MM-DD');
     } else {
       value = props?.field_data?.fields[`${controls?.field_name}`];
@@ -35,6 +45,9 @@ const Input = (props) => {
           maxLength={255}
           disabled={props.isDisable ? props.isDisable : false}
           onChange={(e) => {
+            if(controls?.field_type === 'date') {
+              setDateValue(e.target.value);
+            }
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
           value={value}

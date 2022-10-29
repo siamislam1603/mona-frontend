@@ -72,6 +72,7 @@ const DynamicForm = () => {
     }
     if (location?.state?.id) {
       if (type === 'date') {
+        console.log('DATE FIELD!');
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
           ...fieldData,
@@ -410,6 +411,8 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       })
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
+
+  targetUser && console.log('TARGET USER:', targetUser);
   return (
     <>
       <div id="main">
@@ -489,6 +492,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item.id === parseInt(childId) ? (
@@ -498,7 +502,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
@@ -509,7 +513,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
@@ -542,6 +546,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
@@ -551,7 +556,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             key={index}
                                           >
                                             {item?.child
-                                              ? item?.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         ) : (
@@ -562,7 +567,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             key={index}
                                           >
                                             {item?.child
-                                              ? item?.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         )}
@@ -590,6 +595,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {(parseInt(
@@ -606,7 +612,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}

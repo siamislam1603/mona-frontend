@@ -124,7 +124,8 @@ function Setting(props) {
               ) {
                 selectedChild.push({
                   id: item.id,
-                  fullname: item.fullname,
+                  name: item.fullname,
+                  family_name: item.family_name,
                 });
                 selectedChildId += item.id + ',';
               }
@@ -285,7 +286,8 @@ function Setting(props) {
     selectedChildId += selectedItem.id + ',';
     selectedChild.push({
       id: selectedItem.id,
-      fullname: selectedItem.fullname,
+      name: selectedItem.fullname,
+      family_name: selectedItem.family_name,
     });
   }
   function onTargetRemoveChild(selectedList, removedItem) {
@@ -428,7 +430,12 @@ function Setting(props) {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        setChild(result?.children);
+        setChild(result?.children.map(d => ({
+          id: d.id,
+          name: d.fullname,
+          family_name: d.family_name,
+          namemail: `${d.fullname} ${d.family_name}`
+        })));
         getParticularFormData(userData, result?.children);
       });
   };
@@ -1169,7 +1176,7 @@ function Setting(props) {
                             </Form.Label>
                             <div className="select-with-plus">
                               <Multiselect
-                                displayValue="fullname"
+                                displayValue="namemail"
                                 className="multiselect-box default-arrow-select"
                                 selectedValues={selectedChild}
                                 onRemove={onTargetRemoveChild}
