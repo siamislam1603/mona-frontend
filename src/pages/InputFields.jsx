@@ -20,13 +20,14 @@ const InputFields = (props) => {
   }
   let { field_data: { fields = {} } = {} } = controls;
   delete fields.undefined;
-  console.log(controls?.field_type, '------controls?.field_type');
+  // console.log(controls?.field_type, '------controls?.field_type');
   switch (controls?.field_type) {
     case 'radio':
       inputElement = (
         <Radio
           {...controls}
           field_data={props?.field_data}
+          setFieldData={props.setFieldData}
           diff_index={props?.diff_index}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}

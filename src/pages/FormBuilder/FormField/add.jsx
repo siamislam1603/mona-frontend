@@ -118,36 +118,40 @@ const AddFormField = (props) => {
       })
       .catch((error) => console.log('error', error));
   };
-  const setCheckBoxField = (name, value, checked, index) => {
+  const setCheckBoxField = (form, name, value, checked, index) => {
+    console.log('NAME>>>>>>>>>>>>>>', name);
+    console.log('VALUE>>>>>>>>>>>>>>', value);
+    console.log('CHECKED>>>>>>>>>>>>>>', checked);
+    console.log('INDEX>>>>>>>>>>>>>>', index);
+    console.log('FORM>>>>>>>>>>>>>>', form);
     let tempArr = [...form];
     let tempObj = tempArr[index];
-
-    console.log(tempObj, '----------------');
+    console.log('TEMP OBJ>>>>>>>>>>>>>>>>', tempObj);
 
     let obj = selectedCheckBox;
     console.log(selectedCheckBox, '-=-=-===');
 
     if (checked) {
-      if (tempObj[name]) {
+      if (tempObj[`${name}`]) {
         tempObj[name] =
-          selectedCheckBox[tempObj.section_name]?.join(',') + ',' + value + ',';
+          selectedCheckBox[tempObj?.section_name]?.join(',') + ',' + value + ',';
         obj[tempObj.section_name] = [
           ...selectedCheckBox[tempObj.section_name],
-          ...tempObj[name]?.split(',')?.filter((item) => item != ''),
-        ].filter((data) => data != '');
+          ...tempObj[name]?.split(',')?.filter((item) => item !== ''),
+        ].filter((data) => data !== '');
         setSelectedCheckBox(obj);
       } else {
         tempObj[name] =
-          selectedCheckBox[tempObj.section_name]?.join(',') + ',' + value + ',';
+          selectedCheckBox[tempObj?.section_name]?.join(',') + ',' + value + ',';
         obj[tempObj.section_name] = [
-          ...selectedCheckBox[tempObj.section_name],
-          ...tempObj[name]?.split(',')?.filter((item) => item != ''),
-        ].filter((data) => data != '');
+          ...selectedCheckBox[tempObj?.section_name.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join("_")],
+          ...tempObj[name]?.split(',')?.filter((item) => item !== ''),
+        ].filter((data) => data !== '');
         setSelectedCheckBox(obj);
       }
     } else {
       tempObj[name] = (
-        selectedCheckBox[tempObj.section_name]?.join(',') + ','
+        selectedCheckBox[tempObj?.section_name]?.join(',') + ','
       )?.replace(value + ',', '');
       obj[tempObj.section_name] = selectedCheckBox[tempObj.section_name].filter(
         (item) => item != value
@@ -1192,7 +1196,6 @@ const AddFormField = (props) => {
                         show={conditionFlag}
                         onHide={() => {
                           setConditionFlag(false);
-                          setUpdateFlag(true);
                         }}
                         size="lg"
                         aria-labelledby="contained-modal-title-vcenter"
@@ -1513,9 +1516,10 @@ const AddFormField = (props) => {
                             onClick={() => {
                               setConditionFlag(false);
                               // getFormField();
+                              setUpdateFlag(false);
                             }}
                           >
-                            Back
+                            Remove Condtion
                           </Button>
                           <Button
                             className="done"
@@ -1719,6 +1723,7 @@ const AddFormField = (props) => {
                                                 Fill access user:
                                               </Form.Label>
                                               <div className="checkbox-card">
+                                                {console.log('SELECTED CHECKBOX:', selectedCheckBox)}
                                                 <div className="modal-two-check user-roles-box">
                                                   <label className="container">
                                                     Franchisor Admin
@@ -1741,7 +1746,9 @@ const AddFormField = (props) => {
                                                         // )
                                                       }
                                                       onChange={(e) => {
+                                                        console.log('E>>>>>>>>>>>', e);
                                                         setCheckBoxField(
+                                                          form,
                                                           e.target.name,
                                                           e.target.value,
                                                           e.target.checked,
@@ -1773,6 +1780,7 @@ const AddFormField = (props) => {
                                                       }
                                                       onChange={(e) => {
                                                         setCheckBoxField(
+                                                          form,
                                                           e.target.name,
                                                           e.target.value,
                                                           e.target.checked,
@@ -1804,6 +1812,7 @@ const AddFormField = (props) => {
                                                       }
                                                       onChange={(e) => {
                                                         setCheckBoxField(
+                                                          form,
                                                           e.target.name,
                                                           e.target.value,
                                                           e.target.checked,
@@ -1833,6 +1842,7 @@ const AddFormField = (props) => {
                                                       }
                                                       onChange={(e) => {
                                                         setCheckBoxField(
+                                                          form,
                                                           e.target.name,
                                                           e.target.value,
                                                           e.target.checked,
@@ -1862,6 +1872,7 @@ const AddFormField = (props) => {
                                                       }
                                                       onChange={(e) => {
                                                         setCheckBoxField(
+                                                          form,
                                                           e.target.name,
                                                           e.target.value,
                                                           e.target.checked,
@@ -1923,6 +1934,7 @@ const AddFormField = (props) => {
                                                         )}
                                                         onChange={(e) => {
                                                           setCheckBoxField(
+                                                            form,
                                                             e.target.name,
                                                             e.target.value,
                                                             e.target.checked,
@@ -1945,6 +1957,7 @@ const AddFormField = (props) => {
                                                         )}
                                                         onChange={(e) => {
                                                           setCheckBoxField(
+                                                            form,
                                                             e.target.name,
                                                             e.target.value,
                                                             e.target.checked,
@@ -1967,6 +1980,7 @@ const AddFormField = (props) => {
                                                         )}
                                                         onChange={(e) => {
                                                           setCheckBoxField(
+                                                            form,
                                                             e.target.name,
                                                             e.target.value,
                                                             e.target.checked,
@@ -1989,6 +2003,7 @@ const AddFormField = (props) => {
                                                         )}
                                                         onChange={(e) => {
                                                           setCheckBoxField(
+                                                            form,
                                                             e.target.name,
                                                             e.target.value,
                                                             e.target.checked,
@@ -2011,6 +2026,7 @@ const AddFormField = (props) => {
                                                         )}
                                                         onChange={(e) => {
                                                           setCheckBoxField(
+                                                            form,
                                                             e.target.name,
                                                             e.target.value,
                                                             e.target.checked,
