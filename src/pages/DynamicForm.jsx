@@ -106,10 +106,6 @@ const DynamicForm = () => {
           [section]: { ...form[`${section}`], [field]: value },
         });
       } else {
-        console.log('Selecting radio');
-        console.log('SECTION>>>>>>>>', section);
-        console.log('FORM>>>>>>>', form);
-        console.log('FIELD>>>>>>>', field);
         setForm({
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
@@ -322,7 +318,7 @@ const DynamicForm = () => {
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
-        document.getElementById(Object.keys(newErrors)[0]).focus();
+        document.getElementById(Object.keys(newErrors)[0])?.focus();
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
@@ -407,7 +403,7 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
-  targetUser && console.log('TARGET USER:', targetUser);
+  // targetUser && console.log('TARGET USER:', targetUser);
   return (
     <>
       <div id="main">
@@ -541,7 +537,7 @@ const DynamicForm = () => {
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    console.log('ITEM>>>>>>>>>>>>', item);
+                                    // console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
@@ -590,7 +586,7 @@ const DynamicForm = () => {
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    console.log('ITEM>>>>>>>>>>>>>', item);
+                                    // console.log('ITEM>>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {(parseInt(
