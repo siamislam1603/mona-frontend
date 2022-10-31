@@ -4,34 +4,26 @@ import { useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 
 const Input = (props) => {
-  let [dateValue, setDateValue] = useState(null);
+  // let [dateValue, setDateValue] = useState(null);
   let { ...controls } = props;
-  const [data, setData] = useState('');
+  const [dataValue, setDataValue] = useState('');
 
-  // console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
+  console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
   
   useEffect(() => {
     let value;
-  
-    if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-      let v;
-      if(typeof props?.field_data?.fields[`${controls?.field_name}`] == 'undefined') {
-        v = dateValue;
-        // console.log('V1>>>>>>>>>>>', v);
-      } else {
-        v = props?.field_data?.fields[`${controls?.field_name}`];
-        // console.log('Value fetched from db>>>>>>>>>>>', v);
-      }
 
+    if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+      console.log('INSIDE FUNCTION');
       if (controls?.field_type === 'date') {
-        value = moment(v, "YYYY-MM-DD").format('YYYY-MM-DD')
-        setData(value);
+        value = moment(props?.field_data?.fields[`${controls?.field_name}`], "YYYY-MM-DD").format('YYYY-MM-DD')
+        setDataValue(value);
       } else {
         value = props?.field_data?.fields[`${controls?.field_name}`];
-        setData(value);
+        setDataValue(value);
       }
     }
   }, []);
@@ -53,12 +45,15 @@ const Input = (props) => {
           maxLength={255}
           disabled={props.isDisable ? props.isDisable : false}
           onChange={(e) => {
-            if(controls?.field_type === 'date') {
-              setDateValue(e.target.value);
+            if (controls?.field_type === 'date') {
+              setDataValue(moment(e.target.value, "YYYY-MM-DD").format('YYYY-MM-DD'));
+            } else {
+              setDataValue(e.target.value);
             }
+
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
-          value={data}
+          value={dataValue}
           isInvalid={!!controls.error[controls?.field_name]}
         />
         {controls?.field_type === 'text' && (

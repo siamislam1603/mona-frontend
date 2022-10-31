@@ -35,6 +35,7 @@ const TextArea = (props) => {
           value={value}
           onChange={(e) => {
             e.preventDefault();
+            console.log('VALUE OF TEXT AREA:', e.target.value);
             props.onChange(e.target.name, e.target.value, 'textarea');
           }}
           isInvalid={!!controls.error[controls.field_name]}
