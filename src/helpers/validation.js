@@ -10,54 +10,42 @@ export const DynamicFormValidation = (
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
-      newErrors.behalf_of = 'Behalf of is required';
-  }
+       newErrors.behalf_of = 'Behalf of is required';
+   }
+   
+   console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
+   console.log('DATA:>>>>>>>>>>>>>>>>>', data);
 
-  let formFields = form[''];
-  let errorFields = [];
-  for (let key of Object.keys(data)) {
-    let temp = data[key].map((d) => {
-      if (
-        d?.form_field_permissions[0]?.fill_access_users
-          ?.join(',')
-          .includes(
-            localStorage.getItem('user_role') == 'guardian'
-              ? 'parent'
-              : localStorage.getItem('user_role')
-          )
-      ) {
-        if (!d.field_name.includes('signature')) {
-          return {
-            field_type: d.field_type,
-            field_name: d.field_name,
-            field_label: d.field_label,
-            required: d.required,
-          };
-        }
-      }
-    });
+   let dataTemp = {"": []};
+   for(let values of Object.values(data)) {
+    dataTemp = {"": [...dataTemp[""], ...values]}
+   }
 
-    errorFields = [...errorFields, ...temp];
-  }
+   let formFields = {};
+   for(let value of Object.values(form)) {
+    formFields = {...formFields, ...value}
+   }
 
-  // console.log('ERROR FIELDS:', errorFields);
-
-  errorFields.map((item) => {
-    if (
-      item?.required &&
-      item?.type !== 'headings' &&
-      item?.type !== 'text_headings'
-    ) {
-      if (Object.keys(formFields).length !== 0) {
-        if (!formFields[item.field_name]) {
-          newErrors[`${item.field_name}`] = `${item.field_label} is required`;
-        }
-      }
+   let emptyFields = [];
+   for(let key of Object.keys(formFields)) {
+    if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
+      emptyFields = [...emptyFields, key];
     }
+   }
+
+  let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
+  errorFields.map((item) => {
+    if (item.required && item.type !== "headings" && item.type !== "text_headings") {
+        newErrors[
+          `${item.field_name}`
+        ] = `${item.field_label} is required`;
+        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+      }
   });
 
   return newErrors;
 };
+
 export const createCategoryValidation = (form) => {
   let newErrors = {};
   let { category_name, order } = form;

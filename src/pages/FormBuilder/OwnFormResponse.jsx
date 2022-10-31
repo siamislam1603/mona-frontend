@@ -33,6 +33,7 @@ function OwnFormResponse(props) {
   const token = localStorage.getItem('token');
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
+  const [indexToHide, setIndexToHide] = useState(-1);
   const [Index, setIndex] = useState(0);
   const [hideFlag, setHideFlag] = useState(false);
   const [dateFilter, setDateFilter] = useState({
@@ -56,6 +57,10 @@ function OwnFormResponse(props) {
 
   const trim = (e, index) => {
     e.preventDefault();
+
+
+
+    console.log("vvvvvvvvvvvvvvvvvvvvvvvv",indexToHide)
     var myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -109,17 +114,24 @@ function OwnFormResponse(props) {
       .then((response) => response.json())
       .then((result) => {
         if (result) {
+          console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
           setfullLoaderStatus(false);
         }
         if (result?.result.length > 0) {
           result?.result.map((item, index) => {
+            // if(item['signature_button'] === true) {
+              
+            // }
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
+              let parsedJSON = JSON.parse(inner_item.fields);
+
               Object.keys(JSON.parse(inner_item.fields)).map((field_item) => {
-                if (field_item === 'signature') {
+                if (field_item === 'signature_1' && parsedJSON[field_item] !== null) {
                   item['signature_button'] = false;
                 }
+                
               });
             });
             if (result?.result?.length - 1 === index) {
@@ -465,7 +477,10 @@ function OwnFormResponse(props) {
                               </div>
                             </Accordion.Header>
                             <Accordion.Body>
+                              {console.log('RESPONSE DATA:', responseData)}
                               {responseData[index]?.map((item, index) => {
+
+                                console.log("index index index index ", index)
                                 return (
                                   <div
                                     key={index}
@@ -606,11 +621,17 @@ function OwnFormResponse(props) {
                                                 '.jpeg'
                                               ) ? (
                                                 <>
+                                                  {console.log('INNER INDEX:', inner_index)}
+                                                  {console.log('ITEM FIELDS:', item.fields)}
+                                                  {console.log('>>>>><<<<<', Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index])}
                                                   <img
                                                     style={{
                                                       height: '40px',
                                                       width: '51px',
                                                     }}
+                                                    alt="img"
                                                     src={`${
                                                       Object.values(
                                                         JSON.parse(item.fields)
@@ -733,11 +754,12 @@ function OwnFormResponse(props) {
                               })}
                               {location?.state?.signature_access &&
                                 item.signature_button &&
-                                !hideFlag && (
+                                index !== indexToHide  && (
                                   <Button
                                     onClick={() => {
                                       setSignatureModel(true);
                                       setIndex(index);
+                                      setIndexToHide(index);
                                     }}
                                   >
                                     Add Signature

@@ -72,6 +72,7 @@ const DynamicForm = () => {
     }
     if (location?.state?.id) {
       if (type === 'date') {
+        console.log('DATE FIELD!');
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
           ...fieldData,
@@ -105,6 +106,10 @@ const DynamicForm = () => {
           [section]: { ...form[`${section}`], [field]: value },
         });
       } else {
+        console.log('Selecting radio');
+        console.log('SECTION>>>>>>>>', section);
+        console.log('FORM>>>>>>>', form);
+        console.log('FIELD>>>>>>>', field);
         setForm({
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
@@ -317,8 +322,6 @@ const DynamicForm = () => {
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
-        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors).length);
-        console.log('ERROR LENGTH>>>>>>>>>>>>>', Object.keys(newErrors));
         document.getElementById(Object.keys(newErrors)[0]).focus();
       } else {
         var myHeaders = new Headers();
@@ -394,9 +397,17 @@ const DynamicForm = () => {
     }
   };
 
-  selectedUserValue && console.log('SELECTED USER VALUE:', selectedUserValue);
-  behalfOf && console.log('Behalf Of:', behalfOf);
-  targetUser && console.log('Target User:', targetUser);
+  useEffect(() => {
+    if(localStorage.getItem('user_role') === "guardian") {
+      let userObj = targetUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('selectedChild')));
+      setSelectedUserValue({
+        id: userObj[0]?.id,
+        role: "child"
+      })
+    }
+  }, [targetUser, localStorage.getItem('selectedChild')]);
+
+  targetUser && console.log('TARGET USER:', targetUser);
   return (
     <>
       <div id="main">
@@ -476,16 +487,17 @@ const DynamicForm = () => {
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item.id === parseInt(childId) ? (
                                           <option
-                                            value={item.id}
+                                            value={`${item.id} ${item.role || "child"}`} 
                                             selected
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         ) : (
@@ -496,7 +508,7 @@ const DynamicForm = () => {
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
@@ -529,16 +541,17 @@ const DynamicForm = () => {
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
                                           <option
-                                            value={item.id}
+                                            value={`${item.id} ${item.role || "child"}`} 
                                             selected
                                             key={index}
                                           >
                                             {item?.child
-                                              ? item?.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         ) : (
@@ -549,7 +562,7 @@ const DynamicForm = () => {
                                             key={index}
                                           >
                                             {item?.child
-                                              ? item?.fullname
+                                              ? `${item?.fullname} ${item.family_name}`
                                               : `${item?.fullname} (${item?.email})`}
                                           </option>
                                         )}
@@ -577,6 +590,7 @@ const DynamicForm = () => {
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
+                                    console.log('ITEM>>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {(parseInt(
@@ -593,7 +607,7 @@ const DynamicForm = () => {
                                             key={index}
                                           >
                                             {item.child
-                                              ? item.fullname
+                                              ? `${item.fullname} ${item.family_name}`
                                               : `${item.fullname} (${item.email})`}
                                           </option>
                                         )}
@@ -629,6 +643,7 @@ const DynamicForm = () => {
                                     signature_flag={signatureAccessFlag}
                                     diff_index={inner_index}
                                     field_data={fieldData}
+                                    setFieldData={setFieldData}
                                     error={errors}
                                     errorFocus={errorFocus}
                                     onChange={(key, value, type) => {
@@ -672,6 +687,7 @@ const DynamicForm = () => {
                                 signature_flag={signatureAccessFlag}
                                 diff_index={inner_index}
                                 field_data={fieldData}
+                                setFieldData={setFieldData}
                                 error={errors}
                                 errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
@@ -699,6 +715,7 @@ const DynamicForm = () => {
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
                               field_data={fieldData}
+                              setFieldData={setFieldData}
                               diff_index={inner_index}
                               error={errors}
                               errorFocus={errorFocus}
