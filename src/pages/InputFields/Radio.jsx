@@ -2,11 +2,14 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
+
 const Radio = (props) => {
   const { ...controls } = props;
   const [optionValue, setOptionValue] = useState('');
+  const [radioValue, setRadioValue] = useState()
   const [Index, setIndex] = useState(0);
   const sigPad = useRef({});
+
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
@@ -21,6 +24,17 @@ const Radio = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
+  let value;
+  if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+    value =
+      props?.field_data &&
+      props?.field_data.fields[
+      `${Object.values(eval(controls?.option)[Index])[0]
+        ?.field_name
+      }`
+      ]
+  }
 
   return (
     <>
@@ -46,7 +60,6 @@ const Radio = (props) => {
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
                             setOptionValue(e.target.value);
-                            console.log(e.target.value)
                             props.onChange(
                               e.target.name,
                               e.target.value,
@@ -54,16 +67,16 @@ const Radio = (props) => {
                             );
                             setIndex(index);
                           }}
-                          // checked={optionValue}
                           checked={
                             (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) ?
                               props?.field_data &&
                               props?.field_data?.fields[
                               `${controls?.field_name}`
-                              ] === Object.keys(item)[0] : props?.field_data &&
-                              props?.field_data?.fields[
-                              `${controls?.field_name}`
-                              ] === Object.keys(item)[0]
+                              ] === Object.keys(item)[0] : optionValue
+                            // : props?.field_data &&
+                            // props?.field_data?.fields[
+                            // `${controls?.field_name}`
+                            // ] === Object.keys(item)[0]
                           }
                         />
                         <span className="radio-round"></span>
@@ -98,9 +111,7 @@ const Radio = (props) => {
                                 props?.field_data?.fields[
                                 `${controls?.field_name}`
                                 ] === Object.keys(item)[0] : props?.field_data &&
-                                props?.field_data?.fields[
-                                `${controls?.field_name}`
-                                ] === Object.keys(item)[0]
+                                props?.field_data?.fields
                             }
                           />
                           <span className="radio-round"></span>
@@ -340,14 +351,7 @@ const Radio = (props) => {
                     onChange={(e) => {
                       props.onChange(e.target.name, e.target.value);
                     }}
-                    value={
-                      props.field_data &&
-                      props.field_data.fields[
-                      `${Object.values(eval(controls.option)[Index])[0]
-                        .field_name
-                      }`
-                      ]
-                    }
+                    value={value}
                   />
                 </Form.Group>
               </Col>

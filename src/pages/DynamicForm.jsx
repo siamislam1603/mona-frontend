@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Col, Container, Form, Row, Button } from 'react-bootstrap';
 import { BASE_URL } from '../components/App';
 import { DynamicFormValidation } from '../helpers/validation';
@@ -85,6 +85,11 @@ const DynamicForm = () => {
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
         });
+      } if (type === 'radio') {
+        setFieldData({
+          ...fieldData,
+          ['fields']: { ...fieldData[`fields`], [field]: value },
+        });
       } else {
         setFieldData({
           ...fieldData,
@@ -158,7 +163,7 @@ const DynamicForm = () => {
     let form_name = encodeURIComponent(
       location.pathname
         .split('/')
-        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+      [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
     );
 
     let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
@@ -186,7 +191,7 @@ const DynamicForm = () => {
     let form_name = encodeURIComponent(
       location.pathname
         .split('/')
-        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+      [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
     );
     fetch(
       `${BASE_URL}/field?form_name=${form_name}&franchisee_id=${localStorage.getItem(
@@ -279,6 +284,7 @@ const DynamicForm = () => {
         setfullLoaderStatus(false);
       });
   };
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (location?.state?.id) {
@@ -297,6 +303,8 @@ const DynamicForm = () => {
         }),
         redirect: 'follow',
       };
+
+
 
       fetch(`${BASE_URL}/form/form_data`, requestOptions)
         .then((response) => response.json())
@@ -335,11 +343,11 @@ const DynamicForm = () => {
                 ? !behalfOfFlag
                   ? childId
                   : behalfOf
-                  ? behalfOf
-                  : localStorage.getItem('user_id')
+                    ? behalfOf
+                    : localStorage.getItem('user_id')
                 : behalfOf
-                ? behalfOf
-                : localStorage.getItem('user_id'),
+                  ? behalfOf
+                  : localStorage.getItem('user_id'),
             selectedUserData: selectedUserValue,
             data: form,
           }),
@@ -394,7 +402,7 @@ const DynamicForm = () => {
   };
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') === "guardian") {
+    if (localStorage.getItem('user_role') === "guardian") {
       let userObj = targetUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('selectedChild')));
       setSelectedUserValue({
         id: userObj[0]?.id,
@@ -403,7 +411,6 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
-  // targetUser && console.log('TARGET USER:', targetUser);
   return (
     <>
       <div id="main">
@@ -430,10 +437,10 @@ const DynamicForm = () => {
                     <h6>
                       {location.pathname
                         .split('/')
-                        [location.pathname.split('/').length - 1].replaceAll(
-                          '%20',
-                          ' '
-                        )}{' '}
+                      [location.pathname.split('/').length - 1].replaceAll(
+                        '%20',
+                        ' '
+                      )}{' '}
                       Form
                     </h6>
                   </div>
@@ -458,7 +465,7 @@ const DynamicForm = () => {
                             <div clas Name="d-flex mt-2"></div>
                             <div className="btn-radio d-flex align-items-center">
                               {localStorage.getItem('user_role') ===
-                              'guardian' ? (
+                                'guardian' ? (
                                 <Form.Select
                                   name={'behalf_of'}
                                   id="behalf_of"
@@ -488,7 +495,7 @@ const DynamicForm = () => {
                                       <>
                                         {item.id === parseInt(childId) ? (
                                           <option
-                                            value={`${item.id} ${item.role || "child"}`} 
+                                            value={`${item.id} ${item.role || "child"}`}
                                             selected
                                             key={index}
                                           >
@@ -498,9 +505,8 @@ const DynamicForm = () => {
                                           </option>
                                         ) : (
                                           <option
-                                            value={`${item.id} ${
-                                              item.role || 'child'
-                                            }`}
+                                            value={`${item.id} ${item.role || 'child'
+                                              }`}
                                             key={index}
                                           >
                                             {item.child
@@ -542,7 +548,7 @@ const DynamicForm = () => {
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
                                           <option
-                                            value={`${item.id} ${item.role || "child"}`} 
+                                            value={`${item.id} ${item.role || "child"}`}
                                             selected
                                             key={index}
                                           >
@@ -552,9 +558,8 @@ const DynamicForm = () => {
                                           </option>
                                         ) : (
                                           <option
-                                            value={`${item.id} ${
-                                              item.role || 'child'
-                                            }`}
+                                            value={`${item.id} ${item.role || 'child'
+                                              }`}
                                             key={index}
                                           >
                                             {item?.child
@@ -593,20 +598,19 @@ const DynamicForm = () => {
                                           localStorage.getItem('franchisee_id')
                                         ) === item.franchisee_id ||
                                           localStorage.getItem('user_role') ===
-                                            'franchisor_admin' ||
+                                          'franchisor_admin' ||
                                           localStorage.getItem('user_role') ===
-                                            'educator') && (
-                                          <option
-                                            value={`${item.id} ${
-                                              item.role || 'child'
-                                            }`}
-                                            key={index}
-                                          >
-                                            {item.child
-                                              ? `${item.fullname} ${item.family_name}`
-                                              : `${item.fullname} (${item.email})`}
-                                          </option>
-                                        )}
+                                          'educator') && (
+                                            <option
+                                              value={`${item.id} ${item.role || 'child'
+                                                }`}
+                                              key={index}
+                                            >
+                                              {item.child
+                                                ? `${item.fullname} ${item.family_name}`
+                                                : `${item.fullname} (${item.email})`}
+                                            </option>
+                                          )}
                                       </>
                                     );
                                   })}
