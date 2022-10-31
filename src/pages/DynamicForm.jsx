@@ -110,10 +110,6 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
           [section]: { ...form[`${section}`], [field]: value },
         });
       } else {
-        console.log('Selecting radio');
-        console.log('SECTION>>>>>>>>', section);
-        console.log('FORM>>>>>>>', form);
-        console.log('FIELD>>>>>>>', field);
         setForm({
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
@@ -412,7 +408,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
-  targetUser && console.log('TARGET USER:', targetUser);
+  // targetUser && console.log('TARGET USER:', targetUser);
   return (
     <>
       <div id="main">
@@ -546,7 +542,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    console.log('ITEM>>>>>>>>>>>>', item);
+                                    // console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
@@ -595,7 +591,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    console.log('ITEM>>>>>>>>>>>>>', item);
+                                    // console.log('ITEM>>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {(parseInt(
