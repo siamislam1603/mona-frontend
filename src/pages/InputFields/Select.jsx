@@ -6,10 +6,11 @@ import { FullLoader } from '../../components/Loader';
 
 const Select = (props) => {
   const { ...controls } = props;
+  // console.log('Controls:', controls);
   const [dropdownValue, setDropdownValue] = useState();
 
   useEffect(() => {
-    if(typeof controls.field_data !== "undefined") {
+    if(typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0) {
       let val = controls.field_data.fields[`${controls.field_name}`];
       let availableOptions = JSON.parse(controls.option);
       let data = {};
@@ -43,7 +44,7 @@ const Select = (props) => {
             isInvalid={!!controls.error[controls.field_name]}
           >
             <option>Select {controls.label}</option>
-            {console.log(JSON.parse(controls.option))}
+            {/* {console.log(JSON.parse(controls.option))} */}
             {[...JSON.parse(controls.option)]?.map((item2, index) => {
               return (
                 <option key={index}>
