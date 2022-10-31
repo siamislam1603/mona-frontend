@@ -6,34 +6,42 @@ import { Form, Col } from 'react-bootstrap';
 const Input = (props) => {
   let [dateValue, setDateValue] = useState(null);
   let { ...controls } = props;
+  const [data, setData] = useState('');
+
   // console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
-  let value;
-  if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-    let v;
-    if(typeof props?.field_data?.fields[`${controls?.field_name}`] == 'undefined') {
-      v = dateValue;
-      // console.log('V1>>>>>>>>>>>', v);
-    } else {
-      v = props?.field_data?.fields[`${controls?.field_name}`];
-      // console.log('V2>>>>>>>>>>>', v);
-    }
+  
+  useEffect(() => {
+    let value;
+  
+    if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+      let v;
+      if(typeof props?.field_data?.fields[`${controls?.field_name}`] == 'undefined') {
+        v = dateValue;
+        // console.log('V1>>>>>>>>>>>', v);
+      } else {
+        v = props?.field_data?.fields[`${controls?.field_name}`];
+        // console.log('Value fetched from db>>>>>>>>>>>', v);
+      }
 
-    if (controls?.field_type === 'date') {
-      value = moment(
-        v
-      ).format('YYYY-MM-DD');
-    } else {
-      value = props?.field_data?.fields[`${controls?.field_name}`];
+      if (controls?.field_type === 'date') {
+        value = moment(v, "YYYY-MM-DD").format('YYYY-MM-DD')
+        setData(value);
+      } else {
+        value = props?.field_data?.fields[`${controls?.field_name}`];
+        setData(value);
+      }
     }
-  }
+  }, []);
+
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
@@ -50,7 +58,7 @@ const Input = (props) => {
             }
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
-          value={value}
+          value={data}
           isInvalid={!!controls.error[controls?.field_name]}
         />
         {controls?.field_type === 'text' && (
