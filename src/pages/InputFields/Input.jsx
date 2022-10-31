@@ -6,7 +6,7 @@ import { Form, Col } from 'react-bootstrap';
 const Input = (props) => {
   let [dateValue, setDateValue] = useState(null);
   let { ...controls } = props;
-  console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
+  // console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
@@ -15,10 +15,10 @@ const Input = (props) => {
     let v;
     if(typeof props?.field_data?.fields[`${controls?.field_name}`] == 'undefined') {
       v = dateValue;
-      console.log('V1>>>>>>>>>>>', v);
+      // console.log('V1>>>>>>>>>>>', v);
     } else {
       v = props?.field_data?.fields[`${controls?.field_name}`];
-      console.log('V2>>>>>>>>>>>', v);
+      // console.log('V2>>>>>>>>>>>', v);
     }
 
     if (controls?.field_type === 'date') {
