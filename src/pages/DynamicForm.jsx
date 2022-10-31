@@ -323,7 +323,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
-        document.getElementById(Object.keys(newErrors)[0]).focus();
+        document.getElementById(Object.keys(newErrors)[0])?.focus();
       } else {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');

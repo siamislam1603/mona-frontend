@@ -32,17 +32,19 @@ export const DynamicFormValidation = (
       emptyFields = [...emptyFields, key];
     }
    }
-
+   
   let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
+  console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
     if (item.required && item.type !== "headings" && item.type !== "text_headings") {
-        newErrors[
-          `${item.field_name}`
-        ] = `${item.field_label} is required`;
+        // newErrors[
+        //   `${item.field_name}`
+        // ] = `${item.field_label} is required`;
         newErrors[`${item.field_name}`] = `${item.field_label} is required`;
       }
   });
 
+  console.log('NEW ERRORS:', newErrors);
   return newErrors;
 };
 
