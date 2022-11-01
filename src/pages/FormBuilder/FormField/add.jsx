@@ -12,6 +12,7 @@ import Setting from '../Setting';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FullLoader } from '../../../components/Loader';
+import { cssNumber } from 'jquery';
 
 let counter = 0;
 let selectedUserRole = [];
@@ -53,14 +54,14 @@ const AddFormField = (props) => {
   const [errors, setErrors] = useState([{}]);
   const [section, setSection] = useState([]);
   const [createSectionFlag, setCreateSectionFlag] = useState(false);
-  const [updateFlag, setUpdateFlag] = useState(false);
+  const [updateFlag, setUpdateFlag] = useState({});
+  const [chosenFieldForConditionApplied, setChosenFieldForConditionApplied] = useState('');
   const [newFieldAddIndex, setNewFieldAddIndex] = useState(-1);
   const [newOptionAddIndex, setNewOptionAddIndex] = useState(-1);
   const [newConditionOptionAddIndex, setNewConditionOptionAddIndex] =
     useState(-1);
   const [selectedCheckBox, setSelectedCheckBox] = useState({});
 
-  console.log(selectedCheckBox);
 
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
@@ -118,18 +119,33 @@ const AddFormField = (props) => {
       })
       .catch((error) => console.log('error', error));
   };
+
+  const removeCondition = (field_name) => {
+    let field_data = form.filter(d => d.field_name === field_name);
+    let atIndex;
+    form.forEach((d, i) => {
+      if(d.field_name === field_name)
+        atIndex = i;
+    });
+    let remainingData = form.filter(d => d.field_name !== field_name);
+    
+    let option = field_data[0].option;
+    option.forEach((d, index) => {
+      option[index][`${Object.keys(d)}`] = `${Object.keys(d)}`
+    });
+
+    let temp_field = {...field_data[0], option: option};
+    remainingData.splice(atIndex, 0, temp_field);
+    setForm([
+      ...remainingData
+    ]);
+  }
+
   const setCheckBoxField = (form, name, value, checked, index) => {
-    console.log('NAME>>>>>>>>>>>>>>', name);
-    console.log('VALUE>>>>>>>>>>>>>>', value);
-    console.log('CHECKED>>>>>>>>>>>>>>', checked);
-    console.log('INDEX>>>>>>>>>>>>>>', index);
-    console.log('FORM>>>>>>>>>>>>>>', form);
     let tempArr = [...form];
     let tempObj = tempArr[index];
-    console.log('TEMP OBJ>>>>>>>>>>>>>>>>', tempObj);
 
     let obj = selectedCheckBox;
-    console.log(selectedCheckBox, '-=-=-===');
 
     if (checked) {
       if (tempObj[`${name}`]) {
@@ -309,10 +325,35 @@ const AddFormField = (props) => {
     )
       .then((response) => response.json())
       .then((res) => {
+        console.log('RES:>>>>>>>>>>>>', res);
+        // Fetching condition applied
+
         if (res?.result.length > 0) {
           if (location?.state?.update) {
             if (location?.state?.update === true) {
-              setUpdateFlag(true);
+              if(typeof res.result !== "undefined") {
+                let { result } = res;
+                result.forEach(item => {
+                  if(item.field_type === "radio" || item.field_type === "checkbox" || item.field_type === "dropdown_selection") {
+                    JSON.parse(item.option).forEach(d => {
+                      if(typeof Object.values(d)[0] === "object") {
+                        setUpdateFlag(prevState => ({
+                          ...prevState,
+                          [item.field_name]: true
+                        }))
+                      } else {
+                        setUpdateFlag(prevState => ({
+                          ...prevState,
+                          [item.field_name]: false
+                        }))
+                      }
+                      
+                    });
+                  }
+                })
+              } else {
+                setUpdateFlag({});
+              }
             }
           }
           let sectionData = [];
@@ -405,7 +446,26 @@ const AddFormField = (props) => {
                 if (result?.result.length > 0) {
                   if (location?.state?.update) {
                     if (location?.state?.update === true) {
-                      setUpdateFlag(true);
+                      // setUpdateFlag(true);
+                      let { result } = res;
+                      result.forEach(item => {
+                        if(item.field_type === "radio" || item.field_type === "checkbox" || item.field_type === "dropdown_selection") {
+                          JSON.parse(item.option).forEach(d => {
+                            if(typeof Object.values(d)[0] === "object") {
+                              setUpdateFlag(prevState => ({
+                                ...prevState,
+                                [item.field_name]: true
+                              }))
+                            } else {
+                              setUpdateFlag(prevState => ({
+                                ...prevState,
+                                [item.field_name]: false
+                              }))
+                            }
+                            
+                          });
+                        }
+                      })
                     }
                   }
                   let sectionData = [];
@@ -669,6 +729,9 @@ const AddFormField = (props) => {
     }
   };
 
+  console.log('UPDATED FLAG:', updateFlag);
+  console.log('CHOSE FIELD:>>>>>>', chosenFieldForConditionApplied);
+  console.log('FORM DATA>>>>>>', form);
   return (
     <>
       <div id="main">
@@ -771,7 +834,7 @@ const AddFormField = (props) => {
                                     type="text"
                                     name="field_label"
                                     disabled={
-                                      updateFlag && newFieldAddIndex !== index
+                                      updateFlag[form[index]?.field_name] && newFieldAddIndex !== index
                                     }
                                     id={'field_label' + index}
                                     maxLength={255}
@@ -806,7 +869,7 @@ const AddFormField = (props) => {
                                       );
                                     }}
                                     disabled={
-                                      updateFlag && newFieldAddIndex !== index
+                                      updateFlag[form[index]?.field_name] && newFieldAddIndex !== index
                                     }
                                   >
                                     <option
@@ -941,7 +1004,7 @@ const AddFormField = (props) => {
                                               type="text"
                                               name="option"
                                               disabled={
-                                                updateFlag &&
+                                                updateFlag[form[index]?.field_name] &&
                                                 newFieldAddIndex !== index &&
                                                 inner_index !==
                                                 newOptionAddIndex
@@ -1054,7 +1117,11 @@ const AddFormField = (props) => {
                                                   item
                                                 )[0].toString()
                                               ) {
-                                                setUpdateFlag(false);
+                                                setUpdateFlag(prevState => ({
+                                                  ...prevState,
+                                                  [form[index]?.field_name]: false
+                                                }));
+                                                setChosenFieldForConditionApplied(form[index]?.field_name);
                                               }
                                             }
                                           });
@@ -1063,7 +1130,7 @@ const AddFormField = (props) => {
                                             fillOptionCounter
                                           ) {
                                             setConditionFlag(!conditionFlag);
-
+                                            setChosenFieldForConditionApplied(form[index]?.field_name);
                                             tempOption.map((item, index) => {
                                               if (
                                                 Object.keys(item)[0] ===
@@ -1089,7 +1156,7 @@ const AddFormField = (props) => {
                                           setForm(tempArr);
                                         }}
                                       >
-                                        {updateFlag ? 'Condition Applied' : 'Apply Condition'}
+                                        {updateFlag[`${form[index]?.field_name}`] === true ? 'Condition Applied' : 'Apply Condition'}
                                       </Button>
                                       <ToastContainer />
                                     </>
@@ -1232,7 +1299,7 @@ const AddFormField = (props) => {
                                   <Col lg={6}>
                                     <Form.Control
                                       type="text"
-                                      disabled={updateFlag}
+                                      disabled={updateFlag[Object.values(item)[0]['field_label']]}
                                       id={'field_label' + index}
                                       name="field_label"
                                       value={
@@ -1240,7 +1307,7 @@ const AddFormField = (props) => {
                                       }
                                       placeholder="Some text here for the label"
                                       onChange={(e) => {
-                                        setConditionField(
+                                          setConditionField(
                                           e.target.name,
                                           e.target.value,
                                           Index,
@@ -1255,7 +1322,7 @@ const AddFormField = (props) => {
                                     <div className="text-answer-div">
                                       <Form.Select
                                         name="field_type"
-                                        disabled={updateFlag}
+                                        disabled={updateFlag[Object.values(item)[0]['field_label']]}
                                         onChange={(e) => {
                                           setConditionField(
                                             e.target.name,
@@ -1409,7 +1476,7 @@ const AddFormField = (props) => {
                                                   type="text"
                                                   name="option"
                                                   disabled={
-                                                    updateFlag &&
+                                                    updateFlag[item[Object.keys(item)[0]].field_label] &&
                                                     newConditionOptionAddIndex !==
                                                     inner_index
                                                   }
@@ -1514,9 +1581,13 @@ const AddFormField = (props) => {
                           <Button
                             className="back"
                             onClick={() => {
-                              setConditionFlag(false);
                               // getFormField();
-                              setUpdateFlag(false);
+                              removeCondition(chosenFieldForConditionApplied);
+                              setUpdateFlag(prevState => ({
+                                ...prevState,
+                                [chosenFieldForConditionApplied]: false
+                              }));
+                              setConditionFlag(false);
                             }}
                           >
                             Remove Condtion
@@ -1524,10 +1595,16 @@ const AddFormField = (props) => {
                           <Button
                             className="done"
                             onClick={() => {
-                              setUpdateFlag(true);
+                              setUpdateFlag(prevState => ({
+                                ...prevState,
+                                [chosenFieldForConditionApplied]: true
+                              }));
                               setConditionFlag(false);
                               counter++;
-                              setUpdateFlag(true);
+                              setUpdateFlag(prevState => ({
+                                ...prevState,
+                                [chosenFieldForConditionApplied]: true
+                              }));
                               setCount(counter);
                             }}
                           >
@@ -1723,7 +1800,6 @@ const AddFormField = (props) => {
                                                 Fill access user:
                                               </Form.Label>
                                               <div className="checkbox-card">
-                                                {console.log('SELECTED CHECKBOX:', selectedCheckBox)}
                                                 <div className="modal-two-check user-roles-box">
                                                   <label className="container">
                                                     Franchisor Admin
@@ -1746,7 +1822,6 @@ const AddFormField = (props) => {
                                                         // )
                                                       }
                                                       onChange={(e) => {
-                                                        console.log('E>>>>>>>>>>>', e);
                                                         setCheckBoxField(
                                                           form,
                                                           e.target.name,
@@ -2244,8 +2319,6 @@ const AddFormField = (props) => {
                                     setSectionTitle('');
                                     setCreateSectionFlag(false);
                                     let obj = selectedCheckBox;
-
-                                    console.log({ sectionTitle })
 
                                     if (sectionTitle) {
                                       obj[sectionTitle.replaceAll(' ', '_')] =

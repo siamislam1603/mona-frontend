@@ -13,9 +13,6 @@ export const DynamicFormValidation = (
     if (!behalf_of || behalf_of === '')
        newErrors.behalf_of = 'Behalf of is required';
    }
-   
-   console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
-   console.log('DATA:>>>>>>>>>>>>>>>>>', data);
 
    let dataTemp = {"": []};
    for(let values of Object.values(data)) {
@@ -26,6 +23,7 @@ export const DynamicFormValidation = (
    for(let value of Object.values(form)) {
     formFields = {...formFields, ...value}
    }
+
    
    let emptyFields = [];
    for(let key of Object.keys(formFields)) {
@@ -37,7 +35,7 @@ export const DynamicFormValidation = (
   let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
   console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
-    if (item.required && item.type !== "headings" && item.type !== "text_headings" && item.field_type !== "signature") {
+    if (item.required && item.field_type !== "headings" && item.field_type !== "instruction_text" && item.field_type !== "text_headings" && item.field_type !== "signature") {
         // newErrors[
         //   `${item.field_name}`
         // ] = `${item.field_label} is required`;

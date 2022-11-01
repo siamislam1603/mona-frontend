@@ -209,7 +209,7 @@ const DynamicForm = () => {
           window.location.href = '/form';
         }
 
-        setSignatories(res.form[0].form_permissions[0].signatories_role);
+        setSignatories(res?.form[0]?.form_permissions[0]?.signatories_role || []);
         setFormData(res.result);
         setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
