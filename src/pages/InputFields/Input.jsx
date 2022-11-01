@@ -8,7 +8,6 @@ const Input = (props) => {
   let { ...controls } = props;
   const [dataValue, setDataValue] = useState('');
 
-  console.log('CONTROLS>>>>>>>>>>>>>>>', controls);
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
@@ -17,7 +16,6 @@ const Input = (props) => {
     let value;
 
     if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-      console.log('INSIDE FUNCTION');
       if (controls?.field_type === 'date') {
         value = moment(props?.field_data?.fields[`${controls?.field_name}`], "YYYY-MM-DD").format('YYYY-MM-DD')
         setDataValue(value);
@@ -51,6 +49,7 @@ const Input = (props) => {
               setDataValue(e.target.value);
             }
 
+            console.log('e.target.value>>>>>', e.target.value);
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
           value={dataValue}
