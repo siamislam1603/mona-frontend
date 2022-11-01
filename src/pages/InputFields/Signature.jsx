@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
@@ -5,13 +6,29 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Signature = (props) => {
+  const [signature, setSignature] = useState(null);
+  const { ...controls } = props;
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-  const { ...controls } = props;
+  useEffect(() => {
+    if (
+      props !== {} &&
+      props?.field_data &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
+      setSignature(props?.field_data?.fields[controls?.field_name]);
+    }
+  }, [controls?.field_name, props?.field_data]);
   const sigPad = useRef({});
+  useEffect(() => {
+    if (signature && props?.field_data) {
+      sigPad?.current?.fromDataURL(signature);
+    }
+  }, [signature]);
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
@@ -24,6 +41,10 @@ const Signature = (props) => {
       sigPad.current.getTrimmedCanvas().toDataURL('image/png'),
       'signature'
     );
+
+    if (props?.field_data) {
+      sigPad?.current?.clear();
+    }
     toast.success('Signature added.');
   };
   return (

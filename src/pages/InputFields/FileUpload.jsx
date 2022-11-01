@@ -1,15 +1,33 @@
 import { Form, Col } from 'react-bootstrap';
 import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { isEmpty } from 'lodash';
 
 const FileUpload = (props) => {
+  const { ...controls } = props;
+  if (controls.field_data == {} || controls.field_data == undefined) {
+    delete controls?.field_data;
+  }
+  const [fileList, setFileList] = useState('');
+  const [values, setValue] = useState();
+
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-  const { ...controls } = props;
+  useEffect(() => {
+    if (fileList || props?.field_data?.fields) {
+      if (
+        props !== {} &&
+        props?.field_data !== {} &&
+        !isEmpty(props?.field_data)
+      ) {
+        setFileList(props?.field_data?.fields[`${controls?.field_name}`]);
+      }
+    }
+  }, [fileList]);
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -57,48 +75,68 @@ const FileUpload = (props) => {
       });
       let data = await res.json();
       toast.success('uploaded.');
+      setFileList(data?.url);
       return data?.url;
     }
   };
+
+  useEffect(() => {
+    if (
+      props !== {} &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
+      setValue(
+        props?.field_data &&
+          props?.field_data?.fields[`${controls?.field_name}`]
+      );
+    }
+  }, []);
+
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
-        <Form.Label>{controls.field_label}</Form.Label>
-        {props?.field_data?.fields[`${controls?.field_name}`] ? (
+        <Form.Label>{controls?.field_label}</Form.Label>
+        {props !== {} &&
+        props?.field_data !== {} &&
+        !isEmpty(props?.field_data) &&
+        props?.field_data?.fields[`${controls?.field_name}`] ? (
           <Form.Control
             type="file"
-            name={controls.field_name}
+            name={controls?.field_name}
             disabled={props.isDisable ? props.isDisable : false}
-            id={controls.field_name}
+            id={controls?.field_name}
             onChange={async (e) => {
               let file = e.target.files[0];
               await uploadFiles(file).then((url) => {
                 props.onChange(e.target.name, url, 'file');
               });
             }}
-            isInvalid={!!controls.error[controls.field_name]}
+            isInvalid={!!controls.error[controls?.field_name]}
           />
         ) : (
           <Form.Control
             type="file"
-            name={controls.field_name}
+            name={controls?.field_name}
             disabled={props.isDisable ? props.isDisable : false}
-            id={controls.field_name}
-            value={
-              props.field_data &&
-              props.field_data.fields[`${controls.field_name}`]
-            }
+            id={controls?.field_name}
+            value={values}
             onChange={async (e) => {
               let file = e.target.files[0];
               await uploadFiles(file).then((url) => {
                 props.onChange(e.target.name, url, 'file');
               });
             }}
-            isInvalid={!!controls.error[controls.field_name]}
+            isInvalid={!!controls.error[controls?.field_name]}
           />
         )}
+        {fileList && (
+          <>
+            <h5>{fileList?.split('/')[fileList?.split('/').length - 1]}</h5>
+          </>
+        )}
         <Form.Control.Feedback type="invalid">
-          {controls.error[controls.field_name]}
+          {controls.error[controls?.field_name]}
         </Form.Control.Feedback>
       </Form.Group>
     </Col>

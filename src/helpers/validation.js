@@ -11,28 +11,36 @@ export const DynamicFormValidation = (
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
-       newErrors.behalf_of = 'Behalf of is required';
-   }
+      newErrors.behalf_of = 'Behalf of is required';
+  }
 
-   let dataTemp = {"": []};
-   for(let values of Object.values(data)) {
-    dataTemp = {"": [...dataTemp[""], ...values]}
-   }
+  console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
+  console.log('DATA:>>>>>>>>>>>>>>>>>', data);
 
-   let formFields = {};
-   for(let value of Object.values(form)) {
-    formFields = {...formFields, ...value}
-   }
+  let dataTemp = { '': [] };
+  for (let values of Object.values(data)) {
+    dataTemp = { '': [...dataTemp[''], ...values] };
+  }
 
-   
-   let emptyFields = [];
-   for(let key of Object.keys(formFields)) {
-    if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
+  let formFields = {};
+  for (let value of Object.values(form)) {
+    formFields = { ...formFields, ...value };
+  }
+
+  let emptyFields = [];
+  for (let key of Object.keys(formFields)) {
+    if (
+      formFields[key] === null ||
+      formFields[key] === 'null' ||
+      formFields[key].length === 0
+    ) {
       emptyFields = [...emptyFields, key];
     }
-   }
-   
-  let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
+  }
+
+  let errorFields = emptyFields.map(
+    (d) => dataTemp[''].filter((t) => t.field_name === d)[0]
+  );
   console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
     if (item.required && item.field_type !== "headings" && item.field_type !== "instruction_text" && item.field_type !== "text_headings" && item.field_type !== "signature") {

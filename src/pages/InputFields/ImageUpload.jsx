@@ -2,14 +2,31 @@ import { useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
+import { isEmpty } from 'lodash';
 
 const ImageUpload = (props) => {
+  const { ...controls } = props;
+  const [image, setImage] = useState('');
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-  const { ...controls } = props;
+  useEffect(() => {
+    if (image || props?.field_data?.fields) {
+      if (
+        props !== {} &&
+        props?.field_data !== {} &&
+        !isEmpty(props?.field_data)
+      ) {
+        setImage(props?.field_data?.fields[`${controls?.field_name}`]);
+      }
+    }
+  }, [image]);
+
+  if (controls.field_data == {} || controls.field_data == undefined) {
+    delete controls?.field_data;
+  }
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -49,6 +66,7 @@ const ImageUpload = (props) => {
       });
       let data = await res.json();
       toast.success('uploaded.');
+      setImage(data?.url);
       return data?.url;
     }
   };
@@ -74,6 +92,11 @@ const ImageUpload = (props) => {
           }}
           isInvalid={!!controls.error[controls.field_name]}
         />
+        {image && (
+          <>
+            <img src={image} alt="image" style={{ width: '100px' }} />
+          </>
+        )}
         <Form.Control.Feedback type="invalid">
           {controls.error[controls.field_name]}
         </Form.Control.Feedback>
