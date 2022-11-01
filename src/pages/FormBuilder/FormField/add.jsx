@@ -30,6 +30,7 @@ const AddFormField = (props) => {
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
+  const [fieldLabel, setFieldLabel] = useState(null);
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
   const [user, setUser] = useState([]);
@@ -730,8 +731,8 @@ const AddFormField = (props) => {
   };
 
   console.log('UPDATED FLAG:', updateFlag);
-  console.log('CHOSE FIELD:>>>>>>', chosenFieldForConditionApplied);
-  console.log('FORM DATA>>>>>>', form);
+  console.log('FIELD LABEL:', fieldLabel);
+  console.log('CHOSEN FIELD:', chosenFieldForConditionApplied);
   return (
     <>
       <div id="main">
@@ -840,6 +841,8 @@ const AddFormField = (props) => {
                                     maxLength={255}
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
+                                      setFieldLabel(e.target.value);
+                                      console.log('VALUE:>>>>>>>>>', e.target.value);
                                       setField(
                                         e.target.name,
                                         e.target.value,
@@ -1121,7 +1124,7 @@ const AddFormField = (props) => {
                                                   ...prevState,
                                                   [form[index]?.field_name]: false
                                                 }));
-                                                setChosenFieldForConditionApplied(form[index]?.field_name);
+                                                setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel.split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_"));
                                               }
                                             }
                                           });
@@ -1130,7 +1133,7 @@ const AddFormField = (props) => {
                                             fillOptionCounter
                                           ) {
                                             setConditionFlag(!conditionFlag);
-                                            setChosenFieldForConditionApplied(form[index]?.field_name);
+                                            setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel.split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_"));
                                             tempOption.map((item, index) => {
                                               if (
                                                 Object.keys(item)[0] ===
