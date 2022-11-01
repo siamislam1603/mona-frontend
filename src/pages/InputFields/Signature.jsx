@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
@@ -13,7 +14,12 @@ const Signature = (props) => {
     }
   }, []);
   useEffect(() => {
-    if (props?.field_data) {
+    if (
+      props !== {} &&
+      props?.field_data &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
       setSignature(props?.field_data?.fields[controls?.field_name]);
     }
   }, [controls?.field_name, props?.field_data]);
