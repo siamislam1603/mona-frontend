@@ -42,6 +42,7 @@ const DynamicForm = () => {
   const [selectedUserValue, setSelectedUserValue] = useState({});
   const [childId, setChildId] = useState();
   const [errorFocus, setErrorFocus] = useState('');
+  const [signatories, setSignatories] = useState([]);
   const token = localStorage.getItem('token');
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
@@ -180,6 +181,7 @@ const DynamicForm = () => {
       .catch((error) => console.log('error', error));
   };
   const getFormFields = async () => {
+    console.log('GETTING FORM FIELDS');
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -202,12 +204,12 @@ const DynamicForm = () => {
       .then((response) => response.json())
       .then((result) => {
         let res = result;
-
         if (res?.success == false) {
           localStorage.setItem('form_error', res?.message);
           window.location.href = '/form';
         }
 
+        setSignatories(res.form[0].form_permissions[0].signatories_role);
         setFormData(res.result);
         setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
@@ -319,6 +321,7 @@ const DynamicForm = () => {
       const newErrors = DynamicFormValidation(
         form,
         formData,
+        signatories,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
         behalfOfFlag,
         signatureAccessFlag
@@ -377,6 +380,7 @@ const DynamicForm = () => {
               )
                 .then((response) => response.json())
                 .then((res) => {
+                  console.log('RES:>>>>>>>>>>>>>>>>>>>>', res);
                   if (res) {
                     if (
                       result?.message ===

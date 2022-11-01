@@ -3,6 +3,7 @@ import moment from 'moment';
 export const DynamicFormValidation = (
   form,
   data,
+  signatories,
   behalf_of,
   behalf_of_flag,
   signature_access_flag
@@ -36,10 +37,12 @@ export const DynamicFormValidation = (
   let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
   console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
-    if (item.required && item.type !== "headings" && item.type !== "text_headings") {
+    if (item.required && item.type !== "headings" && item.type !== "text_headings" && item.field_type !== "signature") {
         // newErrors[
         //   `${item.field_name}`
         // ] = `${item.field_label} is required`;
+        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+      } else if(item.field_type === "signature" && signatories.includes(localStorage.getItem('user_role'))) {
         newErrors[`${item.field_name}`] = `${item.field_label} is required`;
       }
   });
