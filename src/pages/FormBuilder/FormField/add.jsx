@@ -1122,9 +1122,9 @@ const AddFormField = (props) => {
                                               ) {
                                                 setUpdateFlag(prevState => ({
                                                   ...prevState,
-                                                  [form[index]?.field_name]: false
+                                                  [form[index]?.field_name || fieldLabel?.split(" ").map(d => d.charAt(0)?.toLowerCase() + d?.slice(1))?.join("_")]: false
                                                 }));
-                                                setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel.split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_"));
+                                                setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_"));
                                               }
                                             }
                                           });
@@ -1133,7 +1133,7 @@ const AddFormField = (props) => {
                                             fillOptionCounter
                                           ) {
                                             setConditionFlag(!conditionFlag);
-                                            setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel.split(" ").map(d => d.charAt(0).toLowerCase() + d.slice(1)).join("_"));
+                                            setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel?.split(" ").map(d => d.charAt(0)?.toLowerCase() + d.slice(1))?.join("_"));
                                             tempOption.map((item, index) => {
                                               if (
                                                 Object.keys(item)[0] ===
@@ -1159,7 +1159,7 @@ const AddFormField = (props) => {
                                           setForm(tempArr);
                                         }}
                                       >
-                                        {updateFlag[`${form[index]?.field_name}`] === true ? 'Condition Applied' : 'Apply Condition'}
+                                        {updateFlag[form[index]?.field_name || form[index]['field_label']?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_")] === true ? 'Condition Applied' : 'Apply Condition'}
                                       </Button>
                                       <ToastContainer />
                                     </>
