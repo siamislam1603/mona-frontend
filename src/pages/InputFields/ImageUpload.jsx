@@ -4,11 +4,17 @@ import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
 
 const ImageUpload = (props) => {
+  const [image, setImage] = useState('');
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+  useEffect(() => {
+    if (image || props?.field_data?.fields) {
+      setImage(props.field_data.fields[`${controls.field_name}`]);
+    }
+  }, [image]);
   const { ...controls } = props;
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -49,6 +55,7 @@ const ImageUpload = (props) => {
       });
       let data = await res.json();
       toast.success('uploaded.');
+      setImage(data?.url);
       return data?.url;
     }
   };
@@ -73,6 +80,11 @@ const ImageUpload = (props) => {
           }}
           isInvalid={!!controls.error[controls.field_name]}
         />
+        {image && (
+          <>
+            <img src={image} alt="image" style={{ width: '100px' }} />
+          </>
+        )}
         <Form.Control.Feedback type="invalid">
           {controls.error[controls.field_name]}
         </Form.Control.Feedback>
