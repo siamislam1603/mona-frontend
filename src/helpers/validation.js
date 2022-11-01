@@ -43,22 +43,14 @@ export const DynamicFormValidation = (
   );
   console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
-    if (
-      item.required &&
-      item.type !== 'headings' &&
-      item.type !== 'text_headings' &&
-      item.field_type !== 'signature'
-    ) {
-      // newErrors[
-      //   `${item.field_name}`
-      // ] = `${item.field_label} is required`;
-      newErrors[`${item.field_name}`] = `${item.field_label} is required`;
-    } else if (
-      item?.field_type === 'signature' &&
-      signatories?.includes(localStorage.getItem('user_role'))
-    ) {
-      newErrors[`${item.field_name}`] = `${item.field_label} is required`;
-    }
+    if (item.required && item.field_type !== "headings" && item.field_type !== "instruction_text" && item.field_type !== "text_headings" && item.field_type !== "signature") {
+        // newErrors[
+        //   `${item.field_name}`
+        // ] = `${item.field_label} is required`;
+        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+      } else if(item.field_type === "signature" && signatories.includes(localStorage.getItem('user_role'))) {
+        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+      }
   });
 
   console.log('NEW ERRORS:', newErrors);

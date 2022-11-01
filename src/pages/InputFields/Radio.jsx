@@ -41,7 +41,7 @@ const Radio = (props) => {
                         <input
                           type="radio"
                           key={index}
-                          defaultChecked={true}
+                          // defaultChecked={true}
                           value={Object.keys(item)[0]}
                           disabled={props.isDisable ? props.isDisable : false}
                           name={controls.field_name}
