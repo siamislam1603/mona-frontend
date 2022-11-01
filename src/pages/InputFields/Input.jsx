@@ -16,13 +16,11 @@ const Input = (props) => {
     let value;
 
     if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-      console.log('INSIDE FUNCTION');
       if (controls?.field_type === 'date') {
         value = moment(props?.field_data?.fields[`${controls?.field_name}`], "YYYY-MM-DD").format('YYYY-MM-DD')
         setDataValue(value);
       } else {
         value = props?.field_data?.fields[`${controls?.field_name}`];
-        console.log('VALUE>>>>>>>>>>>>>>', value);
         setDataValue(value);
       }
     }
