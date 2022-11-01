@@ -2,14 +2,12 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
-
 const Radio = (props) => {
   const { ...controls } = props;
   const [optionValue, setOptionValue] = useState('');
-  const [radioValue, setRadioValue] = useState();
   const [Index, setIndex] = useState(0);
+  const [textInputValue, setTextInputValue] = useState('');
   const sigPad = useRef({});
-
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
@@ -24,15 +22,6 @@ const Radio = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-
-  let value;
-  if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
-    value =
-      props?.field_data &&
-      props?.field_data.fields[
-        `${Object.values(eval(controls?.option)[Index])[0]?.field_name}`
-      ];
-  }
 
   return (
     <>
@@ -52,12 +41,14 @@ const Radio = (props) => {
                         <input
                           type="radio"
                           key={index}
+                          defaultChecked={true}
                           value={Object.keys(item)[0]}
                           disabled={props.isDisable ? props.isDisable : false}
                           name={controls.field_name}
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
                             setOptionValue(e.target.value);
+                            console.log(e.target.value);
                             props.onChange(
                               e.target.name,
                               e.target.value,
@@ -65,6 +56,7 @@ const Radio = (props) => {
                             );
                             setIndex(index);
                           }}
+                          // checked={optionValue}
                           checked={
                             props !== {} &&
                             props?.field_data !== {} &&
@@ -73,11 +65,8 @@ const Radio = (props) => {
                                 props?.field_data?.fields[
                                   `${controls?.field_name}`
                                 ] === Object.keys(item)[0]
-                              : optionValue
-                            // : props?.field_data &&
-                            // props?.field_data?.fields[
-                            // `${controls?.field_name}`
-                            // ] === Object.keys(item)[0]
+                              : props?.field_data &&
+                                optionValue === Object.keys(item)[0]
                           }
                         />
                         <span className="radio-round"></span>
@@ -114,7 +103,8 @@ const Radio = (props) => {
                                   props?.field_data?.fields[
                                     `${controls?.field_name}`
                                   ] === Object.keys(item)[0]
-                                : props?.field_data && props?.field_data?.fields
+                                : props?.field_data &&
+                                  optionValue === Object.keys(item)[0]
                             }
                           />
                           <span className="radio-round"></span>
@@ -162,6 +152,7 @@ const Radio = (props) => {
                             }
                             id={Object.keys(item)[0]}
                             onClick={(e) => {
+                              console.log('INPUT>>>>>', e.target.value);
                               props.onChange(e.target.name, e.target.value);
                             }}
                             checked={
@@ -197,6 +188,7 @@ const Radio = (props) => {
                 <Form.Select
                   name={controls.field_name}
                   onChange={(e) => {
+                    console.log('FIELD3:>>>>', e.target.value);
                     props.onChange(e.target.name, e.target.value);
                   }}
                 >
@@ -251,6 +243,7 @@ const Radio = (props) => {
                             ].includes(Object.keys(item)[0])
                           }
                           onClick={(e) => {
+                            console.log('FIELD4:>>>>', e.target.value);
                             props.onChange(e.target.name, e.target.value);
                           }}
                         />
@@ -283,6 +276,7 @@ const Radio = (props) => {
                 className="child_input"
                 onChange={(e) => {
                   e.preventDefault();
+                  console.log('FIELD4:>>>>', e.target.value);
                   props.onChange(e.target.name, e.target.value);
                 }}
               />
@@ -333,6 +327,7 @@ const Radio = (props) => {
                 type="file"
                 name={Object.values(eval(controls.option)[Index])[0].field_name}
                 onChange={(e) => {
+                  console.log('FIELD5:>>>>', e.target.value);
                   props.onChange(e.target.name, e.target.value);
                 }}
               />
@@ -346,7 +341,6 @@ const Radio = (props) => {
                   <Form.Label>
                     {Object.values(eval(controls.option)[Index])[0].field_label}
                   </Form.Label>
-
                   <Form.Control
                     type={
                       Object.values(eval(controls.option)[Index])[0].field_type
@@ -355,9 +349,21 @@ const Radio = (props) => {
                       Object.values(eval(controls.option)[Index])[0].field_name
                     }
                     onChange={(e) => {
+                      console.log('FIELD6:>>>>', e.target.value);
                       props.onChange(e.target.name, e.target.value);
+                      setTextInputValue(e.target.value);
                     }}
-                    value={value}
+                    value={
+                      (props.field_data &&
+                        Object.keys(props.field_data).length > 0 &&
+                        props.field_data.fields[
+                          `${
+                            Object.values(eval(controls.option)[Index])[0]
+                              .field_name
+                          }`
+                        ]) ||
+                      textInputValue
+                    }
                   />
                 </Form.Group>
               </Col>
