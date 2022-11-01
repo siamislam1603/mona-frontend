@@ -13,7 +13,7 @@ const FileUpload = (props) => {
 
   useEffect(() => {
     if (fileList || props?.field_data?.fields) {
-      setFileList(props.field_data.fields[`${controls.field_name}`]);
+      setFileList(props?.field_data?.fields[`${controls?.field_name}`]);
     }
   }, [fileList]);
   const { ...controls } = props;

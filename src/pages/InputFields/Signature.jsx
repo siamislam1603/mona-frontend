@@ -35,7 +35,10 @@ const Signature = (props) => {
       sigPad.current.getTrimmedCanvas().toDataURL('image/png'),
       'signature'
     );
-    sigPad?.current?.clear();
+
+    if (props?.field_data) {
+      sigPad?.current?.clear();
+    }
     toast.success('Signature added.');
   };
   return (
