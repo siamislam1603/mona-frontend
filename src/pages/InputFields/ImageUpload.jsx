@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 import { BASE_URL } from '../../components/App';
 import { toast } from 'react-toastify';
+import { isEmpty } from 'lodash';
 
 const ImageUpload = (props) => {
+  const { ...controls } = props;
   const [image, setImage] = useState('');
   useEffect(() => {
     if (props.errorFocus) {
@@ -12,10 +14,19 @@ const ImageUpload = (props) => {
   }, []);
   useEffect(() => {
     if (image || props?.field_data?.fields) {
-      setImage(props?.field_data?.fields[`${controls?.field_name}`]);
+      if (
+        props !== {} &&
+        props?.field_data !== {} &&
+        !isEmpty(props?.field_data)
+      ) {
+        setImage(props?.field_data?.fields[`${controls?.field_name}`]);
+      }
     }
   }, [image]);
-  const { ...controls } = props;
+
+  if (controls.field_data == {} || controls.field_data == undefined) {
+    delete controls?.field_data;
+  }
   const toBase64 = (file) =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
