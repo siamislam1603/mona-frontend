@@ -25,7 +25,7 @@ export const DynamicFormValidation = (
    for(let value of Object.values(form)) {
     formFields = {...formFields, ...value}
    }
-
+   
    let emptyFields = [];
    for(let key of Object.keys(formFields)) {
     if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
