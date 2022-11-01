@@ -11,40 +11,54 @@ export const DynamicFormValidation = (
   let newErrors = {};
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
-       newErrors.behalf_of = 'Behalf of is required';
-   }
-   
-   console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
-   console.log('DATA:>>>>>>>>>>>>>>>>>', data);
+      newErrors.behalf_of = 'Behalf of is required';
+  }
 
-   let dataTemp = {"": []};
-   for(let values of Object.values(data)) {
-    dataTemp = {"": [...dataTemp[""], ...values]}
-   }
+  console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
+  console.log('DATA:>>>>>>>>>>>>>>>>>', data);
 
-   let formFields = {};
-   for(let value of Object.values(form)) {
-    formFields = {...formFields, ...value}
-   }
-   
-   let emptyFields = [];
-   for(let key of Object.keys(formFields)) {
-    if(formFields[key] === null || formFields[key] === "null" || formFields[key].length === 0) {
+  let dataTemp = { '': [] };
+  for (let values of Object.values(data)) {
+    dataTemp = { '': [...dataTemp[''], ...values] };
+  }
+
+  let formFields = {};
+  for (let value of Object.values(form)) {
+    formFields = { ...formFields, ...value };
+  }
+
+  let emptyFields = [];
+  for (let key of Object.keys(formFields)) {
+    if (
+      formFields[key] === null ||
+      formFields[key] === 'null' ||
+      formFields[key].length === 0
+    ) {
       emptyFields = [...emptyFields, key];
     }
-   }
-   
-  let errorFields = emptyFields.map(d => dataTemp[""].filter(t => t.field_name === d)[0]);
+  }
+
+  let errorFields = emptyFields.map(
+    (d) => dataTemp[''].filter((t) => t.field_name === d)[0]
+  );
   console.log('Error Fields:', errorFields);
   errorFields.map((item) => {
-    if (item.required && item.type !== "headings" && item.type !== "text_headings" && item.field_type !== "signature") {
-        // newErrors[
-        //   `${item.field_name}`
-        // ] = `${item.field_label} is required`;
-        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
-      } else if(item.field_type === "signature" && signatories.includes(localStorage.getItem('user_role'))) {
-        newErrors[`${item.field_name}`] = `${item.field_label} is required`;
-      }
+    if (
+      item.required &&
+      item.type !== 'headings' &&
+      item.type !== 'text_headings' &&
+      item.field_type !== 'signature'
+    ) {
+      // newErrors[
+      //   `${item.field_name}`
+      // ] = `${item.field_label} is required`;
+      newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+    } else if (
+      item?.field_type === 'signature' &&
+      signatories?.includes(localStorage.getItem('user_role'))
+    ) {
+      newErrors[`${item.field_name}`] = `${item.field_label} is required`;
+    }
   });
 
   console.log('NEW ERRORS:', newErrors);

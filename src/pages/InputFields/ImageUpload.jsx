@@ -12,7 +12,7 @@ const ImageUpload = (props) => {
   }, []);
   useEffect(() => {
     if (image || props?.field_data?.fields) {
-      setImage(props.field_data.fields[`${controls.field_name}`]);
+      setImage(props?.field_data?.fields[`${controls?.field_name}`]);
     }
   }, [image]);
   const { ...controls } = props;
