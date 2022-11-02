@@ -219,10 +219,12 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
         let formsData = {};
         let data = {};
         Object.keys(res?.result)?.map((item) => {
+          // console.log('ITEM >>>>>>>>>>>>>>>>>', item);
           if (!formsData[item]) formsData[item] = {};
           if (!data[item]) data[item] = [];
 
-          res?.result[item]?.map((inner_item) => {
+          res?.result[item]?.map((inner_item, index) => {
+            console.log('INNDER ITE>>>>>>>>>>>>', inner_item);
             if (inner_item.form_field_permissions.length > 0) {
               inner_item?.form_field_permissions?.map((permission) => {
                 if (
@@ -239,7 +241,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                     inner_item.field_type === 'headings' ||
                     inner_item.field_type === 'text_headings'
                   ) {
-                    formsData[item][`${inner_item.field_type}`] =
+                    formsData[item][`${inner_item.field_type}_${index}`] =
                       inner_item.field_label;
                   } else {
                     formsData[item][`${inner_item.field_name}`] = null;
@@ -255,7 +257,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                 inner_item.field_type === 'headings' ||
                 inner_item.field_type === 'text_headings'
               ) {
-                formsData[item][`${inner_item.field_type}`] =
+                formsData[item][`${inner_item.field_type}_${index}`] =
                   inner_item.field_label;
               } else {
                 formsData[item][`${inner_item.field_name}`] = null;
@@ -420,6 +422,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
+  console.log('FORM>>>>>>>>>>>>>>>>', form); 
   return (
     <>
       <div id="main">
