@@ -30,6 +30,7 @@ const AddFormField = (props) => {
   const [groupFlag, setGroupFlag] = useState(false);
   const [formSettingFlag, setFormSettingFlag] = useState(false);
   const [formSettingError, setFormSettingError] = useState({});
+  const [removeConditionId, setRemoveConditionId] = useState([]);
   const [fieldLabel, setFieldLabel] = useState(null);
   const [count, setCount] = useState(0);
   const [Index, setIndex] = useState(1);
@@ -122,35 +123,74 @@ const AddFormField = (props) => {
   };
 
   const removeCondition = (field_name) => {
-    // console.log('FORM>>>>>', form);
-    // console.log('FIELD NAME>>>>>>', field_name);
-    // let field_data = form.filter(d => {
-    //   let field = d.field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_") || '';
-    //   if(field === field_name)
-    //     return [d];
-    // });
-    // console.log('FIELD DATA>>>>>>>>>', field_data);
-    // let { option } = field_data[0];
-    // console.log('Options:>>>>>', option);
+    if(form[0]?.form_id) {
+      // EDITING AN ALREADY EXISTING FORM
+      let field_data = form.filter(d => d.field_name === field_name);
+      let atIndex;
+      form.forEach((d, i) => {
+        if(d.field_name === field_name)
+          atIndex = i;
+      });
+      let remainingData = form.filter(d => d.field_name !== field_name);
+      
+      let option = field_data[0].option;
+      
+      let arr = [];
+      option.forEach(d => {
+        console.log('DATA>>>>>>>>>>>>', Object.values(d)[0]);
+        arr.push(Object.values(d)[0].id);
+      });
 
-    let field_data = form.filter(d => d.field_name === field_name);
-    let atIndex;
-    form.forEach((d, i) => {
-      if(d.field_name === field_name)
-        atIndex = i;
-    });
-    let remainingData = form.filter(d => d.field_name !== field_name);
-    
-    let option = field_data[0].option;
-    option.forEach((d, index) => {
-      option[index][`${Object.keys(d)}`] = `${Object.keys(d)}`
-    });
+      setRemoveConditionId([
+        ...removeConditionId,
+        ...arr
+      ]);
 
-    let temp_field = {...field_data[0], option: option};
-    remainingData.splice(atIndex, 0, temp_field);
-    setForm([
-      ...remainingData
-    ]);
+      option.forEach((d, index) => {
+        option[index][`${Object.keys(d)}`] = `${Object.keys(d)}`
+      });
+
+      let temp_field = {...field_data[0], option: option};
+      remainingData.splice(atIndex, 0, temp_field);
+      // setForm([
+      //   ...remainingData
+      // ]);
+
+    } else {
+      // CREATING FORM FOR THE FIRST TIME
+      let field_data = form.filter(d => {
+        let field = d.field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_") || '';
+        if(field === field_name)
+          return [d];
+      });
+  
+      let atIndex;
+      form.forEach((d, index) => {
+        let field = d.field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_") || '';
+        if(field === field_name)
+          atIndex = index;
+      })
+  
+      let remainingData = form.filter((d, index) => {
+        let field = d.field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_") || '';
+        if(field !== field_name)
+          return d;
+      })
+  
+      let { option } = field_data[0];
+      option = option.map(d => ({
+        [Object.keys(d)]: {
+          field_type: d[Object.keys(d)].field_type,
+          option: d[Object.keys(d)].option
+        }
+      }));
+      let temp_field = {...field_data[0], option: option};
+      console.log('TEMP DATA:', temp_field);
+      remainingData.splice(atIndex, 0, temp_field);
+      setForm([
+        ...remainingData
+      ]);
+    }
   }
 
   const setCheckBoxField = (form, name, value, checked, index) => {
@@ -662,7 +702,7 @@ const AddFormField = (props) => {
         });
 
         fetch(
-          `${BASE_URL}/field/add?form_name=${location?.state?.form_name}&formId=${location?.state?.id}`,
+          `${BASE_URL}/field/add?form_name=${location?.state?.form_name}&formId=${location?.state?.id}&removeFieldId=${removeConditionId}`,
           {
             method: 'post',
             body: JSON.stringify(data),
@@ -741,9 +781,8 @@ const AddFormField = (props) => {
     }
   };
 
-  console.log('UPDATED FLAG:', updateFlag);
   console.log('FORM:', form);
-  console.log('CHOSEN FIELD:', chosenFieldForConditionApplied);
+  console.log('REMOVE CONDITION ID:', removeConditionId);
   return (
     <>
       <div id="main">

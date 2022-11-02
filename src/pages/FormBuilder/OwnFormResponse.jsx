@@ -113,8 +113,9 @@ function OwnFormResponse(props) {
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log('RESULT>>>>>>>>>>>>>>', result);
         if (result) {
-          console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
+          // console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
           setfullLoaderStatus(false);
         }
         if (result?.result.length > 0) {
@@ -477,7 +478,7 @@ function OwnFormResponse(props) {
                               </div>
                             </Accordion.Header>
                             <Accordion.Body>
-                              {console.log('RESPONSE DATA:', responseData)}
+                              {console.log('RESPONSE DATA:', JSON.parse(responseData[0][0].fields))}
                               {responseData[index]?.map((item, index) => {
 
                                 console.log("index index index index ", index)
@@ -514,7 +515,7 @@ function OwnFormResponse(props) {
                                           {
                                             (Object.keys(
                                               JSON.parse(item.fields)
-                                            )[inner_index] === 'headings' ||
+                                            )[inner_index].includes('headings') ||
                                               Object.keys(
                                                 JSON.parse(item.fields)
                                               )[inner_index] ===
@@ -533,7 +534,7 @@ function OwnFormResponse(props) {
                                               {!(
                                                 Object.keys(
                                                   JSON.parse(item.fields)
-                                                )[inner_index] === 'headings' ||
+                                                )[inner_index].includes('headings') ||
                                                 Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index] ===
@@ -545,7 +546,7 @@ function OwnFormResponse(props) {
                                               )}
                                               {Object.keys(
                                                 JSON.parse(item.fields)
-                                              )[inner_index] === 'headings' ? (
+                                              )[inner_index].includes('headings') ? (
                                                 <h6
                                                   className="text-capitalize"
                                                   style={{
@@ -588,7 +589,7 @@ function OwnFormResponse(props) {
                                               {!(
                                                 Object.keys(
                                                   JSON.parse(item.fields)
-                                                )[inner_index] === 'headings' ||
+                                                )[inner_index].includes('headings') ||
                                                 Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index] ===
@@ -621,11 +622,11 @@ function OwnFormResponse(props) {
                                                 '.jpeg'
                                               ) ? (
                                                 <>
-                                                  {console.log('INNER INDEX:', inner_index)}
+                                                  {/* {console.log('INNER INDEX:', inner_index)}
                                                   {console.log('ITEM FIELDS:', item.fields)}
                                                   {console.log('>>>>><<<<<', Object.values(
                                                         JSON.parse(item.fields)
-                                                      )[inner_index])}
+                                                      )[inner_index])} */}
                                                   <img
                                                     style={{
                                                       height: '40px',
@@ -728,8 +729,7 @@ function OwnFormResponse(props) {
                                                 !(
                                                   Object.keys(
                                                     JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'headings' ||
+                                                  )[inner_index].includes('headings') ||
                                                   Object.keys(
                                                     JSON.parse(item.fields)
                                                   )[inner_index] ===
