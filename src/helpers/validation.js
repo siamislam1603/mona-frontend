@@ -14,9 +14,6 @@ export const DynamicFormValidation = (
       newErrors.behalf_of = 'Behalf of is required';
   }
 
-  console.log('FORM>>>>>>>>>>>>>>>>>>>>>>>>', form);
-  console.log('DATA:>>>>>>>>>>>>>>>>>', data);
-
   let dataTemp = { '': [] };
   for (let values of Object.values(data)) {
     dataTemp = { '': [...dataTemp[''], ...values] };
