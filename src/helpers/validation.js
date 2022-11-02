@@ -58,7 +58,6 @@ export const DynamicFormValidation = (
     if (
       item.required &&
       item.field_type !== 'headings' &&
-      item.field_type !== 'instruction_text' &&
       item.field_type !== 'text_headings' &&
       item.field_type !== 'signature'
     ) {
