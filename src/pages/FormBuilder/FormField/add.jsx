@@ -122,6 +122,17 @@ const AddFormField = (props) => {
   };
 
   const removeCondition = (field_name) => {
+    // console.log('FORM>>>>>', form);
+    // console.log('FIELD NAME>>>>>>', field_name);
+    // let field_data = form.filter(d => {
+    //   let field = d.field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_") || '';
+    //   if(field === field_name)
+    //     return [d];
+    // });
+    // console.log('FIELD DATA>>>>>>>>>', field_data);
+    // let { option } = field_data[0];
+    // console.log('Options:>>>>>', option);
+
     let field_data = form.filter(d => d.field_name === field_name);
     let atIndex;
     form.forEach((d, i) => {
@@ -731,7 +742,7 @@ const AddFormField = (props) => {
   };
 
   console.log('UPDATED FLAG:', updateFlag);
-  console.log('FIELD LABEL:', fieldLabel);
+  console.log('FORM:', form);
   console.log('CHOSEN FIELD:', chosenFieldForConditionApplied);
   return (
     <>
@@ -835,7 +846,7 @@ const AddFormField = (props) => {
                                     type="text"
                                     name="field_label"
                                     disabled={
-                                      updateFlag[form[index]?.field_name] && newFieldAddIndex !== index
+                                      updateFlag[form[index]?.field_name || form[index]['field_label']?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_")] && newFieldAddIndex !== index
                                     }
                                     id={'field_label' + index}
                                     maxLength={255}
@@ -872,7 +883,7 @@ const AddFormField = (props) => {
                                       );
                                     }}
                                     disabled={
-                                      updateFlag[form[index]?.field_name] && newFieldAddIndex !== index
+                                      updateFlag[form[index]?.field_name || form[index]['field_label']?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_")] && newFieldAddIndex !== index
                                     }
                                   >
                                     <option
@@ -1007,7 +1018,7 @@ const AddFormField = (props) => {
                                               type="text"
                                               name="option"
                                               disabled={
-                                                updateFlag[form[index]?.field_name] &&
+                                                updateFlag[form[index]?.field_name || form[index]['field_label']?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_")] &&
                                                 newFieldAddIndex !== index &&
                                                 inner_index !==
                                                 newOptionAddIndex
@@ -1124,7 +1135,7 @@ const AddFormField = (props) => {
                                                   ...prevState,
                                                   [form[index]?.field_name || fieldLabel?.split(" ").map(d => d.charAt(0)?.toLowerCase() + d?.slice(1))?.join("_")]: false
                                                 }));
-                                                setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_"));
+                                                setChosenFieldForConditionApplied(form[index]?.field_name || form[index].field_label?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_"));
                                               }
                                             }
                                           });
@@ -1133,7 +1144,7 @@ const AddFormField = (props) => {
                                             fillOptionCounter
                                           ) {
                                             setConditionFlag(!conditionFlag);
-                                            setChosenFieldForConditionApplied(form[index]?.field_name || fieldLabel?.split(" ").map(d => d.charAt(0)?.toLowerCase() + d.slice(1))?.join("_"));
+                                            setChosenFieldForConditionApplied(form[index]?.field_name || form[index].field_label?.split(" ").map(d => d.charAt(0)?.toLowerCase() + d.slice(1))?.join("_"));
                                             tempOption.map((item, index) => {
                                               if (
                                                 Object.keys(item)[0] ===
@@ -1479,7 +1490,7 @@ const AddFormField = (props) => {
                                                   type="text"
                                                   name="option"
                                                   disabled={
-                                                    updateFlag[item[Object.keys(item)[0]].field_label] &&
+                                                    updateFlag[item[Object.keys(item)[0]].field_label || form[index]['field_label']?.split(" ")?.map(d => d.charAt(0).toLowerCase() + d.slice(1))?.join("_")] &&
                                                     newConditionOptionAddIndex !==
                                                     inner_index
                                                   }
@@ -1604,10 +1615,6 @@ const AddFormField = (props) => {
                               }));
                               setConditionFlag(false);
                               counter++;
-                              setUpdateFlag(prevState => ({
-                                ...prevState,
-                                [chosenFieldForConditionApplied]: true
-                              }));
                               setCount(counter);
                             }}
                           >
