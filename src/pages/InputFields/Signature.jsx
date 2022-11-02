@@ -25,7 +25,7 @@ const Signature = (props) => {
   }, [controls?.field_name, props?.field_data]);
   const sigPad = useRef({});
   useEffect(() => {
-    if (signature && props?.field_data) {
+    if (signature && props !== {} && props?.field_data) {
       sigPad?.current?.fromDataURL(signature);
     }
   }, [signature]);
@@ -41,8 +41,15 @@ const Signature = (props) => {
       sigPad.current.getTrimmedCanvas().toDataURL('image/png'),
       'signature'
     );
-
-    if (props?.field_data) {
+    if (
+      props?.field_data ||
+      props?.form_field_permissions[0]?.fill_access_users.includes(
+        localStorage.getItem('user_role') === 'guardian'
+          ? 'parent'
+          : localStorage.getItem('user_role')
+      )
+    ) {
+      setSignature(sigPad?.current?.getTrimmedCanvas()?.toDataURL('image/png'));
       sigPad?.current?.clear();
     }
     toast.success('Signature added.');
