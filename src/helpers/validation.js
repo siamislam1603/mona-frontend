@@ -25,7 +25,10 @@ export const DynamicFormValidation = (
     if (sectionName !== '') {
       for (const sectionsKeys of Object.keys(form[sectionName])) {
         if (
-          !form[sectionName][sectionsKeys] ||
+          (form[''] &&
+            form[''][sectionsKeys] &&
+            form[sectionName] &&
+            !form[sectionName][sectionsKeys]) ||
           form[sectionName][sectionsKeys] === null
         ) {
           form[sectionName][sectionsKeys] = form[''][sectionsKeys] || null;
