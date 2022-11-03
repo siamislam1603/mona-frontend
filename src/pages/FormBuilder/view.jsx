@@ -1250,6 +1250,7 @@ function ViewFormBuilder(props) {
                                                                 </Dropdown.Item>
                                                                 <Dropdown.Item
                                                                   onClick={() => {
+                                                                    localStorage.setItem('formStatus', false)
                                                                     navigate(
                                                                       `/form/preview/${inner_item.form_name}`,
                                                                       {
