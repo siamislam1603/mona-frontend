@@ -48,7 +48,7 @@ const Preview = (props) => {
       `${BASE_URL}/field?form_name=${encodeURIComponent(
         location.pathname
           .split('/')
-          [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
       )
         .toString()
         .trim()}`,
@@ -83,22 +83,29 @@ const Preview = (props) => {
                   <div className="forms-managment-left new-form-title mynewForm-heading">
                     <Button
                       onClick={() => {
-                        navigate('/form/field/add', {
-                          state: {
-                            id: location?.state?.id,
-                            form_name: location?.state?.form_name,
-                          },
-                        });
+                        localStorage.getItem('formStatus') == 'false' ?
+                          navigate('/form',
+                            localStorage.removeItem('formStatus')
+                          )
+                          :
+                          navigate('/form/field/add',
+                            localStorage.removeItem('formStatus'),
+                            {
+                              state: {
+                                id: location?.state?.id,
+                                form_name: location?.state?.form_name,
+                              },
+                            });
                       }}
                     >
-                      <img src="../../img/back-arrow.svg" />
+                      <img src="../../img/back-arrow.svg" alt='back-btn' />
                     </Button>
                     <h4 className="mynewForm text-capitalize">{`Preview - ${location.pathname
                       .split('/')
-                      [location.pathname.split('/').length - 1].replaceAll(
-                        '%20',
-                        ' '
-                      )}`}</h4>
+                    [location.pathname.split('/').length - 1].replaceAll(
+                      '%20',
+                      ' '
+                    )}`}</h4>
                   </div>
                   <div className="userBox">
                     <p>Created by:</p>
@@ -133,8 +140,8 @@ const Preview = (props) => {
               </div>
             </div>
           </Container>
-        </section>
-      </div>
+        </section >
+      </div >
     </>
   );
 };
