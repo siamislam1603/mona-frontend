@@ -44,7 +44,8 @@ export const DynamicFormValidation = (
     if (
       formFields[key] === null ||
       formFields[key] === 'null' ||
-      formFields[key]?.length === 0
+      formFields[key]?.length === 0 ||
+      formFields[key] === 'Invalid date'
     ) {
       emptyFields = [...emptyFields, key];
     }
