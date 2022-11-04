@@ -86,7 +86,8 @@ const DynamicForm = () => {
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
         });
-      } if (type === 'radio') {
+      }
+      if (type === 'radio') {
         setFieldData({
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
@@ -164,7 +165,7 @@ const DynamicForm = () => {
     let form_name = encodeURIComponent(
       location.pathname
         .split('/')
-      [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
     );
 
     let api_url = `${BASE_URL}/form/target_users?form_name=${form_name}&franchisee_id=${localStorage.getItem(
@@ -193,7 +194,7 @@ const DynamicForm = () => {
     let form_name = encodeURIComponent(
       location.pathname
         .split('/')
-      [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
     );
     fetch(
       `${BASE_URL}/field?form_name=${form_name}&franchisee_id=${localStorage.getItem(
@@ -209,18 +210,18 @@ const DynamicForm = () => {
           window.location.href = '/form';
         }
 
-        setSignatories(res?.form[0]?.form_permissions[0]?.signatories_role || []);
+        setSignatories(
+          res?.form[0]?.form_permissions[0]?.signatories_role || []
+        );
         setFormData(res.result);
         setFormPermission(res?.form[0]?.form_permissions[0]);
         let formsData = {};
         let data = {};
         Object.keys(res?.result)?.map((item) => {
-          // console.log('ITEM >>>>>>>>>>>>>>>>>', item);
           if (!formsData[item]) formsData[item] = {};
           if (!data[item]) data[item] = [];
 
           res?.result[item]?.map((inner_item, index) => {
-            console.log('INNDER ITE>>>>>>>>>>>>', inner_item);
             if (inner_item.form_field_permissions.length > 0) {
               inner_item?.form_field_permissions?.map((permission) => {
                 if (
@@ -292,34 +293,53 @@ const DynamicForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (location?.state?.id) {
-      var myHeaders = new Headers();
-      myHeaders.append('Content-Type', 'application/json');
-      myHeaders.append('authorization', 'Bearer ' + token);
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: JSON.stringify({
-          id: location?.state?.id,
-          data: fieldData,
-          status: 'update',
-          updated: true,
-          updatedBy: localStorage.getItem('user_id'),
-        }),
-        redirect: 'follow',
-      };
-
-
-
-      fetch(`${BASE_URL}/form/form_data`, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          navigate(`/form/response/${location.state.form_id}`, {
-            state: { message: result.message },
-          });
+      let formData1 = {};
+      Object.keys(formData)?.map((editFormData) => {
+        if (!formData1[editFormData]) formData1[editFormData] = {};
+        formData[editFormData]?.map((inner_editFormData) => {
+          formData1[editFormData][`${inner_editFormData?.field_name}`] =
+            fieldData?.fields[inner_editFormData?.field_name];
         });
+      });
+      console.log(formData1, '====-==-=-=-=-=');
+      const newErrors = DynamicFormValidation(
+        formData1,
+        formData,
+        signatories,
+        localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
+        behalfOfFlag,
+        signatureAccessFlag
+      );
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        setErrorFocus(Object.keys(newErrors)[0]);
+        document.getElementById(Object.keys(newErrors)[0])?.focus();
+      } else {
+        var myHeaders = new Headers();
+        myHeaders.append('Content-Type', 'application/json');
+        myHeaders.append('authorization', 'Bearer ' + token);
+        var requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: JSON.stringify({
+            id: location?.state?.id,
+            data: fieldData,
+            status: 'update',
+            updated: true,
+            updatedBy: localStorage.getItem('user_id'),
+          }),
+          redirect: 'follow',
+        };
+        fetch(`${BASE_URL}/form/form_data`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            navigate(`/form/response/${location.state.form_id}`, {
+              state: { message: result.message },
+            });
+          });
+      }
     } else {
       // let newFormObj = copyOneStateToAnother(form);
-
       const newErrors = DynamicFormValidation(
         form,
         formData,
@@ -348,11 +368,11 @@ const DynamicForm = () => {
                 ? !behalfOfFlag
                   ? childId
                   : behalfOf
-                    ? behalfOf
-                    : localStorage.getItem('user_id')
-                : behalfOf
                   ? behalfOf
-                  : localStorage.getItem('user_id'),
+                  : localStorage.getItem('user_id')
+                : behalfOf
+                ? behalfOf
+                : localStorage.getItem('user_id'),
             selectedUserData: selectedUserValue,
             data: form,
           }),
@@ -408,16 +428,18 @@ const DynamicForm = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('user_role') === "guardian") {
-      let userObj = targetUser.filter(d => parseInt(d.id) === parseInt(localStorage.getItem('selectedChild')));
+    if (localStorage.getItem('user_role') === 'guardian') {
+      let userObj = targetUser.filter(
+        (d) =>
+          parseInt(d.id) === parseInt(localStorage.getItem('selectedChild'))
+      );
       setSelectedUserValue({
         id: userObj[0]?.id,
-        role: "child"
-      })
+        role: 'child',
+      });
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
-  console.log('FORM>>>>>>>>>>>>>>>>', form); 
   return (
     <>
       <div id="main">
@@ -444,10 +466,10 @@ const DynamicForm = () => {
                     <h6>
                       {location.pathname
                         .split('/')
-                      [location.pathname.split('/').length - 1].replaceAll(
-                        '%20',
-                        ' '
-                      )}{' '}
+                        [location.pathname.split('/').length - 1].replaceAll(
+                          '%20',
+                          ' '
+                        )}{' '}
                       Form
                     </h6>
                   </div>
@@ -472,7 +494,7 @@ const DynamicForm = () => {
                             <div clas Name="d-flex mt-2"></div>
                             <div className="btn-radio d-flex align-items-center">
                               {localStorage.getItem('user_role') ===
-                                'guardian' ? (
+                              'guardian' ? (
                                 <Form.Select
                                   name={'behalf_of'}
                                   id="behalf_of"
@@ -502,7 +524,9 @@ const DynamicForm = () => {
                                       <>
                                         {item.id === parseInt(childId) ? (
                                           <option
-                                            value={`${item.id} ${item.role || "child"}`}
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
                                             selected
                                             key={index}
                                           >
@@ -512,8 +536,9 @@ const DynamicForm = () => {
                                           </option>
                                         ) : (
                                           <option
-                                            value={`${item.id} ${item.role || 'child'
-                                              }`}
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
                                             key={index}
                                           >
                                             {item.child
@@ -555,7 +580,9 @@ const DynamicForm = () => {
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
                                           <option
-                                            value={`${item.id} ${item.role || "child"}`}
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
                                             selected
                                             key={index}
                                           >
@@ -565,8 +592,9 @@ const DynamicForm = () => {
                                           </option>
                                         ) : (
                                           <option
-                                            value={`${item.id} ${item.role || 'child'
-                                              }`}
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
                                             key={index}
                                           >
                                             {item?.child
@@ -605,19 +633,20 @@ const DynamicForm = () => {
                                           localStorage.getItem('franchisee_id')
                                         ) === item.franchisee_id ||
                                           localStorage.getItem('user_role') ===
-                                          'franchisor_admin' ||
+                                            'franchisor_admin' ||
                                           localStorage.getItem('user_role') ===
-                                          'educator') && (
-                                            <option
-                                              value={`${item.id} ${item.role || 'child'
-                                                }`}
-                                              key={index}
-                                            >
-                                              {item.child
-                                                ? `${item.fullname} ${item.family_name}`
-                                                : `${item.fullname} (${item.email})`}
-                                            </option>
-                                          )}
+                                            'educator') && (
+                                          <option
+                                            value={`${item.id} ${
+                                              item.role || 'child'
+                                            }`}
+                                            key={index}
+                                          >
+                                            {item.child
+                                              ? `${item.fullname} ${item.family_name}`
+                                              : `${item.fullname} (${item.email})`}
+                                          </option>
+                                        )}
                                       </>
                                     );
                                   })}
