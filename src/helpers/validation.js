@@ -19,6 +19,7 @@ export const DynamicFormValidation = (
     dataTemp = { '': [...dataTemp[''], ...values] };
   }
 
+
   let formFields = {};
   // Start - this code was written by Preet. Fixed section-wise required validation and display section-wise response
   for (const sectionName of Object.keys(form)) {
@@ -29,7 +30,7 @@ export const DynamicFormValidation = (
             form[''][sectionsKeys] &&
             form[sectionName] &&
             !form[sectionName][sectionsKeys]) ||
-          form[sectionName][sectionsKeys] === null
+            form[sectionName][sectionsKeys] === null
         ) {
           form[sectionName][sectionsKeys] = form[''][sectionsKeys] || null;
         }
@@ -54,6 +55,18 @@ export const DynamicFormValidation = (
     }
   }
 
+  // HANDLING 'SELECT' 
+  let fieldArray = dataTemp[''];
+  fieldArray = fieldArray.filter(d => d.field_type === "dropdown_selection");
+  fieldArray = fieldArray.map(d => d.field_name);
+  fieldArray.forEach(d => {
+    if(formFields[d] === 'Select') {
+      if(!emptyFields.includes(d))
+        emptyFields = [...emptyFields, d];
+    }
+  });
+
+
   let errorFields = emptyFields.map(
     (d) => dataTemp[''].filter((t) => t.field_name === d)[0]
   );
@@ -77,7 +90,6 @@ export const DynamicFormValidation = (
     }
   });
 
-  console.log('NEW ERRORS:', newErrors);
   return newErrors;
 };
 
