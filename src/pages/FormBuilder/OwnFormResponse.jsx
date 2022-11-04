@@ -496,11 +496,11 @@ function OwnFormResponse(props) {
                                       {/* Filled By {item?.filled_user?.fullname}{' '} */}
                                       {item?.filled_user?.fullname}{' '}
                                       {!item.section_name ||
-                                        (item.section_name !== '' &&
+                                         (item.section_name !== '' &&
                                           `| ${item.section_name
                                             .split('_')
                                             .join(' ')} Section`)}{' '}
-                                      {`| Name: ${item?.user?.fullname}`}
+                                      {`| Name: ${item?.user?.fullname} ${item?.user?.family_name || ''}`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(
