@@ -493,13 +493,14 @@ function OwnFormResponse(props) {
                                     }
                                   >
                                     <h4 className="content-wrap-title text-capitalize">
-                                      Filled By {item?.filled_user?.fullname}{' '}
+                                      {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                      {item?.filled_user?.fullname}{' '}
                                       {!item.section_name ||
                                         (item.section_name !== '' &&
                                           `| ${item.section_name
                                             .split('_')
                                             .join(' ')} Section`)}{' '}
-                                      {`| Behalf of ${item?.user?.fullname}`}
+                                      {`| Name: ${item?.user?.fullname}`}
                                     </h4>
 
                                     {Object.keys(JSON.parse(item.fields)).map(

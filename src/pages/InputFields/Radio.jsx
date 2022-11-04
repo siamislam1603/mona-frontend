@@ -23,6 +23,19 @@ const Radio = (props) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (props?.field_data?.form_id) {
+      eval(controls.option)?.map((item, index) => {
+        return props?.field_data &&
+          (props?.field_data?.fields[`${controls?.field_name}`] ===
+            Object.keys(item)[0]) ===
+            true
+          ? setIndex(index)
+          : 0;
+      });
+    }
+  }, []);
+
   return (
     <>
       <Col sm={6}>
@@ -34,8 +47,8 @@ const Radio = (props) => {
             {eval(controls.option)?.map((item, index) => {
               return (
                 <>
-                  {Object.keys(eval(controls.option)[index])[0] ===
-                  Object.values(eval(controls.option)[index])[0] ? (
+                  {Object.keys(eval(controls?.option)[index])[0] ===
+                  Object.values(eval(controls?.option)[index])[0] ? (
                     <div className="new-form-radio-box">
                       <label htmlFor={Object.keys(item)[0] + props?.diff_index}>
                         <input
@@ -120,7 +133,7 @@ const Radio = (props) => {
           <p className="error">{controls.error[controls.field_name]}</p>
         </Form.Group>
       </Col>
-      {props.field_data ||
+      {props?.field_data?.form_id ||
       optionValue ===
         Object.values(eval(controls.option)[Index])[0]['option_key'] ? (
         Object.values(eval(controls.option)[Index])[0]['field_type'] ===
@@ -128,7 +141,7 @@ const Radio = (props) => {
           <Col sm={6}>
             <Form.Group>
               <Form.Label>
-                {Object.values(eval(controls.option)[Index])[0]['field_name']}
+                {Object.values(eval(controls.option)[Index])[0]?.field_name}
               </Form.Label>
               <div className="new-form-radio">
                 {Object.values(eval(controls.option)[Index])[0]['option'].map(
@@ -156,7 +169,7 @@ const Radio = (props) => {
                               props.onChange(e.target.name, e.target.value);
                             }}
                             checked={
-                              props.field_data &&
+                              props.field_data?.form_id &&
                               props.field_data.fields[
                                 `${
                                   Object.values(
@@ -212,7 +225,7 @@ const Radio = (props) => {
           <Col sm={6}>
             <div className="child_info_field sex">
               <span>
-                {Object.values(eval(controls.option)[Index])[0].field_label}:
+                {Object.values(eval(controls?.option)[Index])[0]?.field_label}:
               </span>
               <div className="d-flex mt-2"></div>
               <div className="btn-radio d-flex align-items-center">
@@ -234,13 +247,13 @@ const Radio = (props) => {
                           id={Object.keys(item)[0]}
                           value={Object.keys(item)[0]}
                           checked={
-                            props.field_data &&
+                            props.field_data?.form_id &&
                             props.field_data.fields[
                               `${
                                 Object.values(eval(controls.option)[Index])[0]
                                   .field_name
                               }`
-                            ].includes(Object.keys(item)[0])
+                            ]
                           }
                           onClick={(e) => {
                             console.log('FIELD4:>>>>', e.target.value);
@@ -266,7 +279,7 @@ const Radio = (props) => {
                 rows={controls.row ? controls.row : 3}
                 name={Object.values(eval(controls.option)[Index])[0].field_name}
                 value={
-                  props.field_data &&
+                  props.field_data?.form_id &&
                   props.field_data.fields[
                     `${
                       Object.values(eval(controls.option)[Index])[0].field_name
