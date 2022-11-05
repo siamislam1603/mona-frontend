@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, Container, Form, Row, Button } from 'react-bootstrap';
+import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
 import { BASE_URL } from '../components/App';
 import { DynamicFormValidation } from '../helpers/validation';
 import InputFields from './InputFields';
@@ -24,6 +24,30 @@ import { FullLoader } from '../components/Loader';
 //   return formObj;
 // }
 
+function formatDate(date) {
+  let data = date.split("-");
+  return `${data[2]}/${data[1]}/${data[0]}`
+}
+
+function formatTime(time) {
+  let data = time.split(":");
+  let hour = null;
+  let hourValue = data[0], minuteValue = data[1];
+
+  if(parseInt(hourValue) > 12) {
+    hourValue = parseInt(hourValue) - 12;
+    hour = 'PM';
+  } else if(parseInt(hourValue) === 12) {
+    hourValue = parseInt(hourValue);
+    hour = 'PM';
+  } else {
+    hourValue = parseInt(hourValue);
+    hour = 'AM';
+  }
+
+  return `${hourValue >= 10 ? hourValue : `0${hourValue}`}:${minuteValue} ${hour}`
+}
+
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -41,6 +65,9 @@ const DynamicForm = () => {
   const [behalfOf, setBehalfOf] = useState('');
   const [selectedUserValue, setSelectedUserValue] = useState({});
   const [childId, setChildId] = useState();
+  const [inactiveFormPopup, setInactiveFormPopup] = useState(false);
+  const [formFillingDate, setFormFillingDate] = useState(null);
+  const [formFillingTime, setFormFillingTime] = useState(null);
   const [errorFocus, setErrorFocus] = useState('');
   const [signatories, setSignatories] = useState([]);
   const token = localStorage.getItem('token');
@@ -185,6 +212,13 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       })
       .catch((error) => console.log('error', error));
   };
+
+  function handleGoBack() {
+    setFormFillingDate(null);
+    setFormFillingTime(null);
+    window.location.href = '/form';
+  }
+
   const getFormFields = async () => {
     console.log('GETTING FORM FIELDS');
     var myHeaders = new Headers();
@@ -208,36 +242,70 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
     )
       .then((response) => response.json())
       .then((result) => {
-        let res = result;
-        if (res?.success == false) {
-          localStorage.setItem('form_error', res?.message);
-          window.location.href = '/form';
-        }
+        console.log('RESPONSE>>>>>>>>>>>>>>>>>>>>>>>', result);
+        let { form } = result;
+        let { start_date, start_time, created_by } = form[0];
 
-        setSignatories(
-          res?.form[0]?.form_permissions[0]?.signatories_role || []
-        );
-        setFormData(res.result);
-        setFormPermission(res?.form[0]?.form_permissions[0]);
-        let formsData = {};
-        let data = {};
-        Object.keys(res?.result)?.map((item) => {
-          if (!formsData[item]) formsData[item] = {};
-          if (!data[item]) data[item] = [];
+        let currentDate = moment().format('YYYY-MM-DD');
+        let currentTime = moment().format('HH:mm:ss');
 
-          res?.result[item]?.map((inner_item, index) => {
-            if (inner_item.form_field_permissions.length > 0) {
-              inner_item?.form_field_permissions?.map((permission) => {
-                if (
-                  permission?.fill_access_users?.includes(
-                    localStorage.getItem('user_role') === 'guardian'
-                      ? 'parent'
-                      : localStorage.getItem('user_role')
-                  ) ||
-                  permission?.fill_access_users?.includes(
-                    localStorage.getItem('user_id')
-                  )
-                ) {
+        if(currentDate < start_date) {
+          setInactiveFormPopup(true);
+          setFormFillingDate(start_date);
+          setFormFillingTime(start_time);
+        } else {
+          if(currentDate === start_date && currentTime < start_time) {
+            // && parseInt(created_by) !== parseInt(localStorage.getItem('user_id'))
+            setInactiveFormPopup(true);
+            setFormFillingDate(start_date);
+            setFormFillingTime(start_time);
+          } else {
+            let res = result;
+            if (res?.success === false) {
+              localStorage.setItem('form_error', res?.message);
+              window.location.href = '/form';
+            }
+
+            setSignatories(
+              res?.form[0]?.form_permissions[0]?.signatories_role || []
+            );
+            setFormData(res.result);
+            setFormPermission(res?.form[0]?.form_permissions[0]);
+            let formsData = {};
+            let data = {};
+            Object.keys(res?.result)?.map((item) => {
+              if (!formsData[item]) formsData[item] = {};
+              if (!data[item]) data[item] = [];
+
+              res?.result[item]?.map((inner_item, index) => {
+                if (inner_item.form_field_permissions.length > 0) {
+                  inner_item?.form_field_permissions?.map((permission) => {
+                    if (
+                      permission?.fill_access_users?.includes(
+                        localStorage.getItem('user_role') === 'guardian'
+                          ? 'parent'
+                          : localStorage.getItem('user_role')
+                      ) ||
+                      permission?.fill_access_users?.includes(
+                        localStorage.getItem('user_id')
+                      )
+                    ) {
+                      if (
+                        inner_item.field_type === 'headings' ||
+                        inner_item.field_type === 'text_headings'
+                      ) {
+                        formsData[item][`${inner_item.field_type}_${index}`] =
+                          inner_item.field_label;
+                      } else {
+                        formsData[item][`${inner_item.field_name}`] = null;
+                      }
+                      data[item].push(inner_item);
+                    } else {
+                      delete formsData[item];
+                      delete data[item];
+                    }
+                  });
+                } else {
                   if (
                     inner_item.field_type === 'headings' ||
                     inner_item.field_type === 'text_headings'
@@ -248,44 +316,30 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                     formsData[item][`${inner_item.field_name}`] = null;
                   }
                   data[item].push(inner_item);
-                } else {
-                  delete formsData[item];
-                  delete data[item];
                 }
               });
-            } else {
+            });
+            if (result.form[0]?.form_permissions[0].signatories === true) {
               if (
-                inner_item.field_type === 'headings' ||
-                inner_item.field_type === 'text_headings'
+                result.form[0]?.form_permissions[0]?.signatories_role.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role')
+                )
               ) {
-                formsData[item][`${inner_item.field_type}_${index}`] =
-                  inner_item.field_label;
+                setSignatureAccessFlag(true);
               } else {
-                formsData[item][`${inner_item.field_name}`] = null;
+                setSignatureAccessFlag(false);
               }
-              data[item].push(inner_item);
+            } else {
+              setSignatureAccessFlag(true);
             }
-          });
-        });
-        if (result.form[0]?.form_permissions[0].signatories === true) {
-          if (
-            result.form[0]?.form_permissions[0]?.signatories_role.includes(
-              localStorage.getItem('user_role') === 'guardian'
-                ? 'parent'
-                : localStorage.getItem('user_role')
-            )
-          ) {
-            setSignatureAccessFlag(true);
-          } else {
-            setSignatureAccessFlag(false);
+            setForm(formsData);
+            setFormData(data);
+            if (result) {
+              setfullLoaderStatus(false);
+            }
           }
-        } else {
-          setSignatureAccessFlag(true);
-        }
-        setForm(formsData);
-        setFormData(data);
-        if (result) {
-          setfullLoaderStatus(false);
         }
       })
       .catch((error) => {
@@ -806,6 +860,25 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
           </Container>
         </section>
       </div>
+
+      {
+        inactiveFormPopup &&
+        <Modal
+          show={inactiveFormPopup}>
+          <Modal.Header>
+            <Modal.Title>Message</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>The Form isn't ready to be filled yet. You can start filling the form on {formatDate(formFillingDate)}, from {formatTime(formFillingTime)} onwards.</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              className="modal-button"
+              onClick={handleGoBack}
+              >Go Back</button>
+          </Modal.Footer>
+        </Modal>
+      }
     </>
   );
 };

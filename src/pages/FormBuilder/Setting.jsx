@@ -430,6 +430,7 @@ function Setting(props) {
     fetch(api_url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        
         setChild(result?.children.map(d => ({
           id: d.id,
           name: d.fullname,
@@ -505,6 +506,7 @@ function Setting(props) {
         props.onModelChange();
       });
   };
+
   return (
     <>
       <Form>
