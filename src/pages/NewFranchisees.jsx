@@ -229,7 +229,7 @@ const NewFranchisees = () => {
                                                     ref={abn}
                                                     maxLength={11}
                                                     minLength={11}
-                                                    placeholder="45666777888"
+                                                    placeholder="456 667 778 88"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -340,9 +340,9 @@ const NewFranchisees = () => {
                                                     name="acn" 
                                                     type="text" 
                                                     ref={acn}
-                                                    maxLength={9}
+                                                    maxLength={11}
                                                     minLength={9}
-                                                    placeholder="666777888"
+                                                    placeholder="666 777 888 99"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
