@@ -32,6 +32,7 @@ const Radio = (props) => {
       setSignature(sigPad?.current?.getTrimmedCanvas()?.toDataURL('image/png'));
       sigPad?.current?.clear();
     }
+    toast.success('Signature added.');
   };
 
   useEffect(() => {
@@ -84,19 +85,25 @@ const Radio = (props) => {
 
   useEffect(() => {
     if (
-      props !== {} &&
-      props?.field_data !== {} &&
-      !isEmpty(props?.field_data) &&
+      typeof controls.field_data !== 'undefined' &&
+      Object.keys(controls.field_data).length > 0 &&
       Object.values(eval(controls.option)[Index])[0]?.field_type ===
         'dropdown_selection'
     ) {
-      setDropDownValue(
+      let val =
         props?.field_data?.fields[
-          Object.values(eval(controls.option)[Index])[0]?.field_name
-        ]
-      );
+          `${Object.values(eval(controls.option)[Index])[0]?.field_name}`
+        ];
+      let availableOptions = Object.values(eval(controls.option)[Index])[0]
+        ?.option;
+      let data = {};
+      availableOptions.forEach((d, index) => {
+        data = { ...data, ...d };
+      });
+      let valueSelected = Object.keys(data).filter((d) => d === val);
+      setDropDownValue(valueSelected[0]);
     }
-  }, [dropDownValue]);
+  }, [Index]);
 
   useEffect(() => {
     if (
@@ -238,7 +245,6 @@ const Radio = (props) => {
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
                             setOptionValue(e.target.value);
-                            console.log(e.target.value);
                             props.onChange(
                               e.target.name,
                               e.target.value,
@@ -559,6 +565,26 @@ const Radio = (props) => {
                     />
                   </>
                 )}
+            </Form.Group>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'text_headings' ? (
+          <Col sm={12} className="main-form-text-heading-title">
+            <br />
+            <Form.Group>
+              <Form.Label className="form-style-headings">
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
+            </Form.Group>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'headings' ? (
+          <Col sm={12} className="main-form-heading-title">
+            <br />
+            <Form.Group>
+              <Form.Label className="form-style-headings">
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
             </Form.Group>
           </Col>
         ) : (
