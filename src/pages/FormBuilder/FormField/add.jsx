@@ -308,8 +308,18 @@ const AddFormField = (props) => {
     index,
     inner_index,
     inner_inner_index,
-    key
+    key,
+    sectionName
   ) => {
+    console.log({
+      field,
+      value,
+      index,
+      inner_index,
+      inner_inner_index,
+      key,
+      name: JSON.stringify(sectionName),
+    });
     counter++;
     setCount(counter);
     const tempArr = form;
@@ -320,6 +330,7 @@ const AddFormField = (props) => {
       keyOfOption[key]['option'][inner_inner_index] = { [value]: value };
       tempOption[inner_index] = keyOfOption;
       tempArr[index]['option'] = tempOption;
+      console.log(tempArr[index], '====');
       setForm(tempArr);
     } else if (
       field === 'field_type' &&
@@ -328,7 +339,6 @@ const AddFormField = (props) => {
         value === 'dropdown_selection')
     ) {
       const keyOfOption = tempOption[inner_index];
-
       if (!keyOfOption[key]['option']) {
         keyOfOption[key]['option'] = [{ '': '' }, { '': '' }];
       }
@@ -342,6 +352,7 @@ const AddFormField = (props) => {
       const keyOfOption = tempOption[inner_index];
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
+      keyOfOption[key]['section_name'] = sectionName;
       tempArr[index]['option'] = tempOption;
       setForm(tempArr);
     }
@@ -721,7 +732,7 @@ const AddFormField = (props) => {
             item['section'] = false;
           }
         });
-
+        console.log(data, '----data');
         fetch(
           `${BASE_URL}/field/add?form_name=${location?.state?.form_name}&formId=${location?.state?.id}&removeFieldId=${removeConditionId}`,
           {
@@ -1473,7 +1484,12 @@ const AddFormField = (props) => {
                                           Index,
                                           index,
                                           0,
-                                          Object.keys(item)[0]
+                                          Object.keys(item)[0],
+                                          form[Index]?.section_name
+                                            ? form[Index]
+                                                ?.form_field_permissions[0]
+                                                ?.fill_access_users
+                                            : ''
                                         );
                                       }}
                                     />
