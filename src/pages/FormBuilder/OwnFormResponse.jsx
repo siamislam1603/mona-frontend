@@ -301,6 +301,7 @@ function OwnFormResponse(props) {
                   {responseData.length > 0 ? (
                     <Accordion defaultActiveKey="0">
                       {responseData.map((item, index) => {
+                        {console.log('ITEM>>>>>>>>>>>>>>>>', childrenData.includes(item[0].user.fullname))}
                         return localStorage.getItem('user_role') === "guardian" ?
                         (
                           childrenData.includes(item[0].user.fullname) &&
