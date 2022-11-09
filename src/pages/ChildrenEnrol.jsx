@@ -75,7 +75,7 @@ const ChildrenEnrol = () => {
             educatorassisgned: `${data[index]?.users[0]?.fullname}, ${data[index]?.users[1]?.fullname},${data[index]?.users[2]?.fullname},${data[index]?.users[3]?.fullname},${data[index]?.users[4]?.fullname},${data[index]?.users[5]?.fullname},${data[index]?.users[6]?.fullname},${data[index]?.users[7]?.fullname},${data[index]?.users[8]?.fullname},${data[index]?.users[9]?.fullname},${data[index]?.users[0]?.educator_profile_photo}, ${data[index]?.users[1]?.educator_profile_photo},${data[index]?.users[2]?.educator_profile_photo},${data[index]?.users[3]?.educator_profile_photo},${data[index]?.users[4]?.educator_profile_photo},${data[index]?.users[5]?.educator_profile_photo},${data[index]?.users[6]?.educator_profile_photo},${data[index]?.users[7]?.educator_profile_photo},${data[index]?.users[8]?.educator_profile_photo},${data[index]?.users[9]?.educator_profile_photo}`,
             specailneed: `${dt?.has_special_needs}`,
             franchise: `${dt?.franchisee_id}`,
-            enrolldate: `${dt?.enrollment_initiated}`,
+            enrolldate: `${dt?.start_date}`,
             franchise: `${dt?.franchisee?.franchisee_name}`
           })
           )
