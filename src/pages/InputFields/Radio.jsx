@@ -2,19 +2,37 @@ import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
+import { toast } from 'react-toastify';
+import { BASE_URL } from '../../components/App';
 const Radio = (props) => {
   const { ...controls } = props;
   const [optionValue, setOptionValue] = useState('');
   const [Index, setIndex] = useState(0);
   const [textInputValue, setTextInputValue] = useState('');
+  const [array, setArray] = useState([]);
+  const [event, setEvent] = useState();
+  const [signature, setSignature] = useState(null);
+  const [fileList, setFileList] = useState('');
+  const [dropDownValue, setDropDownValue] = useState();
+
   const sigPad = useRef({});
+
   const clear = (e) => {
     e.preventDefault();
     sigPad.current.clear();
   };
+
   const trim = (e) => {
     e.preventDefault();
-    props.onChange(sigPad.current.getTrimmedCanvas().toDataURL('image/png'));
+    props.onChange(
+      Object.values(eval(controls?.option)[Index])[0]?.field_name,
+      sigPad.current.getTrimmedCanvas().toDataURL('image/png')
+    );
+    if (props?.field_data || signature) {
+      setSignature(sigPad?.current?.getTrimmedCanvas()?.toDataURL('image/png'));
+      sigPad?.current?.clear();
+    }
+    toast.success('Signature added.');
   };
 
   useEffect(() => {
@@ -22,6 +40,35 @@ const Radio = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      props !== {} &&
+      props?.field_data &&
+      props?.fieldData !== {} &&
+      !isEmpty(props?.field_data) &&
+      Object.values(eval(controls?.option)[Index])[0]?.field_type ===
+        'signature'
+    ) {
+      setSignature(
+        props?.field_data?.fields[
+          Object.values(eval(controls?.option)[Index])[0]?.field_name
+        ]
+      );
+    }
+  }, [signature]);
+
+  useEffect(() => {
+    if (
+      signature &&
+      props !== {} &&
+      props?.field_data &&
+      Object.values(eval(controls?.option)[Index])[0]?.field_type ===
+        'signature'
+    ) {
+      sigPad?.current?.fromDataURL(signature);
+    }
+  }, [signature]);
 
   useEffect(() => {
     if (props?.field_data?.form_id) {
@@ -35,6 +82,143 @@ const Radio = (props) => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      typeof controls.field_data !== 'undefined' &&
+      Object.keys(controls.field_data).length > 0 &&
+      Object.values(eval(controls.option)[Index])[0]?.field_type ===
+        'dropdown_selection'
+    ) {
+      let val =
+        props?.field_data?.fields[
+          `${Object.values(eval(controls.option)[Index])[0]?.field_name}`
+        ];
+      let availableOptions = Object.values(eval(controls.option)[Index])[0]
+        ?.option;
+      let data = {};
+      availableOptions.forEach((d, index) => {
+        data = { ...data, ...d };
+      });
+      let valueSelected = Object.keys(data).filter((d) => d === val);
+      setDropDownValue(valueSelected[0]);
+    }
+  }, [Index]);
+
+  useEffect(() => {
+    if (
+      !isEmpty(props?.field_data) ||
+      !props?.field_data ||
+      props?.field_data == 'undefined'
+    ) {
+      let fieldData =
+        props?.field_data?.fields[
+          `${Object.values(eval(controls?.option)[Index])[0]?.field_name}`
+        ];
+      if (typeof fieldData === 'object') {
+        fieldData = fieldData?.join(',');
+      }
+      setArray(
+        fieldData?.split(',').map((item) => {
+          return item;
+        })
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      window.location.pathname.split('/')[2] !== 'preview' &&
+      Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+        'checkbox'
+    ) {
+      props.onChange(event, array?.join(','));
+    }
+  }, [array, event]);
+
+  useEffect(() => {
+    if (fileList || props?.field_data?.fields) {
+      if (
+        props !== {} &&
+        props?.field_data !== {} &&
+        !isEmpty(props?.field_data)
+      ) {
+        setFileList(
+          props?.field_data?.fields[
+            `${Object.values(eval(controls?.option)[Index])[0]?.field_name}`
+          ]
+        );
+      }
+    }
+  }, [fileList]);
+
+  const toBase64 = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+
+  const uploadFile = async (file) => {
+    console.log(file, '===-=-=');
+    let type = file.name.split('.')[file.name.split('.').length - 1];
+    if (
+      Object.values(eval(controls?.option)[Index])[0]?.field_type ===
+        'document_attachment' &&
+      !(
+        type.includes('doc') ||
+        type.includes('docx') ||
+        type.includes('html') ||
+        type.includes('htm') ||
+        type.includes('odt') ||
+        type.includes('xls') ||
+        type.includes('xlsx') ||
+        type.includes('ods') ||
+        type.includes('ppt') ||
+        type.includes('pptx') ||
+        type.includes('pdf') ||
+        type.includes('txt')
+      )
+    ) {
+      toast.error('File must be DOC, PDF, TXT, XLS, or PPT.');
+      return null;
+    } else if (
+      Object.values(eval(controls?.option)[Index])[0]?.field_type ===
+        'image_upload' &&
+      !(
+        type.includes('jpg') ||
+        type.includes('jpeg') ||
+        type.includes('png') ||
+        type.includes('psd')
+      )
+    ) {
+      toast.error('Image must be JPG, PNG, or PSD.');
+      return null;
+    } else if (file.size > 2048 * 1024) {
+      toast.error('File is too large. File limit 2 MB.');
+      return null;
+    } else {
+      const body = new FormData();
+      const blob = await fetch(await toBase64(file)).then((res) => res.blob());
+      body.append('image', blob, file.name);
+      body.append('description', 'form module');
+      body.append('title', 'image');
+      body.append('uploadedBy', 'vaibhavi');
+      console.log('object');
+      var myHeaders = new Headers();
+      myHeaders.append('shared_role', 'admin');
+      let res = await fetch(`${BASE_URL}/uploads/uiFiles`, {
+        method: 'post',
+        body: body,
+        headers: myHeaders,
+      });
+      let data = await res.json();
+      toast.success('uploaded.');
+      setFileList(data?.url);
+      return data?.url;
+    }
+  };
 
   return (
     <>
@@ -61,7 +245,6 @@ const Radio = (props) => {
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
                             setOptionValue(e.target.value);
-                            console.log(e.target.value);
                             props.onChange(
                               e.target.name,
                               e.target.value,
@@ -199,10 +382,18 @@ const Radio = (props) => {
               <div className="d-flex mt-2"></div>
               <div className="btn-radio d-flex align-items-center">
                 <Form.Select
-                  name={controls.field_name}
+                  name={
+                    Object.values(eval(controls.option)[Index])[0]?.field_name
+                  }
+                  value={dropDownValue ? dropDownValue : 'Select'}
                   onChange={(e) => {
                     console.log('FIELD3:>>>>', e.target.value);
-                    props.onChange(e.target.name, e.target.value);
+                    setDropDownValue(e.target.value);
+                    props.onChange(
+                      Object.values(eval(controls.option)[Index])[0]
+                        ?.field_name,
+                      e.target.value
+                    );
                   }}
                 >
                   <option>Select </option>
@@ -246,19 +437,26 @@ const Radio = (props) => {
                           }
                           id={Object.keys(item)[0]}
                           value={Object.keys(item)[0]}
-                          checked={
-                            props.field_data?.form_id &&
-                            props.field_data.fields[
-                              `${
-                                Object.values(eval(controls.option)[Index])[0]
-                                  .field_name
-                              }`
-                            ]
-                          }
                           onClick={(e) => {
-                            console.log('FIELD4:>>>>', e.target.value);
-                            props.onChange(e.target.name, e.target.value);
+                            if (e.target.checked) {
+                              setEvent(e.target.name);
+                              setArray((oldData) => {
+                                if (oldData) {
+                                  return [...oldData, Object.keys(item)[0]];
+                                } else {
+                                  return [Object.keys(item)[0]];
+                                }
+                              });
+                            } else {
+                              setEvent(e.target.name);
+                              setArray((oldData) =>
+                                oldData?.filter(
+                                  (item) => item !== e.target.value
+                                )
+                              );
+                            }
                           }}
+                          checked={array?.includes(Object.keys(item)[0])}
                         />
                       </>
                     );
@@ -339,11 +537,54 @@ const Radio = (props) => {
               <Form.Control
                 type="file"
                 name={Object.values(eval(controls.option)[Index])[0].field_name}
-                onChange={(e) => {
-                  console.log('FIELD5:>>>>', e.target.value);
-                  props.onChange(e.target.name, e.target.value);
+                onChange={async (e) => {
+                  console.log('FIELD5:>>>>', e.target.files[0]);
+                  let file = e.target.files[0];
+                  await uploadFile(file).then((url) => {
+                    props.onChange(e.target.name, url, 'file');
+                  });
                 }}
               />
+              {fileList &&
+                Object.values(eval(controls.option)[Index])[0].field_type ===
+                  'document_attachment' && (
+                  <>
+                    <h5>
+                      {fileList?.split('/')[fileList?.split('/').length - 1]}
+                    </h5>
+                  </>
+                )}
+              {fileList &&
+                Object.values(eval(controls.option)[Index])[0].field_type ===
+                  'image_upload' && (
+                  <>
+                    <img
+                      src={fileList}
+                      alt="image"
+                      style={{ width: '100px' }}
+                    />
+                  </>
+                )}
+            </Form.Group>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'text_headings' ? (
+          <Col sm={12} className="main-form-text-heading-title">
+            <br />
+            <Form.Group>
+              <Form.Label className="form-style-headings">
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
+            </Form.Group>
+          </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'headings' ? (
+          <Col sm={12} className="main-form-heading-title">
+            <br />
+            <Form.Group>
+              <Form.Label className="form-style-headings">
+                {Object.values(eval(controls.option)[Index])[0].field_label}
+              </Form.Label>
             </Form.Group>
           </Col>
         ) : (

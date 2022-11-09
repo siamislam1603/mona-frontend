@@ -70,7 +70,6 @@ const ImageUpload = (props) => {
       return data?.url;
     }
   };
-
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">

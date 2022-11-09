@@ -267,7 +267,7 @@ const EditFranchisees = () => {
                                                     maxLength={11}
                                                     minLength={11}
                                                     value={franchiseeData?.abn}
-                                                    placeholder="45 666 777 888"
+                                                    placeholder="456 667 778 88"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({
@@ -382,10 +382,10 @@ const EditFranchisees = () => {
                                                 <Form.Control
                                                     name="acn" 
                                                     type="text" 
-                                                    maxLength={9}
+                                                    maxLength={11}
                                                     minLength={9}
                                                     value={franchiseeData?.acn}
-                                                    placeholder="666 777 888"
+                                                    placeholder="666 777 888 99"
                                                     onChange={(e) => {
                                                         handleChange(e);
                                                         setFormErrors(prevState => ({

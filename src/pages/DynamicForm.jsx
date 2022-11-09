@@ -126,6 +126,10 @@ const DynamicForm = () => {
         });
       }
     } else {
+
+console.log("ggggggggggggggggggggggggoooooooooooooooooooooooooooooooooooooo",field)
+console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
+
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setForm({
@@ -402,6 +406,7 @@ const DynamicForm = () => {
         behalfOfFlag,
         signatureAccessFlag
       );
+      console.log("erorsssssssssssssssssssss",newErrors)
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);

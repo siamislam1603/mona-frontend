@@ -33,6 +33,7 @@ const Checkbox = (props) => {
     }
   }, []);
 
+
   useEffect(() => {
     if (window.location.pathname.split('/')[2] !== 'preview') {
       props.onChange(

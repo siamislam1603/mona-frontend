@@ -484,8 +484,8 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                         </div>
                       </div>
                       <div className="cta text-center mt-5 mb-5">
-                        <Button variant="outline" onClick={() => initiateCancelEvent()} className="me-3">Cancel</Button>
-                        <Button variant="primary" type="submit">
+                        <Button variant={localStorage.getItem('user_role') === "guardian" ? "primary" : "outline"} onClick={() => initiateCancelEvent()} className="me-3">{localStorage.getItem('user_role') === "guardian" ? "Back" : "Cancel"}</Button>
+                        {localStorage.getItem('user_role') !== "guardian" && <Button variant="primary" type="submit">
                           {loader === true ? (
                             <>
                               <img
@@ -497,7 +497,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                             </>
                           ) : (
                           'Submit')}
-                        </Button>
+                        </Button>}
                       </div>
                     </Form>
                   </div>

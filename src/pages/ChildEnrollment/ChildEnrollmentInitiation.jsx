@@ -293,7 +293,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   type="date"
                                   name="start_date"
                                   ref={start_date}
-                                  min={new Date().toISOString().slice(0, 10)}
+                                  // min={new Date().toISOString().slice(0, 10)}
                                   // max={new Date().toISOString().slice(0, 10)}
                                   value={formOneChildData?.start_date || ""}
                                   onChange={(e) => {
@@ -404,6 +404,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   placeholder={formOneChildData?.language || "Select"}
                                   closeMenuOnSelect={true}
                                   isMulti
+                                  isDisabled={formOneChildData?.franchisee_id === null}
                                   ref={educator}
                                   isDisabled={formOneChildData?.franchisee_id === null}
                                   options={educatorData}
