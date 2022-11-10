@@ -308,8 +308,7 @@ const AddFormField = (props) => {
     index,
     inner_index,
     inner_inner_index,
-    key,
-    sectionName
+    key
   ) => {
     console.log({
       field,
@@ -318,7 +317,6 @@ const AddFormField = (props) => {
       inner_index,
       inner_inner_index,
       key,
-      name: JSON.stringify(sectionName),
     });
     counter++;
     setCount(counter);
@@ -352,7 +350,7 @@ const AddFormField = (props) => {
       const keyOfOption = tempOption[inner_index];
       keyOfOption[key][field] = value;
       tempOption[inner_index] = keyOfOption;
-      keyOfOption[key]['section_name'] = sectionName;
+
       tempArr[index]['option'] = tempOption;
       setForm(tempArr);
     }
@@ -365,7 +363,6 @@ const AddFormField = (props) => {
       redirect: 'follow',
       headers: myHeaders,
     };
-
     fetch(
       `${BASE_URL}/form?form_name=${
         location?.state?.form_name
@@ -732,7 +729,6 @@ const AddFormField = (props) => {
             item['section'] = false;
           }
         });
-        console.log(data, '----data');
         fetch(
           `${BASE_URL}/field/add?form_name=${location?.state?.form_name}&formId=${location?.state?.id}&removeFieldId=${removeConditionId}`,
           {
@@ -1484,12 +1480,7 @@ const AddFormField = (props) => {
                                           Index,
                                           index,
                                           0,
-                                          Object.keys(item)[0],
-                                          form[Index]?.section_name
-                                            ? form[Index]
-                                                ?.form_field_permissions[0]
-                                                ?.fill_access_users
-                                            : ''
+                                          Object.keys(item)[0]
                                         );
                                       }}
                                     />
