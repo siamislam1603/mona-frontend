@@ -290,7 +290,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     defaultChecked
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
-                                      gender: "M"
+                                      sex: "M"
                                     }))} />
                                   <Form.Check
                                     type="radio"
@@ -301,7 +301,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     label="Female"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
-                                      gender: "F"
+                                      sex: "F"
                                     }))} />
                                 </div>
                               </Form.Group>
