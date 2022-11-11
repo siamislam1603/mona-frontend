@@ -11,13 +11,19 @@ const Input = (props) => {
   if (controls.field_data == {} || controls.field_data == undefined) {
     delete controls.field_data;
   }
-  
   useEffect(() => {
     let value;
 
-    if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
+    if (
+      props !== {} &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
       if (controls?.field_type === 'date') {
-        value = moment(props?.field_data?.fields[`${controls?.field_name}`], "YYYY-MM-DD").format('YYYY-MM-DD')
+        value = moment(
+          props?.field_data?.fields[`${controls?.field_name}`],
+          'YYYY-MM-DD'
+        ).format('YYYY-MM-DD');
         setDataValue(value);
       } else {
         value = props?.field_data?.fields[`${controls?.field_name}`];
@@ -31,7 +37,6 @@ const Input = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
-
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
@@ -41,10 +46,32 @@ const Input = (props) => {
           id={controls?.field_name}
           name={controls?.field_name}
           maxLength={255}
-          disabled={props.isDisable ? props.isDisable : false}
+          disabled={
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
+              null &&
+              !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role')
+              )) ||
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users &&
+              !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role') &&
+                      !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                        localStorage.getItem('user_role') === 'guardian'
+                          ? 'parent'
+                          : localStorage.getItem('user_role')
+                      )
+              )) ||
+            props.isDisable
+          }
           onChange={(e) => {
             if (controls?.field_type === 'date') {
-              setDataValue(moment(e.target.value, "YYYY-MM-DD").format('YYYY-MM-DD'));
+              setDataValue(
+                moment(e.target.value, 'YYYY-MM-DD').format('YYYY-MM-DD')
+              );
             } else {
               setDataValue(e.target.value);
             }

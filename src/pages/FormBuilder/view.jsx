@@ -500,10 +500,33 @@ function ViewFormBuilder(props) {
                                         let fieldPermission = [];
                                         inner_item?.form_fields.map(
                                           (fields) => {
-                                            fieldPermission =
-                                              fields?.form_field_permissions;
+                                            fields
+                                              ?.form_field_permissions[0] !==
+                                              undefined &&
+                                              fieldPermission.push(
+                                                fields
+                                                  ?.form_field_permissions[0]
+                                                  .fill_access_users
+                                              );
                                           }
                                         );
+                                        let array1 = [];
+                                        if (fieldPermission.length > 0) {
+                                          fieldPermission.map((permission) => {
+                                            if (
+                                              permission !== undefined &&
+                                              permission !== '' &&
+                                              permission !== null
+                                            ) {
+                                              for (let name of permission) {
+                                                array1.push(name);
+                                              }
+                                            }
+                                          });
+
+                                          fieldPermission = [];
+                                          fieldPermission = array1;
+                                        }
                                         return inner_item?.end_date === null &&
                                           ((
                                             (typeof formPermissions !==
@@ -550,8 +573,7 @@ function ViewFormBuilder(props) {
                                           ((
                                             (typeof fieldPermission !==
                                               'undefined' &&
-                                              fieldPermission[0]
-                                                ?.fill_access_users) ||
+                                              fieldPermission) ||
                                             []
                                           )?.includes(
                                             localStorage.getItem(
@@ -806,6 +828,36 @@ function ViewFormBuilder(props) {
                                   <Row>
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
+                                        let fieldPermission = [];
+                                        inner_item?.form_fields.map(
+                                          (fields) => {
+                                            fields
+                                              ?.form_field_permissions[0] !==
+                                              undefined &&
+                                              fieldPermission.push(
+                                                fields
+                                                  ?.form_field_permissions[0]
+                                                  .fill_access_users
+                                              );
+                                          }
+                                        );
+                                        let array1 = [];
+                                        if (fieldPermission.length > 0) {
+                                          fieldPermission.map((permission) => {
+                                            if (
+                                              permission !== undefined &&
+                                              permission !== '' &&
+                                              permission !== null
+                                            ) {
+                                              for (let name of permission) {
+                                                array1.push(name);
+                                              }
+                                            }
+                                          });
+
+                                          fieldPermission = [];
+                                          fieldPermission = array1;
+                                        }
                                         return ((
                                           (typeof inner_item?.form_permissions !==
                                             'undefined' &&
@@ -839,12 +891,11 @@ function ViewFormBuilder(props) {
                                                   )
                                             )) &&
                                           ((
-                                            (typeof inner_item?.form_permissions !==
+                                            (typeof fieldPermission !==
                                               'undefined' &&
-                                              inner_item?.form_permissions[0]
-                                                ?.fill_access_users) ||
+                                              fieldPermission) ||
                                             []
-                                          ).includes(
+                                          )?.includes(
                                             localStorage.getItem(
                                               'user_role'
                                             ) === 'guardian'
@@ -853,6 +904,21 @@ function ViewFormBuilder(props) {
                                                   'user_role'
                                                 )
                                           ) ||
+                                            (
+                                              (typeof inner_item?.form_permissions !==
+                                                'undefined' &&
+                                                inner_item?.form_permissions[0]
+                                                  ?.fill_access_users) ||
+                                              []
+                                            ).includes(
+                                              localStorage.getItem(
+                                                'user_role'
+                                              ) === 'guardian'
+                                                ? 'parent'
+                                                : localStorage.getItem(
+                                                    'user_role'
+                                                  )
+                                            ) ||
                                             (
                                               (typeof inner_item?.form_permissions !==
                                                 'undefined' &&
@@ -1359,6 +1425,39 @@ function ViewFormBuilder(props) {
                                         <Row key={index + '10'}>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
+                                              let fieldPermission = [];
+                                              inner_item?.form_fields.map(
+                                                (fields) => {
+                                                  fields
+                                                    ?.form_field_permissions[0] !==
+                                                    undefined &&
+                                                    fieldPermission.push(
+                                                      fields
+                                                        ?.form_field_permissions[0]
+                                                        .fill_access_users
+                                                    );
+                                                }
+                                              );
+                                              let array1 = [];
+                                              if (fieldPermission.length > 0) {
+                                                fieldPermission.map(
+                                                  (permission) => {
+                                                    if (
+                                                      permission !==
+                                                        undefined &&
+                                                      permission !== '' &&
+                                                      permission !== null
+                                                    ) {
+                                                      for (let name of permission) {
+                                                        array1.push(name);
+                                                      }
+                                                    }
+                                                  }
+                                                );
+
+                                                fieldPermission = [];
+                                                fieldPermission = array1;
+                                              }
                                               if (
                                                 inner_item?.created_by !==
                                                   parseInt(
@@ -1379,16 +1478,18 @@ function ViewFormBuilder(props) {
                                                     )
                                                   ) &&
                                                 ((
-                                                  (typeof inner_item?.form_permissions !==
+                                                  (typeof fieldPermission !==
                                                     'undefined' &&
-                                                    inner_item
-                                                      ?.form_permissions[0]
-                                                      ?.response_visibility) ||
+                                                    fieldPermission) ||
                                                   []
-                                                ).includes(
+                                                )?.includes(
                                                   localStorage.getItem(
-                                                    'user_id'
-                                                  )
+                                                    'user_role'
+                                                  ) === 'guardian'
+                                                    ? 'parent'
+                                                    : localStorage.getItem(
+                                                        'user_role'
+                                                      )
                                                 ) ||
                                                   (
                                                     (typeof inner_item?.form_permissions !==
@@ -1399,8 +1500,24 @@ function ViewFormBuilder(props) {
                                                     []
                                                   ).includes(
                                                     localStorage.getItem(
-                                                      'user_role'
+                                                      'user_id'
                                                     )
+                                                  ) ||
+                                                  (
+                                                    (typeof inner_item?.form_permissions !==
+                                                      'undefined' &&
+                                                      inner_item
+                                                        ?.form_permissions[0]
+                                                        ?.response_visibility) ||
+                                                    []
+                                                  ).includes(
+                                                    localStorage.getItem(
+                                                      'user_role'
+                                                    ) === 'guardian'
+                                                      ? 'parent'
+                                                      : localStorage.getItem(
+                                                          'user_role'
+                                                        )
                                                   ) ||
                                                   (
                                                     (typeof inner_item?.form_permissions !==

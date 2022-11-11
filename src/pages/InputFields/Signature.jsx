@@ -8,6 +8,30 @@ import 'react-toastify/dist/ReactToastify.css';
 const Signature = (props) => {
   const [signature, setSignature] = useState(null);
   const { ...controls } = props;
+
+  useEffect(() => {
+    if (
+      (props?.currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
+        !props?.form_field_permissions[0]?.fill_access_users?.includes(
+          localStorage.getItem('user_role') === 'guardian'
+            ? 'parent'
+            : localStorage.getItem('user_role')
+        )) ||
+      (props?.currentForm[0]?.form_permissions[0]?.fill_access_users &&
+        !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+          localStorage.getItem('user_role') === 'guardian'
+            ? 'parent'
+            : localStorage.getItem('user_role') &&
+                !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role')
+                )
+        ))
+    ) {
+      sigPad?.current?.off();
+    }
+  }, []);
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
@@ -79,7 +103,28 @@ const Signature = (props) => {
           />
           <div style={{ marginTop: '5px' }}>
             <Button
-              disabled={props.isDisable ? props.isDisable : false}
+              disabled={
+                (props?.currentForm[0]?.form_permissions[0]
+                  ?.fill_access_users === null &&
+                  !props?.form_field_permissions[0]?.fill_access_users.includes(
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role')
+                  )) ||
+                (props?.currentForm[0]?.form_permissions[0]
+                  ?.fill_access_users &&
+                  !props?.currentForm[0]?.form_permissions[0]?.fill_access_users.includes(
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role') &&
+                          !props?.form_field_permissions[0]?.fill_access_users.includes(
+                            localStorage.getItem('user_role') === 'guardian'
+                              ? 'parent'
+                              : localStorage.getItem('user_role')
+                          )
+                  )) ||
+                props.isDisable
+              }
               style={{ minWidth: '70px !important' }}
               onClick={trim}
             >

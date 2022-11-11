@@ -20,7 +20,11 @@ const Checkbox = (props) => {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(props?.field_data) || !props?.field_data || props?.field_data == 'undefined') {
+    if (
+      !isEmpty(props?.field_data) ||
+      !props?.field_data ||
+      props?.field_data == 'undefined'
+    ) {
       let fieldData = props?.field_data?.fields[controls?.field_name];
       if (typeof fieldData === 'object') {
         fieldData = fieldData?.join(',');
@@ -32,7 +36,6 @@ const Checkbox = (props) => {
       );
     }
   }, []);
-
 
   useEffect(() => {
     if (window.location.pathname.split('/')[2] !== 'preview') {
@@ -62,7 +65,29 @@ const Checkbox = (props) => {
                     key={index}
                     name={controls.field_name}
                     id={Object.keys(item2)[0]}
-                    disabled={props.isDisable ? props.isDisable : false}
+                    disabled={
+                      (props?.currentForm[0]?.form_permissions[0]
+                        ?.fill_access_users === null &&
+                        !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                          localStorage.getItem('user_role') === 'guardian'
+                            ? 'parent'
+                            : localStorage.getItem('user_role')
+                        )) ||
+                      (props?.currentForm[0]?.form_permissions[0]
+                        ?.fill_access_users &&
+                        !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                          localStorage.getItem('user_role') === 'guardian'
+                            ? 'parent'
+                            : localStorage.getItem('user_role') &&
+                                !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                                  localStorage.getItem('user_role') ===
+                                    'guardian'
+                                    ? 'parent'
+                                    : localStorage.getItem('user_role')
+                                )
+                        )) ||
+                      props.isDisable
+                    }
                     value={Object.keys(item2)[0]}
                     onClick={(e) => {
                       if (e.target.checked) {

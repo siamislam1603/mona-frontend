@@ -6,7 +6,8 @@ export const DynamicFormValidation = (
   signatories,
   behalf_of,
   behalf_of_flag,
-  signature_access_flag
+  signature_access_flag,
+  currentForm
 ) => {
   let newErrors = {};
   if (behalf_of_flag === true) {
@@ -18,8 +19,6 @@ export const DynamicFormValidation = (
   for (let values of Object.values(data)) {
     dataTemp = { '': [...dataTemp[''], ...values] };
   }
-
-
   let formFields = {};
   // Start - this code was written by Preet. Fixed section-wise required validation and display section-wise response
   for (const sectionName of Object.keys(form)) {
@@ -30,7 +29,7 @@ export const DynamicFormValidation = (
             form[''][sectionsKeys] &&
             form[sectionName] &&
             !form[sectionName][sectionsKeys]) ||
-            form[sectionName][sectionsKeys] === null
+          form[sectionName][sectionsKeys] === null
         ) {
           form[sectionName][sectionsKeys] = form[''][sectionsKeys] || null;
         }
@@ -42,6 +41,34 @@ export const DynamicFormValidation = (
   for (let value of Object.values(form)) {
     formFields = { ...formFields, ...value };
   }
+
+  Object.values(dataTemp)?.map((ele) => {
+    ele?.map((ele1) => {
+      if (
+        ((currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
+          !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
+            localStorage.getItem('user_role') === 'guardian'
+              ? 'parent'
+              : localStorage.getItem('user_role')
+          )) ||
+          (currentForm[0]?.form_permissions[0]?.fill_access_users &&
+            !currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+              localStorage.getItem('user_role') === 'guardian'
+                ? 'parent'
+                : localStorage.getItem('user_role') &&
+                    !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
+                      localStorage.getItem('user_role') === 'guardian'
+                        ? 'parent'
+                        : localStorage.getItem('user_role')
+                    )
+            ))) &&
+        ele1?.required
+      ) {
+        delete formFields[`${ele1?.field_name}`];
+      }
+    });
+  });
+  console.log(formFields, '=====formFields');
 
   let emptyFields = [];
   for (let key of Object.keys(formFields)) {
@@ -55,17 +82,15 @@ export const DynamicFormValidation = (
     }
   }
 
-  // HANDLING 'SELECT' 
+  // HANDLING 'SELECT'
   let fieldArray = dataTemp[''];
-  fieldArray = fieldArray.filter(d => d.field_type === "dropdown_selection");
-  fieldArray = fieldArray.map(d => d.field_name);
-  fieldArray.forEach(d => {
-    if(formFields[d] === 'Select') {
-      if(!emptyFields.includes(d))
-        emptyFields = [...emptyFields, d];
+  fieldArray = fieldArray.filter((d) => d.field_type === 'dropdown_selection');
+  fieldArray = fieldArray.map((d) => d.field_name);
+  fieldArray.forEach((d) => {
+    if (formFields[d] === 'Select') {
+      if (!emptyFields.includes(d)) emptyFields = [...emptyFields, d];
     }
   });
-
 
   let errorFields = emptyFields.map(
     (d) => dataTemp[''].filter((t) => t.field_name === d)[0]
@@ -952,4 +977,3 @@ export const enrollmentInitiationFormValidation = (formOneChildData) => {
 
   return errors;
 };
-

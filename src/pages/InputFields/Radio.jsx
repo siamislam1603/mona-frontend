@@ -240,7 +240,29 @@ const Radio = (props) => {
                           key={index}
                           // defaultChecked={true}
                           value={Object.keys(item)[0]}
-                          disabled={props.isDisable ? props.isDisable : false}
+                          disabled={
+                            (props?.currentForm[0]?.form_permissions[0]
+                              ?.fill_access_users === null &&
+                              !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                                localStorage.getItem('user_role') === 'guardian'
+                                  ? 'parent'
+                                  : localStorage.getItem('user_role')
+                              )) ||
+                            (props?.currentForm[0]?.form_permissions[0]
+                              ?.fill_access_users &&
+                              !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                                localStorage.getItem('user_role') === 'guardian'
+                                  ? 'parent'
+                                  : localStorage.getItem('user_role') &&
+                                      !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                                        localStorage.getItem('user_role') ===
+                                          'guardian'
+                                          ? 'parent'
+                                          : localStorage.getItem('user_role')
+                                      )
+                              )) ||
+                            props.isDisable
+                          }
                           name={controls.field_name}
                           id={Object.keys(item)[0] + props?.diff_index}
                           onClick={(e) => {
@@ -279,7 +301,31 @@ const Radio = (props) => {
                             type="radio"
                             value={Object.keys(item)[0]}
                             key={index}
-                            disabled={props.isDisable ? props.isDisable : false}
+                            disabled={
+                              (props?.currentForm[0]?.form_permissions[0]
+                                ?.fill_access_users === null &&
+                                !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                                  localStorage.getItem('user_role') ===
+                                    'guardian'
+                                    ? 'parent'
+                                    : localStorage.getItem('user_role')
+                                )) ||
+                              (props?.currentForm[0]?.form_permissions[0]
+                                ?.fill_access_users &&
+                                !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                                  localStorage.getItem('user_role') ===
+                                    'guardian'
+                                    ? 'parent'
+                                    : localStorage.getItem('user_role') &&
+                                        !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                                          localStorage.getItem('user_role') ===
+                                            'guardian'
+                                            ? 'parent'
+                                            : localStorage.getItem('user_role')
+                                        )
+                                )) ||
+                              props.isDisable
+                            }
                             name={controls.field_name}
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {

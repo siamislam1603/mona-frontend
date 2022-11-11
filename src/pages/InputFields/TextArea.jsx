@@ -8,9 +8,7 @@ const TextArea = (props) => {
   let value;
   if (props !== {} && props?.field_data !== {} && !isEmpty(props?.field_data)) {
     value =
-      props?.field_data &&
-      props?.field_data?.fields[`${controls.field_name}`]
-
+      props?.field_data && props?.field_data?.fields[`${controls.field_name}`];
   }
 
   useEffect(() => {
@@ -27,7 +25,27 @@ const TextArea = (props) => {
         <Form.Control
           as="textarea"
           rows={controls.row ? controls.row : 3}
-          disabled={props.isDisable ? props.isDisable : false}
+          disabled={
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
+              null &&
+              !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role')
+              )) ||
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users &&
+              !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role') &&
+                      !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                        localStorage.getItem('user_role') === 'guardian'
+                          ? 'parent'
+                          : localStorage.getItem('user_role')
+                      )
+              )) ||
+            props.isDisable
+          }
           name={controls.field_name}
           maxLength={2000}
           className="child_input"

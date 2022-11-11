@@ -25,19 +25,20 @@ import { FullLoader } from '../components/Loader';
 // }
 
 function formatDate(date) {
-  let data = date.split("-");
-  return `${data[2]}/${data[1]}/${data[0]}`
+  let data = date.split('-');
+  return `${data[2]}/${data[1]}/${data[0]}`;
 }
 
 function formatTime(time) {
-  let data = time.split(":");
+  let data = time.split(':');
   let hour = null;
-  let hourValue = data[0], minuteValue = data[1];
+  let hourValue = data[0],
+    minuteValue = data[1];
 
-  if(parseInt(hourValue) > 12) {
+  if (parseInt(hourValue) > 12) {
     hourValue = parseInt(hourValue) - 12;
     hour = 'PM';
-  } else if(parseInt(hourValue) === 12) {
+  } else if (parseInt(hourValue) === 12) {
     hourValue = parseInt(hourValue);
     hour = 'PM';
   } else {
@@ -45,7 +46,9 @@ function formatTime(time) {
     hour = 'AM';
   }
 
-  return `${hourValue >= 10 ? hourValue : `0${hourValue}`}:${minuteValue} ${hour}`
+  return `${
+    hourValue >= 10 ? hourValue : `0${hourValue}`
+  }:${minuteValue} ${hour}`;
 }
 
 let values = [];
@@ -70,6 +73,7 @@ const DynamicForm = () => {
   const [formFillingTime, setFormFillingTime] = useState(null);
   const [errorFocus, setErrorFocus] = useState('');
   const [signatories, setSignatories] = useState([]);
+  const [currentForm, setCurrentForm] = useState({});
   const token = localStorage.getItem('token');
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
@@ -126,9 +130,11 @@ const DynamicForm = () => {
         });
       }
     } else {
-
-console.log("ggggggggggggggggggggggggoooooooooooooooooooooooooooooooooooooo",field)
-console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
+      console.log(
+        'ggggggggggggggggggggggggoooooooooooooooooooooooooooooooooooooo',
+        field
+      );
+      console.log('field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', value);
 
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
@@ -243,18 +249,19 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
       .then((response) => response.json())
       .then((result) => {
         console.log('RESPONSE>>>>>>>>>>>>>>>>>>>>>>>', result);
+        setCurrentForm(result?.form);
         let { form } = result;
         let { start_date, start_time, created_by } = form[0];
 
         let currentDate = moment().format('YYYY-MM-DD');
         let currentTime = moment().format('HH:mm:ss');
 
-        if(currentDate < start_date) {
+        if (currentDate < start_date) {
           setInactiveFormPopup(true);
           setFormFillingDate(start_date);
           setFormFillingTime(start_time);
         } else {
-          if(currentDate === start_date && currentTime < start_time) {
+          if (currentDate === start_date && currentTime < start_time) {
             // && parseInt(created_by) !== parseInt(localStorage.getItem('user_id'))
             setInactiveFormPopup(true);
             setFormFillingDate(start_date);
@@ -347,7 +354,6 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
         setfullLoaderStatus(false);
       });
   };
-
   const onSubmit = (e) => {
     e.preventDefault();
     if (location?.state?.id) {
@@ -366,7 +372,8 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
         signatories,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
         behalfOfFlag,
-        signatureAccessFlag
+        signatureAccessFlag,
+        currentForm
       );
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
@@ -404,9 +411,9 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
         signatories,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
         behalfOfFlag,
-        signatureAccessFlag
+        signatureAccessFlag,
+        currentForm
       );
-      console.log("erorsssssssssssssssssssss",newErrors)
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
@@ -745,6 +752,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                       setField('', key, value, type);
                                     }}
                                     freshForm={true}
+                                    currentForm={currentForm}
                                   />
                                 </>
                               ) : (
@@ -772,6 +780,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                       onChange={(key, value, type) => {
                                         setField(item, key, value, type);
                                       }}
+                                      currentForm={currentForm}
                                     />
                                   </>
                                 )
@@ -788,6 +797,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 onChange={(key, value, type) => {
                                   setField('', key, value, type);
                                 }}
+                                currentForm={currentForm}
                               />
                             ) : (
                               <InputFields
@@ -799,6 +809,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 onChange={(key, value, type) => {
                                   setField('', key, value, type);
                                 }}
+                                currentForm={currentForm}
                               />
                             );
                           })}
@@ -817,6 +828,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                               onChange={(key, value, type) => {
                                 setField('', key, value, type);
                               }}
+                              currentForm={currentForm}
                             />
                           ) : (
                             <InputFields
@@ -829,6 +841,7 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
                                 setField(item, key, value, type);
                               }}
                               freshForm={true}
+                              currentForm={currentForm}
                             />
                           );
                         })
@@ -861,24 +874,25 @@ console.log("field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",value)
         </section>
       </div>
 
-      {
-        inactiveFormPopup &&
-        <Modal
-          show={inactiveFormPopup}>
+      {inactiveFormPopup && (
+        <Modal show={inactiveFormPopup}>
           <Modal.Header>
             <Modal.Title>Message</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>The Form isn't ready to be filled yet. You can start filling the form on {formatDate(formFillingDate)}, from {formatTime(formFillingTime)} onwards.</p>
+            <p>
+              The Form isn't ready to be filled yet. You can start filling the
+              form on {formatDate(formFillingDate)}, from{' '}
+              {formatTime(formFillingTime)} onwards.
+            </p>
           </Modal.Body>
           <Modal.Footer>
-            <button
-              className="modal-button"
-              onClick={handleGoBack}
-              >Go Back</button>
+            <button className="modal-button" onClick={handleGoBack}>
+              Go Back
+            </button>
           </Modal.Footer>
         </Modal>
-      }
+      )}
     </>
   );
 };

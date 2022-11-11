@@ -79,6 +79,27 @@ const ImageUpload = (props) => {
           type="file"
           id={controls.field_name}
           name={controls.field_name}
+          disabled={
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
+              null &&
+              !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role')
+              )) ||
+            (props?.currentForm[0]?.form_permissions[0]?.fill_access_users &&
+              !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                localStorage.getItem('user_role') === 'guardian'
+                  ? 'parent'
+                  : localStorage.getItem('user_role') &&
+                      !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                        localStorage.getItem('user_role') === 'guardian'
+                          ? 'parent'
+                          : localStorage.getItem('user_role')
+                      )
+              )) ||
+            props.isDisable
+          }
           // value={
           //   props.field_data &&
           //   props.field_data.fields[`${controls.field_name}`]

@@ -10,14 +10,17 @@ const Select = (props) => {
   const [dropdownValue, setDropdownValue] = useState();
 
   useEffect(() => {
-    if(typeof controls.field_data !== "undefined" && Object.keys(controls.field_data).length > 0) {
+    if (
+      typeof controls.field_data !== 'undefined' &&
+      Object.keys(controls.field_data).length > 0
+    ) {
       let val = controls.field_data.fields[`${controls.field_name}`];
       let availableOptions = JSON.parse(controls.option);
       let data = {};
       availableOptions.forEach((d, index) => {
-        data = {...data, ...d};
+        data = { ...data, ...d };
       });
-      let valueSelected = Object.keys(data).filter(d => d === val);
+      let valueSelected = Object.keys(data).filter((d) => d === val);
       setDropdownValue(valueSelected[0]);
     }
   }, [controls]);
@@ -35,10 +38,30 @@ const Select = (props) => {
           <Form.Select
             className="form-input-section"
             name={controls.field_name}
-            value={dropdownValue || "Select"}
-            disabled={props.isDisable ? props.isDisable : false}
+            value={dropdownValue || 'Select'}
+            disabled={
+              (props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
+                null &&
+                !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role')
+                )) ||
+              (props?.currentForm[0]?.form_permissions[0]?.fill_access_users &&
+                !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role') &&
+                        !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                          localStorage.getItem('user_role') === 'guardian'
+                            ? 'parent'
+                            : localStorage.getItem('user_role')
+                        )
+                )) ||
+              props.isDisable
+            }
             onChange={(e) => {
-              setDropdownValue(e.target.value)
+              setDropdownValue(e.target.value);
               props.onChange(e.target.name, e.target.value, 'select');
             }}
             isInvalid={!!controls.error[controls.field_name]}
@@ -46,11 +69,7 @@ const Select = (props) => {
             <option>Select {controls.label}</option>
             {/* {console.log(JSON.parse(controls.option))} */}
             {[...JSON.parse(controls.option)]?.map((item2, index) => {
-              return (
-                <option key={index}>
-                  {Object.keys(item2)}
-                </option>
-              );
+              return <option key={index}>{Object.keys(item2)}</option>;
             })}
             {/* {eval(controls.option)?.map((item2, index) => {
               return (
