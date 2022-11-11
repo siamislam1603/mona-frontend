@@ -35,6 +35,7 @@ function OwnFormResponse(props) {
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [signatureModel, setSignatureModel] = useState(false);
   const [indexToHide, setIndexToHide] = useState(-1);
+  const [fillAccessUsers, setFillAccessUsers] = useState([]);
   const [Index, setIndex] = useState(0);
   const [ childrenData, setChildrenData ] = useState([]);
   const [hideFlag, setHideFlag] = useState(false);
@@ -133,6 +134,17 @@ function OwnFormResponse(props) {
       .then((response) => response.json())
       .then((result) => {
         console.log('RESULT>>>>>>>>>>>>>>', result);
+        let { fill_access_users } = result.fillPermission;
+        
+        let isExist = fill_access_users.includes('parent');
+        let tempUsers = [];
+        if (isExist) {
+          tempUsers = fill_access_users.filter(d => d !== 'parent');
+          setFillAccessUsers([...tempUsers, 'guardian']);
+        } else {
+          setFillAccessUsers(fill_access_users);
+        }
+
         if (result) {
           // console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
           setfullLoaderStatus(false);
@@ -200,6 +212,8 @@ function OwnFormResponse(props) {
   useEffect(() => {
     fetchChildren();
   }, []);
+
+  fillAccessUsers && console.log('FILL ACCESS USERS:', fillAccessUsers);
   return (
     <>
       <div id="main">
@@ -302,7 +316,6 @@ function OwnFormResponse(props) {
                   {responseData.length > 0 ? (
                     <Accordion defaultActiveKey="0">
                       {responseData.map((item, index) => {
-                        {console.log('ITEM>>>>>>>>>>>>>>>>', childrenData.includes(item[0].user.fullname))}
                         return localStorage.getItem('user_role') === "guardian" ?
                         (
                           childrenData.includes(item[0].user.fullname) &&
@@ -408,9 +421,12 @@ function OwnFormResponse(props) {
                                                     );
                                                   }}
                                                 > */}
+                                                {
+                                                  fillAccessUsers.includes(localStorage.getItem('user_role')) &&
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                   />
+                                                }
                                                 </Link>
                                               )
                                             )}
@@ -898,9 +914,12 @@ function OwnFormResponse(props) {
                                                     );
                                                   }}
                                                 > */}
+                                                  {
+                                                  fillAccessUsers.includes(localStorage.getItem('user_role')) &&
                                                   <FontAwesomeIcon
                                                     icon={faPen}
                                                   />
+                                                }
                                                 </Link>
                                               )
                                             )}
