@@ -78,7 +78,7 @@ const Radio = (props) => {
             Object.keys(item)[0]) ===
             true
           ? setIndex(index)
-          : 0;
+          : '';
       });
     }
   }, []);
@@ -134,7 +134,7 @@ const Radio = (props) => {
     ) {
       props.onChange(event, array?.join(','));
     }
-  }, [array, event]);
+  }, [array]);
 
   useEffect(() => {
     if (fileList || props?.field_data?.fields) {

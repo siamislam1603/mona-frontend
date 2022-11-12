@@ -130,12 +130,6 @@ const DynamicForm = () => {
         });
       }
     } else {
-      console.log(
-        'ggggggggggggggggggggggggoooooooooooooooooooooooooooooooooooooo',
-        field
-      );
-      console.log('field valueeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee', value);
-
       if (type === 'date') {
         value = moment(value).format('DD-MM-YYYY');
         setForm({
