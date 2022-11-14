@@ -51,12 +51,12 @@ const Select = (props) => {
                 !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
                   localStorage.getItem('user_role') === 'guardian'
                     ? 'parent'
-                    : localStorage.getItem('user_role') &&
-                        !props?.form_field_permissions[0]?.fill_access_users?.includes(
-                          localStorage.getItem('user_role') === 'guardian'
-                            ? 'parent'
-                            : localStorage.getItem('user_role')
-                        )
+                    : localStorage.getItem('user_role')
+                ) &&
+                !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role')
                 )) ||
               props.isDisable
             }
