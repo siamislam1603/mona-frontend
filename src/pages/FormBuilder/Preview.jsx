@@ -58,13 +58,13 @@ const Preview = (props) => {
       .then((response) => response.text())
       .then((result) => {
         let res = JSON.parse(result);
-        setCurrentForm(res?.form);
         setFormData(res.result);
         setRole(res.created_by.role);
         setName(res.created_by.name);
         if (result) {
           setfullLoaderStatus(false);
         }
+        setCurrentForm(res?.form);
       })
       .catch((error) => console.log('error', error));
   };
@@ -90,16 +90,12 @@ const Preview = (props) => {
                               '/form',
                               localStorage.removeItem('formStatus')
                             )
-                          : navigate(
-                              '/form/field/add',
-                              localStorage.removeItem('formStatus'),
-                              {
-                                state: {
-                                  id: location?.state?.id,
-                                  form_name: location?.state?.form_name,
-                                },
-                              }
-                            );
+                          : navigate('/form/field/add', {
+                              state: {
+                                id: location?.state?.id,
+                                form_name: location?.state?.form_name,
+                              },
+                            });
                       }}
                     >
                       <img src="../../img/back-arrow.svg" alt="back-btn" />

@@ -45,30 +45,29 @@ export const DynamicFormValidation = (
   Object.values(dataTemp)?.map((ele) => {
     ele?.map((ele1) => {
       if (
-        ((currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
+        (currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
           !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
             localStorage.getItem('user_role') === 'guardian'
               ? 'parent'
               : localStorage.getItem('user_role')
           )) ||
-          (currentForm[0]?.form_permissions[0]?.fill_access_users &&
-            !currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
-              localStorage.getItem('user_role') === 'guardian'
-                ? 'parent'
-                : localStorage.getItem('user_role') &&
-                    !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
-                      localStorage.getItem('user_role') === 'guardian'
-                        ? 'parent'
-                        : localStorage.getItem('user_role')
-                    )
-            ))) &&
-        ele1?.required
+        (currentForm[0]?.form_permissions[0]?.fill_access_users &&
+          !currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+            localStorage.getItem('user_role') === 'guardian'
+              ? 'parent'
+              : localStorage.getItem('user_role')
+          ) &&
+          !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
+            localStorage.getItem('user_role') === 'guardian'
+              ? 'parent'
+              : localStorage.getItem('user_role')
+          ) &&
+          ele1.isDisable)
       ) {
         delete formFields[`${ele1?.field_name}`];
       }
     });
   });
-  console.log(formFields, '=====formFields');
 
   let emptyFields = [];
   for (let key of Object.keys(formFields)) {
@@ -76,6 +75,7 @@ export const DynamicFormValidation = (
       formFields[key] === null ||
       formFields[key] === 'null' ||
       formFields[key]?.length === 0 ||
+      formFields[key] === undefined ||
       formFields[key] === 'Invalid date'
     ) {
       emptyFields = [...emptyFields, key];

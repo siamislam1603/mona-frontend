@@ -441,33 +441,20 @@ function OwnFormResponse(props) {
                                                     );
                                                   }}
                                                 > */}
-                                                    {(fillAccessUsers?.includes(
+                                                    {(fillAccessUsers.includes(
                                                       localStorage.getItem(
                                                         'user_role'
                                                       )
-                                                    ) === 'guardian'
-                                                      ? 'parent'
-                                                      : localStorage.getItem(
+                                                    ) ||
+                                                      formFieldPermission?.includes(
+                                                        localStorage.getItem(
                                                           'user_role'
-                                                        ) ||
-                                                        (formFieldPermission?.includes(
-                                                          localStorage.getItem(
-                                                            'user_role'
-                                                          ) === 'guardian'
-                                                            ? 'parent'
-                                                            : localStorage.getItem(
-                                                                'user_role'
-                                                              )
-                                                        ) &&
-                                                          !fillAccessUsers.includes(
-                                                            localStorage.getItem(
+                                                        ) === 'guardian'
+                                                          ? 'parent'
+                                                          : localStorage.getItem(
                                                               'user_role'
-                                                            ) === 'guardian'
-                                                              ? 'parent'
-                                                              : localStorage.getItem(
-                                                                  'user_role'
-                                                                )
-                                                          ))) && (
+                                                            )
+                                                      )) && (
                                                       <FontAwesomeIcon
                                                         icon={faPen}
                                                       />
@@ -956,10 +943,6 @@ function OwnFormResponse(props) {
                                                     form_id: id ? id : null,
                                                   }}
                                                 >
-                                                  {console.log(
-                                                    'item[index]?.id--->',
-                                                    item[inner_index]
-                                                  )}
                                                   {/* <div
                                                   className="edit-icon-form"
                                                   onClick={() => {
@@ -982,29 +965,16 @@ function OwnFormResponse(props) {
                                                     localStorage.getItem(
                                                       'user_role'
                                                     )
-                                                  ) === 'guardian'
-                                                    ? 'parent'
-                                                    : localStorage.getItem(
+                                                  ) ||
+                                                    formFieldPermission?.includes(
+                                                      localStorage.getItem(
                                                         'user_role'
-                                                      ) ||
-                                                      (formFieldPermission?.includes(
-                                                        localStorage.getItem(
-                                                          'user_role'
-                                                        ) === 'guardian'
-                                                          ? 'parent'
-                                                          : localStorage.getItem(
-                                                              'user_role'
-                                                            )
-                                                      ) &&
-                                                        !fillAccessUsers.includes(
-                                                          localStorage.getItem(
+                                                      ) === 'guardian'
+                                                        ? 'parent'
+                                                        : localStorage.getItem(
                                                             'user_role'
-                                                          ) === 'guardian'
-                                                            ? 'parent'
-                                                            : localStorage.getItem(
-                                                                'user_role'
-                                                              )
-                                                        ))) && (
+                                                          )
+                                                    )) && (
                                                     <FontAwesomeIcon
                                                       icon={faPen}
                                                     />
@@ -1102,12 +1072,7 @@ function OwnFormResponse(props) {
                               </div>
                             </Accordion.Header>
                             <Accordion.Body>
-                              {console.log(
-                                'RESPONSE DATA:',
-                                JSON.parse(responseData[0][0].fields)
-                              )}
                               {responseData[index]?.map((item, index) => {
-                                console.log('index index index index ', index);
                                 return (
                                   <div
                                     key={index}

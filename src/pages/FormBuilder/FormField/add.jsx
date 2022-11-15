@@ -75,7 +75,11 @@ const AddFormField = (props) => {
   }, [selectedCheckBox]);
 
   useEffect(() => {
-    if (form_name) {
+    if (
+      form_name ||
+      (localStorage.getItem('formStatus') &&
+        localStorage.getItem('formStatus') === true)
+    ) {
       getFormField();
       getFormData();
       getUserRoleAndFranchiseeData();
@@ -83,6 +87,11 @@ const AddFormField = (props) => {
       setfullLoaderStatus(false);
     }
   }, []);
+
+  if (localStorage.getItem('formStatus')) {
+    localStorage.removeItem('formStatus');
+  }
+
   useEffect(() => {
     setFormSettingFlag(false);
   }, [user]);
