@@ -15,6 +15,7 @@ const Preview = (props) => {
   const [role, setRole] = useState('');
   const [errors, setErrors] = useState({});
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [currentForm, setCurrentForm] = useState({});
   const [form, setForm] = useState({});
   const token = localStorage.getItem('token');
   const setField = (field, value) => {
@@ -48,7 +49,7 @@ const Preview = (props) => {
       `${BASE_URL}/field?form_name=${encodeURIComponent(
         location.pathname
           .split('/')
-        [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
+          [location.pathname.split('/').length - 1].replaceAll('%20', ' ')
       )
         .toString()
         .trim()}`,
@@ -57,6 +58,7 @@ const Preview = (props) => {
       .then((response) => response.text())
       .then((result) => {
         let res = JSON.parse(result);
+        setCurrentForm(res?.form);
         setFormData(res.result);
         setRole(res.created_by.role);
         setName(res.created_by.name);
@@ -83,29 +85,31 @@ const Preview = (props) => {
                   <div className="forms-managment-left new-form-title mynewForm-heading">
                     <Button
                       onClick={() => {
-                        localStorage.getItem('formStatus') == 'false' ?
-                          navigate('/form',
-                            localStorage.removeItem('formStatus')
-                          )
-                          :
-                          navigate('/form/field/add',
-                            localStorage.removeItem('formStatus'),
-                            {
-                              state: {
-                                id: location?.state?.id,
-                                form_name: location?.state?.form_name,
-                              },
-                            });
+                        localStorage.getItem('formStatus') == 'false'
+                          ? navigate(
+                              '/form',
+                              localStorage.removeItem('formStatus')
+                            )
+                          : navigate(
+                              '/form/field/add',
+                              localStorage.removeItem('formStatus'),
+                              {
+                                state: {
+                                  id: location?.state?.id,
+                                  form_name: location?.state?.form_name,
+                                },
+                              }
+                            );
                       }}
                     >
-                      <img src="../../img/back-arrow.svg" alt='back-btn' />
+                      <img src="../../img/back-arrow.svg" alt="back-btn" />
                     </Button>
                     <h4 className="mynewForm text-capitalize">{`Preview - ${location.pathname
                       .split('/')
-                    [location.pathname.split('/').length - 1].replaceAll(
-                      '%20',
-                      ' '
-                    )}`}</h4>
+                      [location.pathname.split('/').length - 1].replaceAll(
+                        '%20',
+                        ' '
+                      )}`}</h4>
                   </div>
                   <div className="userBox">
                     <p>Created by:</p>
@@ -126,6 +130,7 @@ const Preview = (props) => {
                       return (
                         <InputFields
                           {...item}
+                          currentForm={currentForm}
                           signature_flag={true}
                           diff_index={index}
                           error={errors}
@@ -140,8 +145,8 @@ const Preview = (props) => {
               </div>
             </div>
           </Container>
-        </section >
-      </div >
+        </section>
+      </div>
     </>
   );
 };
