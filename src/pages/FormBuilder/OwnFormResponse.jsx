@@ -340,7 +340,7 @@ function OwnFormResponse(props) {
                       {responseData.map((item, index) => {
                         return localStorage.getItem('user_role') ===
                           'guardian' ? (
-                          childrenData.includes(item[0].user.fullname) && (
+                          childrenData?.includes(item[0].user.fullname) && (
                             <Accordion.Item key={index} eventKey={index}>
                               <Accordion.Header>
                                 <div className="responses-header-row">
@@ -441,7 +441,7 @@ function OwnFormResponse(props) {
                                                     );
                                                   }}
                                                 > */}
-                                                    {(fillAccessUsers.includes(
+                                                    {(fillAccessUsers?.includes(
                                                       localStorage.getItem(
                                                         'user_role'
                                                       )
@@ -471,7 +471,7 @@ function OwnFormResponse(props) {
                                                     ]?.filled_user?.role
                                                       .split('_')
                                                       .join(' ')
-                                                      .includes(
+                                                      ?.includes(
                                                         inner_item?.filled_user?.role
                                                           .split('_')
                                                           .join(' ')
@@ -486,7 +486,7 @@ function OwnFormResponse(props) {
                                               {inner_index > 0
                                                 ? !responseData[index][
                                                     inner_index - 1
-                                                  ].filled_user?.franchisee?.franchisee_name.includes(
+                                                  ].filled_user?.franchisee?.franchisee_name?.includes(
                                                     inner_item?.filled_user
                                                       ?.franchisee
                                                       ?.franchisee_name
@@ -591,7 +591,7 @@ function OwnFormResponse(props) {
                                             {
                                               (Object.keys(
                                                 JSON.parse(item.fields)
-                                              )[inner_index].includes(
+                                              )[inner_index]?.includes(
                                                 'headings'
                                               ) ||
                                                 Object.keys(
@@ -612,7 +612,7 @@ function OwnFormResponse(props) {
                                                 {!(
                                                   Object.keys(
                                                     JSON.parse(item.fields)
-                                                  )[inner_index].includes(
+                                                  )[inner_index]?.includes(
                                                     'headings'
                                                   ) ||
                                                   Object.keys(
@@ -626,7 +626,7 @@ function OwnFormResponse(props) {
                                                 )}
                                                 {Object.keys(
                                                   JSON.parse(item.fields)
-                                                )[inner_index].includes(
+                                                )[inner_index]?.includes(
                                                   'headings'
                                                 ) ? (
                                                   <h6
@@ -671,7 +671,7 @@ function OwnFormResponse(props) {
                                                 {!(
                                                   Object.keys(
                                                     JSON.parse(item.fields)
-                                                  )[inner_index].includes(
+                                                  )[inner_index]?.includes(
                                                     'headings'
                                                   ) ||
                                                   Object.keys(
@@ -819,7 +819,7 @@ function OwnFormResponse(props) {
                                                   !(
                                                     Object.keys(
                                                       JSON.parse(item.fields)
-                                                    )[inner_index].includes(
+                                                    )[inner_index]?.includes(
                                                       'headings'
                                                     ) ||
                                                     Object.keys(
@@ -991,7 +991,7 @@ function OwnFormResponse(props) {
                                                   ]?.filled_user?.role
                                                     .split('_')
                                                     .join(' ')
-                                                    .includes(
+                                                    ?.includes(
                                                       inner_item?.filled_user?.role
                                                         .split('_')
                                                         .join(' ')
@@ -1006,7 +1006,7 @@ function OwnFormResponse(props) {
                                             {inner_index > 0
                                               ? !responseData[index][
                                                   inner_index - 1
-                                                ].filled_user?.franchisee?.franchisee_name.includes(
+                                                ].filled_user?.franchisee?.franchisee_name?.includes(
                                                   inner_item?.filled_user
                                                     ?.franchisee
                                                     ?.franchisee_name
@@ -1109,7 +1109,7 @@ function OwnFormResponse(props) {
                                           {
                                             (Object.keys(
                                               JSON.parse(item.fields)
-                                            )[inner_index].includes(
+                                            )[inner_index]?.includes(
                                               'headings'
                                             ) ||
                                               Object.keys(
@@ -1130,7 +1130,7 @@ function OwnFormResponse(props) {
                                               {!(
                                                 Object.keys(
                                                   JSON.parse(item.fields)
-                                                )[inner_index].includes(
+                                                )[inner_index]?.includes(
                                                   'headings'
                                                 ) ||
                                                 Object.keys(
@@ -1144,7 +1144,7 @@ function OwnFormResponse(props) {
                                               )}
                                               {Object.keys(
                                                 JSON.parse(item.fields)
-                                              )[inner_index].includes(
+                                              )[inner_index]?.includes(
                                                 'headings'
                                               ) ? (
                                                 <h6
@@ -1189,7 +1189,7 @@ function OwnFormResponse(props) {
                                               {!(
                                                 Object.keys(
                                                   JSON.parse(item.fields)
-                                                )[inner_index].includes(
+                                                )[inner_index]?.includes(
                                                   'headings'
                                                 ) ||
                                                 Object.keys(
@@ -1331,7 +1331,7 @@ function OwnFormResponse(props) {
                                                 !(
                                                   Object.keys(
                                                     JSON.parse(item.fields)
-                                                  )[inner_index].includes(
+                                                  )[inner_index]?.includes(
                                                     'headings'
                                                   ) ||
                                                   Object.keys(

@@ -81,7 +81,9 @@ const DynamicForm = () => {
   const setField = (section, field, value, type) => {
     let flag = false;
     if (type === 'text') {
-      value = value.trimEnd();
+      if (!location?.state?.if) {
+        value = value.trimEnd();
+      }
       if (value.split(' ').length > 250) {
         let errorsData = { ...errors };
         errorsData[
@@ -92,7 +94,9 @@ const DynamicForm = () => {
       }
     }
     if (type === 'textarea') {
-      value = value.trimEnd();
+      if (!location?.state?.id) {
+        value = value.trimEnd();
+      }
       if (value.split(' ').length > 2000) {
         let errorsData = { ...errors };
         errorsData[

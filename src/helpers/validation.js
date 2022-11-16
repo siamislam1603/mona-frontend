@@ -45,24 +45,20 @@ export const DynamicFormValidation = (
   Object.values(dataTemp)?.map((ele) => {
     ele?.map((ele1) => {
       if (
-        (currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
+        ((currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
           !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
             localStorage.getItem('user_role') === 'guardian'
               ? 'parent'
               : localStorage.getItem('user_role')
           )) ||
-        (currentForm[0]?.form_permissions[0]?.fill_access_users &&
-          !currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
-            localStorage.getItem('user_role') === 'guardian'
-              ? 'parent'
-              : localStorage.getItem('user_role')
-          ) &&
-          !ele1?.form_field_permissions[0]?.fill_access_users?.includes(
-            localStorage.getItem('user_role') === 'guardian'
-              ? 'parent'
-              : localStorage.getItem('user_role')
-          ) &&
-          ele1.isDisable)
+          (currentForm[0]?.form_permissions[0]?.fill_access_users &&
+            !currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+              localStorage.getItem('user_role') === 'guardian'
+                ? 'parent'
+                : localStorage.getItem('user_role')
+            ) &&
+            !ele1?.form_field_permissions[0])) &&
+        ele1?.required
       ) {
         delete formFields[`${ele1?.field_name}`];
       }
