@@ -564,7 +564,7 @@ const Radio = (props) => {
                   Clear
                 </button>
                 <button onClick={trim} style={{ padding: '12px 35px' }}>
-                  Trim
+                  Save Signature
                 </button>
               </div>
             </Form.Group>

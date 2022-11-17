@@ -1071,6 +1071,15 @@ const AddFormField = (props) => {
                                       Instruction Text
                                     </option>
                                     <option
+                                      value="sub_headings"
+                                      selected={
+                                        form[index]?.field_type ===
+                                        'sub_headings'
+                                      }
+                                    >
+                                      Sub Headings
+                                    </option>
+                                    <option
                                       value="headings"
                                       selected={
                                         form[index]?.field_type === 'headings'
@@ -1378,7 +1387,9 @@ const AddFormField = (props) => {
                                         form[index]?.field_type ===
                                           'headings' ||
                                         form[index]?.field_type ===
-                                          'text_headings'
+                                          'text_headings' ||
+                                        form[index]?.field_type ===
+                                          'sub_headings'
                                       }
                                     />
                                   </div>
@@ -1615,6 +1626,16 @@ const AddFormField = (props) => {
                                           }
                                         >
                                           Instruction Text
+                                        </option>
+                                        <option
+                                          value="sub_headings"
+                                          selected={
+                                            Object.values(item)[0][
+                                              'field_type'
+                                            ] === 'sub_headings'
+                                          }
+                                        >
+                                          Sub Headings
                                         </option>
                                         <option
                                           value="headings"

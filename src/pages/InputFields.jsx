@@ -10,6 +10,7 @@ import Headings from './InputFields/Headings';
 import TextHeadings from './InputFields/TextHeadings';
 import isEmpty from 'lodash/isEmpty';
 import { FullLoader } from '../components/Loader';
+import SubHeadings from './InputFields/SubHeadings';
 
 const InputFields = (props) => {
   let inputElement = null;
@@ -37,6 +38,9 @@ const InputFields = (props) => {
       break;
     case 'headings':
       inputElement = <Headings {...controls} />;
+      break;
+    case 'sub_headings':
+      inputElement = <SubHeadings {...controls} />;
       break;
     case 'checkbox':
       inputElement = (

@@ -129,7 +129,7 @@ const Signature = (props) => {
               style={{ minWidth: '70px !important' }}
               onClick={trim}
             >
-              Save
+              Save Signature
             </Button>
             <Button
               className="theme-light"
