@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../../components/App';
@@ -550,22 +550,24 @@ const Radio = (props) => {
                   style: {
                     background: 'white',
                     border: '1px solid #e5e5e5',
-                    width: '700px',
-                    height: '250px',
+                    width: '310px',
+                    minHeight: '65%',
+                    display: 'grid',
                   },
                 }}
                 ref={sigPad}
               />
-              <div>
-                <button
+              <div style={{ marginTop: '5px' }}>
+                <Button style={{ minWidth: '70px !important' }} onClick={trim}>
+                  Save Signature
+                </Button>
+                <Button
+                  className="theme-light"
+                  style={{ minWidth: '70px !important' }}
                   onClick={clear}
-                  style={{ padding: '12px 35px', marginRight: '10px' }}
                 >
                   Clear
-                </button>
-                <button onClick={trim} style={{ padding: '12px 35px' }}>
-                  Save Signature
-                </button>
+                </Button>
               </div>
             </Form.Group>
           </Col>
@@ -632,6 +634,18 @@ const Radio = (props) => {
               </Form.Label>
             </Form.Group>
           </Col>
+        ) : Object.values(eval(controls.option)[Index])[0]['field_type'] ===
+          'sub_headings' ? (
+          <>
+            <Col sm={12} className="main-form-text-sub-heading-title">
+              <br />
+              <Form.Group>
+                <Form.Label className="form-style-headings">
+                  {controls.field_label}
+                </Form.Label>
+              </Form.Group>
+            </Col>
+          </>
         ) : (
           <>
             {Object.values(eval(controls.option)[Index])[0]?.field_name && (
