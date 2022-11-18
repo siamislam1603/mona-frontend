@@ -319,14 +319,6 @@ const AddFormField = (props) => {
     inner_inner_index,
     key
   ) => {
-    console.log({
-      field,
-      value,
-      index,
-      inner_index,
-      inner_inner_index,
-      key,
-    });
     counter++;
     setCount(counter);
     const tempArr = form;
@@ -337,7 +329,6 @@ const AddFormField = (props) => {
       keyOfOption[key]['option'][inner_inner_index] = { [value]: value };
       tempOption[inner_index] = keyOfOption;
       tempArr[index]['option'] = tempOption;
-      console.log(tempArr[index], '====');
       setForm(tempArr);
     } else if (
       field === 'field_type' &&
@@ -818,9 +809,6 @@ const AddFormField = (props) => {
       }
     }
   };
-
-  console.log('FORM:', form);
-  console.log('REMOVE CONDITION ID:', removeConditionId);
   return (
     <>
       <div id="main">
@@ -940,10 +928,6 @@ const AddFormField = (props) => {
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
                                       setFieldLabel(e.target.value);
-                                      console.log(
-                                        'VALUE:>>>>>>>>>',
-                                        e.target.value
-                                      );
                                       setField(
                                         e.target.name,
                                         e.target.value,

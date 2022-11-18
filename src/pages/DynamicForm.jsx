@@ -297,7 +297,8 @@ const DynamicForm = () => {
                     ) {
                       if (
                         inner_item.field_type === 'headings' ||
-                        inner_item.field_type === 'text_headings'
+                        inner_item.field_type === 'text_headings' ||
+                        inner_item.field_type === 'sub_headings'
                       ) {
                         formsData[item][`${inner_item.field_type}_${index}`] =
                           inner_item.field_label;
@@ -313,7 +314,8 @@ const DynamicForm = () => {
                 } else {
                   if (
                     inner_item.field_type === 'headings' ||
-                    inner_item.field_type === 'text_headings'
+                    inner_item.field_type === 'text_headings' ||
+                    inner_item.field_type === 'sub_headings'
                   ) {
                     formsData[item][`${inner_item.field_type}_${index}`] =
                       inner_item.field_label;
@@ -352,6 +354,74 @@ const DynamicForm = () => {
         setfullLoaderStatus(false);
       });
   };
+
+  useEffect(() => {
+    if (location?.state?.id) {
+      setTextField(fieldData);
+    } else {
+      setTextField(form);
+    }
+  }, [form, fieldData]);
+
+  const setTextField = (data) => {
+    if (data?.fields) {
+      Object.keys(formData)?.map((ele) => {
+        formData[ele]?.map((inner_item) => {
+          if (inner_item?.option) {
+            Object.values(eval(inner_item?.option))?.map(
+              (option1, inner_index) => {
+                if (
+                  (Object.values(eval(option1))[0]?.field_type === 'headings' ||
+                    Object.values(eval(option1))[0]?.field_type ===
+                      'text_headings' ||
+                    Object.values(eval(option1))[0]?.field_type ===
+                      'sub_headings') &&
+                  data?.fields[`${inner_item?.field}`] ===
+                    Object.values(eval(option1))[0]?.option?.key
+                ) {
+                  data.fields[
+                    `${
+                      Object.values(eval(option1))[0]?.field_type
+                    }_${inner_index}`
+                  ] = Object.values(eval(option1))[0]?.field_label;
+                }
+              }
+            );
+          }
+        });
+      });
+    } else {
+      Object.keys(formData)?.map((ele) => {
+        formData[ele]?.map((inner_item) => {
+          if (inner_item?.option) {
+            Object.values(eval(inner_item?.option))?.map(
+              (option1, inner_index) => {
+                Object.keys(data)?.map((ele1) => {
+                  if (
+                    data[ele1][`${inner_item?.field_name}`] ===
+                      Object.values(eval(option1))[0]?.option_key &&
+                    (Object.values(eval(option1))[0]?.field_type ===
+                      'sub_headings' ||
+                      Object.values(eval(option1))[0]?.field_type ===
+                        'headings' ||
+                      Object.values(eval(option1))[0]?.field_type ===
+                        'text_headings')
+                  ) {
+                    data[ele1][
+                      `${
+                        Object.values(eval(option1))[0]?.field_type
+                      }_${inner_index}`
+                    ] = Object.values(eval(option1))[0]?.field_label;
+                  }
+                });
+              }
+            );
+          }
+        });
+      });
+    }
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (location?.state?.id) {
