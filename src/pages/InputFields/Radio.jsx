@@ -641,7 +641,7 @@ const Radio = (props) => {
               <br />
               <Form.Group>
                 <Form.Label className="form-style-headings">
-                  {controls.field_label}
+                  {Object.values(eval(controls.option)[Index])[0].field_label}
                 </Form.Label>
               </Form.Group>
             </Col>
