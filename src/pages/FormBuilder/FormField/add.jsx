@@ -65,6 +65,9 @@ const AddFormField = (props) => {
     useState(-1);
   const [selectedCheckBox, setSelectedCheckBox] = useState({});
 
+  const [formData, setFormData] = useState([]);
+  const [fieldData, setFieldData] = useState([]);
+
   const formId = location?.state?.id;
   const form_name = location?.state?.form_name
     ? location?.state?.form_name
@@ -83,6 +86,7 @@ const AddFormField = (props) => {
       getFormField();
       getFormData();
       getUserRoleAndFranchiseeData();
+      getOneFormData();
     } else {
       setfullLoaderStatus(false);
     }
@@ -98,6 +102,12 @@ const AddFormField = (props) => {
   useEffect(() => {
     getUser();
   }, [selectedFranchisee]);
+
+  useEffect(() => {
+    if (formData) {
+      getField();
+    }
+  }, [formData]);
 
   const getUser = () => {
     var myHeaders = new Headers();
@@ -319,14 +329,6 @@ const AddFormField = (props) => {
     inner_inner_index,
     key
   ) => {
-    console.log({
-      field,
-      value,
-      index,
-      inner_index,
-      inner_inner_index,
-      key,
-    });
     counter++;
     setCount(counter);
     const tempArr = form;
@@ -337,7 +339,6 @@ const AddFormField = (props) => {
       keyOfOption[key]['option'][inner_inner_index] = { [value]: value };
       tempOption[inner_index] = keyOfOption;
       tempArr[index]['option'] = tempOption;
-      console.log(tempArr[index], '====');
       setForm(tempArr);
     } else if (
       field === 'field_type' &&
@@ -819,8 +820,67 @@ const AddFormField = (props) => {
     }
   };
 
-  console.log('FORM:', form);
-  console.log('REMOVE CONDITION ID:', removeConditionId);
+  const getOneFormData = () => {
+    let fieldName = [];
+    let singleFieldName = [];
+    var myHeaders = new Headers();
+    myHeaders.append('authorization', 'Bearer ' + token);
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow',
+      headers: myHeaders,
+    };
+    const form_id = parseInt(location?.state?.id);
+    const URL_ = `${BASE_URL}/form/response/own?search=&form_id=${form_id}&user_id=${localStorage.getItem(
+      'user_id'
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=&to_date=`;
+    fetch(URL_, requestOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        res?.result.map((item) => {
+          item.map((inner_item) => {
+            let obj = {};
+            for (const key of Object.keys(
+              eval(JSON.parse(inner_item?.fields))
+            )) {
+              if (JSON.parse(inner_item?.fields)[key] !== null) {
+                obj[key] = JSON.parse(inner_item?.fields)[key];
+              }
+            }
+            inner_item.fields = JSON.stringify(obj);
+            fieldName.push(Object.keys(eval(JSON.parse(inner_item?.fields))));
+            fieldName.push(Object.values(eval(JSON.parse(inner_item?.fields))));
+          });
+        });
+
+        fieldName?.map((fields) => {
+          fields?.map((field) => {
+            if (!singleFieldName?.includes(field)) {
+              singleFieldName.push(field);
+            }
+          });
+        });
+
+        setFormData(singleFieldName);
+      })
+      .catch((err) => console.log({ err }));
+  };
+
+  const getField = () => {
+    let arr = [];
+
+    form?.map((formFields, index) => {
+      if (
+        formData.includes(formFields?.field_label) ||
+        formData.includes(formFields?.field_name)
+      ) {
+        arr.push(formFields?.field_label);
+      }
+    });
+
+    setFieldData(arr);
+  };
+
   return (
     <>
       <div id="main">
@@ -940,10 +1000,6 @@ const AddFormField = (props) => {
                                     value={form[index]?.field_label}
                                     onChange={(e) => {
                                       setFieldLabel(e.target.value);
-                                      console.log(
-                                        'VALUE:>>>>>>>>>',
-                                        e.target.value
-                                      );
                                       setField(
                                         e.target.name,
                                         e.target.value,
@@ -973,7 +1029,7 @@ const AddFormField = (props) => {
                                       );
                                     }}
                                     disabled={
-                                      updateFlag[
+                                      (updateFlag[
                                         form[index]?.field_name ||
                                           form[index]['field_label']
                                             ?.split(' ')
@@ -983,7 +1039,11 @@ const AddFormField = (props) => {
                                                 d.slice(1)
                                             )
                                             ?.join('_')
-                                      ] && newFieldAddIndex !== index
+                                      ] &&
+                                        newFieldAddIndex !== index) ||
+                                      fieldData?.includes(
+                                        form[index]?.field_label
+                                      )
                                     }
                                   >
                                     <option

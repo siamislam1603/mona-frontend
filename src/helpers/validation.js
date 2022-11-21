@@ -167,7 +167,6 @@ export const createFormFieldValidation = (form) => {
       field_type === 'dropdown_selection'
     ) {
       for (let j = 0; j < option.length; j++) {
-        console.log('Object.keys(option[j])---->', Object.keys(option[j])[0]);
         if (Object.keys(option[j])[0] === '') {
           if (!newErrors[i].option) {
             newErrors[i].option = [];
