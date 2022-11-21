@@ -335,7 +335,28 @@ const UserManagement = () => {
     // }
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
-      let tempData = users.map((dt) => ({
+      let userData = users;
+
+      // IN CASE OF EDUCATOR ROLE, REMOVES ALL OTHER EDUCATORS FROM THE RESULTS
+      if(localStorage.getItem('user_role') === "educator") {
+        let educatorList = userData.filter(user => user.role === "educator");
+        let nonEducatorList = userData.filter(user => user.role !=="educator");
+
+        educatorList = educatorList.filter(user => parseInt(user.id) === parseInt(localStorage.getItem('user_id')))
+        userData = [...educatorList, ...nonEducatorList];
+      }
+
+      // IN CASE OF EDUCATOR ROLE, WHEN "EDUCATOR" ROLE FILTER IS APPLIED, 
+      // REMOVES ALL OTHER RESULTS EXCEPT FOR HIS OWN DETAILS
+      if(filter === "Educator" && localStorage.getItem('user_role') === "educator") {
+        let educatorList = userData.filter(user => user.role === "educator");
+
+        educatorList = educatorList.filter(user => parseInt(user.id) === parseInt(localStorage.getItem('user_id')))
+        userData = [...educatorList];
+      }
+
+      // FORMATS THE RESULTS TO THE DATA TABLE FORMAT
+      let tempData = userData.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
           .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
@@ -520,6 +541,8 @@ const UserManagement = () => {
 
   const csvLink = useRef();
   jsonCSVData && console.log('JSON CSV DATA:', jsonCSVData);
+
+  filter && console.log('FILTER>>>>>>>>>>>>>>>', filter);
   return (
     <>
       <div
