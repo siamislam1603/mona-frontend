@@ -355,6 +355,18 @@ const UserManagement = () => {
         userData = [...educatorList];
       }
 
+      if(filter === "Coordinator" && localStorage.getItem('user_role') === "educator") {
+        let coordinatorList = userData.filter(user => user.role === "coordinator");
+        userData = [...coordinatorList];
+      }
+
+      if(filter === "Guardian" && localStorage.getItem('user_role') === "educator") {
+        let guardianList = userData.filter(user => user.role === "guardian");
+        userData = [...guardianList];
+      }
+
+
+
       // FORMATS THE RESULTS TO THE DATA TABLE FORMAT
       let tempData = userData.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
