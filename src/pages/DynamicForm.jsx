@@ -376,14 +376,20 @@ const DynamicForm = () => {
                       'text_headings' ||
                     Object.values(eval(option1))[0]?.field_type ===
                       'sub_headings') &&
-                  data?.fields[`${inner_item?.field}`] ===
-                    Object.values(eval(option1))[0]?.option?.key
+                  data?.fields[`${inner_item?.field_name}`] ===
+                    Object.values(eval(option1))[0]?.option_key
                 ) {
                   data.fields[
                     `${
                       Object.values(eval(option1))[0]?.field_type
                     }_${inner_index}`
                   ] = Object.values(eval(option1))[0]?.field_label;
+                } else {
+                  delete data?.fields[
+                    `${
+                      Object.values(eval(option1))[0]?.field_type
+                    }_${inner_index}`
+                  ];
                 }
               }
             );
