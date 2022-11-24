@@ -24,35 +24,35 @@ const ChangePassword = () => {
 
 
   // LOG MESSAGES
-  
+
   const [errors, setErrors] = useState({});
   const [topMessage, setTopMessage] = useState(null);
   const [topErrorMessage, setTopErrorMessage] = useState(null);
-  const [attempts,setAttempts] = useState(0);
-  const [attemptError,setAttemptError] = useState(null)
+  const [attempts, setAttempts] = useState(0);
+  const [attemptError, setAttemptError] = useState(null)
 
 
   const getRoleString = (role) => {
     let roleString = '';
 
-    if(role === 'franchisor_admin') 
+    if (role === 'franchisor_admin')
       roleString = 'franchisor';
-    
-    if(role === 'franchisee_admin') 
+
+    if (role === 'franchisee_admin')
       roleString = 'franchisee';
 
-    if(role === 'coordinator')
+    if (role === 'coordinator')
       roleString = 'coordinator';
 
-    if(role === 'educator')
+    if (role === 'educator')
       roleString = 'educator';
 
-    if(role === 'guardian')
+    if (role === 'guardian')
       roleString = 'parents';
 
     return roleString;
   }
-  
+
   // FETCHING FRANCHISEE LIST
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
@@ -62,7 +62,7 @@ const ChangePassword = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       setFranchiseeList(response.data.franchiseeList.map(data => ({
         id: data.id,
         cat: data.franchisee_alias,
@@ -73,7 +73,12 @@ const ChangePassword = () => {
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')
+          }`
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoles([
@@ -86,9 +91,14 @@ const ChangePassword = () => {
   };
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
-    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`);
+    const response = await axios.get(`${BASE_URL}/role/user/franchiseeById/${franchisee_id}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')
+          }`
+      }
+    });
     console.log('RESPONSE:', response);
-    if(response.status === 200 && Object.keys(response.data).length > 1) {
+    if (response.status === 200 && Object.keys(response.data).length > 1) {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
         ...users?.map((data) => ({
@@ -100,43 +110,43 @@ const ChangePassword = () => {
     }
   };
 
-   const ChangePassword = async(data) =>{
+  const ChangePassword = async (data) => {
     try {
-        console.log("The password",data)
-        let token = localStorage.getItem("token");
-        let userId = localStorage.getItem("user_id");
-        const response = await axios.post(`${BASE_URL}/auth/changePassword`,{
+      console.log("The password", data)
+      let token = localStorage.getItem("token");
+      let userId = localStorage.getItem("user_id");
+      const response = await axios.post(`${BASE_URL}/auth/changePassword`, {
         id: userId,
-        oldPassword:data.oldpassword,
-        newPassword:data.new_password,
+        oldPassword: data.oldpassword,
+        newPassword: data.new_password,
         isLoggedIn: 1,
         changePasswordNextLogin: 0
-      },{
+      }, {
         headers: {
           "Authorization": "Bearer " + token
         }
-       } )
-    if(response.status===200 && response.data.status === "success"){
+      })
+      if (response.status === 200 && response.data.status === "success") {
         setTopMessage("Password Change Successfully")
         setTimeout(() => {
-            window.location.href=`/${getRoleString(localStorage.getItem('user_role'))}-dashboard`;
+          window.location.href = `/${getRoleString(localStorage.getItem('user_role'))}-dashboard`;
         }, 2000);
-    }
+      }
     } catch (error) {
       console.log("The error", error)
-        if( error.response.status ==404 && error.response.data.msg === "password incorrect!"){
-            setTopErrorMessage("Old passsword is incorrect")
-            setAttempts(attempts+ 1)
-            console.log("The attemps",attempts)
-            localStorage.setItem("attempts",attempts)  
-          }
-        setTimeout(() => {
-          setTopErrorMessage(null)
+      if (error.response.status == 404 && error.response.data.msg === "password incorrect!") {
+        setTopErrorMessage("Old passsword is incorrect")
+        setAttempts(attempts + 1)
+        console.log("The attemps", attempts)
+        localStorage.setItem("attempts", attempts)
+      }
+      setTimeout(() => {
+        setTopErrorMessage(null)
       }, 3000);
 
     }
-   } 
-   const logout = async () => {
+  }
+  const logout = async () => {
     const response = await axios.get(`${BASE_URL}/auth/logout`);
     if (response.status === 200) {
       localStorage.removeItem('token');
@@ -150,7 +160,7 @@ const ChangePassword = () => {
     }
   };
 
-   const setField = (field, value) => {
+  const setField = (field, value) => {
     setPasswords({ ...passwords, [field]: value });
     console.log("form---->", passwords);
     if (!!errors[field]) {
@@ -174,8 +184,8 @@ const ChangePassword = () => {
         "Authorization": "Bearer " + token
       }
     });
-  
-    if(response.status === 200 && response.data.status === 'success') {
+
+    if (response.status === 200 && response.data.status === 'success') {
       let { passwordChangeInitiationFlag } = response.data;
       setPasswordInitiationFlag(passwordChangeInitiationFlag);
     }
@@ -190,36 +200,36 @@ const ChangePassword = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { parentData } = response.data;
       console.log('PARENT DATA', parentData === null);
-      if(parentData === null) {
+      if (parentData === null) {
         setLogUserOutDialog(true);
       }
     }
   }
 
-  const onSubmit = event =>{
+  const onSubmit = event => {
     event.preventDefault()
-    let count =  localStorage.getItem("attempts") 
-    console.log("The coount",count)
-    if(count>1){
+    let count = localStorage.getItem("attempts")
+    console.log("The coount", count)
+    if (count > 1) {
       console.log("Please logut and retry")
       setAttemptError("You consume 3 attempts logout and retry or forgot password")
       setTimeout(() => {
         setAttemptError(null)
-    }, 3000);
+      }, 3000);
       return
     }
     let errObj = PasswordValidation(passwords)
-    if(Object.keys(errObj).length>0){
-    //  console.log("The Error object",errObj.oldpassword)
-      setErrors(errObj)  
+    if (Object.keys(errObj).length > 0) {
+      //  console.log("The Error object",errObj.oldpassword)
+      setErrors(errObj)
     }
-    else{
-        setErrors({})
-        console.log("The data",passwords.oldpassword)
-        ChangePassword(passwords)
+    else {
+      setErrors({})
+      console.log("The data", passwords.oldpassword)
+      ChangePassword(passwords)
     }
   }
   useEffect(() => {
@@ -232,50 +242,50 @@ const ChangePassword = () => {
   }, []);
 
   useEffect(() => {
-    if(localStorage.getItem('user_role') === 'guardian')
+    if (localStorage.getItem('user_role') === 'guardian')
       checkIfChildExist();
   }, []);
   // Get the previous value (was passed into hook on last render)
-  
-const attempt = localStorage.getItem("attempts")
+
+  const attempt = localStorage.getItem("attempts")
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
-      {attemptError && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{attemptError}</p>} 
- 
-    <div id="main">
-      <section className="mainsection">
-     
-        <Container>
-          <div className="admin-wrapper">
-            <aside className="app-sidebar">
-              <LeftNavbar />
-            </aside>
-            <div className="sec-column">
-              <TopHeader
-                selectedFranchisee={selectedFranchisee} 
-                setSelectedFranchisee={setSelectedFranchisee} />
-              <div className="entry-container">
-                <header className="title-head">
-                  <h1 className="title-lg">
-                    Change Password{' '}
-                  </h1>
-                </header>
-                  {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>} 
-                  {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}                 
-                <div className="change-pass-sec">
-                {
-                  passwordInitiationFlag ?
-                  <>
-                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>A password change request has been initiated by the Administrator.</p>
-                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
-                  </>:
-                  <>
-                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px"}}>You've logged in for the first time.</p>
-                    <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
-                  </>
-                }
-                  <Row>
-                  {/* <Col md={12} className="mb-3">
+      {attemptError && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{attemptError}</p>}
+
+      <div id="main">
+        <section className="mainsection">
+
+          <Container>
+            <div className="admin-wrapper">
+              <aside className="app-sidebar">
+                <LeftNavbar />
+              </aside>
+              <div className="sec-column">
+                <TopHeader
+                  selectedFranchisee={selectedFranchisee}
+                  setSelectedFranchisee={setSelectedFranchisee} />
+                <div className="entry-container">
+                  <header className="title-head">
+                    <h1 className="title-lg">
+                      Change Password{' '}
+                    </h1>
+                  </header>
+                  {topMessage && <p className="alert alert-success" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topMessage}</p>}
+                  {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>}
+                  <div className="change-pass-sec">
+                    {
+                      passwordInitiationFlag ?
+                        <>
+                          <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px" }}>A password change request has been initiated by the Administrator.</p>
+                          <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
+                        </> :
+                        <>
+                          <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "5px" }}>You've logged in for the first time.</p>
+                          <p style={{ fontSize: "1.2rem", fontWeight: "400", color: "#9d9d9d", marginBottom: "1.8rem" }}>Before proceeding further, you need to set a new password.</p>
+                        </>
+                    }
+                    <Row>
+                      {/* <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Old Password</Form.Label>
                           <Form.Control
@@ -293,95 +303,95 @@ const attempt = localStorage.getItem("attempts")
                           </Form.Control.Feedback>
                         </Form.Group>
                  </Col> */}
-              <Col md={6}>
-                <Form.Group
-                  className="form-group"
-                  controlId="formBasicPassword"
-                  >
-                  <Form.Label>Old Password</Form.Label>
-                  <Form.Control
-                    className="form_input"
-                    type={!hide ? 'text' : 'password'}                   
-                    name="oldpassword"
-                    placeholder='Old Password'
-                    value={passwords?.oldpassword}
-                    onChange={(e) => {
-                        setField(e.target.name,e.target.value)
-                    }}
-                    isInvalid={!!errors.oldpassword}
-                  />
-                   
-                  {!hide ? (
-                    <FontAwesomeIcon
-                      onClick={() => {
-                        setHide(true);
-                      }}
-                      className="custom_hide"
-                      icon={faEye}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      onClick={() => {
-                        setHide(false);
-                      }}
-                      className="custom_hide"
-                      icon={faEyeSlash}
-                    />
-                  )}
-                    <span className="error">
-                      {errors.oldpassword}
-                    </span>
-                </Form.Group>
-                    </Col>
-                </Row>
-                <Row>
-                 <Col md={6}>
-                <Form.Group
-                  className="form-group"
-                  controlId="formBasicPassword"
-                  >
-                  <Form.Label>New Password</Form.Label>
-                  <Form.Control
-                    className="form_input"
-                    type={!secHide ? 'text' : 'password'}                   
-                    name="new_password"
-                    placeholder='New Password'
-                    onChange={(e) => {
-                      setField(e.target.name,e.target.value)
-                    }}
-                    isInvalid={!!errors.new_password}
-                  />
-                   
-                  {!secHide ? (
-                    <FontAwesomeIcon
-                      onClick={() => {
-                        setSecHide(true);
-                      }}
-                      className="custom_hide"
-                      icon={faEye}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      onClick={() => {
-                        setSecHide(false);
-                      }}
-                      className="custom_hide"
-                      icon={faEyeSlash}
-                    />
-                  )}
-                   
-        {
-          !errors.new_password &&<Form.Text className="text-muted">
-Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character</Form.Text> 
-        }                
+                      <Col md={6}>
+                        <Form.Group
+                          className="form-group"
+                          controlId="formBasicPassword"
+                        >
+                          <Form.Label>Old Password</Form.Label>
+                          <Form.Control
+                            className="form_input"
+                            type={!hide ? 'text' : 'password'}
+                            name="oldpassword"
+                            placeholder='Old Password'
+                            value={passwords?.oldpassword}
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value)
+                            }}
+                            isInvalid={!!errors.oldpassword}
+                          />
 
-                    <span className="error">
-                      {errors.new_password}
-                    </span>
+                          {!hide ? (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setHide(true);
+                              }}
+                              className="custom_hide"
+                              icon={faEye}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setHide(false);
+                              }}
+                              className="custom_hide"
+                              icon={faEyeSlash}
+                            />
+                          )}
+                          <span className="error">
+                            {errors.oldpassword}
+                          </span>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <Form.Group
+                          className="form-group"
+                          controlId="formBasicPassword"
+                        >
+                          <Form.Label>New Password</Form.Label>
+                          <Form.Control
+                            className="form_input"
+                            type={!secHide ? 'text' : 'password'}
+                            name="new_password"
+                            placeholder='New Password'
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value)
+                            }}
+                            isInvalid={!!errors.new_password}
+                          />
 
-                </Form.Group>
-                    </Col>
-                    {/* <Col md={12} className="mb-3">
+                          {!secHide ? (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setSecHide(true);
+                              }}
+                              className="custom_hide"
+                              icon={faEye}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setSecHide(false);
+                              }}
+                              className="custom_hide"
+                              icon={faEyeSlash}
+                            />
+                          )}
+
+                          {
+                            !errors.new_password && <Form.Text className="text-muted">
+                              Minimum 8 characters, at least one uppercase and one lowercase letter, one number and one special character</Form.Text>
+                          }
+
+                          <span className="error">
+                            {errors.new_password}
+                          </span>
+
+                        </Form.Group>
+                      </Col>
+                      {/* <Col md={12} className="mb-3">
                         <Form.Group>
                           <Form.Label>Confirm Password</Form.Label>
                           <Form.Control
@@ -400,59 +410,59 @@ Minimum 8 characters, at least one uppercase and one lowercase letter, one numbe
                         </Form.Group>
                       </Col> */}
 
-                <Col md={6}>
-                  <Form.Group
-                    className="form-group"
-                    controlId="formBasicPassword"
-                    >
-                    <Form.Label>Confirm New Password</Form.Label>
-                    <Form.Control
-                      className="form_input"
-                      type={!ThreHide ? 'text' : 'password'}                   
-                      name="confirm_password"
-                      placeholder='Confirm Password'
-                      value={passwords?.confirm_password}
-                      onChange={(e) => {
-                          setField(e.target.name,e.target.value)
-                      }}
-                      isInvalid={!!errors.confirm_password}
-                    />   
-                   {!ThreHide ? (
-                      <FontAwesomeIcon
-                        onClick={() => {
-                          setThreHide(true);
-                      }}
-                      className="custom_hide"
-                      icon={faEye}
-                    />
-                  ) : (
-                    <FontAwesomeIcon
-                      onClick={() => {
-                        setThreHide(false);
-                      }}
-                      className="custom_hide"
-                      icon={faEyeSlash}
-                    />
-                  )}
-                    <span className="error">
-                      {errors.confirm_password}
-                    </span>
-                    </Form.Group>
-                    </Col>
+                      <Col md={6}>
+                        <Form.Group
+                          className="form-group"
+                          controlId="formBasicPassword"
+                        >
+                          <Form.Label>Confirm New Password</Form.Label>
+                          <Form.Control
+                            className="form_input"
+                            type={!ThreHide ? 'text' : 'password'}
+                            name="confirm_password"
+                            placeholder='Confirm Password'
+                            value={passwords?.confirm_password}
+                            onChange={(e) => {
+                              setField(e.target.name, e.target.value)
+                            }}
+                            isInvalid={!!errors.confirm_password}
+                          />
+                          {!ThreHide ? (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setThreHide(true);
+                              }}
+                              className="custom_hide"
+                              icon={faEye}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              onClick={() => {
+                                setThreHide(false);
+                              }}
+                              className="custom_hide"
+                              icon={faEyeSlash}
+                            />
+                          )}
+                          <span className="error">
+                            {errors.confirm_password}
+                          </span>
+                        </Form.Group>
+                      </Col>
                       <div className="custom_submit text-center pt-3">
-                    <Button variant="primary" type="submit" onClick={onSubmit}>
-                      Submit
-                    </Button>
-                    </div>
-                  </Row>
+                        <Button variant="primary" type="submit" onClick={onSubmit}>
+                          Submit
+                        </Button>
+                      </div>
+                    </Row>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Container>
-      </section>
-    </div>
-    {
+          </Container>
+        </section>
+      </div>
+      {
         <Modal
           show={logUserOutDialog}>
           <Modal.Header>
@@ -466,13 +476,13 @@ Minimum 8 characters, at least one uppercase and one lowercase letter, one numbe
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <button 
+            <button
               className="modal-button"
               onClick={handleParentLogout}>Logout</button>
           </Modal.Footer>
         </Modal>
       }
-  </div>
+    </div>
   )
 }
 

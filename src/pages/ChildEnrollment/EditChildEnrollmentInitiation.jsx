@@ -36,20 +36,25 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
       setFranchiseData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
         value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
-      })));  
+      })));
     }
   }
 
   const fetchEducatorList = async (franchise) => {
     console.log('FETCHING EDUCATORS:', franchise);
-    const response = await axios.get(`${BASE_URL}/user-group/users/${franchise}`);
-    if(response.status === 200 && response.data.status === "success") {
+    let token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/user-group/users/${franchise}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
       setEducatorData(users.map(user => ({
         id: user.id,
@@ -76,27 +81,27 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { user } = response.data;
       let { franchisee_id } = user;
 
-      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...formOneChildData, franchisee_id: franchisee_id  }, {
+      response = await axios.patch(`${BASE_URL}/enrollment/child/${paramsChildId}`, { ...formOneChildData, franchisee_id: franchisee_id }, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
       });
 
-      if(response.status === 201 && response.data.status === "success") {
+      if (response.status === 201 && response.data.status === "success") {
         let removedEducators = oldEducatorIDs.filter(d => !formOneChildData.educator.includes(d));
         console.log('REMOVED EDUCATORS:', removedEducators);
-        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${paramsChildId}`,{ educatorIds: formOneChildData?.educator, removedEducatorIds: removedEducators}, {
+        response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${paramsChildId}`, { educatorIds: formOneChildData?.educator, removedEducatorIds: removedEducators }, {
           headers: {
-              authorization: `Bearer ${localStorage.getItem('token')}`,
+            authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         if (response.status === 201) {
-            console.log('Updated Sucessfully!');
-            window.location.href=`/children/${paramsParentId}`;
+          console.log('Updated Sucessfully!');
+          window.location.href = `/children/${paramsParentId}`;
         }
       }
     }
@@ -110,7 +115,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     });
 
     console.log('FETCHED CHILD DATA:', response.data);
-    if(response.status === 200 && (await response).data.status === "success") {
+    if (response.status === 200 && (await response).data.status === "success") {
       let { child } = response.data;
 
       let { users, fullname, family_name, dob, home_address, sex, child_crn, name_of_school, school_status, start_date, has_special_needs, franchisee_id } = child;
@@ -141,7 +146,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const submitFormData = (event) => {
     event.preventDefault();
     console.log('SUBMITTING FORM DATA');
-    
+
     let errorObj = enrollmentInitiationFormValidation(formOneChildData);
     if (Object.keys(errorObj).length > 0) {
       setErrors(errorObj);
@@ -152,7 +157,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   }
 
   const initiateCancelEvent = () => {
-    window.location.href=`/children/${paramsParentId}`;
+    window.location.href = `/children/${paramsParentId}`;
   }
 
   useEffect(() => {
@@ -164,7 +169,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     fetchAndPopulateChildData();
     fetchFranchiseList();
   }, []);
-  
+
 
   oldEducatorIDs && console.log('EDUCATOR:', oldEducatorIDs);
   formOneChildData && console.log('FORM ONE CHILD DATA:', formOneChildData);
@@ -176,11 +181,11 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader 
-                  setSelectedFranchisee={setSelectedFranchisee}/>
+                <TopHeader
+                  setSelectedFranchisee={setSelectedFranchisee} />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Child Enrolment Initiation Form</h1>
@@ -206,10 +211,10 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       fullname: null
                                     }))
                                   }} />
-                                  {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
+                                {errors.fullname !== null && <span className="error">{errors.fullname}</span>}
                               </Form.Group>
                             </Col>
-                            
+
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
                                 <Form.Label>Child's Family Name *</Form.Label>
@@ -231,7 +236,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       family_name: null,
                                     }))
                                   }} />
-                                { errors?.family_name !== null && <span className="error">{errors?.family_name}</span> }
+                                {errors?.family_name !== null && <span className="error">{errors?.family_name}</span>}
                               </Form.Group>
                             </Col>
 
@@ -251,7 +256,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       dob: null
                                     }))
                                   }} />
-                                  {errors.dob !== null && <span className="error">{errors.dob}</span>}
+                                {errors.dob !== null && <span className="error">{errors.dob}</span>}
                               </Form.Group>
                             </Col>
 
@@ -272,7 +277,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       start_date: null
                                     }))
                                   }} />
-                                  {errors.start_date !== null && <span className="error">{errors.start_date}</span>}
+                                {errors.start_date !== null && <span className="error">{errors.start_date}</span>}
                               </Form.Group>
                             </Col>
 
@@ -297,7 +302,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="gender"
                                     disabled={localStorage.getItem('user_role') === "guardian"}
                                     id="femalecheck"
-                                    checked = {formOneChildData?.sex === "F"}
+                                    checked={formOneChildData?.sex === "F"}
                                     label="Female"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -325,10 +330,10 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                       home_address: null
                                     }))
                                   }} />
-                                  {errors.home_address !== null && <span className="error">{errors.home_address}</span>}
+                                {errors.home_address !== null && <span className="error">{errors.home_address}</span>}
                               </Form.Group>
                             </Col>
-                            
+
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
                                 <Form.Label>Select Franchise *</Form.Label>
@@ -353,7 +358,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 {errors.educatorData !== null && <span className="error">{errors.educatorData}</span>}
                               </Form.Group>
                             </Col>
-                            
+
                             <Col md={6}>
                               <Form.Group className="mb-3 relative">
                                 <Form.Label>Select An Educator *</Form.Label>
@@ -401,7 +406,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="has_special_needs"
                                     disabled={localStorage.getItem('user_role') === "guardian"}
                                     id="specialneedsno"
-                                    checked = {formOneChildData?.has_special_needs === 0}
+                                    checked={formOneChildData?.has_special_needs === 0}
                                     label="No"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -432,7 +437,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     name="school_status"
                                     id="statuscheckno"
                                     disabled={localStorage.getItem('user_role') === "guardian"}
-                                    checked = {formOneChildData?.school_status === "N"}
+                                    checked={formOneChildData?.school_status === "N"}
                                     label="No"
                                     onChange={(event) => setFormOneChildData(prevState => ({
                                       ...prevState,
@@ -442,7 +447,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                               </Form.Group>
                             </Col>
 
-                            { 
+                            {
                               formOneChildData?.school_status === "Y" &&
                               <Col md={6}>
                                 <Form.Group className="mb-3 relative">
@@ -459,7 +464,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                         name_of_school: null
                                       }))
                                     }} />
-                                    {errors.name_of_school !== null && <span className="error">{errors.name_of_school}</span>}
+                                  {errors.name_of_school !== null && <span className="error">{errors.name_of_school}</span>}
                                 </Form.Group>
                               </Col>
                             }
@@ -477,7 +482,7 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                     handleChildData(e);
                                   }} />
 
-                                  { errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span> }
+                                {errors?.child_crn !== null && <span className="error">{errors?.child_crn}</span>}
                               </Form.Group>
                             </Col>
                           </Row>
@@ -489,14 +494,14 @@ const EditChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                           {loader === true ? (
                             <>
                               <img
-                              style={{ width: '24px' }}
-                              src={'/img/mini_loader1.gif'}
-                              alt=""
+                                style={{ width: '24px' }}
+                                src={'/img/mini_loader1.gif'}
+                                alt=""
                               />
-                                Submitting...
+                              Submitting...
                             </>
                           ) : (
-                          'Submit')}
+                            'Submit')}
                         </Button>}
                       </div>
                     </Form>

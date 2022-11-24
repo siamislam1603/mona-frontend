@@ -94,7 +94,7 @@ const setField = (field, value) => {
     let response = await axios.get(`${BASE_URL}/auth/passwordReset/?token=${theToken}&password=${password}`)
     if(response.status===200 && response.data.status === "success"){
       setTopMessage("Password Reset Successfully ")
-      // userInfo()
+      // /file-category()
       let isLogin = await axios.patch(`${BASE_URL}/auth/user/update-login-credential/${userID}`)
       console.log("THE RESPONSE",isLogin)
       

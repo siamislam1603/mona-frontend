@@ -122,7 +122,12 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   const fetchFranchiseeUsers = async (franchisee_id) => {
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -247,16 +252,16 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
   }, [localStorage.getItem('selectedFranchise')]);
 
   useEffect(() => {
-    if(typeof selectedFranchisee !== "undefined") {
-    trainingCreatedByOther()
-    }
-  }, [filter.search, filter.category_id, trainingDeleteMessage,selectedFranchisee])
- 
-  useEffect(() =>{
-    if(typeof selectedFranchisee !== "undefined") {
+    if (typeof selectedFranchisee !== "undefined") {
       trainingCreatedByOther()
     }
-  },[selectedFranchisee])
+  }, [filter.search, filter.category_id, trainingDeleteMessage, selectedFranchisee])
+
+  useEffect(() => {
+    if (typeof selectedFranchisee !== "undefined") {
+      trainingCreatedByOther()
+    }
+  }, [selectedFranchisee])
   useEffect(() => {
     fetchFranchiseeList();
 
@@ -433,7 +438,7 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
           {otherTrainingData?.length > 0 || myTrainingData?.length > 0 ?
             null
             :
-             !fullLoaderStatus &&  <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
+            !fullLoaderStatus && <div className="text-center mb-5 mt-5">  <strong>No training available.</strong> </div>
           }
           {/* {
 

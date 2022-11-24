@@ -19,9 +19,9 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
     percentage: "",
     eligible_hours: ""
   });
-  const[showSignatureDialog, setShowSignatureDialog] = useState(false);
+  const [showSignatureDialog, setShowSignatureDialog] = useState(false);
   const [signatureImage, setSignatureImage] = useState(null);
-  const[formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
+  const [formSubmissionSuccessDialog, setFormSubmissionSuccessDialog] = useState(false);
   const [loader, setLoader] = useState(false);
 
 
@@ -37,7 +37,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       setLoader(false);
       // REST OF THE CODE COMES HERE...
       setFormSubmissionSuccessDialog(true);
@@ -46,7 +46,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
 
   // REDIRECTION AFTER SUCCESSFUL SUBMISSION OF FORM
   const handleSubmissionRedirection = () => {
-    window.location.href=`/children/${localStorage.getItem('enrolled_parent_id')}`;
+    window.location.href = `/children/${localStorage.getItem('enrolled_parent_id')}`;
   }
 
   const handleSubmitForm = (e) => {
@@ -58,12 +58,16 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
   // CREATING AN EMPTY RECORD IF NOT ALREADY EXISTS
   const createEmptyRecord = async () => {
     let user_id = localStorage.getItem('user_id');
-    const response = await axios.post(`${BASE_URL}/enrollment/office-use-only/empty-record/${user_id}`);
+    const response = await axios.post(`${BASE_URL}/enrollment/office-use-only/empty-record/${user_id}`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { data } = response.data;
       setOfficeUseData(data);
-    } else if(response.status === 201 && response.data.status === "success") {
+    } else if (response.status === 201 && response.data.status === "success") {
       let { data } = response.data;
       setOfficeUseData(data);
     }
@@ -74,7 +78,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
   const saveSignatureImage = async () => {
     let data = new FormData();
 
-    if(signatureImage) {
+    if (signatureImage) {
       setShowSignatureDialog(false);
       console.log('Saving Signature Image!');
       const blob = await fetch(signatureImage).then((res) => res.blob());
@@ -82,10 +86,14 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
       data.append('image', blob);
     }
 
-    let response = await axios.patch(`${BASE_URL}/enrollment/office-use-only/signature/${localStorage.getItem('user_id')}`, data);
+    let response = await axios.patch(`${BASE_URL}/enrollment/office-use-only/signature/${localStorage.getItem('user_id')}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
     console.log('SIGNATURE RESPONSE:', response);
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       let { signature: signatureURL } = response.data;
       setOfficeUseData(prevState => ({
         ...prevState,
@@ -113,7 +121,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
               <Col md={4}>
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Documents sighted by</Form.Label>
-                  <Form.Control 
+                  <Form.Control
                     type="text"
                     name="sighted_by"
                     placeholder="Sighted By"
@@ -140,15 +148,15 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                   }
                 </Form.Group>
               </Col>
-              
+
               <Col md={4}>
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Date</Form.Label>
-                  <Form.Control 
-                    type="date" 
+                  <Form.Control
+                    type="date"
                     disabled={true}
                     min={new Date().toISOString().slice(0, 10)}
-                    value={moment(officeUseData?.date).format('YYYY-MM-DD')} 
+                    value={moment(officeUseData?.date).format('YYYY-MM-DD')}
                     name="dob"
                     onChange={(e) => {
                       setOfficeUseData(prevState => ({
@@ -158,11 +166,11 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                     }} />
                 </Form.Group>
               </Col>
-              
+
               <Col md={4}>
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Percentage</Form.Label>
-                  <Form.Control 
+                  <Form.Control
                     type="text"
                     name="percentage"
                     placeholder="Percentage"
@@ -175,11 +183,11 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
                     }} />
                 </Form.Group>
               </Col>
-              
+
               <Col md={4}>
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Eligible Hours</Form.Label>
-                  <Form.Control 
+                  <Form.Control
                     type="text"
                     name="eligible_hours"
                     placeholder="Eligible Hours"
@@ -198,20 +206,20 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Previous</Button>
             <Button variant="primary" onClick={handleSubmitForm} type="submit">
-            {loader === true ? (
-              <>
-                <img
-                style={{ width: '24px' }}
-                src={'/img/mini_loader1.gif'}
-                alt=""
-                />
+              {loader === true ? (
+                <>
+                  <img
+                    style={{ width: '24px' }}
+                    src={'/img/mini_loader1.gif'}
+                    alt=""
+                  />
                   {
                     localStorage.getItem('user_role') === 'guardian'
-                    ? "Saving..."
-                    : "Submitting..."
+                      ? "Saving..."
+                      : "Submitting..."
                   }
-              </>
-            ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
+                </>
+              ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
             </Button>
           </div>
         </Form>
@@ -247,7 +255,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
           <p className="modal-paragraph">Form Submitted Successfully.</p>
         </Modal.Body>
         <Modal.Footer>
-          <button 
+          <button
             className="modal-button"
             onClick={() => handleSubmissionRedirection()}>Okay</button>
         </Modal.Footer>

@@ -140,7 +140,12 @@ const AddNewTraining = () => {
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')
+      }`
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoles([
@@ -164,7 +169,7 @@ const AddNewTraining = () => {
   const createTraining = async (data) => {
     const token = localStorage.getItem('token');
     const response = await axios.post(
-      `${BASE_URL}/training/addTraining`, data, {
+      `${ BASE_URL } / training / addTraining`, data, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -180,7 +185,7 @@ const AddNewTraining = () => {
       data.append('image', blob);
 
       let imgSaveResponse = await axios.post(
-        `${BASE_URL}/training/coverImg?title="training"`, data, {
+        `${ BASE_URL } / training / coverImg ? title = "training"`, data, {
         headers: {
           "Authorization": "Bearer " + token
         }
@@ -215,7 +220,7 @@ const AddNewTraining = () => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
+    const response = await axios.post(`${ BASE_URL } / auth / users / franchisees ? franchiseeId = ${ f_id }`);
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -231,7 +236,7 @@ const AddNewTraining = () => {
 
   // FETCHING TRAINING FORM DATA
   const fetchTrainingFormData = async () => {
-    const response = await axios.get(`${BASE_URL}/training/forms/training`);
+    const response = await axios.get(`${ BASE_URL } / training / forms / training`);
 
     if (response.status === 200 && response.data.status === "success") {
       const { formData } = response.data;
@@ -247,7 +252,7 @@ const AddNewTraining = () => {
   const fetchTrainingCategories = async () => {
     const token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`, {
+      `${ BASE_URL } / training / get - training - categories`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -322,11 +327,11 @@ const AddNewTraining = () => {
 
         let data = new FormData();
         for (let [key, values] of Object.entries(trainingSettings)) {
-          data.append(`${key}`, values);
+          data.append(`${ key }`, values);
         }
 
         for (let [key, values] of Object.entries(trainingData)) {
-          data.append(`${key}`, values)
+          data.append(`${ key }`, values)
         }
 
         videoTutorialFiles.forEach((file, index) => {
@@ -379,7 +384,7 @@ const AddNewTraining = () => {
 
   useEffect(() => {
     if (localStorage.getItem('user_role') === 'guardian') {
-      window.location.href = `/parents-dashboard`;
+      window.location.href = `/ parents - dashboard`;
     }
   }, []);
 
@@ -1010,7 +1015,7 @@ const AddNewTraining = () => {
                     </Form.Group>
                   </Col>
                   <Col lg={9} md={6} className="mt-3 mt-md-0">
-                    <div className={`custom-checkbox ${trainingSettings.applicable_to === 'users' ? "d-none" : ""}`}>
+                    <div className={`custom - checkbox ${ trainingSettings.applicable_to === 'users' ? "d-none" : "" }`}>
                       <Form.Label className="d-block">Select User Roles</Form.Label>
                       <div className="btn-checkbox d-block">
                         <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
@@ -1112,7 +1117,7 @@ const AddNewTraining = () => {
                       </div>
                     </div>
 
-                    <div className={`mt-3 mt-md-0 ${trainingSettings.applicable_to === 'roles' ? "d-none" : ""}`}>
+                    <div className={`mt - 3 mt - md - 0 ${ trainingSettings.applicable_to === 'roles' ? "d-none" : "" }`}>
                       <Form.Group>
                         <Form.Label>Select User Names</Form.Label>
                         <Multiselect
@@ -1310,7 +1315,7 @@ const AddNewTraining = () => {
                     </Form.Group>
                   </Col>
                   <Col lg={9} md={6} className="mt-3 mt-md-0">
-                    <div className={`custom-checkbox ${trainingSettings.applicable_to === 'users' ? "d-none" : ""}`}>
+                    <div className={`custom - checkbox ${ trainingSettings.applicable_to === 'users' ? "d-none" : "" }`}>
                       <Form.Label className="d-block">Select User Roles</Form.Label>
                       <div className="btn-checkbox d-block">
                         {
@@ -1452,7 +1457,7 @@ const AddNewTraining = () => {
                       </div>
                     </div>
 
-                    <div className={`mt-3 mt-md-0 ${trainingSettings.applicable_to === 'roles' ? "d-none" : ""}`}>
+                    <div className={`mt - 3 mt - md - 0 ${ trainingSettings.applicable_to === 'roles' ? "d-none" : "" }`}>
                       <Form.Group>
                         <Form.Label>Select User Names</Form.Label>
                         <Multiselect

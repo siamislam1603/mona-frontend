@@ -4,11 +4,11 @@ import React, { useState } from "react";
 // import { Button, Container, Form, Dropdown } from "react-bootstrap";
 // import LeftNavbar from "../components/LeftNavbar";
 import Multiselect from 'multiselect-react-dropdown';
-import { Col, Row, Dropdown, Container,Modal, Form, Button } from "react-bootstrap";
+import { Col, Row, Dropdown, Container, Modal, Form, Button } from "react-bootstrap";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import TopHeader from "../../components/TopHeader";
-import { useLocation ,useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 // import { verifyPermission } from '../helpers/roleBasedAccess';
@@ -45,13 +45,13 @@ function isTrainingExpired(end_date) {
   let due_date = moment(end_date).format();
   let today = moment().format();
 
-  if(due_date < today)
+  if (due_date < today)
     return true
 
   return false
 }
 
-const TrainingCreatedByOther = ({filter}) => {
+const TrainingCreatedByOther = ({ filter }) => {
   let location = useLocation();
   const navigate = useNavigate();
 
@@ -61,11 +61,11 @@ const TrainingCreatedByOther = ({filter}) => {
   const [saveTrainingId, setSaveTrainingId] = useState(null);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('all');
   const [fetchedFranchiseeUsers, setFetchedFranchiseeUsers] = useState([]);
-  const [page,setPage] = useState(6)
+  const [page, setPage] = useState(6)
 
-  const [count,setCount] = useState(null)
-  const [checkCount,setCheckCount]= useState(null)
-//   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
+  const [count, setCount] = useState(null)
+  const [checkCount, setCheckCount] = useState(null)
+  //   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
 
   const [formSettings, setFormSettings] = useState({
     assigned_roles: [],
@@ -78,7 +78,7 @@ const TrainingCreatedByOther = ({filter}) => {
   const [errorMessageToast, setErrorMessageToast] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
   const [selectedFranchise, setSelectedFranchise] = useState(localStorage.getItem('selectedFranchise'));
-   const [trainingCategory, setTrainingCategory] = useState([]);
+  const [trainingCategory, setTrainingCategory] = useState([]);
   const [filterData, setFilterData] = useState({
     category_id: 0,
     search: ""
@@ -95,26 +95,26 @@ const TrainingCreatedByOther = ({filter}) => {
       }
     }
     );
-    if(response)
-    //   setfullLoaderStatus(false)
+    if (response)
+      //   setfullLoaderStatus(false)
 
 
-    if (response.status === 200 && response.data.status === "success") {
-      const { categoryList } = response.data;
-      setTrainingCategory([
-        {
-          id: 0, 
-          value: 'all categories',
-          label: 'All Categories'
-        },
-        ...categoryList.map((data) => ({
-          id: data.id,
-          value: data.category_name,
-          label: data.category_name,
-        })),
-      ]);
+      if (response.status === 200 && response.data.status === "success") {
+        const { categoryList } = response.data;
+        setTrainingCategory([
+          {
+            id: 0,
+            value: 'all categories',
+            label: 'All Categories'
+          },
+          ...categoryList.map((data) => ({
+            id: data.id,
+            value: data.category_name,
+            label: data.category_name,
+          })),
+        ]);
 
-    }
+      }
   };
 
   const handleTrainingSharing = async () => {
@@ -133,38 +133,38 @@ const TrainingCreatedByOther = ({filter}) => {
       let { msg: successMessage } = response.data;
       setSuccessMessageToast(successMessage);
       setSuccessMessageToast('Training re-shared successfully.');
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       let { msg: failureMessage } = response.data;
       setErrorMessageToast(failureMessage);
     }
   }
 
-  const trainingCreatedByOther = async() =>{
-   try {
-    setfullLoaderStatus(true)
-    let user_id = localStorage.getItem('user_id');
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if(response.status===200 && response.data.status === "success"){
-      const {searchedData} = response.data
-      setfullLoaderStatus(false)
-      setCount(response.data.count)
-      setCheckCount(searchedData?.length)
-       setOtherTrainingData(searchedData)
-
-      
-    }
-   } catch (error) {
+  const trainingCreatedByOther = async () => {
+    try {
+      setfullLoaderStatus(true)
+      let user_id = localStorage.getItem('user_id');
+      let token = localStorage.getItem('token');
+      const response = await axios.get(`${BASE_URL}/training/trainingCreatedByOthers/?limit=${page}&search=${filterData.search}&category_id=${filterData.category_id}&franchiseeAlias=${selectedFranchise}`, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      if (response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data
         setfullLoaderStatus(false)
-        setOtherTrainingData([])
-   }
+        setCount(response.data.count)
+        setCheckCount(searchedData?.length)
+        setOtherTrainingData(searchedData)
+
+
+      }
+    } catch (error) {
+      setfullLoaderStatus(false)
+      setOtherTrainingData([])
+    }
 
   }
-  const searchTraining= async() =>{
+  const searchTraining = async () => {
     try {
 
       let user_id = localStorage.getItem('user_id');
@@ -174,23 +174,23 @@ const TrainingCreatedByOther = ({filter}) => {
           "Authorization": "Bearer " + token
         }
       });
-      if(response.status===200 && response.data.status === "success"){
-        const {searchedData} = response.data
+      if (response.status === 200 && response.data.status === "success") {
+        const { searchedData } = response.data
         setfullLoaderStatus(false)
-            setCheckCount(0)
-            setCount(0)
+        setCheckCount(0)
+        setCount(0)
         setOtherTrainingData(searchedData)
-  
-        
+
+
       }
-     } catch (error) {
-          setfullLoaderStatus(false)
-          setOtherTrainingData([])
-     }
+    } catch (error) {
+      setfullLoaderStatus(false)
+      setOtherTrainingData([])
+    }
   }
-  const fetchMoreData = async ( ) =>{
-    setPage(page => page+6) 
-}
+  const fetchMoreData = async () => {
+    setPage(page => page + 6)
+  }
   const handleTrainingDelete = async (trainingId) => {
     let token = localStorage.getItem('token');
     let userId = localStorage.getItem('user_id');
@@ -211,8 +211,8 @@ const TrainingCreatedByOther = ({filter}) => {
   }
 
 
-   // FETCH TRAINING DATA
-   const fetchTrainingData = async (trainingId) => {
+  // FETCH TRAINING DATA
+  const fetchTrainingData = async (trainingId) => {
     const userId = localStorage.getItem('user_id');
     const token = localStorage.getItem('token');
     const response = await axios.get(`${BASE_URL}/training/getTrainingByIdCreated/${trainingId}/${userId}`, {
@@ -252,9 +252,13 @@ const TrainingCreatedByOther = ({filter}) => {
   }
 
   const fetchFranchiseeUsers = async (franchisee_id) => {
-
+    const token = localStorage.getItem('token');
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -272,25 +276,25 @@ const TrainingCreatedByOther = ({filter}) => {
   useEffect(() => {
     fetchTrainingCategories()
   }, []);
-  useEffect(() =>{
+  useEffect(() => {
 
-    trainingCreatedByOther() 
+    trainingCreatedByOther()
 
-  },[selectedFranchise,page,filterData.category_id])
-  useEffect(() =>{
-    if(filterData.search){
+  }, [selectedFranchise, page, filterData.category_id])
+  useEffect(() => {
+    if (filterData.search) {
       searchTraining()
     }
-    else{
+    else {
       setPage(6)
-    if(typeof selectedFranchisee !== "undefined") {
+      if (typeof selectedFranchisee !== "undefined") {
 
-      trainingCreatedByOther()
+        trainingCreatedByOther()
       }
     }
-  },[filterData.search])
+  }, [filterData.search])
   useEffect(() => {
-    if(formSettings?.assigned_franchisee?.length > 0) {
+    if (formSettings?.assigned_franchisee?.length > 0) {
       fetchFranchiseeUsers(formSettings?.assigned_franchisee);
     } else {
       setFetchedFranchiseeUsers([]);
@@ -328,25 +332,25 @@ const TrainingCreatedByOther = ({filter}) => {
                 <LeftNavbar />
               </aside>
               <div className="sec-column">
-              <TopHeader
+                <TopHeader
                   selectedFranchisee={selectedFranchisee}
                   setSelectedFranchisee={setSelectedFranchisee}
                 />
 
-                  {/* <FullLoader loading={fullLoaderStatus} /> */}
+                {/* <FullLoader loading={fullLoaderStatus} /> */}
                 <div className="entry-container">
                   <header className="title-head mynewForm-heading mb-3">
-                  <Button className="me-3"
-                        onClick={() => {
-                          navigate('/training');
-                        }}
-                      >
-                        <img src="../../img/back-arrow.svg" />
-                      </Button>
+                    <Button className="me-3"
+                      onClick={() => {
+                        navigate('/training');
+                      }}
+                    >
+                      <img src="../../img/back-arrow.svg" />
+                    </Button>
                     <h1 className="title-lg mb-0">
-                      
+
                       Training created by others</h1>
-                    
+
                     <div className="othpanel">
                       <div className="extra-btn">
                         <div className="data-search ">
@@ -395,7 +399,7 @@ const TrainingCreatedByOther = ({filter}) => {
                             </Dropdown.Menu>
                           </Dropdown>
                         }
-                        
+
                       </div>
                     </div>
                   </header>
@@ -420,90 +424,90 @@ const TrainingCreatedByOther = ({filter}) => {
 
                   <div className="training-column">
 
-          <Row>
-           
-            {otherTrainingData?.map((training) => {
-              return (
-                <Col lg={4} md={6} key={training.id}>
-                  <div
-                    className="item mt-3 mb-3">
-                    <div className="pic">
-                      <a href={`/training-detail/${training.id}`}>
-                        <img src={training.coverImage} alt="" />
-                        <span className="lthumb">
-                          <img src="../img/logo-thumb.png" alt="" />
-                        </span>
-                      </a>
-                    </div>
-                    <div className="fixcol">
-                      <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
-                      <div className="iconame"><a href="/training-detail">{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
-                      <div className="datecol">
-                        {
-                          training.end_date !== null &&
-                          <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
-                        }
-                        <span className="time">{training.completion_time} {training.completion_in}</span>
-                      </div>
-                      </div>
-                      <div className="cta-col">
-                        <Dropdown>
-                          <Dropdown.Toggle variant="transparent" id="ctacol">
-                            <img src="../img/dot-ico.svg" alt="" />
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            {
-                              isTrainingExpired(training.end_date) === false &&
-                              <Dropdown.Item href={`/edit-training/${training.id}`}>
-                                Edit
-                              </Dropdown.Item>
-                            }
-                            {
-                              isTrainingExpired(training.end_date) === false &&
-                              <Dropdown.Item href="#" onClick={() => {
-                                setSaveTrainingId(training.id);
-                                setShowModal(true)
-                              }}>Share</Dropdown.Item>
-                            }
-                            <Dropdown.Item onClick={() => {
-                              if (window.confirm("Are you sure you want to delete this training?"))
-                                handleTrainingDelete(training.id)
-                            }}>Delete</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                    <div className="created-by">
-                      <h4 className="title">Created by:</h4>
-                      <div className="createrimg">
-                        <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
-                      </div>
-                      <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
-                    </div>
-                  </div>
-                </Col>
-              );
-            })}
-          </Row>
-          </div>
+                    <Row>
 
-          {
-                  count !== checkCount && !fullLoaderStatus && <div className="text-center">
-
-                  <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
-
-                 </div>
-                }
-          {fullLoaderStatus && 
-                              <div className="text-center">
-                              <img src="/img/loader.svg" style={{maxWidth:"100px"}} alt="Loader"></img>
+                      {otherTrainingData?.map((training) => {
+                        return (
+                          <Col lg={4} md={6} key={training.id}>
+                            <div
+                              className="item mt-3 mb-3">
+                              <div className="pic">
+                                <a href={`/training-detail/${training.id}`}>
+                                  <img src={training.coverImage} alt="" />
+                                  <span className="lthumb">
+                                    <img src="../img/logo-thumb.png" alt="" />
+                                  </span>
+                                </a>
+                              </div>
+                              <div className="fixcol">
+                                <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                                <div className="iconame"><a href="/training-detail">{training.title.length > 40 ? training.title.slice(0, 40) + "..." : training.title}</a>
+                                  <div className="datecol">
+                                    {
+                                      training.end_date !== null &&
+                                      <span className="red-date">Due Date:{' '}{moment(training.end_date).format('DD/MM/YYYY')}</span>
+                                    }
+                                    <span className="time">{training.completion_time} {training.completion_in}</span>
+                                  </div>
+                                </div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      {
+                                        isTrainingExpired(training.end_date) === false &&
+                                        <Dropdown.Item href={`/edit-training/${training.id}`}>
+                                          Edit
+                                        </Dropdown.Item>
+                                      }
+                                      {
+                                        isTrainingExpired(training.end_date) === false &&
+                                        <Dropdown.Item href="#" onClick={() => {
+                                          setSaveTrainingId(training.id);
+                                          setShowModal(true)
+                                        }}>Share</Dropdown.Item>
+                                      }
+                                      <Dropdown.Item onClick={() => {
+                                        if (window.confirm("Are you sure you want to delete this training?"))
+                                          handleTrainingDelete(training.id)
+                                      }}>Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </div>
+                              <div className="created-by">
+                                <h4 className="title">Created by:</h4>
+                                <div className="createrimg">
+                                  <img src="https://img.freepik.com/free-photo/portrait-white-man-isolated_53876-40306.jpg?w=2000" alt="" />
+                                </div>
+                                <p>{training.user?.fullname}, <span>{training.user?.role.split("_").map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(" ")}</span></p>
+                              </div>
                             </div>
-                      }
-                  {otherTrainingData?.length>0 ?
-                  null
-                    :     
-                    fullLoaderStatus ? null :   <div className="text-center mb-5 mt-5">  <strong>No training available</strong> </div>
-                  }    
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  </div>
+
+                  {
+                    count !== checkCount && !fullLoaderStatus && <div className="text-center">
+
+                      <button type="button" onClick={fetchMoreData} className="btn btn-primary">Load More</button>
+
+                    </div>
+                  }
+                  {fullLoaderStatus &&
+                    <div className="text-center">
+                      <img src="/img/loader.svg" style={{ maxWidth: "100px" }} alt="Loader"></img>
+                    </div>
+                  }
+                  {otherTrainingData?.length > 0 ?
+                    null
+                    :
+                    fullLoaderStatus ? null : <div className="text-center mb-5 mt-5">  <strong>No training available</strong> </div>
+                  }
                 </div>
               </div>
             </div>
@@ -738,7 +742,7 @@ const TrainingCreatedByOther = ({filter}) => {
                                       checked={formSettings.assigned_roles.length === 3}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["franchisee_admin", "coordinator", "educator"]
@@ -935,7 +939,7 @@ const TrainingCreatedByOther = ({filter}) => {
                                       checked={formSettings.assigned_roles.length === 2}
                                       onChange={() => {
 
-                                        if(formSettings?.assigned_roles?.length > 0) {
+                                        if (formSettings?.assigned_roles?.length > 0) {
                                           setFormSettings(prevState => ({
                                             ...prevState,
                                             assigned_roles: ["coordinator", "educator"]

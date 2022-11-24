@@ -93,7 +93,11 @@ const NewFranchisees = () => {
       }
     // FETCHES AUSTRALIAN STATES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
     const fetchStateList = async () => {
-        let response = await axios.get(`${BASE_URL}/api/state/data`);
+        let response = await axios.get(`${BASE_URL}/api/state/data` ,{
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem('token')
+            }
+        });
     
         if(response.status === 200 && response.data.status === "success") {
           let { states } = response.data;

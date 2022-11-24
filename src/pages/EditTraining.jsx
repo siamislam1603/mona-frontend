@@ -70,10 +70,10 @@ const validateTrainingSettings = (trainingSettings) => {
   if (!start_time)
     errors.start_time = "Choose a start time";
 
-  if(end_date && end_date < start_date)
+  if (end_date && end_date < start_date)
     errors.end_date = "End date must be greater than start date";
 
-  if(start_date && start_time && end_date && end_time && start_date === end_date && start_time > end_time) 
+  if (start_date && start_time && end_date && end_time && start_date === end_date && start_time > end_time)
     errors.end_time = "End time must be greater than start time"
 
 
@@ -153,7 +153,12 @@ const EditTraining = () => {
 
   // FETCHING USER ROLES
   const fetchUserRoles = async () => {
-    const response = await axios.get(`${BASE_URL}/api/user-role`);
+    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')
+          }`
+      }
+    });
     if (response.status === 200) {
       const { userRoleList } = response.data;
       setUserRoles([
@@ -191,7 +196,12 @@ const EditTraining = () => {
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
     // let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`);
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -383,7 +393,7 @@ const EditTraining = () => {
   const handleDataSubmit = event => {
     event.preventDefault();
 
-    if(errors.doc === null) {
+    if (errors.doc === null) {
       window.scrollTo(0, 0);
     }
 
@@ -431,13 +441,13 @@ const EditTraining = () => {
       }
     }).then(function () {
 
-      if(fileType === "related_files") {
+      if (fileType === "related_files") {
         let newData = fetchedRelatedFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
         setFetchedRelatedFiles(newData);
-      } else if(fileType === "video_files") {
+      } else if (fileType === "video_files") {
         let newData = fetchedVideoTutorialFiles.filter(d => parseInt(d.id) !== parseInt(fileId))
         console.log('NEW DATA:', newData);
-        setFetchedVideoTutorialFiles(newData); 
+        setFetchedVideoTutorialFiles(newData);
       }
     })
       .catch(error => {
@@ -479,7 +489,7 @@ const EditTraining = () => {
   }, [fileDeleteResponse]);
 
   useEffect(() => {
-    if((relatedFiles?.length + fetchedRelatedFiles?.length) < 5) {
+    if ((relatedFiles?.length + fetchedRelatedFiles?.length) < 5) {
       setErrors(prevState => ({
         ...prevState,
         doc: null
@@ -488,7 +498,7 @@ const EditTraining = () => {
   }, [relatedFiles]);
 
   useEffect(() => {
-    if((videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length) < 5) {
+    if ((videoTutorialFiles?.length + fetchedVideoTutorialFiles?.length) < 5) {
       setErrors(prevState => ({
         ...prevState,
         video: null
@@ -498,13 +508,13 @@ const EditTraining = () => {
 
   const getUniqueErrors = (arr) => {
     var result = [];
-    arr.forEach(function(item) {
-        if(result.indexOf(item) < 0) {
-            result.push(item);
-        }
+    arr.forEach(function (item) {
+      if (result.indexOf(item) < 0) {
+        result.push(item);
+      }
     });
 
-   return result;
+    return result;
   }
 
   useEffect(() => {
@@ -512,7 +522,7 @@ const EditTraining = () => {
       errObj?.error[0]?.message
     )));
   }, [videoFileErrorMessage])
-  
+
   useEffect(() => {
     setDocError(docFileError?.map(errObj => (
       errObj?.error[0]?.message
@@ -618,12 +628,12 @@ const EditTraining = () => {
                                 type="number"
                                 value={trainingData.time_required_to_complete}
                                 onChange={(event) => {
-                                  if(parseInt(event.target.value) < 10000) {
+                                  if (parseInt(event.target.value) < 10000) {
                                     setTrainingData((prevState) => ({
                                       ...prevState,
                                       time_required_to_complete: parseInt(event.target.value),
                                     }));
-  
+
                                     setErrors(prevState => ({
                                       ...prevState,
                                       time_required_to_complete: null
@@ -634,7 +644,7 @@ const EditTraining = () => {
                                       time_required_to_complete: event.target.value.slice(0, -1),
                                     }));
                                   }
-  
+
                                 }}
                               />
                               <Select
@@ -733,7 +743,7 @@ const EditTraining = () => {
                               onSave={setVideoTutorialFiles}
                             />
                             {
-                              videoError  &&
+                              videoError &&
                               getUniqueErrors(videoError).map(errorObj => {
                                 return (
                                   <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five video files allowed" : errorObj}</p>
@@ -761,7 +771,7 @@ const EditTraining = () => {
                                   )
                                 })
                               }
-                              { errors.video !== null && <span className="error">{errors.video}</span> }
+                              {errors.video !== null && <span className="error">{errors.video}</span>}
                             </div>
                           </Form.Group>
 
@@ -775,10 +785,10 @@ const EditTraining = () => {
                               onSave={setRelatedFiles}
                             />
                             {
-                              docError  &&
+                              docError &&
                               getUniqueErrors(docError).map(errorObj => {
                                 return (
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed" : errorObj}</p>
                                 )
                               })
                             }
@@ -803,7 +813,7 @@ const EditTraining = () => {
                                   )
                                 })
                               }
-                              { errors.doc !== null && <span className="error">{errors.doc}</span> }
+                              {errors.doc !== null && <span className="error">{errors.doc}</span>}
                             </div>
                           </Form.Group>
                         </Col>
@@ -838,809 +848,809 @@ const EditTraining = () => {
 
       {
         localStorage.getItem('user_role') === 'franchisor_admin'
-        ? ( 
-          <Modal
-            className="training-modal"
-            size="lg"
-            show={settingsModalPopup}
-            onHide={() => setSettingsModalPopup(false)}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>
-                <img src="../img/setting-ico.png" alt="" /> Training Settings
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {
-                trainingSettings &&
-                <div className="form-settings-content">
-                  <Row>
-                    <Col lg={3} sm={6}>
-                      <Form.Group>
-                        <Form.Label>Start Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="start_date"
-                          className="datepicker"
-                          placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
-                          value={trainingSettings?.start_date}
-                          min={moment().format('YYYY-MM-DD')}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              start_date: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              start_date: null
-                            }))
-                        }}
-                        />
-                        {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-sm-0">
-                      <Form.Group>
-                        <Form.Label>Start Time</Form.Label>
-                        <Form.Control
-                          type="time"
-                          name="start_time"
-                          value={trainingSettings?.start_time}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              start_time: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              start_time: null
-                            }))
-                          }}
-                        />
-                        {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                      <Form.Group>
-                        <Form.Label>End Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="end_date"
-                          className="datepicker"
-                          placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
-                          value={trainingSettings?.end_date}
-                          min={moment().format('YYYY-MM-DD')}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              end_date: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              end_date: null
-                            }))
-                          }}
-                        />
-                        {trainingSettingErrors?.end_date !== null && <span className="error">{trainingSettingErrors?.end_date}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                      <Form.Group>
-                        <Form.Label>End Time</Form.Label>
-                        <Form.Control
-                          type="time"
-                          name="end_time"
-                          value={trainingSettings?.end_time}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              end_time: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              end_time: null
-                            }))
-                          }}
-                        />
-                        {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-4">
-                    <Col lg={3} md={6}>
-                      <Form.Group>
-                        <Form.Label>Give access to all franchises</Form.Label>
-                        <div className="new-form-radio d-block">
-                          <div className="new-form-radio-box">
-                            <label for="all">
-                              <input
-                                type="radio"
-                                checked={trainingSettings?.send_to_all_franchisee === true}
-                                name="send_to_all_franchisee"
-                                id="all"
-                                onChange={() => {
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    send_to_all_franchisee: true,
-                                    assigned_franchisee: ['all']
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>Yes</p>
-                            </label>
-                          </div>
-                          <div className="new-form-radio-box m-0 mt-3">
-                            <label for="none">
-                              <input
-                                type="radio"
-                                name="send_to_all_franchisee"
-                                checked={trainingSettings?.send_to_all_franchisee === false}
-                                id="none"
-                                onChange={() => {
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    send_to_all_franchisee: false,
-                                    assigned_franchisee: []
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>No</p>
-                            </label>
-                          </div>
-                        </div>
-                      </Form.Group>
-                    </Col>
-
-                    <Col lg={9} md={12}>
-                      <Form.Group>
-                        <Form.Label>Select Franchise(s)</Form.Label>
-                        <div className="select-with-plus">
-                          <Multiselect
-                            disable={trainingSettings?.send_to_all_franchisee === true}
-                            // singleSelect={true}
-                            placeholder={"Select"}
-                            displayValue="key"
-                            selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id) + ''))}
-                            className="multiselect-box default-arrow-select"
-                            onKeyPressFn={function noRefCheck() { }}
-                            onRemove={function noRefCheck(data) {
-                              setTrainingSettings((prevState) => ({
+          ? (
+            <Modal
+              className="training-modal"
+              size="lg"
+              show={settingsModalPopup}
+              onHide={() => setSettingsModalPopup(false)}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  <img src="../img/setting-ico.png" alt="" /> Training Settings
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {
+                  trainingSettings &&
+                  <div className="form-settings-content">
+                    <Row>
+                      <Col lg={3} sm={6}>
+                        <Form.Group>
+                          <Form.Label>Start Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="start_date"
+                            className="datepicker"
+                            placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
+                            value={trainingSettings?.start_date}
+                            min={moment().format('YYYY-MM-DD')}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
                                 ...prevState,
-                                assigned_franchisee: [...data.map(data => data.id + '')],
+                                start_date: e.target.value
                               }));
-                            }}
-                            onSearch={function noRefCheck() { }}
-                            onSelect={function noRefCheck(data) {
-                              setTrainingSettings((prevState) => ({
+                              setTrainingSettingErrors(prevState => ({
                                 ...prevState,
-                                assigned_franchisee: [...data.map((data) => data.id + '')],
-                              }));
+                                start_date: null
+                              }))
                             }}
-                            options={franchiseeList}
                           />
-                        </div>
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                          {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                        <Form.Group>
+                          <Form.Label>Start Time</Form.Label>
+                          <Form.Control
+                            type="time"
+                            name="start_time"
+                            value={trainingSettings?.start_time}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                start_time: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                start_time: null
+                              }))
+                            }}
+                          />
+                          {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                        <Form.Group>
+                          <Form.Label>End Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="end_date"
+                            className="datepicker"
+                            placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
+                            value={trainingSettings?.end_date}
+                            min={moment().format('YYYY-MM-DD')}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                end_date: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                end_date: null
+                              }))
+                            }}
+                          />
+                          {trainingSettingErrors?.end_date !== null && <span className="error">{trainingSettingErrors?.end_date}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                        <Form.Group>
+                          <Form.Label>End Time</Form.Label>
+                          <Form.Control
+                            type="time"
+                            name="end_time"
+                            value={trainingSettings?.end_time}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                end_time: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                end_time: null
+                              }))
+                            }}
+                          />
+                          {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
+                        </Form.Group>
+                      </Col>
+                    </Row>
 
-                  <Row className="mt-4">
-                    <Col lg={3} md={6}>
-                      <Form.Group>
-                        <Form.Label>Accessible to</Form.Label>
-                        <div className="new-form-radio d-block">
-                          <div className="new-form-radio-box mb-3">
-                            <label htmlFor="yes1">
-                              <input
-                                type="radio"
-                                value="Y"
-                                checked={trainingSettings?.applicable_to === 'roles'}
-                                name="roles"
-                                id="yes1"
-                                onChange={(event) => {
-                                  setTrainingSettings((prevState) => ({
-                                    ...prevState,
-                                    applicable_to: 'roles',
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>User Roles</p>
-                            </label>
+                    <Row className="mt-4">
+                      <Col lg={3} md={6}>
+                        <Form.Group>
+                          <Form.Label>Give access to all franchises</Form.Label>
+                          <div className="new-form-radio d-block">
+                            <div className="new-form-radio-box">
+                              <label for="all">
+                                <input
+                                  type="radio"
+                                  checked={trainingSettings?.send_to_all_franchisee === true}
+                                  name="send_to_all_franchisee"
+                                  id="all"
+                                  onChange={() => {
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      send_to_all_franchisee: true,
+                                      assigned_franchisee: ['all']
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>Yes</p>
+                              </label>
+                            </div>
+                            <div className="new-form-radio-box m-0 mt-3">
+                              <label for="none">
+                                <input
+                                  type="radio"
+                                  name="send_to_all_franchisee"
+                                  checked={trainingSettings?.send_to_all_franchisee === false}
+                                  id="none"
+                                  onChange={() => {
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      send_to_all_franchisee: false,
+                                      assigned_franchisee: []
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>No</p>
+                              </label>
+                            </div>
                           </div>
-                          <div className="new-form-radio-box mb-3">
-                            <label htmlFor="no1">
-                              <input
-                                type="radio"
-                                value="N"
-                                checked={trainingSettings?.applicable_to === 'users'}
-                                name="roles"
-                                id="no1"
-                                onChange={(event) => {
-                                  setTrainingSettings((prevState) => ({
-                                    ...prevState,
-                                    applicable_to: 'users',
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>Specific Users</p>
-                            </label>
-                          </div>
-                        </div>
+                        </Form.Group>
+                      </Col>
 
-                      </Form.Group>
-                    </Col>
-                    <Col lg={9} md={6} className="mt-3 mt-md-0">
-                      <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
-                        <Form.Label className="d-block">Select User Roles</Form.Label>
-                        <div className="btn-checkbox d-block">
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                            <Form.Check
-                              type="checkbox"
-                              checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                              label="Franchisee Admin"
-                              onChange={() => {
-                                if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
-                                  let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...data]
-                                  }));
-                                }
-
-                                if (!trainingSettings.assigned_roles?.includes("franchisee_admin"))
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
-                                  }))
-                              }} />
-                          </Form.Group>
-
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                            <Form.Check
-                              type="checkbox"
-                              checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                              label="Coordinator"
-                              onChange={() => {
-                                if (trainingSettings.assigned_roles?.includes("coordinator")) {
-                                  let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...data]
-                                  }));
-                                }
-
-                                if (!trainingSettings.assigned_roles?.includes("coordinator"))
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
-                                  }))
-                              }} />
-                          </Form.Group>
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                            <Form.Check
-                              type="checkbox"
-                              label="Educator"
-                              checked={trainingSettings.assigned_roles?.includes("educator")}
-                              onChange={() => {
-                                if (trainingSettings.assigned_roles?.includes("educator")) {
-                                  let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...data]
-                                  }));
-                                }
-
-                                if (!trainingSettings.assigned_roles?.includes("educator"))
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [...trainingSettings.assigned_roles, "educator"]
-                                  }))
-                              }} />
-                          </Form.Group>
-                          <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                            <Form.Check
-                              type="checkbox"
-                              label="All Roles"
-                              checked={trainingSettings.assigned_roles?.length === 3}
-                              onChange={() => {
-
-                                if(trainingSettings?.assigned_roles?.length > 0) {
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                  }));
-                                }
-
-                                if (trainingSettings.assigned_roles?.includes("franchisee_admin")
-                                  && trainingSettings.assigned_roles.includes("coordinator")
-                                  && trainingSettings.assigned_roles.includes("educator")) {
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: [],
-                                  }));
-                                }
-
-                                if (!trainingSettings.assigned_roles.includes("franchisee_admin")
-                                  && !trainingSettings.assigned_roles?.includes("coordinator")
-                                  && !trainingSettings.assigned_roles.includes("educator"))
-                                  setTrainingSettings(prevState => ({
-                                    ...prevState,
-                                    assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                  })
-                                  )
-                              }} />
-                          </Form.Group>
-                        </div>
-                      </div>
-
-                      <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings?.applicable_to === 'roles' ? "d-none" : ""}`}>
-                        <Col>
-                          <Form.Group>
-                            <Form.Label>Select User Names</Form.Label>
+                      <Col lg={9} md={12}>
+                        <Form.Group>
+                          <Form.Label>Select Franchise(s)</Form.Label>
+                          <div className="select-with-plus">
                             <Multiselect
-                              placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
+                              disable={trainingSettings?.send_to_all_franchisee === true}
+                              // singleSelect={true}
+                              placeholder={"Select"}
                               displayValue="key"
-                              selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users?.includes(d.id + ''))}
+                              selectedValues={franchiseeList?.filter(d => trainingSettings?.assigned_franchisee?.includes(parseInt(d.id) + ''))}
                               className="multiselect-box default-arrow-select"
                               onKeyPressFn={function noRefCheck() { }}
                               onRemove={function noRefCheck(data) {
                                 setTrainingSettings((prevState) => ({
                                   ...prevState,
-                                  assigned_users: [...data.map(data => data.id + '')],
+                                  assigned_franchisee: [...data.map(data => data.id + '')],
                                 }));
                               }}
                               onSearch={function noRefCheck() { }}
                               onSelect={function noRefCheck(data) {
                                 setTrainingSettings((prevState) => ({
                                   ...prevState,
-                                  assigned_users: [...data.map((data) => data.id + '')],
+                                  assigned_franchisee: [...data.map((data) => data.id + '')],
                                 }));
                               }}
-                              options={fetchedFranchiseeUsers}
+                              options={franchiseeList}
                             />
-
-                          </Form.Group>
-                        </Col>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              }
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={() => {
-                let settingErrors = validateTrainingSettings(trainingSettings);
-                if (Object.keys(settingErrors).length > 0) {
-                  setTrainingSettingErrors(settingErrors);
-                } else {
-                  setTrainingSettingErrors(prevState => ({
-                    ...prevState,
-                    start_date: null,
-                    end_date: null,
-                    start_time: null,
-                    end_time: null
-                  }));
-                  setSettingsModalPopup(false)
-                  setAllowSubmit(true);
-                }
-              }}>
-                Save Settings
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        )
-        : ( 
-          <Modal
-            className="training-modal"
-            size="lg"
-            show={settingsModalPopup}
-            onHide={() => setSettingsModalPopup(false)}
-          >
-            <Modal.Header closeButton>
-              <Modal.Title>
-                <img src="../img/setting-ico.png" alt="" /> Training Edit Settings
-              </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {
-                trainingSettings &&
-                <div className="form-settings-content">
-                  <Row>
-                    <Col lg={3} sm={6}>
-                      <Form.Group>
-                        <Form.Label>Start Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="start_date"
-                          className="datepicker"
-                          placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
-                          value={trainingSettings?.start_date}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              start_date: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              start_date: null
-                            }))
-                          }}
-                          max={trainingSettings?.end_date}
-                        />
-                        {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-sm-0">
-                      <Form.Group>
-                        <Form.Label>Start Time</Form.Label>
-                        <Form.Control
-                          type="time"
-                          name="start_time"
-                          // className="timepicker"
-                          // placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
-                          value={trainingSettings?.start_time}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              start_time: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              start_time: null
-                            }))
-                          }}
-                        />
-                        {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                      <Form.Group>
-                        <Form.Label>End Date</Form.Label>
-                        <Form.Control
-                          type="date"
-                          name="end_date"
-                          className="datepicker"
-                          placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy" }
-                          value={trainingSettings?.end_date}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              end_date: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              end_date: null
-                            }))
-                          }}
-                          min={trainingSettings?.start_date}
-                        />
-                        {trainingSettingErrors?.end_date !== null && <span className="error">{trainingSettingErrors?.end_date}</span>}
-                      </Form.Group>
-                    </Col>
-                    <Col lg={3} sm={6} className="mt-3 mt-lg-0">
-                      <Form.Group>
-                        <Form.Label>End Time</Form.Label>
-                        <Form.Control
-                          type="time"
-                          name="end_time"
-                          value={trainingSettings?.end_time}
-                          onChange={(e) => {
-                            setTrainingSettings(prevState => ({
-                              ...prevState,
-                              end_time: e.target.value
-                            }));
-                            setTrainingSettingErrors(prevState => ({
-                              ...prevState,
-                              end_time: null
-                            }))
-                          }}
-                        />
-                        {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
-                      </Form.Group>
-                    </Col>
-                  </Row>
-
-                  <Row className="mt-4">
-                    <Col lg={3} md={6}>
-                      <Form.Group>
-                        <Form.Label>Accessible to</Form.Label>
-                        <div className="new-form-radio">
-                          <div className="new-form-radio-box">
-                            <label htmlFor="yes1">
-                              <input
-                                type="radio"
-                                value="Y"
-                                checked={trainingSettings?.applicable_to === 'roles'}
-                                name="roles"
-                                id="yes1"
-                                onChange={(event) => {
-                                  setTrainingSettings((prevState) => ({
-                                    ...prevState,
-                                    applicable_to: 'roles',
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>User Roles</p>
-                            </label>
                           </div>
-                          <div className="new-form-radio-box">
-                            <label htmlFor="no1">
-                              <input
-                                type="radio"
-                                value="N"
-                                checked={trainingSettings?.applicable_to === 'users'}
-                                name="roles"
-                                id="no1"
-                                onChange={(event) => {
-                                  setTrainingSettings((prevState) => ({
-                                    ...prevState,
-                                    applicable_to: 'users',
-                                  }));
-                                }}
-                              />
-                              <span className="radio-round"></span>
-                              <p>Specific Users</p>
-                            </label>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row className="mt-4">
+                      <Col lg={3} md={6}>
+                        <Form.Group>
+                          <Form.Label>Accessible to</Form.Label>
+                          <div className="new-form-radio d-block">
+                            <div className="new-form-radio-box mb-3">
+                              <label htmlFor="yes1">
+                                <input
+                                  type="radio"
+                                  value="Y"
+                                  checked={trainingSettings?.applicable_to === 'roles'}
+                                  name="roles"
+                                  id="yes1"
+                                  onChange={(event) => {
+                                    setTrainingSettings((prevState) => ({
+                                      ...prevState,
+                                      applicable_to: 'roles',
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>User Roles</p>
+                              </label>
+                            </div>
+                            <div className="new-form-radio-box mb-3">
+                              <label htmlFor="no1">
+                                <input
+                                  type="radio"
+                                  value="N"
+                                  checked={trainingSettings?.applicable_to === 'users'}
+                                  name="roles"
+                                  id="no1"
+                                  onChange={(event) => {
+                                    setTrainingSettings((prevState) => ({
+                                      ...prevState,
+                                      applicable_to: 'users',
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>Specific Users</p>
+                              </label>
+                            </div>
+                          </div>
+
+                        </Form.Group>
+                      </Col>
+                      <Col lg={9} md={6} className="mt-3 mt-md-0">
+                        <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
+                          <Form.Label className="d-block">Select User Roles</Form.Label>
+                          <div className="btn-checkbox d-block">
+                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                              <Form.Check
+                                type="checkbox"
+                                checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
+                                label="Franchisee Admin"
+                                onChange={() => {
+                                  if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
+                                    let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...data]
+                                    }));
+                                  }
+
+                                  if (!trainingSettings.assigned_roles?.includes("franchisee_admin"))
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
+                                    }))
+                                }} />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                              <Form.Check
+                                type="checkbox"
+                                checked={trainingSettings.assigned_roles?.includes("coordinator")}
+                                label="Coordinator"
+                                onChange={() => {
+                                  if (trainingSettings.assigned_roles?.includes("coordinator")) {
+                                    let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...data]
+                                    }));
+                                  }
+
+                                  if (!trainingSettings.assigned_roles?.includes("coordinator"))
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
+                                    }))
+                                }} />
+                            </Form.Group>
+                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                              <Form.Check
+                                type="checkbox"
+                                label="Educator"
+                                checked={trainingSettings.assigned_roles?.includes("educator")}
+                                onChange={() => {
+                                  if (trainingSettings.assigned_roles?.includes("educator")) {
+                                    let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...data]
+                                    }));
+                                  }
+
+                                  if (!trainingSettings.assigned_roles?.includes("educator"))
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [...trainingSettings.assigned_roles, "educator"]
+                                    }))
+                                }} />
+                            </Form.Group>
+                            <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                              <Form.Check
+                                type="checkbox"
+                                label="All Roles"
+                                checked={trainingSettings.assigned_roles?.length === 3}
+                                onChange={() => {
+
+                                  if (trainingSettings?.assigned_roles?.length > 0) {
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                    }));
+                                  }
+
+                                  if (trainingSettings.assigned_roles?.includes("franchisee_admin")
+                                    && trainingSettings.assigned_roles.includes("coordinator")
+                                    && trainingSettings.assigned_roles.includes("educator")) {
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: [],
+                                    }));
+                                  }
+
+                                  if (!trainingSettings.assigned_roles.includes("franchisee_admin")
+                                    && !trainingSettings.assigned_roles?.includes("coordinator")
+                                    && !trainingSettings.assigned_roles.includes("educator"))
+                                    setTrainingSettings(prevState => ({
+                                      ...prevState,
+                                      assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                    })
+                                    )
+                                }} />
+                            </Form.Group>
                           </div>
                         </div>
 
-                      </Form.Group>
-                    </Col>
-                    <Col lg={9} md={6} className="mt-3 mt-md-0">
-                      <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
-                        <Form.Label className="d-block">Select User Roles</Form.Label>
-                        <div className="btn-checkbox d-block">
-                          {
-                            localStorage.getItem('user_role') === 'franchisor_admin'
-                            ?(
-                              <>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
-                                  <Form.Check
-                                    type="checkbox"
-                                    checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
-                                    label="Franchisee Admin"
-                                    onChange={() => {
-                                      if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
-                                        let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...data]
-                                        }));
-                                      }
+                        <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings?.applicable_to === 'roles' ? "d-none" : ""}`}>
+                          <Col>
+                            <Form.Group>
+                              <Form.Label>Select User Names</Form.Label>
+                              <Multiselect
+                                placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
+                                displayValue="key"
+                                selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users?.includes(d.id + ''))}
+                                className="multiselect-box default-arrow-select"
+                                onKeyPressFn={function noRefCheck() { }}
+                                onRemove={function noRefCheck(data) {
+                                  setTrainingSettings((prevState) => ({
+                                    ...prevState,
+                                    assigned_users: [...data.map(data => data.id + '')],
+                                  }));
+                                }}
+                                onSearch={function noRefCheck() { }}
+                                onSelect={function noRefCheck(data) {
+                                  setTrainingSettings((prevState) => ({
+                                    ...prevState,
+                                    assigned_users: [...data.map((data) => data.id + '')],
+                                  }));
+                                }}
+                                options={fetchedFranchiseeUsers}
+                              />
 
-                                      if (!trainingSettings.assigned_roles?.includes("franchisee_admin"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
-                                        }))
-                                    }} />
-                                </Form.Group>
-
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                                  <Form.Check
-                                    type="checkbox"
-                                    checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                                    label="Coordinator"
-                                    onChange={() => {
-                                      if (trainingSettings.assigned_roles?.includes("coordinator")) {
-                                        let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...data]
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles?.includes("coordinator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
-                                        }))
-                                    }} />
-                                </Form.Group>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                                  <Form.Check
-                                    type="checkbox"
-                                    label="Educator"
-                                    checked={trainingSettings.assigned_roles?.includes("educator")}
-                                    onChange={() => {
-                                      if (trainingSettings.assigned_roles?.includes("educator")) {
-                                        let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...data]
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles?.includes("educator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...trainingSettings.assigned_roles, "educator"]
-                                        }))
-                                    }} />
-                                </Form.Group>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                                  <Form.Check
-                                    type="checkbox"
-                                    label="All Roles"
-                                    checked={trainingSettings.assigned_roles?.length === 3}
-                                    onChange={() => {
-
-                                      if(trainingSettings?.assigned_roles?.length > 0) {
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                        }));
-                                      }
-
-                                      if (trainingSettings.assigned_roles?.includes("franchisee_admin")
-                                        && trainingSettings.assigned_roles.includes("coordinator")
-                                        && trainingSettings.assigned_roles.includes("educator")) {
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [],
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles.includes("franchisee_admin")
-                                        && !trainingSettings.assigned_roles?.includes("coordinator")
-                                        && !trainingSettings.assigned_roles.includes("educator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: ["franchisee_admin", "coordinator", "educator"]
-                                        })
-                                        )
-                                    }} />
-                                </Form.Group>
-                              </>
-                            )
-                            :(
-                              <>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
-                                  <Form.Check
-                                    type="checkbox"
-                                    checked={trainingSettings.assigned_roles?.includes("coordinator")}
-                                    label="Coordinator"
-                                    onChange={() => {
-                                      if (trainingSettings.assigned_roles?.includes("coordinator")) {
-                                        let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...data]
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles?.includes("coordinator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
-                                        }))
-                                    }} />
-                                </Form.Group>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
-                                  <Form.Check
-                                    type="checkbox"
-                                    label="Educator"
-                                    checked={trainingSettings.assigned_roles?.includes("educator")}
-                                    onChange={() => {
-                                      if (trainingSettings.assigned_roles?.includes("educator")) {
-                                        let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...data]
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles?.includes("educator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [...trainingSettings.assigned_roles, "educator"]
-                                        }))
-                                    }} />
-                                </Form.Group>
-                                <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
-                                  <Form.Check
-                                    type="checkbox"
-                                    label="All Roles"
-                                    checked={trainingSettings.assigned_roles?.length === 2}
-                                    onChange={() => {
-
-                                      if(trainingSettings?.assigned_roles?.length > 0) {
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: ["coordinator", "educator"]
-                                        }));
-                                      }
-
-                                      if (trainingSettings.assigned_roles.includes("coordinator")
-                                        && trainingSettings.assigned_roles.includes("educator")) {
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: [],
-                                        }));
-                                      }
-
-                                      if (!trainingSettings.assigned_roles?.includes("coordinator")
-                                        && !trainingSettings.assigned_roles.includes("educator"))
-                                        setTrainingSettings(prevState => ({
-                                          ...prevState,
-                                          assigned_roles: ["coordinator", "educator"]
-                                        })
-                                        )
-                                    }} />
-                                </Form.Group>
-                              </>
-                            )
-                          }
+                            </Form.Group>
+                          </Col>
                         </div>
-                      </div>
-
-                      <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings?.applicable_to === 'roles' ? "d-none" : ""}`}>
-                        <Col>
-                          <Form.Group>
-                            <Form.Label>Select User Names</Form.Label>
-                            <Multiselect
-                              placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
-                              displayValue="key"
-                              selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ''))}
-                              className="multiselect-box default-arrow-select"
-                              onKeyPressFn={function noRefCheck() { }}
-                              onRemove={function noRefCheck(data) {
-                                setTrainingSettings((prevState) => ({
-                                  ...prevState,
-                                  assigned_users: [...data.map(data => data.id + '')],
-                                }));
-                              }}
-                              onSearch={function noRefCheck() { }}
-                              onSelect={function noRefCheck(data) {
-                                setTrainingSettings((prevState) => ({
-                                  ...prevState,
-                                  assigned_users: [...data.map((data) => data.id + '')],
-                                }));
-                              }}
-                              options={fetchedFranchiseeUsers}
-                            />
-
-                          </Form.Group>
-                        </Col>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              }
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={() => {
-                let settingErrors = validateTrainingSettings(trainingSettings);
-                if (Object.keys(settingErrors).length > 0) {
-                  setTrainingSettingErrors(settingErrors);
-                } else {
-                  setTrainingSettingErrors(prevState => ({
-                    ...prevState,
-                    start_date: null,
-                    end_date: null,
-                    start_time: null,
-                    end_time: null
-                  }));
-                  setSettingsModalPopup(false)
-                  setAllowSubmit(true);
+                      </Col>
+                    </Row>
+                  </div>
                 }
-              }}>
-                Save Settings
-              </Button>
-            </Modal.Footer>
-          </Modal>
-        )
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={() => {
+                  let settingErrors = validateTrainingSettings(trainingSettings);
+                  if (Object.keys(settingErrors).length > 0) {
+                    setTrainingSettingErrors(settingErrors);
+                  } else {
+                    setTrainingSettingErrors(prevState => ({
+                      ...prevState,
+                      start_date: null,
+                      end_date: null,
+                      start_time: null,
+                      end_time: null
+                    }));
+                    setSettingsModalPopup(false)
+                    setAllowSubmit(true);
+                  }
+                }}>
+                  Save Settings
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )
+          : (
+            <Modal
+              className="training-modal"
+              size="lg"
+              show={settingsModalPopup}
+              onHide={() => setSettingsModalPopup(false)}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  <img src="../img/setting-ico.png" alt="" /> Training Edit Settings
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {
+                  trainingSettings &&
+                  <div className="form-settings-content">
+                    <Row>
+                      <Col lg={3} sm={6}>
+                        <Form.Group>
+                          <Form.Label>Start Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="start_date"
+                            className="datepicker"
+                            placeholder={trainingSettings?.start_date ? moment(trainingSettings?.start_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
+                            value={trainingSettings?.start_date}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                start_date: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                start_date: null
+                              }))
+                            }}
+                            max={trainingSettings?.end_date}
+                          />
+                          {trainingSettingErrors?.start_date !== null && <span className="error">{trainingSettingErrors?.start_date}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-sm-0">
+                        <Form.Group>
+                          <Form.Label>Start Time</Form.Label>
+                          <Form.Control
+                            type="time"
+                            name="start_time"
+                            // className="timepicker"
+                            // placeholder={trainingSettings?.start_time ? moment(trainingSettings?.start_time).format("HH:mm") : "tt:tt tt" }
+                            value={trainingSettings?.start_time}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                start_time: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                start_time: null
+                              }))
+                            }}
+                          />
+                          {trainingSettingErrors?.start_time !== null && <span className="error">{trainingSettingErrors?.start_time}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                        <Form.Group>
+                          <Form.Label>End Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            name="end_date"
+                            className="datepicker"
+                            placeholder={trainingSettings?.end_date ? moment(trainingSettings?.end_date).format("DD/MM/YYYY") : "dd/mm/yyyy"}
+                            value={trainingSettings?.end_date}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                end_date: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                end_date: null
+                              }))
+                            }}
+                            min={trainingSettings?.start_date}
+                          />
+                          {trainingSettingErrors?.end_date !== null && <span className="error">{trainingSettingErrors?.end_date}</span>}
+                        </Form.Group>
+                      </Col>
+                      <Col lg={3} sm={6} className="mt-3 mt-lg-0">
+                        <Form.Group>
+                          <Form.Label>End Time</Form.Label>
+                          <Form.Control
+                            type="time"
+                            name="end_time"
+                            value={trainingSettings?.end_time}
+                            onChange={(e) => {
+                              setTrainingSettings(prevState => ({
+                                ...prevState,
+                                end_time: e.target.value
+                              }));
+                              setTrainingSettingErrors(prevState => ({
+                                ...prevState,
+                                end_time: null
+                              }))
+                            }}
+                          />
+                          {trainingSettingErrors?.end_time !== null && <span className="error">{trainingSettingErrors?.end_time}</span>}
+                        </Form.Group>
+                      </Col>
+                    </Row>
+
+                    <Row className="mt-4">
+                      <Col lg={3} md={6}>
+                        <Form.Group>
+                          <Form.Label>Accessible to</Form.Label>
+                          <div className="new-form-radio">
+                            <div className="new-form-radio-box">
+                              <label htmlFor="yes1">
+                                <input
+                                  type="radio"
+                                  value="Y"
+                                  checked={trainingSettings?.applicable_to === 'roles'}
+                                  name="roles"
+                                  id="yes1"
+                                  onChange={(event) => {
+                                    setTrainingSettings((prevState) => ({
+                                      ...prevState,
+                                      applicable_to: 'roles',
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>User Roles</p>
+                              </label>
+                            </div>
+                            <div className="new-form-radio-box">
+                              <label htmlFor="no1">
+                                <input
+                                  type="radio"
+                                  value="N"
+                                  checked={trainingSettings?.applicable_to === 'users'}
+                                  name="roles"
+                                  id="no1"
+                                  onChange={(event) => {
+                                    setTrainingSettings((prevState) => ({
+                                      ...prevState,
+                                      applicable_to: 'users',
+                                    }));
+                                  }}
+                                />
+                                <span className="radio-round"></span>
+                                <p>Specific Users</p>
+                              </label>
+                            </div>
+                          </div>
+
+                        </Form.Group>
+                      </Col>
+                      <Col lg={9} md={6} className="mt-3 mt-md-0">
+                        <div className={`custom-checkbox ${trainingSettings?.applicable_to === 'users' ? "d-none" : ""}`}>
+                          <Form.Label className="d-block">Select User Roles</Form.Label>
+                          <div className="btn-checkbox d-block">
+                            {
+                              localStorage.getItem('user_role') === 'franchisor_admin'
+                                ? (
+                                  <>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox">
+                                      <Form.Check
+                                        type="checkbox"
+                                        checked={trainingSettings.assigned_roles?.includes("franchisee_admin")}
+                                        label="Franchisee Admin"
+                                        onChange={() => {
+                                          if (trainingSettings.assigned_roles?.includes("franchisee_admin")) {
+                                            let data = trainingSettings.assigned_roles.filter(t => t !== "franchisee_admin");
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...data]
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("franchisee_admin"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...trainingSettings.assigned_roles, "franchisee_admin"]
+                                            }))
+                                        }} />
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                                      <Form.Check
+                                        type="checkbox"
+                                        checked={trainingSettings.assigned_roles?.includes("coordinator")}
+                                        label="Coordinator"
+                                        onChange={() => {
+                                          if (trainingSettings.assigned_roles?.includes("coordinator")) {
+                                            let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...data]
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("coordinator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
+                                            }))
+                                        }} />
+                                    </Form.Group>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                                      <Form.Check
+                                        type="checkbox"
+                                        label="Educator"
+                                        checked={trainingSettings.assigned_roles?.includes("educator")}
+                                        onChange={() => {
+                                          if (trainingSettings.assigned_roles?.includes("educator")) {
+                                            let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...data]
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("educator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...trainingSettings.assigned_roles, "educator"]
+                                            }))
+                                        }} />
+                                    </Form.Group>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                      <Form.Check
+                                        type="checkbox"
+                                        label="All Roles"
+                                        checked={trainingSettings.assigned_roles?.length === 3}
+                                        onChange={() => {
+
+                                          if (trainingSettings?.assigned_roles?.length > 0) {
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                            }));
+                                          }
+
+                                          if (trainingSettings.assigned_roles?.includes("franchisee_admin")
+                                            && trainingSettings.assigned_roles.includes("coordinator")
+                                            && trainingSettings.assigned_roles.includes("educator")) {
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [],
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles.includes("franchisee_admin")
+                                            && !trainingSettings.assigned_roles?.includes("coordinator")
+                                            && !trainingSettings.assigned_roles.includes("educator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: ["franchisee_admin", "coordinator", "educator"]
+                                            })
+                                            )
+                                        }} />
+                                    </Form.Group>
+                                  </>
+                                )
+                                : (
+                                  <>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox1">
+                                      <Form.Check
+                                        type="checkbox"
+                                        checked={trainingSettings.assigned_roles?.includes("coordinator")}
+                                        label="Coordinator"
+                                        onChange={() => {
+                                          if (trainingSettings.assigned_roles?.includes("coordinator")) {
+                                            let data = trainingSettings.assigned_roles.filter(t => t !== "coordinator");
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...data]
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("coordinator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...trainingSettings.assigned_roles, "coordinator"]
+                                            }))
+                                        }} />
+                                    </Form.Group>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox2">
+                                      <Form.Check
+                                        type="checkbox"
+                                        label="Educator"
+                                        checked={trainingSettings.assigned_roles?.includes("educator")}
+                                        onChange={() => {
+                                          if (trainingSettings.assigned_roles?.includes("educator")) {
+                                            let data = trainingSettings.assigned_roles.filter(t => t !== "educator");
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...data]
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("educator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [...trainingSettings.assigned_roles, "educator"]
+                                            }))
+                                        }} />
+                                    </Form.Group>
+                                    <Form.Group className="mb-3 form-group" controlId="formBasicCheckbox3">
+                                      <Form.Check
+                                        type="checkbox"
+                                        label="All Roles"
+                                        checked={trainingSettings.assigned_roles?.length === 2}
+                                        onChange={() => {
+
+                                          if (trainingSettings?.assigned_roles?.length > 0) {
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: ["coordinator", "educator"]
+                                            }));
+                                          }
+
+                                          if (trainingSettings.assigned_roles.includes("coordinator")
+                                            && trainingSettings.assigned_roles.includes("educator")) {
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: [],
+                                            }));
+                                          }
+
+                                          if (!trainingSettings.assigned_roles?.includes("coordinator")
+                                            && !trainingSettings.assigned_roles.includes("educator"))
+                                            setTrainingSettings(prevState => ({
+                                              ...prevState,
+                                              assigned_roles: ["coordinator", "educator"]
+                                            })
+                                            )
+                                        }} />
+                                    </Form.Group>
+                                  </>
+                                )
+                            }
+                          </div>
+                        </div>
+
+                        <div lg={9} md={6} className={`mt-3 mt-md-0 ${trainingSettings?.applicable_to === 'roles' ? "d-none" : ""}`}>
+                          <Col>
+                            <Form.Group>
+                              <Form.Label>Select User Names</Form.Label>
+                              <Multiselect
+                                placeholder={fetchedFranchiseeUsers ? "Select" : "No User Available"}
+                                displayValue="key"
+                                selectedValues={fetchedFranchiseeUsers?.filter(d => trainingSettings?.assigned_users.includes(d.id + ''))}
+                                className="multiselect-box default-arrow-select"
+                                onKeyPressFn={function noRefCheck() { }}
+                                onRemove={function noRefCheck(data) {
+                                  setTrainingSettings((prevState) => ({
+                                    ...prevState,
+                                    assigned_users: [...data.map(data => data.id + '')],
+                                  }));
+                                }}
+                                onSearch={function noRefCheck() { }}
+                                onSelect={function noRefCheck(data) {
+                                  setTrainingSettings((prevState) => ({
+                                    ...prevState,
+                                    assigned_users: [...data.map((data) => data.id + '')],
+                                  }));
+                                }}
+                                options={fetchedFranchiseeUsers}
+                              />
+
+                            </Form.Group>
+                          </Col>
+                        </div>
+                      </Col>
+                    </Row>
+                  </div>
+                }
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="transparent" onClick={() => setSettingsModalPopup(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary" onClick={() => {
+                  let settingErrors = validateTrainingSettings(trainingSettings);
+                  if (Object.keys(settingErrors).length > 0) {
+                    setTrainingSettingErrors(settingErrors);
+                  } else {
+                    setTrainingSettingErrors(prevState => ({
+                      ...prevState,
+                      start_date: null,
+                      end_date: null,
+                      start_time: null,
+                      end_time: null
+                    }));
+                    setSettingsModalPopup(false)
+                    setAllowSubmit(true);
+                  }
+                }}>
+                  Save Settings
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          )
       }
       {
         createTrainingModal &&

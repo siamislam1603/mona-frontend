@@ -81,7 +81,7 @@ const RepoEdit = () => {
         data?.repository_shares[0].assigned_users.length == 0 ? setUserCount(0) : setUserCount(data?.repository_shares[0].assigned_users.length)
     }
 
-  
+
 
     const onChange = (e) => {
         const files = data.image;
@@ -122,7 +122,11 @@ const RepoEdit = () => {
         });
         if (response.status === 200 && response.data.status === "success") {
             if (typeof data.image === 'string') {
-                response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image });
+                response = await axios.patch(`${BASE_URL}/fileRepo/updateFilePath/${Params.id}`, { filesPath: data.image }, {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
                 if (response.status === 201 && response.data.status === "success") {
 
                     navigate(`/file-repository-List-me/${data.categoryId}`);
@@ -256,7 +260,7 @@ const RepoEdit = () => {
 
     const setFieldd = async (field, value) => {
         setData({ ...data, categoryId: field[0] })
-     
+
         if (!!errors[field]) {
             setErrors({
                 ...errors,

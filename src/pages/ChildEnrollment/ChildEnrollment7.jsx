@@ -45,7 +45,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const fetchEducatorList = async () => {
     const response = await axios.get(`${BASE_URL}/user-group/users/role/educator`);
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { users } = response.data;
       console.log('USER DATA:', users);
       setEducatorData(users.map(user => ({
@@ -67,7 +67,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('SIGNATURE IMAGHE RESPONSE:', response);
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { child } = response.data;
       let educators = child.users.map(e => e.id);
       let parentData = child.parents.filter(p => parseInt(p.user_parent_id) === parseInt(paramsParentId));
@@ -77,7 +77,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       //(child.consent_signature);
       setConsentData(prevState => ({
         ...prevState,
-        parent_name: child.consent_parent_name ||  `${parentData[0].family_name} ${parentData[0].given_name}`,
+        parent_name: child.consent_parent_name || `${parentData[0].family_name} ${parentData[0].given_name}`,
         consent_date: moment(child.consent_date).format('YYYY-MM-DD'),
         consent_signature: child.consent_signature
       }));
@@ -97,13 +97,13 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     let token = localStorage.getItem('token');
     // let parentId = localStorage.getItem('enrolled_parent_id');
     let childId = localStorage.getItem('enrolled_child_id');
-    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, {...consentData }, {
+    let response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { ...consentData }, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     })
 
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       response = await axios.patch(`${BASE_URL}/enrollment/educator-consent/${childId}`, {
         consentPayload: consentDetail
       }, {
@@ -112,27 +112,27 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
         }
       });
 
-      if(response.status === 201 && response.data.status === "success") {
-        if(!(formStepData > step)) {
+      if (response.status === 201 && response.data.status === "success") {
+        if (!(formStepData > step)) {
           console.log('CONDITION FULLFULLED!');
-          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step:  nextstep }, {
+          response = await axios.patch(`${BASE_URL}/enrollment/child/${childId}`, { form_step: nextstep }, {
             headers: {
               "Authorization": `Bearer ${token}`
             }
           });
-  
-          if(response.status === 201 && response.data.status === "success") {
+
+          if (response.status === 201 && response.data.status === "success") {
             // nextStep();
             setFormSubmissionSuccessDialog(true);
           }
         }
-        
-        if(localStorage.getItem('user_role') !== 'guardian' && localStorage.getItem('change_count') > 0) {
+
+        if (localStorage.getItem('user_role') !== 'guardian' && localStorage.getItem('change_count') > 0) {
           console.log('ASKING FOR PARENT CONSENT WITH CONSENT FORM');
           setLoader(false);
           setUserConsentFormDialog(true);
-        } else if(localStorage.getItem('user_role') === 'guardian') {
-            setFormSubmissionSuccessDialog(true);
+        } else if (localStorage.getItem('user_role') === 'guardian') {
+          setFormSubmissionSuccessDialog(true);
         } else {
           nextStep();
         }
@@ -142,10 +142,10 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const handleDataSubmit = event => {
     event.preventDefault();
-    
+
     let errorDigitalSignature = digitalSignatureValidator(consentData);
 
-    if(Object.keys(errorDigitalSignature).length > 0) {
+    if (Object.keys(errorDigitalSignature).length > 0) {
       setFormErrors(errorDigitalSignature);
     } else {
       updateFormSevenData();
@@ -165,7 +165,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('RESPONSE CONSENT:', response);
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       let { parentConsentObject } = response.data;
       console.log('PARENT CONSENT OBJECT!', parentConsentObject);
       localStorage.setItem('has_given_consent', parentConsentObject.has_given_consent);
@@ -174,12 +174,12 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       response = await axios.post(`${BASE_URL}/enrollment/send-notification/consent-mail/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id') });
 
       console.log('CONSENT MAIL RESPONSE', response);
-      if(response.status === 201 && response.data.status === "success") {
+      if (response.status === 201 && response.data.status === "success") {
         console.log('CLOSING THE DIALOG!');
         setUserConsentFormDialog(false);
         localStorage.removeItem('change_count');
-        
-        if(localStorage.getItem('user_role') === 'guardian') {
+
+        if (localStorage.getItem('user_role') === 'guardian') {
           setFormSubmissionSuccessDialog(true)
         } else {
           nextStep();
@@ -190,7 +190,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
 
   const handleConsentUpdation = (consentId, consent_given) => {
     let updatedData = consentDetail.map(c => {
-      if(c.id === consentId) {
+      if (c.id === consentId) {
         return {
           id: c.id,
           educator_id: c.educator_id,
@@ -207,7 +207,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     localStorage.removeItem('asked_for_consent');
     localStorage.removeItem('consent_comment');
     localStorage.removeItem('has_given_consent');
-    
+
     console.log('UPDATING THE ENROLLMENT STATE!');
     let enrolledChildId = localStorage.getItem('enrolled_child_id');
     let token = localStorage.getItem('token');
@@ -217,48 +217,52 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
-    if(response.status === 201 && response.data.status === "success" && localStorage.getItem('user_role') === 'guardian') {
-      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id')});
+    if (response.status === 201 && response.data.status === "success" && localStorage.getItem('user_role') === 'guardian') {
+      response = await axios.post(`${BASE_URL}/enrollment/send-notification/mailer/${localStorage.getItem('enrolled_parent_id')}/${localStorage.getItem('enrolled_child_id')}`, { userId: localStorage.getItem('user_id'), franchisee_id: localStorage.getItem('franchisee_id') }, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      });
 
-      if(response.status === 201 && response.data.status === "success") {
+      if (response.status === 201 && response.data.status === "success") {
 
-        if(localStorage.getItem('asked_for_consent') !== null) {
+        if (localStorage.getItem('asked_for_consent') !== null) {
           response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
           });
-  
-          if(response.status === 201 && response.data.status === "success") {
+
+          if (response.status === 201 && response.data.status === "success") {
             localStorage.removeItem('asked_for_consent');
             localStorage.removeItem('consent_comment');
             localStorage.removeItem('has_given_consent');
             let parent_id = localStorage.getItem('enrolled_parent_id');
-            window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
+            window.location.href = `${FRONT_BASE_URL}/children/${parent_id}`;
           }
         } else {
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
+          window.location.href = `${FRONT_BASE_URL}/children/${parent_id}`;
         }
       }
-    } else if(response.status === 201 && response.data.status === "success") {
-      if(localStorage.getItem('asked_for_consent') !== null) {
+    } else if (response.status === 201 && response.data.status === "success") {
+      if (localStorage.getItem('asked_for_consent') !== null) {
         response = await axios.patch(`${BASE_URL}/enrollment/parent-consent/${localStorage.getItem('enrolled_parent_id')}`, { childId: localStorage.getItem('enrolled_child_id') }, {
           headers: {
             "Authorization": `Bearer ${localStorage.getItem('token')}`
           }
         });
 
-        if(response.status === 201 && response.data.status === "success") {
+        if (response.status === 201 && response.data.status === "success") {
           localStorage.removeItem('asked_for_consent');
           localStorage.removeItem('consent_comment');
           localStorage.removeItem('has_given_consent');
           let parent_id = localStorage.getItem('enrolled_parent_id');
-          window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
+          window.location.href = `${FRONT_BASE_URL}/children/${parent_id}`;
         }
       } else {
         let parent_id = localStorage.getItem('enrolled_parent_id');
-        window.location.href=`${FRONT_BASE_URL}/children/${parent_id}`;
+        window.location.href = `${FRONT_BASE_URL}/children/${parent_id}`;
       }
     }
   }
@@ -266,7 +270,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
   const saveSignatureImage = async () => {
     let data = new FormData();
 
-    if(signatureImage) {
+    if (signatureImage) {
       setShowSignatureDialog(false);
       console.log('Saving Signature Image!');
       const blob = await fetch(signatureImage).then((res) => res.blob());
@@ -282,7 +286,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('SIGNATURE RESPONSE:', response);
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       let { signature: signatureURL, consent_parent_name: parent_name } = response.data;
       // console.log('Signature:', signatureURL);
       // setSignatureString(signatureURL);
@@ -293,11 +297,11 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       }));
     }
   }
-      
+
   // const handleSignatureDialog = async (signURI) => {
   //   setSignatureImage(signURI);
   //   setShowSignatureDialog(false);
-    
+
   // }
 
   useEffect(() => {
@@ -356,16 +360,16 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                       type="text"
                       name="to_provide_care_and_education_to_my_child"
                       value={educatorData?.filter(d => parseInt(d.id) === parseInt(consent.educator_id))[0].assistant}
-                      // onChange={}
+                    // onChange={}
                     />
                   </Form.Group>
                   <p>to support the educator in transporting my child to and from regular outings or excursion, providing care while educator has an appointment for the period of less than 4 hours, or in an emergency where the educator needs medical attention. Assistant may also provide support to the educator while the educator is providing care for my child.</p>
 
                   <Form.Group>
-                    <div className="btn-checkbox" style={{padding: 0, margin: 0}}>
-                      <Form.Check 
-                        type="checkbox" 
-                        id={`accept_${consent.id}`} 
+                    <div className="btn-checkbox" style={{ padding: 0, margin: 0 }}>
+                      <Form.Check
+                        type="checkbox"
+                        id={`accept_${consent.id}`}
                         checked={consent.consent_given === true}
                         label="I consent to the above educator."
                         onChange={() => handleConsentUpdation(consent.id, consent.consent_given)} />
@@ -373,7 +377,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                   </Form.Group>
                 </div>
               )
-              })
+            })
           }
 
           <h3 className="title-xs mt-4 mb-4">Authorization by Parents / Authorized person for the Approved Provider, Nomminated Supervisor or Educator</h3>
@@ -415,15 +419,15 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                       <p className="signature-mode">{consentData?.parent_name}</p>
                     </>
                   }
-                  { formErrors?.consent_signature !== null && <span className="error">{formErrors?.consent_signature}</span> }
+                  {formErrors?.consent_signature !== null && <span className="error">{formErrors?.consent_signature}</span>}
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3 relative">
                   <Form.Label>Date</Form.Label>
-                  <Form.Control 
-                    type="date" 
-                    placeholder="" 
+                  <Form.Control
+                    type="date"
+                    placeholder=""
                     name="consent_date"
                     min={new Date().toISOString().slice(0, 10)}
                     value={consentData?.consent_date || ""}
@@ -432,29 +436,29 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
                       consent_date: e.target.value
                     }))}
                   />
-                  { formErrors?.consent_date !== null && <span className="error">{formErrors?.consent_date}</span> }
+                  {formErrors?.consent_date !== null && <span className="error">{formErrors?.consent_date}</span>}
                 </Form.Group>
               </Col>
             </Row>
           </div>
           <div className="cta text-center mt-5 mb-5">
             <Button variant="outline" type="submit" onClick={prevStep} className="me-3">Go Back</Button>
-            <Button 
-              variant="primary" 
-              type="submit" 
+            <Button
+              variant="primary"
+              type="submit"
               onClick={handleDataSubmit}>
               {loader === true ? (
                 <>
                   <img
-                  style={{ width: '24px' }}
-                  src={'/img/mini_loader1.gif'}
-                  alt=""
+                    style={{ width: '24px' }}
+                    src={'/img/mini_loader1.gif'}
+                    alt=""
                   />
-                    {
-                      localStorage.getItem('user_role') === 'guardian'
+                  {
+                    localStorage.getItem('user_role') === 'guardian'
                       ? "Saving..."
                       : "Submitting..."
-                    }
+                  }
                 </>
               ) : ('Submit')}
             </Button>
@@ -472,7 +476,7 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
           <p className="modal-paragraph">Form Submitted Successfully.</p>
         </Modal.Body>
         <Modal.Footer>
-          <button 
+          <button
             className="modal-button"
             onClick={() => handleSubmissionRedirection()}>Okay</button>
         </Modal.Footer>
@@ -481,80 +485,80 @@ const ChildEnrollment6 = ({ nextStep, handleFormData, prevStep }) => {
       <Modal
         show={userConsentFormDialog}
         size="lg">
-          <Modal.Header>
-            <Modal.Title>Parent Consent Form</Modal.Title>
-          </Modal.Header>
+        <Modal.Header>
+          <Modal.Title>Parent Consent Form</Modal.Title>
+        </Modal.Header>
 
-          <Modal.Body>
-            <div>
-              <Form.Group>
-                <div className="btn-checkbox" style={{padding: 0, margin: 0, width: "100%"}}>
-                  <Form.Check 
-                    type="checkbox" 
-                    style={{ padding: "0px", margin: "0px 0px 20px 0px" }}
-                    id={`accept_consent_1`} 
-                    checked={parentConsentData.asked_for_consent === true}
-                    label="Parent/Guardian's consent required"
-                    onChange={() => setParentConsentData(prevState => ({
+        <Modal.Body>
+          <div>
+            <Form.Group>
+              <div className="btn-checkbox" style={{ padding: 0, margin: 0, width: "100%" }}>
+                <Form.Check
+                  type="checkbox"
+                  style={{ padding: "0px", margin: "0px 0px 20px 0px" }}
+                  id={`accept_consent_1`}
+                  checked={parentConsentData.asked_for_consent === true}
+                  label="Parent/Guardian's consent required"
+                  onChange={() => setParentConsentData(prevState => ({
+                    ...prevState,
+                    asked_for_consent: !parentConsentData.asked_for_consent
+                  }))}
+                />
+
+                <div className="comment-box" style={{ width: "100%" }}>
+                  <p><strong>Add Comment</strong></p>
+                  <Form.Control
+                    name="your comment here"
+                    as="textarea"
+                    style={{ width: "100%" }}
+                    value={parentConsentData?.comment || ""}
+                    rows={10}
+                    onChange={(e) => setParentConsentData(prevState => ({
                       ...prevState,
-                      asked_for_consent: !parentConsentData.asked_for_consent
-                    }))} 
-                  />
-
-                  <div className="comment-box" style={{  width: "100%" }}>
-                    <p><strong>Add Comment</strong></p>
-                    <Form.Control
-                      name="your comment here" 
-                      as="textarea" 
-                      style={{width: "100%"}}
-                      value={parentConsentData?.comment || ""}
-                      rows={10}
-                      onChange={(e) => setParentConsentData(prevState => ({
-                        ...prevState,
-                        comment: e.target.value
-                      }))} />
-                  </div> 
-                  <p>* There were changes in {localStorage.getItem('change_count')} {localStorage.getItem('change_count') > 1 ? "sections" : "section"} of this form!</p>
+                      comment: e.target.value
+                    }))} />
                 </div>
-              </Form.Group>
-            </div>
-          </Modal.Body>
+                <p>* There were changes in {localStorage.getItem('change_count')} {localStorage.getItem('change_count') > 1 ? "sections" : "section"} of this form!</p>
+              </div>
+            </Form.Group>
+          </div>
+        </Modal.Body>
 
-          <Modal.Footer>
-            <button 
-              className="modal-button"
-              onClick={() => handleParentConsentSubmission()}>Ask For Consent</button>
-          </Modal.Footer>
+        <Modal.Footer>
+          <button
+            className="modal-button"
+            onClick={() => handleParentConsentSubmission()}>Ask For Consent</button>
+        </Modal.Footer>
       </Modal>
 
       {
-            <Modal
-              size="lg"
-              show={showSignatureDialog}
-              onHide={() => setShowSignatureDialog(false)}>
-              <Modal.Header>
-                <Modal.Title>Consent Signature</Modal.Title>
-              </Modal.Header>
+        <Modal
+          size="lg"
+          show={showSignatureDialog}
+          onHide={() => setShowSignatureDialog(false)}>
+          <Modal.Header>
+            <Modal.Title>Consent Signature</Modal.Title>
+          </Modal.Header>
 
-              <Modal.Body>
-                <Row>
-                  <UserSignature
-                    field_label="Signature:"
-                    // handleSignatureDialog={handleSignatureDialog}
-                    onChange={setSignatureImage} />
-                </Row>
-              </Modal.Body>
+          <Modal.Body>
+            <Row>
+              <UserSignature
+                field_label="Signature:"
+                // handleSignatureDialog={handleSignatureDialog}
+                onChange={setSignatureImage} />
+            </Row>
+          </Modal.Body>
 
-              {/* <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
+          {/* <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
               <div className="text-center"> */}
-                {/* <button 
+          {/* <button 
                   type="button" 
                   className="btn btn-primary" 
                   style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button> */}
-              {/* </div>
+          {/* </div>
               </Modal.Footer> */}
-            </Modal>
-          }
+        </Modal>
+      }
     </>
   );
 };

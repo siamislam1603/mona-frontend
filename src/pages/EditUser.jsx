@@ -227,14 +227,22 @@ const EditUser = () => {
     console.log('ENGAGEBAY PAYLOAD:', payload);
 
     // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
-    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
     if (response.status === 200 && response.data.isRecordFetched === 0) {
 
       // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
       // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
       // WITH THE GIVEN DETAILS
-      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+      });
 
       if (createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
@@ -254,7 +262,11 @@ const EditUser = () => {
       // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
       // HENCE, UPDATING THE RECORD
       // WITH THE GIVEN DETAILS
-      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload, {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem('token')
+        }
+      });
 
       if (updateResponse.status === 201 && updateResponse.data.status === "success") {
 
@@ -292,7 +304,11 @@ const EditUser = () => {
   };
 
   const fetchStateList = async () => {
-    let response = await axios.get(`${BASE_URL}/api/state/data`);
+    let response = await axios.get(`${BASE_URL}/api/state/data`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
     if (response.status === 200 && response.data.status === "success") {
       let { states } = response.data;
@@ -516,7 +532,11 @@ const EditUser = () => {
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
-    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     if (response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({

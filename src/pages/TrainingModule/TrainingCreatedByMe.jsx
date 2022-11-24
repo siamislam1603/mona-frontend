@@ -185,9 +185,13 @@ const TrainingCreatedByMe = ({ filter }) => {
   }
 
   const fetchFranchiseeUsers = async (franchisee_id) => {
-
+    const token = localStorage.getItem('token');
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`);
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;
       setFetchedFranchiseeUsers([
@@ -297,7 +301,7 @@ const TrainingCreatedByMe = ({ filter }) => {
 
   useEffect(() => {
     // if (selectedFranchisee) {
-      CreatedByme()
+    CreatedByme()
     // }
 
   }, [filterData.category_id, selectedFranchise, page])
@@ -452,7 +456,7 @@ const TrainingCreatedByMe = ({ filter }) => {
                           className="selectdropdown-col"
                           onChange={(e) => setFilterData(prevState => ({
                             ...prevState,
-                            category_id:  e.id
+                            category_id: e.id
                           }))}
                         />
                       </Form.Group>
