@@ -198,7 +198,7 @@ function OwnFormResponse(props) {
                 }
               });
             });
-            let arr2 = [];
+
             if (result?.result?.length - 1 === index) {
               let temData = {};
               for (let formDatas of result?.result) {
@@ -215,16 +215,21 @@ function OwnFormResponse(props) {
                     }
                   }
                   formDatas[0].fields = JSON.stringify(temData);
-                  // formDatas = [formDatas[0]];
+                  formDatas = [formDatas[0]];
                   temData = {};
-
-                  console.log(formDatas, '===fromDatas');
-
-                  arr2.push([formDatas[0]]);
-                } else {
-                  arr2.push(formDatas);
                 }
               }
+
+              let arr2 = [];
+              for (let iterator of result?.result) {
+                let ar = [];
+
+                ar.push(iterator[0]);
+                ar['signature_button'] = iterator?.signature_button;
+
+                arr2.push(ar);
+              }
+
               setResponseData(arr2);
               seenFormResponse(arr2);
 
@@ -251,8 +256,18 @@ function OwnFormResponse(props) {
               temData = {};
             }
           }
-          setResponseData(result?.result);
-          seenFormResponse(result?.result);
+          let arr2 = [];
+          for (let iterator of result?.result) {
+            let ar = [];
+
+            ar.push(iterator[0]);
+            ar['signature_button'] = iterator?.signature_button;
+
+            arr2.push(ar);
+          }
+
+          setResponseData(arr2);
+          seenFormResponse(arr2);
 
           setFormData(result?.form);
         }

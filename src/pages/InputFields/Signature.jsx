@@ -8,10 +8,12 @@ import 'react-toastify/dist/ReactToastify.css';
 const Signature = (props) => {
   const [signature, setSignature] = useState(null);
   const { ...controls } = props;
-
+  const sigPad = useRef({});
   useEffect(() => {
     if (
-      (props?.currentForm[0]?.form_permissions[0]?.fill_access_users === null &&
+      (props.signature_flag &&
+        props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
+          null &&
         !props?.form_field_permissions[0]?.fill_access_users?.includes(
           localStorage.getItem('user_role') === 'guardian'
             ? 'parent'
@@ -32,7 +34,7 @@ const Signature = (props) => {
     ) {
       sigPad?.current?.off();
     }
-  }, []);
+  }, [props]);
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
@@ -40,6 +42,7 @@ const Signature = (props) => {
   }, []);
   useEffect(() => {
     if (
+      props.signature_flag &&
       props !== {} &&
       props?.field_data &&
       props?.field_data !== {} &&
@@ -48,7 +51,6 @@ const Signature = (props) => {
       setSignature(props?.field_data?.fields[controls?.field_name]);
     }
   }, [controls?.field_name, props?.field_data]);
-  const sigPad = useRef({});
   useEffect(() => {
     if (signature && props !== {} && props?.field_data) {
       sigPad?.current?.fromDataURL(signature);
