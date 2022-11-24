@@ -195,6 +195,7 @@ const EditTraining = () => {
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
   const fetchFranchiseeUsers = async (franchisee_id) => {
+    console.log('FRANCHISEE ID>>>>>>>>>>>>>>>>>>>>>', franchisee_id);
     // let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
     const token = localStorage.getItem('token');
     const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`, {
