@@ -198,14 +198,59 @@ function OwnFormResponse(props) {
                 }
               });
             });
+            let arr2 = [];
             if (result?.result?.length - 1 === index) {
-              setResponseData(result?.result);
-              seenFormResponse(result?.result);
+              let temData = {};
+              for (let formDatas of result?.result) {
+                if (formDatas.length > 1) {
+                  for (let formData of formDatas) {
+                    for (let formField of Object.keys(
+                      JSON.parse(formData.fields)
+                    )) {
+                      if (JSON.parse(formData['fields'])[formField] !== null) {
+                        temData[formField] = JSON.parse(formData['fields'])[
+                          formField
+                        ];
+                      }
+                    }
+                  }
+                  formDatas[0].fields = JSON.stringify(temData);
+                  // formDatas = [formDatas[0]];
+                  temData = {};
+
+                  console.log(formDatas, '===fromDatas');
+
+                  arr2.push([formDatas[0]]);
+                } else {
+                  arr2.push(formDatas);
+                }
+              }
+              setResponseData(arr2);
+              seenFormResponse(arr2);
 
               setFormData(result?.form);
             }
           });
         } else {
+          let temData = {};
+          for (let formDatas of result?.result) {
+            if (formDatas.length > 1) {
+              for (let formData of formDatas) {
+                for (let formField of Object.keys(
+                  JSON.parse(formData.fields)
+                )) {
+                  if (JSON.parse(formData['fields'])[formField] !== null) {
+                    temData[formField] = JSON.parse(formData['fields'])[
+                      formField
+                    ];
+                  }
+                }
+              }
+              formDatas[0].fields = JSON.stringify(temData);
+              formDatas = formDatas.slice(0, 1);
+              temData = {};
+            }
+          }
           setResponseData(result?.result);
           seenFormResponse(result?.result);
 
@@ -590,7 +635,7 @@ function OwnFormResponse(props) {
                                 {responseData[index]?.map((item, index) => {
                                   return (
                                     <>
-                                      {item?.section_name === '' && (
+                                      {
                                         <div
                                           key={index}
                                           className={
@@ -909,7 +954,7 @@ function OwnFormResponse(props) {
                                             );
                                           })}
                                         </div>
-                                      )}
+                                      }
                                     </>
                                   );
                                 })}
@@ -1016,9 +1061,6 @@ function OwnFormResponse(props) {
                                                     form_id: id ? id : null,
                                                   }}
                                                 >
-                                                  {console.log(
-                                                    item[inner_index]?.id
-                                                  )}
                                                   {/* <div
                                                   className="edit-icon-form"
                                                   onClick={() => {
@@ -1151,7 +1193,7 @@ function OwnFormResponse(props) {
                               {responseData[index]?.map((item, index) => {
                                 return (
                                   <>
-                                    {item?.section_name === '' && (
+                                    {
                                       <div
                                         key={index}
                                         className={
@@ -1457,7 +1499,7 @@ function OwnFormResponse(props) {
                                           );
                                         })}
                                       </div>
-                                    )}
+                                    }
                                   </>
                                 );
                               })}
