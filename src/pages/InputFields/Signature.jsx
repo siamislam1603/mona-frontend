@@ -7,11 +7,31 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Signature = (props) => {
   const [signature, setSignature] = useState(null);
+  const [signatureFlag, setSignatureFlag] = useState(
+    props?.signature_flag || true
+  );
   const { ...controls } = props;
   const sigPad = useRef({});
+  // console.log(props?.signature_flag, '====');
   useEffect(() => {
     if (
-      (props.signature_flag &&
+      signatureFlag &&
+      props?.currentForm[0]?.form_permissions[0]?.signatories &&
+      !props?.currentForm[0]?.form_permissions[0]?.signatories_role?.includes(
+        localStorage.getItem('user_role') === 'guardian'
+          ? 'parent'
+          : localStorage.getItem('user_role')
+      ) &&
+      props?.field_name?.includes('signature_')
+    ) {
+      setSignatureFlag(false);
+    } else {
+      setSignatureFlag(true);
+    }
+  }, []);
+  useEffect(() => {
+    if (
+      (signatureFlag &&
         props?.currentForm[0]?.form_permissions[0]?.fill_access_users ===
           null &&
         !props?.form_field_permissions[0]?.fill_access_users?.includes(
@@ -34,7 +54,7 @@ const Signature = (props) => {
     ) {
       sigPad?.current?.off();
     }
-  }, [props]);
+  }, []);
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
@@ -42,7 +62,6 @@ const Signature = (props) => {
   }, []);
   useEffect(() => {
     if (
-      props.signature_flag &&
       props !== {} &&
       props?.field_data &&
       props?.field_data !== {} &&
@@ -82,7 +101,7 @@ const Signature = (props) => {
     toast.success('Signature added.');
   };
   return (
-    props.signature_flag && (
+    signatureFlag && (
       <Col sm={6}>
         <ToastContainer />
         <Form.Group className="form-input-section">
@@ -137,6 +156,28 @@ const Signature = (props) => {
               className="theme-light"
               style={{ minWidth: '70px !important' }}
               onClick={clear}
+              disabled={
+                (props?.currentForm[0]?.form_permissions[0]
+                  ?.fill_access_users === null &&
+                  !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role')
+                  )) ||
+                (props?.currentForm[0]?.form_permissions[0]
+                  ?.fill_access_users &&
+                  !props?.currentForm[0]?.form_permissions[0]?.fill_access_users?.includes(
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role')
+                  ) &&
+                  !props?.form_field_permissions[0]?.fill_access_users?.includes(
+                    localStorage.getItem('user_role') === 'guardian'
+                      ? 'parent'
+                      : localStorage.getItem('user_role')
+                  )) ||
+                props.isDisable
+              }
             >
               Clear
             </Button>

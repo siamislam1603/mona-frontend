@@ -961,9 +961,41 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-icon-section"
                                                   onClick={() => {
-                                                    navigate(
-                                                      `/form/response/${inner_item.id}`
-                                                    );
+                                                    if (
+                                                      (
+                                                        formData[index]?.forms[
+                                                          inner_index
+                                                        ]?.form_permissions[0]
+                                                          ?.signatories_role ||
+                                                        []
+                                                      ).includes(
+                                                        localStorage.getItem(
+                                                          'user_role'
+                                                        ) === 'guardian'
+                                                          ? 'parent'
+                                                          : localStorage.getItem(
+                                                              'user_role'
+                                                            )
+                                                      )
+                                                    ) {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`,
+                                                        {
+                                                          state: {
+                                                            signature_access: true,
+                                                          },
+                                                        }
+                                                      );
+                                                    } else {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`,
+                                                        {
+                                                          state: {
+                                                            signature_access: false,
+                                                          },
+                                                        }
+                                                      );
+                                                    }
                                                   }}
                                                 >
                                                   <img
@@ -996,9 +1028,41 @@ function ViewFormBuilder(props) {
                                                 <div
                                                   className="content-title-section"
                                                   onClick={() => {
-                                                    navigate(
-                                                      `/form/response/${inner_item.id}`
-                                                    );
+                                                    if (
+                                                      (
+                                                        formData[index]?.forms[
+                                                          inner_index
+                                                        ]?.form_permissions[0]
+                                                          ?.signatories_role ||
+                                                        []
+                                                      )?.includes(
+                                                        localStorage.getItem(
+                                                          'user_role'
+                                                        ) === 'guardian'
+                                                          ? 'parent'
+                                                          : localStorage.getItem(
+                                                              'user_role'
+                                                            )
+                                                      )
+                                                    ) {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`,
+                                                        {
+                                                          state: {
+                                                            signature_access: true,
+                                                          },
+                                                        }
+                                                      );
+                                                    } else {
+                                                      navigate(
+                                                        `/form/response/${inner_item.id}`,
+                                                        {
+                                                          state: {
+                                                            signature_access: false,
+                                                          },
+                                                        }
+                                                      );
+                                                    }
                                                   }}
                                                 >
                                                   <h6>
