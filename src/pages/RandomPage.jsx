@@ -7,9 +7,13 @@ const RandomPage = () => {
   const [userData, setUserData] = useState(null);
 
   const fetchUserData = async () => {
-    const response = await axios.get(`${BASE_URL}/user-group/users`);
+    const response = await axios.get(`${BASE_URL}/user-group/users`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { allUser } = response.data;
       setUserData(allUser.filter(user => user.profile_photo && user.profile_photo.includes('https')));
     }

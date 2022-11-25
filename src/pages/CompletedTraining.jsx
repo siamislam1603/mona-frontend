@@ -5,7 +5,7 @@ import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
-import { useNavigate, useParams, NavLink, useLocation  } from 'react-router-dom';
+import { useNavigate, useParams, NavLink, useLocation } from 'react-router-dom';
 import axios from "axios";
 import { FullLoader } from "../components/Loader";
 
@@ -37,23 +37,28 @@ const CompleteTraining = () => {
   const fetchCompletedTrainingData = async () => {
     alert("dddddddddddddddddd")
     let user_id = localStorage.getItem('user_id');
-    const response = await axios.get(`${BASE_URL}/training/${user_id}`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/training/${user_id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
 
     console.log('RESPONSE:', response);
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { trainingList } = response.data;
       // setfullLoaderStatus(false)
 
       setCompletedTrainingData(trainingList);
 
     }
-  };  
+  };
 
   useEffect(() => {
     fetchCompletedTrainingData();
   }, []);
 
-console.log("ddddddddddddddddddddddd",fullLoaderStatus)
+
 
 
 
@@ -64,12 +69,12 @@ console.log("ddddddddddddddddddddddd",fullLoaderStatus)
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-              <FullLoader loading={fullLoaderStatus} />
+                <FullLoader loading={fullLoaderStatus} />
 
-                <TopHeader/>
+                <TopHeader />
 
                 <div className="entry-container">
                   <header className="title-head">
@@ -78,7 +83,7 @@ console.log("ddddddddddddddddddddddd",fullLoaderStatus)
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value="" />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -144,7 +149,7 @@ console.log("ddddddddddddddddddddddd",fullLoaderStatus)
                         <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
+                            <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Item href="#">Export All</Dropdown.Item>
@@ -156,35 +161,35 @@ console.log("ddddddddddddddddddddddd",fullLoaderStatus)
                   </header>
                   <div className="training-cat mb-3">
                     <ul>
-                    <li><NavLink to="/available-training">Trainings Available</NavLink></li>
-                    <li><NavLink to="/complete-training">Complete Training</NavLink></li>
-                    <li><NavLink to="/">Trainings Created</NavLink></li>
+                      <li><NavLink to="/available-training">Trainings Available</NavLink></li>
+                      <li><NavLink to="/complete-training">Complete Training</NavLink></li>
+                      <li><NavLink to="/">Trainings Created</NavLink></li>
                     </ul>
                   </div>
                   <div className="training-column">
                     <Row>
-                    {completedTrainingData?.map((item) => {
-                      return(
-                      <Col lg={4} md={6} key={item.id}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0].thumbnail}`} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.training.title}</a> <span className="time">{ item.training.completion_time }</span></div>
-                            <div className="cta-col">
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
+                      {completedTrainingData?.map((item) => {
+                        return (
+                          <Col lg={4} md={6} key={item.id}>
+                            <div className="item mt-3 mb-3">
+                              <div className="pic"><a href={`/training-detail/${item.training.id}`}><img src={`${item.training.training_files[0].thumbnail}`} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                              <div className="fixcol">
+                                <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                                <div className="iconame"><a href="/training-detail">{item.training.title}</a> <span className="time">{item.training.completion_time}</span></div>
+                                <div className="cta-col">
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </Col>
-                       );
+                          </Col>
+                        );
                       })}
                     </Row>
                   </div>

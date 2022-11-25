@@ -163,7 +163,11 @@ const Children = () => {
 
   const DeactivateChild = async (id) => {
     console.log('Deactivating child!', id);
-    const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`);
+    const response = await axios.patch(`${BASE_URL}/enrollment/deactivate-reactivate-child/${id}`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     console.log('RESPONSE:', response);
 
     if (response.status === 200 && response.data.status === "reactivated") {
@@ -198,7 +202,11 @@ const Children = () => {
 
       localStorage.setItem("DefaultParents", JSON.stringify(defaultparents))
 
-      response = await axios.get(`${BASE_URL}/enrollment/child/franchise/${childId || id}`);
+      response = await axios.get(`${BASE_URL}/enrollment/child/franchise/${childId || id}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
 
       if (response.status === 200 && response.data.status === 'success') {
         let { franchise } = response.data;

@@ -14,7 +14,7 @@ const initialFields = {
 }
 
 const SignUp = () => {
-  
+
   const [hide, setHide] = useState(true);
   const [fields, setFields] = useState(initialFields);
   const { fullname, email, password } = fields;
@@ -25,14 +25,19 @@ const SignUp = () => {
 
   // function to post data in the database
   const addUser = async (data) => {
-    const res = await axios.post(`${BASE_URL}/signup`, data);
-    if(res.status === 201 && res.data?.status === "success") {
+    const token = localStorage.getItem('token');
+    const res = await axios.post(`${BASE_URL}/signup`, data, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (res.status === 201 && res.data?.status === "success") {
       localStorage.setItem("token", res.data.accessToken);
       localStorage.setItem("user_id", res.data.user.id);
       localStorage.setItem("user_role", res.data.user.role);
       localStorage.setItem("user_name", res.data.user.name);
-      window.location.href="/dashboard";
-    } else if(res.status === 201 && res.data.status === 'fail') {
+      window.location.href = "/dashboard";
+    } else if (res.status === 201 && res.data.status === 'fail') {
       setTopErrorMessage(res.data.message)
     }
   }
@@ -41,14 +46,14 @@ const SignUp = () => {
     const { name, value } = e.target;
     setFields({
       ...fields,
-      [name]: value 
+      [name]: value
     });
   }
 
   const handleSubmit = e => {
     e.preventDefault();
     addUser(fields);
-  } 
+  }
 
   return (
     <>
@@ -63,7 +68,7 @@ const SignUp = () => {
                 <div className="custom_title">
                   <p>Sign Up</p>
                 </div>
-                <Form className="login_form" onSubmit={ handleSubmit }>
+                <Form className="login_form" onSubmit={handleSubmit}>
                   <Form.Group className="mb-4 form-group" controlId="formBasicFullName">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
@@ -125,7 +130,7 @@ const SignUp = () => {
                           By creating an account you agree to the <Link to='#'>terms of use</Link> and our <Link to='#'>privacy policy</Link>.
                         </label>
                       </Col>
-                      
+
                     </Row>
                   </Form.Group>
                   <div className="custom_submit text-center pt-3">
@@ -136,7 +141,7 @@ const SignUp = () => {
 
                   <div className="custom_bottom">
                     <p>
-                       Already have an account? <Link to="#">Log in</Link>{" "}
+                      Already have an account? <Link to="#">Log in</Link>{" "}
                     </p>
                   </div>
                 </Form>

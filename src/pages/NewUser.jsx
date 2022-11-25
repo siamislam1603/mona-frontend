@@ -98,37 +98,41 @@ const NewUser = () => {
       }
     });
     console.log('RESPONSE:', response);
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       let { data } = response.data;
-      
+
       // SELECTIVE CREATION OF ENGAGEBAY CONTACTS
-      if(query.searchParams.get('childId')) {
-        if(query.searchParams.get('role') === 'guardian') {
-          response = await axios.post(`${BASE_URL}/enrollment/parent/`, {user_parent_id: data.id, childId: childId}, {
+      if (query.searchParams.get('childId')) {
+        if (query.searchParams.get('role') === 'guardian') {
+          response = await axios.post(`${BASE_URL}/enrollment/parent/`, { user_parent_id: data.id, childId: childId }, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
           });
-        } else if(query.searchParams.get('role') === 'educator') {
-          response =await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`,{educatorIds: [...assignedEducators, data.id], removedEducatorIds: []}, {
+        } else if (query.searchParams.get('role') === 'educator') {
+          response = await axios.post(`${BASE_URL}/enrollment/child/assign-educators/${childId}`, { educatorIds: [...assignedEducators, data.id], removedEducatorIds: [] }, {
             headers: {
-                authorization: `Bearer ${localStorage.getItem('token')}`,
+              authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           });
         }
         if (response.status === 201) {
-          response = await axios.patch(`${BASE_URL}/auth/user/update/${data.id}`);
-          if(response.status === 201 && response.data.status === "success") {
+          response = await axios.patch(`${BASE_URL}/auth/user/update/${data.id}`, {
+            headers: {
+              authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          if (response.status === 201 && response.data.status === "success") {
             const response = await axios.post(`${BASE_URL}/enrollment/send-mail/${data.id}`, { childId, user_role: localStorage.getItem('user_role') }, {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
+              headers: {
+                "Authorization": `Bearer ${token}`
+              }
             });
-    
-            if(response.status === 201 && response.data.status === "success") {
+
+            if (response.status === 201 && response.data.status === "success") {
               setLoaderMessage("Adding the User details to Engagebay Contacts")
               updateEngageBayContactList(data);
-              setLoaderMessage("Wrapping Up");       
+              setLoaderMessage("Wrapping Up");
             }
           }
         }
@@ -137,13 +141,13 @@ const NewUser = () => {
         updateEngageBayContactList(data);
         setLoaderMessage("Wrapping Up");
       }
-    } else if(response.status === 200 && response.data.status === "fail") {
+    } else if (response.status === 200 && response.data.status === "fail") {
       setLoader(false);
       setCreateUserModal(false);
       let { errorObject } = response.data;
       errorObject.map(error => setFormErrors(prevState => ({
-          ...prevState,
-          [error.error_field]: error.error_msg
+        ...prevState,
+        [error.error_field]: error.error_msg
       })));
     }
   };
@@ -157,16 +161,21 @@ const NewUser = () => {
   };
 
   const getEngagebayDetail = async (email) => {
-    const response = await axios.get(`${BASE_URL}/contacts/${email}`);
-    if(response.status === 200 && response.data.status === "success") {
-    
-      const {data} = response.data;
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/contacts/${email}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (response.status === 200 && response.data.status === "success") {
+
+      const { data } = response.data;
       let { properties } = data;
-      
+
       let tempDataObj = {}
       properties.map(d => {
         let obj = { [d.name]: [d.value][0] };
-        tempDataObj = {...tempDataObj, ...obj};
+        tempDataObj = { ...tempDataObj, ...obj };
       });
 
       setFormData(prevState => ({
@@ -184,9 +193,13 @@ const NewUser = () => {
   };
 
   const checkIfUserExistsAndDeactivated = async (email) => {
-    const response = await axios.get(`${BASE_URL}/auth/user/checkIfExists/${email}`);
-
-    if(response.status === 200 && response.data.isPresentAndDeactivated === 1) {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/auth/user/checkIfExists/${email}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (response.status === 200 && response.data.isPresentAndDeactivated === 1) {
       const { active_status } = response.data;
       setUserActiveStatus(active_status);
       setStatusPopup(true);
@@ -207,34 +220,34 @@ const NewUser = () => {
     const errArray = Object.keys(errObj);
     console.log('ARRAY REFS:', errArray);
 
-    if(errArray.includes('email')) {
+    if (errArray.includes('email')) {
       email?.current?.focus();
-    } else if(errArray?.includes('role')) {
+    } else if (errArray?.includes('role')) {
       role?.current?.focus();
-    } else if(errArray?.includes('fullname')) {
+    } else if (errArray?.includes('fullname')) {
       fullname?.current?.focus();
-    } else if(errArray?.includes('state')) {
+    } else if (errArray?.includes('state')) {
       state?.current?.focus();
-    } else if(errArray?.includes('city')) {
+    } else if (errArray?.includes('city')) {
       city?.current?.focus();
-    } else if(errArray?.includes('address')) {
+    } else if (errArray?.includes('address')) {
       address?.current?.focus();
-    } else if(errArray?.includes('postalCode')) {
+    } else if (errArray?.includes('postalCode')) {
       postalCode?.current?.focus();
-    } else if(errArray?.includes('crn')) {
+    } else if (errArray?.includes('crn')) {
       parent_crn?.current?.focus();
-    } else if(errArray?.includes('phone')) {
+    } else if (errArray?.includes('phone')) {
       phone?.current?.focus();
-    } else if(errArray.includes('franchisee')) {
+    } else if (errArray.includes('franchisee')) {
       franchisee?.current?.focus();
-    } else if(errArray.includes('coordinator')) {
+    } else if (errArray.includes('coordinator')) {
       coordinator?.current?.focus();
     }
   }
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
+    if (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') {
       setFormData((prevState) => ({
         ...prevState,
         franchisee: selectedFranchisee,
@@ -246,7 +259,7 @@ const NewUser = () => {
       }));
     }
     const errorObj = UserFormValidation(formData, trainingDocuments);
-    if(Object.keys(errorObj).length > 0) {
+    if (Object.keys(errorObj).length > 0) {
       setFormErrors(errorObj);
       setAutoFocus(errorObj);
     } else {
@@ -256,33 +269,33 @@ const NewUser = () => {
         fullname
       }));
       console.log('Erorrs removed!');
-      let data=new FormData();
+      let data = new FormData();
       trainingDocuments?.map(item => {
         data.append('images', item);
       });
-      
-      if(croppedImage) {
+
+      if (croppedImage) {
         const blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
         data.append('images', blob);
       }
-      
-      Object.keys(formData)?.map((item,index) => {
-        data.append(item,Object.values(formData)[index]);
+
+      Object.keys(formData)?.map((item, index) => {
+        data.append(item, Object.values(formData)[index]);
       })
-      
+
       let errorObject = UserFormValidation(formData);
 
-      if(Object.keys(errorObject).length > 0) {
-          console.log('THERE ARE STILL ERRORS', errorObject);
-          setFormErrors(errorObject);
+      if (Object.keys(errorObject).length > 0) {
+        console.log('THERE ARE STILL ERRORS', errorObject);
+        setFormErrors(errorObject);
       } else {
-          console.log('CREATING USER!');
-          setCreateUserModal(true);
-          setLoaderMessage("Creating New User")
-          setLoader(true)
-          createUser(data);
+        console.log('CREATING USER!');
+        setCreateUserModal(true);
+        setLoaderMessage("Creating New User")
+        setLoader(true)
+        createUser(data);
       }
-      
+
       createUser(data);
     }
   };
@@ -302,59 +315,72 @@ const NewUser = () => {
     };
 
     // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
-    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
-    if(response.status === 200 && response.data.isRecordFetched === 0) {
+    if (response.status === 200 && response.data.isRecordFetched === 0) {
 
       // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
       // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
       // WITH THE GIVEN DETAILS
-      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
-  
-      if(createResponse.status === 200 && createResponse.data.status === "success") {
-        
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (createResponse.status === 200 && createResponse.data.status === "success") {
+
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
         localStorage.setItem('success_msg', 'User created successfully');
 
-        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+        if (localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
           // console.log('IS AVAILABLE>>>>>>>>>>>>>>>>>', query.searchParams.get('sdfsdf'))
-          window.location.href=`/children/${data.id}`;
+          window.location.href = `/children/${data.id}`;
         } else {
-          if(query.searchParams.get('childId')) { 
+          if (query.searchParams.get('childId')) {
             // window.location.href=`/children/${query.searchParams.get('parentId')}`
             navigate(`/children/${query.searchParams.get('parentId')}`, { state: { franchisee_id: formData.franchisee } })
           } else {
-            window.location.href="/user-management";
+            window.location.href = "/user-management";
           }
         }
-      
+
       } else {
         console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
       }
 
-    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+    } else if (response.status === 200 && response.data.isRecordFetched === 1) {
 
       // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
       // HENCE, UPDATING THE RECORD
       // WITH THE GIVEN DETAILS
-      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+      const token = localStorage.getItem('token');
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
 
-      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
-        
+      if (updateResponse.status === 201 && updateResponse.data.status === "success") {
+
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         setLoader(false);
         setCreateUserModal(false);
         localStorage.setItem('success_msg', 'User created successfully');
 
-        if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-            window.location.href=`/children/${data.id}`;
+        if (localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
+          window.location.href = `/children/${data.id}`;
         } else {
-          if(query.searchParams.get('parentId')) {
-            window.location.href=`/children/${query.searchParams.get('parentId')}`
+          if (query.searchParams.get('parentId')) {
+            window.location.href = `/children/${query.searchParams.get('parentId')}`
           } else {
-            window.location.href="/user-management";
+            window.location.href = "/user-management";
           }
         }
 
@@ -367,9 +393,9 @@ const NewUser = () => {
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
-    const response = 
+    const response =
       await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
         id: coordinator.id,
@@ -409,7 +435,7 @@ const NewUser = () => {
     if (response.status === 200) {
       const { userRoleList } = response.data;
       // let newRoleList = userRoleList.filter(role => role.role_name !== 'franchisor_admin');
-      
+
       let newRoleList = userRoleList.map(d => ({
         id: d.id,
         value: d.role_name,
@@ -434,7 +460,7 @@ const NewUser = () => {
   // FETCHING SUBURB DATA
   const fetchSuburbData = (state) => {
     const suburbAPI = `${BASE_URL}/api/suburbs/data/${state}`;
-    const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+    const getSuburbList = axios(suburbAPI, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } });
     axios.all([getSuburbList]).then(
       axios.spread((...data) => {
         console.log('SUBURB DATA:', data[0].data.data);
@@ -450,7 +476,9 @@ const NewUser = () => {
 
   const fetchTrainingCategories = async () => {
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`);
+      `${BASE_URL}/training/get-training-categories`, {
+      headers: { "Authorization": "Bearer " + localStorage.getItem('token') }
+    });
     if (response.status === 200 && response.data.status === "success") {
       const { categoryList } = response.data;
       setTrainingCategoryData([
@@ -464,9 +492,9 @@ const NewUser = () => {
   };
 
   const fetchProfessionalDevelopementCategories = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`);
-    
-    if(response.status === 200 && response.data.status === "success") {
+    const response = await axios.get(`${BASE_URL}/api/get-pdc`, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } });
+
+    if (response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
@@ -474,12 +502,16 @@ const NewUser = () => {
         label: data.category_name
       })));
     }
-  }; 
+  };
 
   const fetchStateList = async () => {
-    let response = await axios.get(`${BASE_URL}/api/state/data`);
+    let response = await axios.get(`${BASE_URL}/api/state/data`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { states } = response.data;
       setStateData(states.map(d => ({
         id: d.id,
@@ -491,8 +523,8 @@ const NewUser = () => {
 
   const fetchBuinessAssets = async () => {
     const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
-    
-    if(response.status === 200 && response.data.status === "success") {
+
+    if (response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
@@ -510,13 +542,13 @@ const NewUser = () => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
         value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
-      })));  
+      })));
     }
   }
 
@@ -525,27 +557,27 @@ const NewUser = () => {
     let newRoleList = userRoleData;
     console.log('NEW ROLE LIST:', newRoleList);
 
-    if(currentRole === "educator") {
+    if (currentRole === "educator") {
       newRoleList = newRoleList.filter(role => role.sequence === 4);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "coordinator") {
+    if (currentRole === "coordinator") {
       newRoleList = newRoleList.filter(role => role.sequence > 3);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "franchisee_admin") {
+    if (currentRole === "franchisee_admin") {
       newRoleList = newRoleList.filter(role => role.sequence > 2);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === 'franchisor_admin') {
+    if (currentRole === 'franchisor_admin') {
       newRoleList = newRoleList.filter(role => role.sequence > 1);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "guardian") {
+    if (currentRole === "guardian") {
       newRoleList = newRoleList.filter(role => role.sequence === 5);
       setUserRoleData(newRoleList);
     }
@@ -578,13 +610,13 @@ const NewUser = () => {
     fetchCoordinatorData(formData.franchisee)
   }, [formData.franchisee]);
 
-  useEffect(() => { 
-    if(localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
+  useEffect(() => {
+    if (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator') {
       let franchisee_id = localStorage.getItem('franchisee_id');
       setFormData(prevState => ({
         ...prevState,
         franchisee: franchisee_id,
-        franchiseeObj: {...franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id))[0]} 
+        franchiseeObj: { ...franchiseeData?.filter(data => parseInt(data.id) === parseInt(franchisee_id))[0] }
       }));
     }
   }, [franchiseeData]);
@@ -595,7 +627,7 @@ const NewUser = () => {
   }, [currentRole]);
 
   useEffect(() => {
-    if(queryRole && childfranchise) {
+    if (queryRole && childfranchise) {
       setFormData(prevState => ({
         ...prevState,
         franchisee: parseInt(childfranchise),
@@ -605,7 +637,7 @@ const NewUser = () => {
   }, []);
 
   useEffect(() => {
-    if(trainingDocuments?.length < 5) {
+    if (trainingDocuments?.length < 5) {
       setFormErrors(prevState => ({
         ...prevState,
         doc: null
@@ -615,17 +647,17 @@ const NewUser = () => {
 
   const getUniqueErrors = (arr) => {
     var result = [];
-    arr.forEach(function(item) {
-        if(result.indexOf(item) < 0) {
-            result.push(item);
-        }
+    arr.forEach(function (item) {
+      if (result.indexOf(item) < 0) {
+        result.push(item);
+      }
     });
 
-   return result;
+    return result;
   }
 
   useEffect(() => {
-    
+
     setFileError(uploadError?.map(errObj => (
       errObj?.error[0]?.message
     )));
@@ -663,17 +695,17 @@ const NewUser = () => {
                         />
 
                         {
-                          popupVisible && 
-                          <ImageCropPopup 
-                            image={image} 
+                          popupVisible &&
+                          <ImageCropPopup
+                            image={image}
                             setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible} />
                         }
-                        
+
                       </div>
                       <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
-                        <Form.Group className="col-md-6 mb-3 relative">
+                          <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address *</Form.Label>
                             <Form.Control
                               type="text"
@@ -692,7 +724,7 @@ const NewUser = () => {
                                 checkIfUserExistsAndDeactivated(e.target.value);
                               }}
                             />
-                            { formErrors.email !== null && <span className="error">{formErrors.email}</span> }
+                            {formErrors.email !== null && <span className="error">{formErrors.email}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -708,7 +740,7 @@ const NewUser = () => {
                                 menu: (provided) => ({ ...provided, zIndex: 9999 })
                               }}
                               options={userRoleData}
-                              value={userRoleData?.filter(d => d.value ===  formData?.role)}
+                              value={userRoleData?.filter(d => d.value === formData?.role)}
                               onChange={(e) => {
                                 setFormData((prevState) => ({
                                   ...prevState,
@@ -721,7 +753,7 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.role !== null && <span className="error">{formErrors.role}</span> }
+                            {formErrors.role !== null && <span className="error">{formErrors.role}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -739,7 +771,7 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span> }
+                            {formErrors.fullname !== null && <span className="error">{formErrors.fullname}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -768,7 +800,7 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                            {formErrors.state !== null && <span className="error">{formErrors.state}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -800,9 +832,9 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.city !== null && <span className="error">{formErrors.city}</span> }
+                            {formErrors.city !== null && <span className="error">{formErrors.city}</span>}
                           </Form.Group>
-                          
+
 
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Address *</Form.Label>
@@ -819,7 +851,7 @@ const NewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.address !== null && <span className="error">{formErrors.address}</span> }
+                            {formErrors.address !== null && <span className="error">{formErrors.address}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -838,7 +870,7 @@ const NewUser = () => {
                                   postalCode: null
                                 }));
 
-                                if(e.target.value.length === 4) {
+                                if (e.target.value.length === 4) {
                                   setFormErrors(prevState => ({
                                     ...prevState,
                                     postalCodeLength: null
@@ -846,9 +878,9 @@ const NewUser = () => {
                                 }
                               }}
                             />
-                            { (formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>) }
+                            {(formErrors.postalCode !== null && <span className="error">{formErrors.postalCode}</span>) || (formErrors.postalCodeLength !== null && <span className="error">{formErrors.postalCodeLength}</span>)}
                           </Form.Group>
-                          
+
                           {
                             formData?.role === 'guardian' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -867,10 +899,10 @@ const NewUser = () => {
                                   }));
                                 }}
                               />
-                              { formErrors.crn !== null && <span className="error">{formErrors.crn}</span> }
+                              {formErrors.crn !== null && <span className="error">{formErrors.crn}</span>}
                             </Form.Group>
                           }
-                            
+
                           {
                             formData && formData?.role !== 'guardian' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -897,7 +929,7 @@ const NewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           {
                             formData?.role !== 'guardian' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -924,7 +956,7 @@ const NewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number *</Form.Label>
                             <div className="tel-col">
@@ -950,11 +982,11 @@ const NewUser = () => {
 
                                   e.target.value = e.target.value.replace(/\s/g, "");
                                   // handleChange(e);
-                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                  if (isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                                     setFormData(prevState => ({
                                       ...prevState,
                                       phone: e.target.value.slice(0, -1)
-                                    })); 
+                                    }));
                                   } else {
                                     setFormData(prevState => ({
                                       ...prevState,
@@ -969,9 +1001,9 @@ const NewUser = () => {
                                 }}
                               />
                             </div>
-                            { formErrors.phone !== null && <span className="error">{formErrors.phone}</span> }
+                            {formErrors.phone !== null && <span className="error">{formErrors.phone}</span>}
                           </Form.Group>
-                          
+
                           {
                             formData && formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -986,7 +1018,7 @@ const NewUser = () => {
                               />
                             </Form.Group>
                           }
-                            
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchise *</Form.Label>
                             {
@@ -1024,7 +1056,7 @@ const NewUser = () => {
                               />
                             }
                             {
-                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') && 
+                              (localStorage.getItem('user_role') === 'franchisee_admin' || localStorage.getItem('user_role') === 'coordinator' || localStorage.getItem('user_role') === 'educator') &&
                               <Select
                                 placeholder={franchiseeData?.filter(d => parseInt(d.id) === parseInt(selectedFranchisee))[0].label || "Select"}
                                 isDisabled={true}
@@ -1032,7 +1064,7 @@ const NewUser = () => {
                                 hideSelectedOptions={true}
                               />
                             }
-                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
+                            {formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span>}
                           </Form.Group>
 
                           {
@@ -1064,7 +1096,7 @@ const NewUser = () => {
                                   }))
                                 }}
                               />
-                              { formErrors.coordinator !== null && <span className="error">{formErrors.coordinator}</span> }
+                              {formErrors.coordinator !== null && <span className="error">{formErrors.coordinator}</span>}
                             </Form.Group>
                           }
 
@@ -1107,7 +1139,7 @@ const NewUser = () => {
                                 }} />
                             </div>
                           </Form.Group> */}
-                          
+
                           {/* <Form.Group className="col-md-6 mb-3">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
@@ -1123,20 +1155,20 @@ const NewUser = () => {
                             />
                             { formErrors.terminationDate !== null && <span className="error">{formErrors.terminationDate}</span> }
                           </Form.Group> */}
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
-                            <DragDropMultiple 
+                            <DragDropMultiple
                               module="user-management"
                               onSave={setTrainingDocuments}
                               setUploadError={setUploadError} />
-                            { formErrors.doc !== null && <span className="error">{formErrors.doc}</span> }
+                            {formErrors.doc !== null && <span className="error">{formErrors.doc}</span>}
                             {
-                              fileError  &&
+                              fileError &&
                               getUniqueErrors(fileError).map(errorObj => {
                                 return (
                                   // errorObj?.error[0].message
-                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed": errorObj}</p>
+                                  <p style={{ color: 'tomato', fontSize: '12px' }}>{errorObj === "Too many files" ? "Only five files allowed" : errorObj.includes("File type must be text/*") ? "zip file uploads aren't allowed" : errorObj}</p>
                                 )
                               })
                             }
@@ -1164,32 +1196,32 @@ const NewUser = () => {
           </Container>
         </section>
         {
-                createUserModal && 
-                <Modal
-                show={createUserModal}
-                onHide={() => setCreateUserModal(false)}>
-                    <Modal.Header>
-                        <Modal.Title>
-                        Creating User
-                        </Modal.Title>
-                    </Modal.Header>
+          createUserModal &&
+          <Modal
+            show={createUserModal}
+            onHide={() => setCreateUserModal(false)}>
+            <Modal.Header>
+              <Modal.Title>
+                Creating User
+              </Modal.Title>
+            </Modal.Header>
 
-                    <Modal.Body>
-                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>{loaderMessage}</p>
-                        <p>Please Wait...</p>
-                        </div>
-                    </Modal.Body>
+            <Modal.Body>
+              <div className="create-training-modal" style={{ textAlign: 'center' }}>
+                <p>{loaderMessage}</p>
+                <p>Please Wait...</p>
+              </div>
+            </Modal.Body>
 
-                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                    {
-                        loader === true && <div>
-                        <ReactBootstrap.Spinner animation="border" />
-                        </div>
-                    }
-                    </Modal.Footer>
-                </Modal>
-            }
+            <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {
+                loader === true && <div>
+                  <ReactBootstrap.Spinner animation="border" />
+                </div>
+              }
+            </Modal.Footer>
+          </Modal>
+        }
       </div>
       <Modal
         show={statusPopup}
@@ -1198,21 +1230,21 @@ const NewUser = () => {
           <Modal.Title>Attention!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div>
-              <p>A {userActiveStatus === "deleted" ? "Deleted" : "Deactivated"} User with this email already exists.</p>
-              <p>Contact your administrator to reactivate him/her.</p>
-            </div>
+          <div>
+            <p>A {userActiveStatus === "deleted" ? "Deleted" : "Deactivated"} User with this email already exists.</p>
+            <p>Contact your administrator to reactivate him/her.</p>
+          </div>
         </Modal.Body>
         <Modal.Footer>
-        <button 
-              className="modal-button"
-              onClick={() => {
-                setFormData(prevState => ({
-                  ...prevState,
-                  email: ""
-                }));
-                setStatusPopup(false)
-              }}>Okay</button>
+          <button
+            className="modal-button"
+            onClick={() => {
+              setFormData(prevState => ({
+                ...prevState,
+                email: ""
+              }));
+              setStatusPopup(false)
+            }}>Okay</button>
         </Modal.Footer>
       </Modal>
     </>

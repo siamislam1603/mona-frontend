@@ -8,7 +8,12 @@ const ChildRegister = () => {
   const [errors, setErrors] = useState({});
 
   const addChild = async (data) => {
-    const res = await axios.post(`${BASE_URL}/child/signup`, data);
+    const token = localStorage.getItem('token');
+    const res = await axios.post(`${BASE_URL}/child/signup`, data, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (res.status === 201 && res.data?.status === 'success') {
       window.location.ref = "/dashboard";
     }

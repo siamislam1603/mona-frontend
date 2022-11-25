@@ -360,7 +360,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       }
     });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { childFiles } = response.data;
       console.log('child files:', childFiles);
       setCourtOrderDetails(...childFiles.filter(f => f.category === "court-order"));
@@ -378,23 +378,23 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     let errArray = Object.keys(errorObj);
     console.log('MEDICAL ERROR ARRAY:', errArray);
 
-    if(errArray.includes('medical_service')) {
+    if (errArray.includes('medical_service')) {
       medical_service?.current?.focus();
-    } else if(errArray.includes('telephone')) {
+    } else if (errArray.includes('telephone')) {
       telephone?.current?.focus();
-    } else if(errArray.includes('medical_service_address')) {
+    } else if (errArray.includes('medical_service_address')) {
       medical_service_address?.current?.focus();
-    } else if(errArray.includes('maternal_and_child_health_centre')) {
+    } else if (errArray.includes('maternal_and_child_health_centre')) {
       maternal_and_child_health_centre?.current?.focus();
-    } else if(errArray.includes('courtOrders')) {
+    } else if (errArray.includes('courtOrders')) {
       courtOrderFocus?.current?.focus()
-    } else if(errArray.includes('hasHealthRecord')) {
+    } else if (errArray.includes('hasHealthRecord')) {
       healthRecordRef?.current?.focus();
-    } else if(errArray.includes('healthRecord')) {
+    } else if (errArray.includes('healthRecord')) {
       healthRecordRef?.current?.focus();
-    } else if(errArray.includes('immunisationRecord')) {
+    } else if (errArray.includes('immunisationRecord')) {
       immunisationRecordFocus?.current?.focus();
-    } else if(errArray.includes('allergyError')) {
+    } else if (errArray.includes('allergyError')) {
       allergyFocus?.current?.focus()
     }
   }
@@ -403,8 +403,8 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     e.preventDefault();
 
     const errors = healthInformationFormValidator(
-      healthInformation, 
-      parentData?.i_give_medication_permission, 
+      healthInformation,
+      parentData?.i_give_medication_permission,
       childDetails?.has_health_record,
       healthRecordDetails,
       childDetails?.has_court_orders,
@@ -413,7 +413,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       immunisationRecordDetails,
       childMedicalInformation?.has_sensitivity,
       allergyFormDetails,
-    );  
+    );
     if (Object.keys(errors).length > 0) {
       // window.scrollTo(0, 0);
       setHealthInfoFormErrors(errors);
@@ -426,8 +426,9 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
         console.log('CREATING NEW DATA!')
         saveFormTwoData();
       }
-    
-    setLoader(true);}
+
+      setLoader(true);
+    }
     // nextStep();
   };
 
@@ -435,17 +436,21 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   const saveSignatureImage = async () => {
     let data = new FormData();
 
-    if(signatureImage) {
+    if (signatureImage) {
       setShowSignatureDialog(false);
       console.log('Saving Signature Image!');
       const blob = await fetch(signatureImage).then((res) => res.blob());
       data.append('image', blob);
     }
 
-    let response = await axios.patch(`${BASE_URL}/enrollment/record-viewer/signature/${paramsChildId}`, data);
+    let response = await axios.patch(`${BASE_URL}/enrollment/record-viewer/signature/${paramsChildId}`, data, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
     console.log('SIGNATURE RESPONSE:', response);
-    if(response.status === 201 && response.data.status === "success") {
+    if (response.status === 201 && response.data.status === "success") {
       let { signature_of_record_viewer: signatureURL } = response.data;
       setChildDetails(prevState => ({
         ...prevState,
@@ -464,30 +469,30 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('RESPONSE DELETE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       let { token, fileId } = response.data;
-      
-      if(token === 'immunisation-record') {
-        setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
-      } 
 
-      if(token === "special-needs") {
+      if (token === 'immunisation-record') {
+        setImmunisationRecordDeleteMessage("Immunisation record deleted successfully.");
+      }
+
+      if (token === "special-needs") {
         setSpecialNeedsFormDeleteMessage("Special needs form deleted successfully.");
       }
 
-      if(token === 'allergy') {
+      if (token === 'allergy') {
         setAllergyFormDeleteMessage("Allergy form deleted successfully.")
       }
 
-      if(token === 'medical-plan') {
+      if (token === 'medical-plan') {
         setMedicalPlanDeleteMessage("Medical plan deleted successfully.")
       }
 
-      if(token === 'court-order') {
+      if (token === 'court-order') {
         setCourtOrdersDeleteMessage('Court order has been deleted');
       }
 
-      if(token === 'health-record') {
+      if (token === 'health-record') {
         setHealthRecordDeleteMessage('Health record has been deleted');
       }
     }
@@ -506,7 +511,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setImmunisationRecord(null);
@@ -527,7 +532,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setSpecialNeedsForm(null);
@@ -548,7 +553,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setAllergyForm(null);
@@ -568,13 +573,13 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setMedicalPlan(null);
       setMedicalPlanDetails(supportForm);
     }
-  } 
+  }
 
   // COURT ORDERS
   const uploadCourtOrders = async () => {
@@ -589,7 +594,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setCourtOrders(null);
@@ -610,7 +615,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
     });
 
     console.log('FILE UPLOAD RESPONSE:', response);
-    if(response.status === 201 && response.data.status === 'success') {
+    if (response.status === 201 && response.data.status === 'success') {
       console.log('INSIDE RESPONSE');
       let { supportForm } = response.data;
       setHealthRecord(null);
@@ -633,51 +638,51 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // IMMUNISATION RECORD UPLOAD
   useEffect(() => {
-    if(immunisationRecord) {
+    if (immunisationRecord) {
       uploadImmunisationRecord();
     }
   }, [immunisationRecord]);
 
   useEffect(() => {
-    if(immunisationRecordDeleteMessage) {
+    if (immunisationRecordDeleteMessage) {
       setImmunisationRecordDetails(null);
       setTimeout(() => {
         setImmunisationRecordDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [immunisationRecordDeleteMessage])
 
   // SPECIAL NEEDS SUPPORT FORM
   useEffect(() => {
-    if(specialNeedsForm) {
+    if (specialNeedsForm) {
       uploadSpecialNeedsForm();
     }
   }, [specialNeedsForm]);
 
   useEffect(() => {
-    if(specialNeedsFormDeleteMessage) {
+    if (specialNeedsFormDeleteMessage) {
       setSpecialNeedsFormDetails(null);
       setTimeout(() => {
         setSpecialNeedsFormDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [specialNeedsFormDeleteMessage])
 
   // ALLERGY SUPPORT FORM
   useEffect(() => {
-    if(allergyForm) {
+    if (allergyForm) {
       uploadAllergyForm();
     }
   }, [allergyForm]);
 
   useEffect(() => {
-    if(allergyFormDeleteMessage) {
+    if (allergyFormDeleteMessage) {
       setAllergyFormDetails(null);
       setTimeout(() => {
         setAllergyFormDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [allergyFormDeleteMessage])
@@ -685,51 +690,51 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
 
   // MEDICAL PLAN
   useEffect(() => {
-    if(medicalPlanDeleteMessage) {
+    if (medicalPlanDeleteMessage) {
       setMedicalPlanDetails(null);
       setTimeout(() => {
         setMedicalPlanDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [medicalPlanDeleteMessage])
 
   useEffect(() => {
-    if(medicalPlan) {
+    if (medicalPlan) {
       uploadMedicalPlan();
     }
   }, [medicalPlan])
-  
+
   // COURT ORDERS 
   useEffect(() => {
     console.log('COURT ORDERS:', courtOrders);
-    if(courtOrders) {
+    if (courtOrders) {
       uploadCourtOrders();
     }
   }, [courtOrders]);
 
   useEffect(() => {
-    if(healthRecord) {
+    if (healthRecord) {
       uploadHealthRecord();
     }
   }, [healthRecord]);
 
   useEffect(() => {
-    if(courtOrdersDeleteMessage) {
+    if (courtOrdersDeleteMessage) {
       setCourtOrderDetails(null);
       setTimeout(() => {
         setCourtOrdersDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [courtOrdersDeleteMessage]);
-  
+
   useEffect(() => {
-    if(healthRecordDeleteMessage) {
+    if (healthRecordDeleteMessage) {
       setHealthRecordDetails(null);
       setTimeout(() => {
         setHealthRecordDeleteMessage(null);
-      }, 3000); 
+      }, 3000);
     }
 
   }, [healthRecordDeleteMessage]);
@@ -737,7 +742,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
   // useEffect(() => {
   //   if(healthInfoFormErrors) {
   //     let refName = Object.keys(healthInfoFormErrors)[0];
-      
+
   //     if(healthInfoFormErrors[`${refName}`] !== null)
   //       focusOnHealthInfoErrors(refName);
   //   }
@@ -749,7 +754,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       courtOrders: null
     }));
   }, [courtOrderDetails]);
-  
+
   useEffect(() => {
     setHealthInfoFormErrors(prevState => ({
       ...prevState,
@@ -763,14 +768,14 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
       allergyError: null
     }));
   }, [allergyFormDetails]);
-  
+
   // useEffect(() => {
   //   setHealthInfoFormErrors(prevState => ({
   //     ...prevState,
   //     medicalPlan: null
   //   }));
   // }, [medicalPlanDetails]);
-  
+
   useEffect(() => {
     setHealthInfoFormErrors(prevState => ({
       ...prevState,
@@ -867,7 +872,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <Form.Label>Please describe these changes and provide the contact details of any person given these powers: </Form.Label>
                         <Form.Control
                           as="textarea"
-                          style={{ resize: "none" }} 
+                          style={{ resize: "none" }}
                           rows={3}
                           value={childDetails?.changes_described || ""}
                           name="changes_described"
@@ -913,15 +918,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                         <>
                           <Form.Group className="col-md-6 mb-3 mt-3">
                             <Form.Label>Upload any supporting documents</Form.Label>
-                            <DragDropMultiple 
+                            <DragDropMultiple
                               module="court-orders"
                               fileLimit={1}
                               supportFormDetails={courtOrderDetails}
                               onSave={setCourtOrders} />
                             <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file max.)</small>
                           </Form.Group>
-                          { healthInfoFormErrors?.courtOrders !== null && <span className="error">{healthInfoFormErrors?.courtOrders}</span> }
-                          <input 
+                          {healthInfoFormErrors?.courtOrders !== null && <span className="error">{healthInfoFormErrors?.courtOrders}</span>}
+                          <input
                             style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
                             ref={temp => {
                               courtOrderFocus.current = temp;
@@ -930,15 +935,15 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           />
                           {
                             courtOrderDetails &&
-                              <div>
-                                <a href={ courtOrderDetails?.file}><p>{courtOrderDetails.fileName || courtOrderDetails?.originalName}</p></a>
-                                <img
-                                  onClick={() => handleChildFileDelete(courtOrderDetails?.id)}
-                                  // className="file-remove"
-                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
-                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
-                                  alt="" />
-                              </div>
+                            <div>
+                              <a href={courtOrderDetails?.file}><p>{courtOrderDetails.fileName || courtOrderDetails?.originalName}</p></a>
+                              <img
+                                onClick={() => handleChildFileDelete(courtOrderDetails?.id)}
+                                // className="file-remove"
+                                style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                alt="" />
+                            </div>
                           }
                         </>
                       </Form.Group>
@@ -1143,29 +1148,29 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       {healthInfoFormErrors?.hasHealthRecord !== null && <span className="error">{healthInfoFormErrors?.hasHealthRecord}</span>}
                     </Form.Group>
                   </Col>
-                  <input 
-                      style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
-                      ref={temp => {
-                        healthRecordRef.current = temp;
-                      }}
-                      type="text"
-                    />   
+                  <input
+                    style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                    ref={temp => {
+                      healthRecordRef.current = temp;
+                    }}
+                    type="text"
+                  />
                   {
                     childDetails.has_health_record &&
                     <>
                       <Form.Group className="col-md-12 mb-3 relative">
                         <Form.Label>Upload any supporting documents</Form.Label>
-                        <DragDropMultiple 
+                        <DragDropMultiple
                           module="child-enrollment"
                           fileLimit={1}
                           supportFormDetails={healthRecordDetails}
                           onSave={setHealthRecord} />
-                        <small 
-                          className="fileinput" 
+                        <small
+                          className="fileinput"
                           style={{ width: '95px', textAlign: 'center' }}>
-                            (Upload 1 file)
+                          (Upload 1 file)
                         </small>
-                        { healthInfoFormErrors?.healthRecord !== null && <span className="error">{healthInfoFormErrors?.healthRecord}</span> }
+                        {healthInfoFormErrors?.healthRecord !== null && <span className="error">{healthInfoFormErrors?.healthRecord}</span>}
                       </Form.Group>
                       {
                         healthRecordDetails &&
@@ -1214,7 +1219,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                     //           }
                     //         </div>
                     //       </Col>
-                          
+
                     //       <Col md={6}>
                     //         <div className="mb-3">
                     //           <Form.Label>Date</Form.Label>
@@ -1232,7 +1237,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                     //             }} />
                     //         </div>
                     //       </Col>
-                          
+
                     //       <Col md={6}>
                     //         <div className="mb-3">
                     //           <Form.Label>Position</Form.Label>
@@ -1307,41 +1312,41 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                       </Form.Text>
                     </Form.Group>
                     {
-                        childDetails.has_been_immunized &&
-                        <>
-                          <Form.Group className="col-md-12 mt-3 mb-3 relative">
-                            <Form.Label>Upload any supporting documents</Form.Label>
-                            <DragDropMultiple 
-                              module="child-enrollment"
-                              fileLimit={1}
-                              supportFormDetails={immunisationRecordDetails}
-                              onSave={setImmunisationRecord} />
-                            <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
-                          </Form.Group>
-                          <input 
-                            style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
-                            ref={temp => {
-                              immunisationRecordFocus.current = temp;
-                            }}
-                            type="text"
-                          />
-                          { healthInfoFormErrors?.immunisationRecord !== null && <span className="error">{healthInfoFormErrors?.immunisationRecord}</span> }
-                          {
-                            immunisationRecordDetails &&
-                            (
-                              <div>
-                                <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.fileName || immunisationRecordDetails?.originalName}</p></a>
-                                <img
-                                  onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
-                                  // className="file-remove"
-                                  style={{ width: "25px", height: "auto", cursor: "pointer" }}
-                                  src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
-                                  alt="" />
-                              </div>
-                            )
-                          }
-                        </>
-                      }
+                      childDetails.has_been_immunized &&
+                      <>
+                        <Form.Group className="col-md-12 mt-3 mb-3 relative">
+                          <Form.Label>Upload any supporting documents</Form.Label>
+                          <DragDropMultiple
+                            module="child-enrollment"
+                            fileLimit={1}
+                            supportFormDetails={immunisationRecordDetails}
+                            onSave={setImmunisationRecord} />
+                          <small className="fileinput" style={{ width: '95px', textAlign: 'center' }}>(Upload 1 file)</small>
+                        </Form.Group>
+                        <input
+                          style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
+                          ref={temp => {
+                            immunisationRecordFocus.current = temp;
+                          }}
+                          type="text"
+                        />
+                        {healthInfoFormErrors?.immunisationRecord !== null && <span className="error">{healthInfoFormErrors?.immunisationRecord}</span>}
+                        {
+                          immunisationRecordDetails &&
+                          (
+                            <div>
+                              <a href={immunisationRecordDetails?.file}><p>{immunisationRecordDetails?.fileName || immunisationRecordDetails?.originalName}</p></a>
+                              <img
+                                onClick={() => handleChildFileDelete(immunisationRecordDetails?.id)}
+                                // className="file-remove"
+                                style={{ width: "25px", height: "auto", cursor: "pointer" }}
+                                src="https://cdn4.iconfinder.com/data/icons/linecon/512/delete-512.png"
+                                alt="" />
+                            </div>
+                          )
+                        }
+                      </>
+                    }
                   </Col>
                 </Row>
               </div>
@@ -3229,7 +3234,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control
                               name="special_need_details"
                               as="textarea"
-                              style={{ resize: "none" }} 
+                              style={{ resize: "none" }}
                               rows={3}
                               value={childMedicalInformation?.special_need_details}
                               onChange={(e) => setChildMedicalInformation(prevState => ({
@@ -3249,7 +3254,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <>
                               <Form.Group className="col-md-12 mt-3 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
-                                <DragDropMultiple 
+                                <DragDropMultiple
                                   module="child-enrollment"
                                   fileLimit={1}
                                   supportFormDetails={specialNeedsFormDetails}
@@ -3271,7 +3276,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                                 )
                               }
                             </>
-                          } 
+                          }
                         </>
                       }
 
@@ -3336,7 +3341,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <Form.Control
                               name="details_of_allergies"
                               as="textarea"
-                              style={{ resize: "none" }} 
+                              style={{ resize: "none" }}
                               value={childMedicalInformation?.details_of_allergies || ""}
                               rows={3}
                               onChange={(e) => {
@@ -3357,21 +3362,21 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <>
                               <Form.Group className="col-md-12 mt-3 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
-                                <DragDropMultiple 
+                                <DragDropMultiple
                                   module="child-enrollment"
                                   fileLimit={1}
                                   supportFormDetails={allergyFormDetails}
                                   onSave={setAllergyForm} />
                                 <small className="fileinput">(Upload 1 file)</small>
                               </Form.Group>
-                              <input 
+                              <input
                                 style={{ width: 0, height: 0, border: 'none', background: 'transparent', outline: 'none' }}
                                 ref={temp => {
                                   allergyFocus.current = temp;
                                 }}
                                 type="text"
                               />
-                              { healthInfoFormErrors?.allergyError !== null && <span className="error">{healthInfoFormErrors?.allergyError}</span> }
+                              {healthInfoFormErrors?.allergyError !== null && <span className="error">{healthInfoFormErrors?.allergyError}</span>}
                               {
                                 allergyFormDetails &&
                                 (
@@ -3497,7 +3502,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                             <>
                               <Form.Group className="col-md-12 mt-3 mb-3">
                                 <Form.Label>Upload any supporting documents</Form.Label>
-                                <DragDropMultiple 
+                                <DragDropMultiple
                                   module="child-enrollment"
                                   fileLimit={1}
                                   supportFormDetails={medicalPlanDetails}
@@ -3628,7 +3633,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <Form.Control
                             name="detail_of_other_condition"
                             as="textarea"
-                            style={{ resize: "none" }} 
+                            style={{ resize: "none" }}
                             rows={3}
                             value={childMedicalInformation?.detail_of_other_condition || ""}
                             onChange={(e) => {
@@ -3707,7 +3712,7 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
                           <Form.Control
                             name="details_of_restrictions"
                             as="textarea"
-                            style={{ resize: "none" }} 
+                            style={{ resize: "none" }}
                             rows={3}
                             value={childMedicalInformation?.details_of_restrictions || ""}
                             onChange={(e) => {
@@ -3773,20 +3778,20 @@ const ChildEnrollment2 = ({ nextStep, handleFormData, prevStep }) => {
             <div className="cta text-center mt-5 mb-5">
               <Button variant="outline" type="submit" onClick={() => prevStep()} className="me-3">Go Back</Button>
               <Button
-                variant="primary" 
+                variant="primary"
                 type="submit">
                 {loader === true ? (
                   <>
                     <img
-                    style={{ width: '24px' }}
-                    src={'/img/mini_loader1.gif'}
-                    alt=""
+                      style={{ width: '24px' }}
+                      src={'/img/mini_loader1.gif'}
+                      alt=""
                     />
-                      {
-                        localStorage.getItem('user_role') === 'guardian'
+                    {
+                      localStorage.getItem('user_role') === 'guardian'
                         ? "Saving..."
                         : "Submitting..."
-                      }
+                    }
                   </>
                 ) : (localStorage.getItem('user_role') === 'guardian' ? 'Next' : 'Submit')}
               </Button>

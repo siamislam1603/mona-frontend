@@ -87,15 +87,15 @@ const ViewUser = () => {
       }
     });
     console.log("The reponse", response)
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       const { user } = response.data;
 
-      if(Object.keys(user).length > 0) {
+      if (Object.keys(user).length > 0) {
         copyDataToState(user);
       } else {
         localStorage.setItem('success_msg', 'User doesn\'t exist!');
         const userRole = localStorage.getItem('user_role');
-        if(userRole === 'guardian')
+        if (userRole === 'guardian')
           window.location.href = '/';
         else
           window.location.href = '/user-management';
@@ -142,10 +142,10 @@ const ViewUser = () => {
         "Authorization": `Bearer ${token}`
       }
     });
-    
+
     if (response.status === 200 && response.data.status === 'success') {
       console.log('USER EDITED SUCCESSFULLY!');
-      if(signatureImage) {
+      if (signatureImage) {
         let data = new FormData();
         const blob = await fetch(signatureImage).then((res) => res.blob());
         console.log('BLOB:', blob);
@@ -158,25 +158,25 @@ const ViewUser = () => {
 
         console.log('SIGNATURE IMAGE RESPONSE:', signatureImageResponse);
 
-        if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
+        if (signatureImageResponse.status === 201 && signatureImageResponse.data.status === "success") {
           console.log('WE ARE DONE HERE: I');
           updateEngageBayContactList(formData);
           setCreateUserModal(false);
           setLoader(false)
           localStorage.setItem('success_msg', 'User updated successfully! Termination date set!');
           const userRole = localStorage.getItem('guardian');
-          if(userRole === 'guardian')
+          if (userRole === 'guardian')
             window.location.href = '/';
           else
             window.location.href = '/user-management';
 
           setSignatureUploaded(true);
-        } else if(signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
+        } else if (signatureImageResponse.status === 201 && signatureImageResponse.data.status === "fail") {
           setTopErrorMessage(signatureImageResponse.data.msg);
         }
       }
 
-      if(signatureUploaded !== true) {
+      if (signatureUploaded !== true) {
         console.log('WE ARE DONE HERE: II')
         updateEngageBayContactList(formData);
       }
@@ -202,21 +202,29 @@ const ViewUser = () => {
     console.log('ENGAGEBAY PAYLOAD:', payload);
 
     // CHECKING WHETHER THE RECORD WITH GIVEN MAIL EXISTS OR NOT
-    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`);
+    let response = await axios.get(`${BASE_URL}/contacts/data/${data.email}`, {
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    });
 
-    if(response.status === 200 && response.data.isRecordFetched === 0) {
+    if (response.status === 200 && response.data.isRecordFetched === 0) {
 
       // RECORD WITH THE AFOREMENTIONED EMAIL DOESN'T EXIST, 
       // HENCE, CREATING A NEW RECORD INSIDE ENGAGEBAY
       // WITH THE GIVEN DETAILS
-      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload);
-  
-      if(createResponse.status === 200 && createResponse.data.status === "success") {
+      let createResponse = await axios.post(`${BASE_URL}/contacts/create`, payload, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (createResponse.status === 200 && createResponse.data.status === "success") {
         console.log('ENGAGEBAY CONTACT CREATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
 
         const userRole = localStorage.getItem('user_role');
-        if(userRole === 'guardian')
+        if (userRole === 'guardian')
           window.location.href = '/';
         else
           window.location.href = '/user-management';
@@ -224,20 +232,24 @@ const ViewUser = () => {
         console.log('ENGAGEBAY CONTACT COULDN\'T BE CREATED');
       }
 
-    } else if(response.status === 200 && response.data.isRecordFetched === 1) {
+    } else if (response.status === 200 && response.data.isRecordFetched === 1) {
 
       // RECORD WITH THE AFOREMENTIONED EMAIL ALREADY EXISTS, 
       // HENCE, UPDATING THE RECORD
       // WITH THE GIVEN DETAILS
-      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload);
+      let updateResponse = await axios.put(`${BASE_URL}/contacts/${data.email}`, payload, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('token')}`
+        }
+      });
 
-      if(updateResponse.status === 201 && updateResponse.data.status === "success") {
-        
+      if (updateResponse.status === 201 && updateResponse.data.status === "success") {
+
         console.log('ENGAGEBAY CONTACT UPDATED SUCCESSFULLY!');
         localStorage.setItem('success_msg', 'User updated successfully!');
-        
+
         const userRole = localStorage.getItem('user_role');
-        if(userRole=== 'guardian')
+        if (userRole === 'guardian')
           window.location.href = '/';
         else
           window.location.href = '/user-management';        // setLoader(false);
@@ -245,7 +257,7 @@ const ViewUser = () => {
         // localStorage.setItem('success_msg', 'User created successfully!');
 
         // if(localStorage.getItem('user_role') === 'coordinator' && data.role === 'guardian') {
-        //   window.location.href=`/children/${data.id}`;
+        //   window.location.href=`/ children / ${ data.id }`;
         // } else {
         //   window.location.href="/user-management";
         // }
@@ -267,9 +279,13 @@ const ViewUser = () => {
   };
 
   const fetchStateList = async () => {
-    let response = await axios.get(`${BASE_URL}/api/state/data`);
+    let response = await axios.get(`${BASE_URL} / api / state / data`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
-    if(response.status === 200 && response.data.status === "success") {
+    if (response.status === 200 && response.data.status === "success") {
       let { states } = response.data;
       setStateData(states.map(d => ({
         id: d.id,
@@ -292,21 +308,21 @@ const ViewUser = () => {
     event.preventDefault();
 
     let error = editUserValidation(formData);
-    
-    if(Object.keys(error).length > 0) {
+
+    if (Object.keys(error).length > 0) {
       setFormErrors(error);
     } else {
       let data = new FormData();
-      
-      trainingDocuments?.map(async(item)=>{
-        const blob=await fetch(await toBase64(item)).then((res) => res.blob());
+
+      trainingDocuments?.map(async (item) => {
+        const blob = await fetch(await toBase64(item)).then((res) => res.blob());
         data.append('images', blob);
       })
 
       let blob;
-      if(croppedImage) {
+      if (croppedImage) {
 
-        if(typeof croppedImage === "object") {
+        if (typeof croppedImage === "object") {
           blob = await fetch(croppedImage.getAttribute('src')).then((res) => res.blob());
           data.append('images', blob);
         } else {
@@ -314,9 +330,9 @@ const ViewUser = () => {
           data.append('profile_photo', blob);
         }
       }
-      
-      Object.keys(formData)?.map((item,index) => {
-        data.append(item,Object.values(formData)[index]);
+
+      Object.keys(formData)?.map((item, index) => {
+        data.append(item, Object.values(formData)[index]);
       });
 
       trainingDocuments.map(doc => data.append('images', doc));
@@ -330,7 +346,7 @@ const ViewUser = () => {
   // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchCountryData = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/country-data`, {
+    const response = await axios.get(`${BASE_URL} / api / country - data`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -349,7 +365,7 @@ const ViewUser = () => {
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
   const fetchUserRoleData = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/user-role`, {
+    const response = await axios.get(`${BASE_URL} / api / user - role`, {
       headers: {
         "Authorization": "Bearer " + token
       }
@@ -357,7 +373,7 @@ const ViewUser = () => {
     if (response.status === 200) {
       const { userRoleList } = response.data;
       // let newRoleList = userRoleList.filter(role => role.role_name === 'franchisor_admin');
-      
+
       let newRoleList = userRoleList.map(d => ({
         id: d.id,
         value: d.role_name,
@@ -380,8 +396,8 @@ const ViewUser = () => {
 
   // FETCHING SUBURB DATA
   const fetchSuburbData = (state) => {
-    const suburbAPI = `${BASE_URL}/api/suburbs/data/${state}`;
-    const getSuburbList = axios(suburbAPI, {headers: {"Authorization": "Bearer " + localStorage.getItem('token')}});
+    const suburbAPI = `${BASE_URL} / api / suburbs / data / ${state}`;
+    const getSuburbList = axios(suburbAPI, { headers: { "Authorization": "Bearer " + localStorage.getItem('token') } });
     axios.all([getSuburbList]).then(
       axios.spread((...data) => {
         console.log('SUBURB DATA:', data[0].data.data);
@@ -398,7 +414,7 @@ const ViewUser = () => {
   const fetchTrainingCategories = async () => {
     let token = localStorage.getItem('token');
     const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`,
+      `${BASE_URL} / training / get - training - categories`,
       {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -419,13 +435,13 @@ const ViewUser = () => {
 
   const fetchProfessionalDevelopementCategories = async () => {
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
+    const response = await axios.get(`${BASE_URL} / api / get - pdc`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-    
-    if(response.status === 200 && response.data.status === "success") {
+
+    if (response.status === 200 && response.data.status === "success") {
       const { pdcList } = response.data;
       setPdcData(pdcList.map(data => ({
         id: data.id,
@@ -433,17 +449,17 @@ const ViewUser = () => {
         label: data.category_name
       })));
     }
-  }; 
+  };
 
   const fetchBuinessAssets = async () => {
     let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+    const response = await axios.get(`${BASE_URL} / api / get - business - assets`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-    
-    if(response.status === 200 && response.data.status === "success") {
+
+    if (response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
       setBuinessAssetData(businessAssetList.map(data => ({
         id: data.id,
@@ -455,28 +471,28 @@ const ViewUser = () => {
 
   const fetchFranchiseeList = async () => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+    const response = await axios.get(`${BASE_URL} / role / franchisee`, {
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-    console.log("The franchise data",response)
-    if(response.status === 200 && response.data.status === "success") {
+    console.log("The franchise data", response)
+    if (response.status === 200 && response.data.status === "success") {
       let { franchiseeList } = response.data;
 
       setFranchiseeData(franchiseeList.map(franchisee => ({
         id: franchisee.id,
         value: franchisee.franchisee_name,
         label: franchisee.franchisee_name
-      })));  
+      })));
     }
   }
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('Franchise id', franchisee_id);
     console.log('FETCHING COORDINATOR DATA');
-    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
-    if(response.status === 200 && response.data.status === "success") {
+    const response = await axios.get(`${BASE_URL} / role / franchisee / coordinator / franchiseeID / ${franchisee_id} / coordinator`);
+    if (response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
         id: coordinator.id,
@@ -488,7 +504,7 @@ const ViewUser = () => {
 
   // DIALOG HANDLING
   const handleConsentDialog = () => {
-    if(formData?.termination_reach_me && formData?.terminationDate.length > 0) {
+    if (formData?.termination_reach_me && formData?.terminationDate.length > 0) {
       setShowConsentDialog(false);
       setShowSignatureDialog(true);
     }
@@ -496,7 +512,7 @@ const ViewUser = () => {
 
   const handleSignatureDialog = (data) => {
     setSignatureImage(data);
-    if(signatureImage) {
+    if (signatureImage) {
       console.log('SIGNATURE IMAGE:', signatureImage);
       setShowSignatureDialog(false);
     }
@@ -507,22 +523,22 @@ const ViewUser = () => {
     let newRoleList = userRoleData;
     console.log('NEW ROLE LIST:', newRoleList);
 
-    if(currentRole === "educator") {
+    if (currentRole === "educator") {
       newRoleList = newRoleList.filter(role => role.sequence < 5);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "coordinator") {
+    if (currentRole === "coordinator") {
       newRoleList = newRoleList.filter(role => role.sequence < 4);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "franchisee_admin") {
+    if (currentRole === "franchisee_admin") {
       newRoleList = newRoleList.filter(role => role.sequence < 3 && role.sequence > 1);
       setUserRoleData(newRoleList);
     }
 
-    if(currentRole === "guardian") {
+    if (currentRole === "guardian") {
       newRoleList = newRoleList.filter(role => role.sequence === 5);
       setUserRoleData(newRoleList);
     }
@@ -588,14 +604,14 @@ const ViewUser = () => {
                         </span>
 
                         {
-                          popupVisible && 
-                          <ImageCropPopup 
-                            image={image} 
-                            setCroppedImage={setCroppedImage} 
+                          popupVisible &&
+                          <ImageCropPopup
+                            image={image}
+                            setCroppedImage={setCroppedImage}
                             setPopupVisible={setPopupVisible}
-                             />
+                          />
                         }
-                        
+
                       </div>
                       <form className="user-form error-sec" onSubmit={handleSubmit}>
                         <Row>
@@ -654,7 +670,7 @@ const ViewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.state !== null && <span className="error">{formErrors.state}</span> }
+                            {formErrors.state !== null && <span className="error">{formErrors.state}</span>}
                           </Form.Group>
 
                           <Form.Group className="col-md-6 mb-3 relative">
@@ -664,7 +680,7 @@ const ViewUser = () => {
                               closeMenuOnSelect={true}
                               isDisabled={true}
                               options={cityData}
-                              value={[{value: `${formData?.city}`, label: `${formData?.city}`}] || "Select"}
+                              value={[{ value: `${formData?.city}`, label: `${formData?.city}` }] || "Select"}
                               onInputChange={(e) => {
                                 setSuburbSearchString(e);
                               }}
@@ -709,7 +725,7 @@ const ViewUser = () => {
                               onChange={handleChange}
                             />
                           </Form.Group>
-                          
+
                           {
                             formData?.role === "guardian" &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -723,7 +739,7 @@ const ViewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Email Address</Form.Label>
                             <Form.Control
@@ -735,9 +751,9 @@ const ViewUser = () => {
                             />
                             <span className="error">
                               {!formData.email && formErrors.email}
-                            </span> 
+                            </span>
                           </Form.Group>
-                          
+
                           {
                             formData && formData?.role !== 'guardian' &&
                             <Form.Group className="col-md-6 mb-3 relative">
@@ -758,7 +774,7 @@ const ViewUser = () => {
                                 }}
                               />
                             </Form.Group>
-                            }
+                          }
 
                           {
                             formData && formData?.role !== 'guardian' &&
@@ -781,7 +797,7 @@ const ViewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Contact Number</Form.Label>
                             <div className="tel-col">
@@ -805,11 +821,11 @@ const ViewUser = () => {
                                 disabled={true}
                                 value={formData.phone}
                                 onChange={(e) => {
-                                  if(isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
+                                  if (isNaN(e.target.value.charAt(e.target.value.length - 1)) === true) {
                                     setFormData(prevState => ({
                                       ...prevState,
                                       phone: e.target.value.slice(0, -1)
-                                    })); 
+                                    }));
                                   } else {
                                     setFormData(prevState => ({
                                       ...prevState,
@@ -840,7 +856,7 @@ const ViewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchise</Form.Label>
                             <Select
@@ -867,13 +883,13 @@ const ViewUser = () => {
                                 }));
                               }}
                             />
-                            { formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span> }
+                            {formErrors.franchisee !== null && <span className="error">{formErrors.franchisee}</span>}
                           </Form.Group>
-                          
+
                           {
                             formData?.role === 'educator' &&
                             <Form.Group className="col-md-6 mb-3 relative">
-                              <Form.Label>Select Primary Coordinator</Form.Label> 
+                              <Form.Label>Select Primary Coordinator</Form.Label>
                               <Select
                                 isDisabled={true}
                                 placeholder={formData.role === 'educator' ? "Select" : "disabled"}
@@ -916,7 +932,7 @@ const ViewUser = () => {
                               />
                             </Form.Group>
                           }
-                          
+
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Termination Date</Form.Label>
                             <Form.Control
@@ -926,30 +942,30 @@ const ViewUser = () => {
                               value={moment(formData?.terminationDate).format('YYYY-MM-DD') || ""}
                               onChange={(e) => setFormData(prevState => ({
                                 ...prevState,
-                                terminationData: e.target.value 
+                                terminationData: e.target.value
                               }))}
                             />
                             {
-                              ((formData.termination_reach_me === false  || formData.termination_reach_me === null)) &&
+                              ((formData.termination_reach_me === false || formData.termination_reach_me === null)) &&
                               parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
                               <p style={{ fontSize: "13px", marginTop: "10px" }}>Please fill in <strong style={{ color: '#C2488D', cursor: 'pointer' }}><span onClick={() => setShowConsentDialog(true)}>Termination Consent Form</span></strong> to set termination date</p>
                             }
                             {
                               formData.termination_reach_me === true &&
-                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) && 
+                              parseInt(localStorage.getItem('user_id')) === parseInt(formData.id) &&
                               <div>
                                 <p style={{ fontSize: "14px" }}>You've consented to be terminated on <strong style={{ color: '#C2488D' }}>{moment(formData?.terminationDate).format('DD/MM/YYYY')} <span style={{ cursor: 'pointer' }} onClick={() => setShowConsentDialog(true)}>(edit)</span></strong>.</p>
-                                <img style={{ width: "40px", height: "auto" }}src={`${signatureImage ||formData.user_signature}`} alt="" />
+                                <img style={{ width: "40px", height: "auto" }} src={`${signatureImage || formData.user_signature} `} alt="" />
                               </div>
-                              }
-                              {
-                                (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true && 
-                                <div>
-                                  <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
-                                </div>
-                              }
+                            }
+                            {
+                              (localStorage.getItem('user_role') === 'franchisor_admin' || localStorage.getItem('user_role') === 'franchisee_admin') && formData?.termination_reach_me === true &&
+                              <div>
+                                <p style={{ fontSize: "14px", marginTop: '10px' }}>Consent Form: <strong style={{ color: '#C2488D', cursor: 'pointer' }} onClick={() => setShowUserAgreementDialog(true)}>Click Here!</strong></p>
+                              </div>
+                            }
                           </Form.Group>
-                          
+
                           {/* <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple
@@ -992,7 +1008,7 @@ const ViewUser = () => {
               <Modal.Body>
                 <Row>
                   <p><strong>To whom it may concern,</strong></p>
-                  
+
                   <div className="mt-2">
                     <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of <strong style={{ color: '#C2488D' }}>{moment(formData.terminationDate).format('DD/MM/YYYY')}</strong>.</p>
@@ -1009,12 +1025,12 @@ const ViewUser = () => {
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div className="text-center">
-                <button 
-                  type="button" 
-                  className="btn btn-primary" 
-                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => setShowUserAgreementDialog(false)}>Close</button>
-              </div>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }} onClick={() => setShowUserAgreementDialog(false)}>Close</button>
+                </div>
               </Modal.Footer>
             </Modal>
           }
@@ -1030,58 +1046,58 @@ const ViewUser = () => {
               <Modal.Body>
                 <Row>
                   <p><strong>To whom it may concern,</strong></p>
-                  
+
                   <div className="mt-2">
                     <p style={{ fontSize: "16px" }}>I hereby formally provide notice of my intention to terminate my arrangement with Mona.</p>
                     <p style={{ marginTop: "-10px", fontSize: "16px" }}>I am mindful of the required notice period, and propose a termination date of:</p>
                   </div>
-					
-					<div className="row">
-                  <Form.Group className="col-md-6 mb-3 relative mt-4">
-                    <Form.Label>Termination Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      name="terminationDate"
-                      value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
-                      onChange={(e) => setFormData(prevState => ({
-                        ...prevState,
-                        terminationDate: e.target.value 
-                      }))}
-                    />
-                  </Form.Group>
 
-                  <Form.Group className="col-md-12 mb-6 mt-4">
-                    <div className="form-check btn-checkbox">
-                      <input 
-                        className="form-check-input" 
-                        type="checkbox" 
-                        value="" 
-                        id="flexCheckDefault"
-                        checked={formData?.termination_reach_me ? true : false}
-                        onChange={() => {
-                          setFormData(prevState => ({
-                            ...prevState,
-                            termination_reach_me: !formData?.termination_reach_me 
-                          }));
-                        }} />
-                      <label className="form-check-label" for="flexCheckDefault">
-                        I am happy to be reached if you have any questions.
-                      </label>
-                    </div>
-                  </Form.Group>
-				  </div>
+                  <div className="row">
+                    <Form.Group className="col-md-6 mb-3 relative mt-4">
+                      <Form.Label>Termination Date</Form.Label>
+                      <Form.Control
+                        type="date"
+                        name="terminationDate"
+                        value={moment(formData?.terminationDate).format('YYYY-MM-DD')}
+                        onChange={(e) => setFormData(prevState => ({
+                          ...prevState,
+                          terminationDate: e.target.value
+                        }))}
+                      />
+                    </Form.Group>
+
+                    <Form.Group className="col-md-12 mb-6 mt-4">
+                      <div className="form-check btn-checkbox">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckDefault"
+                          checked={formData?.termination_reach_me ? true : false}
+                          onChange={() => {
+                            setFormData(prevState => ({
+                              ...prevState,
+                              termination_reach_me: !formData?.termination_reach_me
+                            }));
+                          }} />
+                        <label className="form-check-label" for="flexCheckDefault">
+                          I am happy to be reached if you have any questions.
+                        </label>
+                      </div>
+                    </Form.Group>
+                  </div>
                 </Row>
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div className="text-center">
-                <button 
-                  type="button" 
-                  className="btn btn-primary" 
-                  style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => {
-                    handleConsentDialog();
-                  }}>Submit</button>
-              </div>
+                <div className="text-center">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }} onClick={() => {
+                      handleConsentDialog();
+                    }}>Submit</button>
+                </div>
               </Modal.Footer>
             </Modal>
           }
@@ -1106,42 +1122,42 @@ const ViewUser = () => {
               </Modal.Body>
 
               <Modal.Footer style={{ alignItems: 'center', justifyContent: 'center', padding: "45px 60px" }}>
-              <div className="text-center">
-                {/* <button 
+                <div className="text-center">
+                  {/* <button 
                   type="button" 
                   className="btn btn-primary" 
                   style={{ borderRadius: '5px', backgroundColor: '#3E5D58', padding: "8px 18px" }}onClick={() => handleSignatureDialog()}>Submit</button> */}
-              </div>
+                </div>
               </Modal.Footer>
             </Modal>
           }
           {
-                createUserModal && 
-                <Modal
-                show={createUserModal}
-                onHide={() => setCreateUserModal(false)}>
-                    <Modal.Header>
-                        <Modal.Title>
-                        Creating User
-                        </Modal.Title>
-                    </Modal.Header>
+            createUserModal &&
+            <Modal
+              show={createUserModal}
+              onHide={() => setCreateUserModal(false)}>
+              <Modal.Header>
+                <Modal.Title>
+                  Creating User
+                </Modal.Title>
+              </Modal.Header>
 
-                    <Modal.Body>
-                        <div className="create-training-modal" style={{ textAlign: 'center' }}>
-                        <p>User details are being updated!</p>
-                        <p>Please Wait...</p>
-                        </div>
-                    </Modal.Body>
+              <Modal.Body>
+                <div className="create-training-modal" style={{ textAlign: 'center' }}>
+                  <p>User details are being updated!</p>
+                  <p>Please Wait...</p>
+                </div>
+              </Modal.Body>
 
-                    <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                    {
-                        loader === true && <div>
-                        <ReactBootstrap.Spinner animation="border" />
-                        </div>
-                    }
-                    </Modal.Footer>
-                </Modal>
-            }
+              <Modal.Footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {
+                  loader === true && <div>
+                    <ReactBootstrap.Spinner animation="border" />
+                  </div>
+                }
+              </Modal.Footer>
+            </Modal>
+          }
         </section>
       </div>
     </>

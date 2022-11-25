@@ -129,9 +129,8 @@ function OwnFormResponse(props) {
 
     const URL_ = `${BASE_URL}/form/response/own?search=${search}&form_id=${id}&user_id=${localStorage.getItem(
       'user_id'
-    )}&user_role=${localStorage.getItem('user_role')}&from_date=${
-      dateFilter.from_date
-    }&to_date=${dateFilter.to_date}`;
+    )}&user_role=${localStorage.getItem('user_role')}&from_date=${dateFilter.from_date
+      }&to_date=${dateFilter.to_date}`;
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -300,11 +299,13 @@ function OwnFormResponse(props) {
   };
 
   const fetchChildrenForThisEdcuator = async (educatorId) => {
-    let response = await axios.get(
-      `${BASE_URL}/enrollment/get-children-by-educator-id/${educatorId}`
-    );
+    let response = await axios.get(`${BASE_URL}/enrollment/get-children-by-educator-id/${educatorId}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
-    if (response.status === 200 && response.data.status === 'success') {
+    if (response.status === 200 && response.data.status === "success") {
       let { children } = response.data.educator;
       let childrenNames = children.map((child) => child.fullname);
       setEducatorChildren(childrenNames);
@@ -437,7 +438,7 @@ function OwnFormResponse(props) {
                                         src={
                                           item[0]?.filled_user?.profile_photo
                                             ? item[0]?.filled_user
-                                                ?.profile_photo
+                                              ?.profile_photo
                                             : '/img/upload.jpg'
                                         }
                                         alt=""
@@ -451,13 +452,13 @@ function OwnFormResponse(props) {
                                             className={
                                               responseData[index].length - 1 ===
                                                 inner_index ||
-                                              (inner_index > 0 &&
-                                                responseData[index][
-                                                  inner_index - 1
-                                                ]?.filled_user?.fullname?.includes(
-                                                  inner_item?.filled_user
-                                                    ?.fullname
-                                                ))
+                                                (inner_index > 0 &&
+                                                  responseData[index][
+                                                    inner_index - 1
+                                                  ]?.filled_user?.fullname?.includes(
+                                                    inner_item?.filled_user
+                                                      ?.fullname
+                                                  ))
                                                 ? 'responses-header-detail'
                                                 : 'responses-header-detail response-header-left-line'
                                             }
@@ -466,22 +467,22 @@ function OwnFormResponse(props) {
                                               <h5>
                                                 {inner_index > 0
                                                   ? !responseData[index][
-                                                      inner_index - 1
-                                                    ].filled_user?.fullname?.includes(
-                                                      inner_item?.filled_user
-                                                        ?.fullname
-                                                    ) &&
+                                                    inner_index - 1
+                                                  ].filled_user?.fullname?.includes(
                                                     inner_item?.filled_user
                                                       ?.fullname
+                                                  ) &&
+                                                  inner_item?.filled_user
+                                                    ?.fullname
                                                   : inner_item?.filled_user
-                                                      ?.fullname}
+                                                    ?.fullname}
                                               </h5>
 
                                               {item[inner_index].isEditTime !=
                                                 null &&
-                                              moment(
-                                                item[inner_index].isEditTime
-                                              ).format() > moment().format() ? (
+                                                moment(
+                                                  item[inner_index].isEditTime
+                                                ).format() > moment().format() ? (
                                                 <span
                                                   style={{
                                                     fontSize: '12px',
@@ -499,7 +500,7 @@ function OwnFormResponse(props) {
                                                 (formData?.form_type ===
                                                   'editable' ||
                                                   formData?.form_type ===
-                                                    'multi_submission') && (
+                                                  'multi_submission') && (
                                                   <Link
                                                     style={{
                                                       marginLeft: '5px',
@@ -545,13 +546,13 @@ function OwnFormResponse(props) {
                                                         ) === 'guardian'
                                                           ? 'parent'
                                                           : localStorage.getItem(
-                                                              'user_role'
-                                                            )
+                                                            'user_role'
+                                                          )
                                                       )) && (
-                                                      <FontAwesomeIcon
-                                                        icon={faPen}
-                                                      />
-                                                    )}
+                                                        <FontAwesomeIcon
+                                                          icon={faPen}
+                                                        />
+                                                      )}
                                                   </Link>
                                                 )
                                               )}
@@ -560,36 +561,36 @@ function OwnFormResponse(props) {
                                               <span className="text-capitalize">
                                                 {inner_index > 0
                                                   ? !responseData[index][
-                                                      inner_index - 1
-                                                    ]?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ')
-                                                      ?.includes(
-                                                        inner_item?.filled_user?.role
-                                                          .split('_')
-                                                          .join(' ')
-                                                      ) &&
-                                                    inner_item?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ') + ','
+                                                    inner_index - 1
+                                                  ]?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ')
+                                                    ?.includes(
+                                                      inner_item?.filled_user?.role
+                                                        .split('_')
+                                                        .join(' ')
+                                                    ) &&
+                                                  inner_item?.filled_user?.role
+                                                    .split('_')
+                                                    .join(' ') + ','
                                                   : inner_item?.filled_user?.role
-                                                      .split('_')
-                                                      .join(' ') + ','}
+                                                    .split('_')
+                                                    .join(' ') + ','}
                                               </span>{' '}
                                               {inner_index > 0
                                                 ? !responseData[index][
-                                                    inner_index - 1
-                                                  ].filled_user?.franchisee?.franchisee_name?.includes(
-                                                    inner_item?.filled_user
-                                                      ?.franchisee
-                                                      ?.franchisee_name
-                                                  ) &&
+                                                  inner_index - 1
+                                                ].filled_user?.franchisee?.franchisee_name?.includes(
                                                   inner_item?.filled_user
                                                     ?.franchisee
                                                     ?.franchisee_name
+                                                ) &&
+                                                inner_item?.filled_user
+                                                  ?.franchisee
+                                                  ?.franchisee_name
                                                 : inner_item?.filled_user
-                                                    ?.franchisee
-                                                    ?.franchisee_name}
+                                                  ?.franchisee
+                                                  ?.franchisee_name}
                                             </h6>
                                           </div>
                                         );
@@ -714,7 +715,7 @@ function OwnFormResponse(props) {
                                                     Object.keys(
                                                       JSON.parse(item.fields)
                                                     )[inner_index] ===
-                                                      'text_headings'
+                                                    'text_headings'
                                                   ) && (
                                                     <span>
                                                       {inner_index + 1 - count}

@@ -5,7 +5,7 @@ import TopHeader from "../components/TopHeader";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import { BASE_URL } from "../components/App";
-import { useNavigate, useParams  } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from "axios";
 import moment from 'moment';
 
@@ -32,9 +32,14 @@ const AvailableTraining = () => {
 
   const fetchAvailableTrainings = async () => {
     let user_id = localStorage.getItem('user_id');
+    const token = localStorage.getItem('token');
     console.log('USER ID:', user_id)
-    const response = await axios.get(`${BASE_URL}/training/getTraining/${user_id}`);
-    if(response.status === 200 && response.data.status === "success") {
+    const response = await axios.get(`${BASE_URL}/training/getTraining/${user_id}`, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+    if (response.status === 200 && response.data.status === "success") {
       const { all_trainings } = response.data;
       setAvailableTrainingData(all_trainings);
     }
@@ -53,10 +58,10 @@ const AvailableTraining = () => {
           <Container>
             <div className="admin-wrapper">
               <aside className="app-sidebar">
-                <LeftNavbar/>
+                <LeftNavbar />
               </aside>
               <div className="sec-column">
-                <TopHeader/>
+                <TopHeader />
                 <div className="entry-container">
                   <header className="title-head">
                     <h1 className="title-lg">Trainings</h1>
@@ -64,7 +69,7 @@ const AvailableTraining = () => {
                       <div className="extra-btn">
                         <div className="data-search me-3">
                           <label for="search-bar" className="search-label">
-                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value=""/>
+                            <input id="search-bar" type="text" className="form-control" placeholder="Search" value="" />
                           </label>
                         </div>
                         <Dropdown className="filtercol me-3">
@@ -130,7 +135,7 @@ const AvailableTraining = () => {
                         <a href="/new-training" className="btn btn-primary me-3">+ Add New Training</a>
                         <Dropdown>
                           <Dropdown.Toggle id="extrabtn" className="ctaact">
-                            <img src="../img/dot-ico.svg" alt=""/>
+                            <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Item href="#">Export All</Dropdown.Item>
@@ -147,31 +152,31 @@ const AvailableTraining = () => {
                   </div>
                   <div className="training-column">
                     <Row>
-                    {availableTrainingData?.map((item) => {
-                      return(
-                      <Col lg={4} md={6}>
-                        <div className="item mt-3 mb-3">
-                          <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0].thumbnail} alt=""/> <span className="lthumb"><img src="../img/logo-thumb.png" alt=""/></span></a></div>
-                          <div className="fixcol">
-                            <div className="icopic"><img src="../img/traning-audio-ico1.png" alt=""/></div>
-                            <div className="iconame"><a href="/training-detail">{item.id}</a> <span className="time">{moment(item.createdAt).format(
-                                        'MM/DD/YYYY'
-                                      )}</span></div>
-                            <div className="cta-col">
-                              
-                              <Dropdown>
-                                <Dropdown.Toggle variant="transparent" id="ctacol">
-                                  <img src="../img/dot-ico.svg" alt=""/>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
+                      {availableTrainingData?.map((item) => {
+                        return (
+                          <Col lg={4} md={6}>
+                            <div className="item mt-3 mb-3">
+                              <div className="pic"><a href={`/training-detail/${item.id}`}><img src={item.training_files[0].thumbnail} alt="" /> <span className="lthumb"><img src="../img/logo-thumb.png" alt="" /></span></a></div>
+                              <div className="fixcol">
+                                <div className="icopic"><img src="../img/traning-audio-ico1.png" alt="" /></div>
+                                <div className="iconame"><a href="/training-detail">{item.id}</a> <span className="time">{moment(item.createdAt).format(
+                                  'MM/DD/YYYY'
+                                )}</span></div>
+                                <div className="cta-col">
+
+                                  <Dropdown>
+                                    <Dropdown.Toggle variant="transparent" id="ctacol">
+                                      <img src="../img/dot-ico.svg" alt="" />
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#">Delete</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </Col>
-                       );
+                          </Col>
+                        );
                       })}
                     </Row>
                   </div>
