@@ -120,13 +120,13 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
 
   }
 
-  const fetchFranchiseeUsers = async (franchisee_id) => {
+  const fetchFranchiseeUsers = async (franchisee_id , data) => {
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`, {
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${f_id}`,data , {
       headers: {
-        "Authorization": `Bearer ${token}`
-      }
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
     });
     if (response.status === 200 && response.data.status === "success") {
       const { users } = response.data;

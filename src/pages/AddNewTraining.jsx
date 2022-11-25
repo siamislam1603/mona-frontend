@@ -142,8 +142,7 @@ const AddNewTraining = () => {
   const fetchUserRoles = async () => {
     const response = await axios.get(`${BASE_URL}/api/user-role`, {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem('token')
-      }`
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
     });
     if (response.status === 200) {
@@ -169,7 +168,7 @@ const AddNewTraining = () => {
   const createTraining = async (data) => {
     const token = localStorage.getItem('token');
     const response = await axios.post(
-      `${ BASE_URL } / training / addTraining`, data, {
+      `${ BASE_URL }/training/addTraining`, data, {
       headers: {
         "Authorization": "Bearer " + token
       }

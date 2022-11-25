@@ -264,7 +264,11 @@ const ChildEnrollment1 = ({ nextStep, handleFormData }) => {
 
   // FETCHING THE REQUIRED DATA FROM APIs HERE
   const fetchOccupationData = async () => {
-    let response = await axios.get(`${BASE_URL}/api/occupation`);
+    let response = await axios.get(`${BASE_URL}/api/occupation`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    });
 
     if (response.status === 200 && response.data.status === "success") {
       setOccupationData(response.data.occupationData.map(data => ({

@@ -393,8 +393,12 @@ const NewUser = () => {
 
   const fetchCoordinatorData = async (franchisee_id) => {
     console.log('FETCHING COORDINATOR DATA');
-    const response =
-      await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${BASE_URL}/role/franchisee/coordinator/franchiseeID/${franchisee_id}/coordinator`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
     if (response.status === 200 && response.data.status === "success") {
       let { coordinators } = response.data;
       setCoordinatorData(coordinators.map(coordinator => ({
@@ -522,7 +526,11 @@ const NewUser = () => {
   }
 
   const fetchBuinessAssets = async () => {
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`);
+    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem('token')
+      }
+    });
 
     if (response.status === 200 && response.data.status === "success") {
       const { businessAssetList } = response.data;
