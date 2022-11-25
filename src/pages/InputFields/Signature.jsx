@@ -22,7 +22,7 @@ const Signature = (props) => {
           ? 'parent'
           : localStorage.getItem('user_role')
       ) &&
-      props?.field_name?.includes('signature_')
+      props?.field_label?.includes('Signature ')
     ) {
       setSignatureFlag(false);
     } else {
