@@ -983,7 +983,7 @@ const AddFormField = (props) => {
                                     type="text"
                                     name="field_label"
                                     disabled={
-                                      updateFlag[
+                                      (updateFlag[
                                         form[index]?.field_name ||
                                           form[index]['field_label']
                                             ?.split(' ')
@@ -993,7 +993,12 @@ const AddFormField = (props) => {
                                                 d.slice(1)
                                             )
                                             ?.join('_')
-                                      ] && newFieldAddIndex !== index
+                                      ] &&
+                                        newFieldAddIndex !== index) ||
+                                      (item?.field_label?.includes(
+                                        'Signature '
+                                      ) &&
+                                        item?.field_type === 'signature')
                                     }
                                     id={'field_label' + index}
                                     maxLength={255}
@@ -1043,7 +1048,11 @@ const AddFormField = (props) => {
                                         newFieldAddIndex !== index) ||
                                       fieldData?.includes(
                                         form[index]?.field_label
-                                      )
+                                      ) ||
+                                      (item?.field_label?.includes(
+                                        'Signature '
+                                      ) &&
+                                        item?.field_type === 'signature')
                                     }
                                   >
                                     <option
