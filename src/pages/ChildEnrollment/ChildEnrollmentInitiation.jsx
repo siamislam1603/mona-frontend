@@ -88,7 +88,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
       let { user } = response.data;
       let { franchisee_id } = user;
 
-      response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData }, {
+      response = await axios.post(`${BASE_URL}/enrollment/child`, { ...formOneChildData },{}, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -415,7 +415,7 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                   isMulti
                                   isDisabled={formOneChildData?.franchisee_id === null}
                                   ref={educator}
-                                  isDisabled={formOneChildData?.franchisee_id === null}
+                                  // isDisabled={formOneChildData?.fraSnchisee_id === null}
                                   options={educatorData}
                                   onChange={(e) => {
                                     setFormOneChildData((prevState) => ({

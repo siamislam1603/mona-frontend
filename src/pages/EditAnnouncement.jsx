@@ -215,7 +215,7 @@ const [docFileError, setDocFileError] = useState(null);
   }
   const UpdateAnnouncement = async(data) =>{
     // data.append("")
-    const theres = await  axios.post('https://httpbin.org/anything', data);
+    const theres = await  axios.post('https://httpbin.org/anything', data );
         try {
           const token = localStorage.getItem('token');
           setTheMessage("Uploading The Documents")

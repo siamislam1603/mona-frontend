@@ -219,7 +219,7 @@ const AddNewTraining = () => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${ BASE_URL }/auth/users/franchisees?franchiseeId=${ f_id }`, {
+    const response = await axios.post(`${ BASE_URL }/auth/users/franchisees?franchiseeId=${ f_id }`,{}, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
