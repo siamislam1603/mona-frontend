@@ -114,26 +114,29 @@ const TopHeader = ({
 
   const fetchNotificationList = async () => {
     let userID = localStorage.getItem('user_id');
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/notification/unread/${userID}`,
-        {
-          headers: {
-            Authorization: 'Bearer ' + token,
-          },
+    if (token) {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/notification/unread/${userID}`,
+          {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          }
+        );
+        if (response.status === 200 && response.data.status === 'success') {
+          setTopHeaderNotification(response.data.notification.rows);
+          setTopHeaderNotificationCount(response.data.notification.count);
+          setTopHeaderNotificationCountClass(response.data.notification.count);
         }
-      );
-      if (response.status === 200 && response.data.status === 'success') {
-        setTopHeaderNotification(response.data.notification.rows);
-        setTopHeaderNotificationCount(response.data.notification.count);
-        setTopHeaderNotificationCountClass(response.data.notification.count);
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        // console.log("The code is 404")
-        setTopHeaderNotification([]);
-      }
+      } catch (error) {
+        if (error.response.status === 404) {
+          // console.log("The code is 404")
+          setTopHeaderNotification([]);
+        }
+      } 
     }
+
   };
 
   // const handleLinkClick = notificationId => {

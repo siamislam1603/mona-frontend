@@ -9,63 +9,69 @@ import { faCircle } from '@fortawesome/free-solid-svg-icons';
 const LeftNavbar = () => {
   const [permissionList, setPermissionList] = useState();
   const [userDashboardLink, setuserDashboardLink] = useState();
-  const [alert,setAlert]= useState("")
+  const [alert, setAlert] = useState("")
 
-  const AnnouncementAlert = async() =>{
+  const AnnouncementAlert = async () => {
 
     console.log("ANNOuncement alert")
     let token = localStorage.getItem('token');
     let userID = localStorage.getItem('user_id')
     let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
-    const response = await axios.get(Url, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if(response.status === 200 && response.data.message==="Announcements is Active"){
-        
-        localStorage.setItem("alert_announcement","*")
-        setAlert(localStorage.getItem("alert_announcement"))
+    if (token) {
+      const response = await axios.get(Url, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      if (response.status === 200 && response.data.message === "Announcements is Active") {
 
+        localStorage.setItem("alert_announcement", "*")
+        setAlert(localStorage.getItem("alert_announcement"))
+      }
+      console.log("ANNOuncement alert", response)
     }
-    console.log("ANNOuncement alert",response)
+
+
 
   }
-  const AnnouncementAlertset = async() =>{
+  const AnnouncementAlertset = async () => {
     console.log("ANnocunement alert set")
     let token = localStorage.getItem('token');
     let userID = localStorage.getItem('user_id')
     let Url = `${BASE_URL}/announcement/announcementStatus/${userID}`
-    const response = await axios.put(Url,{ }, {
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    });
-    if(response.status === 200 && response.data.status==="success"){
+    if (token) {
+      const response = await axios.put(Url, {}, {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+      if (response.status === 200 && response.data.status === "success") {
         // setAlert(null)
         localStorage.removeItem("alert_announcement")
         setAlert(localStorage.getItem("alert_announcement"))
 
 
-        console.log("localStorage",localStorage.getItem("alert_announcement"))
+        console.log("localStorage", localStorage.getItem("alert_announcement"))
+      }
+
+      console.log("ANNOuncement set alert", response)
     }
-    
-    console.log("ANNOuncement set alert",response)
+
   }
   const fetchPermissionList = async () => {
-    
+
     let menu_list = JSON.parse(localStorage.getItem('menu_list'));
 
-    if(localStorage.getItem('user_role') !== 'guardian') {
+    if (localStorage.getItem('user_role') !== 'guardian') {
       menu_list = menu_list.filter(d => d.controller.controller_label !== 'Child Enrolment');
     }
 
-    if(localStorage.getItem('user_role') === 'guardian') {
+    if (localStorage.getItem('user_role') === 'guardian') {
       menu_list = menu_list.filter(d => d.controller.controller_label !== 'User Management');
     }
 
     menu_list = menu_list.map(d => {
-      if(d.controller.controller_label === 'Child Enrolment') {
+      if (d.controller.controller_label === 'Child Enrolment') {
         return {
           controller: {
             id: d.controller.id,
@@ -83,14 +89,14 @@ const LeftNavbar = () => {
       return d;
     });
 
-    let sortedData = menu_list.sort(function(a,b){ 
-        // here a , b is whole object, you can access its property   //convert both to lowercase      
-        let x = a.controller.sequence;      
-        let y = b.controller.sequence;   //compare the word which is comes first      
-        if(x>y){return 1;}      
-        if(x<y){return -1;}
-        return 0;
-      });
+    let sortedData = menu_list.sort(function (a, b) {
+      // here a , b is whole object, you can access its property   //convert both to lowercase      
+      let x = a.controller.sequence;
+      let y = b.controller.sequence;   //compare the word which is comes first      
+      if (x > y) { return 1; }
+      if (x < y) { return -1; }
+      return 0;
+    });
 
 
     console.log('MENU LIST:', sortedData);
@@ -132,8 +138,8 @@ const LeftNavbar = () => {
       user_dashboar_link = 'educator-dashboard'
     else if (localStorage.getItem('user_role') === 'guardian')
       user_dashboar_link = 'parents-dashboard'
-    else{
-      user_dashboar_link= '/'
+    else {
+      user_dashboar_link = '/'
     }
     setuserDashboardLink(user_dashboar_link)
 
@@ -141,18 +147,18 @@ const LeftNavbar = () => {
     AnnouncementAlert()
 
   }, []);
-  useEffect(() =>{
+  useEffect(() => {
 
     // if(localStorage.getItem("alert_announcement") === "null"){
     // console.log("ANNouncement alert insidne ueffect caall",localStorage.getItem("alert_announcement"))
 
     //   setAlert(null)
     // }
-    if(window.location.href.split("/").pop() === "announcements"){
-      console.log("Window inside announcement" ,window.location.href.split("/").pop())
-        AnnouncementAlertset()
+    if (window.location.href.split("/").pop() === "announcements") {
+      console.log("Window inside announcement", window.location.href.split("/").pop())
+      AnnouncementAlertset()
     }
-  },[window.location.href])
+  }, [window.location.href])
 
   return (
     <>
@@ -167,32 +173,32 @@ const LeftNavbar = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Nav className="mr-auto w-100">
-          {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
-          {/* <FontAwesomeIcon icon="fa-solid fa-circle-small" /> */}
+            {/* <Nav.Link href={`/${FRONT_BASE_URL}/${userDashboardLink}`}><span><i className="ico overview-ico">&nbsp;</i> Overview</span></Nav.Link> */}
+            {/* <FontAwesomeIcon icon="fa-solid fa-circle-small" /> */}
 
 
             {permissionList && permissionList.map(permission => {
               return (
                 <React.Fragment key={permission.controller_id}>
-                  <LinkContainer to={`/${permission.controller.controller_name=='overview'?userDashboardLink:permission.controller.menu_link}`}>
+                  <LinkContainer to={`/${permission.controller.controller_name == 'overview' ? userDashboardLink : permission.controller.menu_link}`}>
                     <Nav.Link>
                       <span>
                         <i className={`ico ${permission.controller.controller_icon}`}>
                           &nbsp;
                         </i>
                         {permission.controller.controller_label === "Announcements" ?
-                      (  <div style={{position:"relative", paddingRight: "12px"}} onClick={
-                          AnnouncementAlertset
-                      }>
-                          {permission.controller.controller_label }  <span style={{color:"red" ,position: "absolute",right: "0", top: "0"}}> 
-                            {alert === "*" &&       <FontAwesomeIcon icon={faCircle} style={{fontSize:"7px"}} />
- }
-                           </span>
-                         
-                        </div>):(
-                          permission.controller.controller_label 
-                        )
-                      } 
+                          (<div style={{ position: "relative", paddingRight: "12px" }} onClick={
+                            AnnouncementAlertset
+                          }>
+                            {permission.controller.controller_label}  <span style={{ color: "red", position: "absolute", right: "0", top: "0" }}>
+                              {alert === "*" && <FontAwesomeIcon icon={faCircle} style={{ fontSize: "7px" }} />
+                              }
+                            </span>
+
+                          </div>) : (
+                            permission.controller.controller_label
+                          )
+                        }
                       </span>
                     </Nav.Link>
                   </LinkContainer>
