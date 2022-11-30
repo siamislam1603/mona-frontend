@@ -16,8 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { logoutUser } from '../helpers/logout';
 // import { FullLoader } from "./Loader";
 
-let temp = () => {};
-let Child = () => {};
+let temp = () => { };
+let Child = () => { };
 const TopHeader = ({
   setSelectedFranchisee = temp,
   setChild = Child,
@@ -114,26 +114,29 @@ const TopHeader = ({
 
   const fetchNotificationList = async () => {
     let userID = localStorage.getItem('user_id');
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/notification/unread/${userID}`,
-        {
-          headers: {
-            Authorization: 'Bearer ' + token,
-          },
+    if (token) {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/notification/unread/${userID}`,
+          {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          }
+        );
+        if (response.status === 200 && response.data.status === 'success') {
+          setTopHeaderNotification(response.data.notification.rows);
+          setTopHeaderNotificationCount(response.data.notification.count);
+          setTopHeaderNotificationCountClass(response.data.notification.count);
         }
-      );
-      if (response.status === 200 && response.data.status === 'success') {
-        setTopHeaderNotification(response.data.notification.rows);
-        setTopHeaderNotificationCount(response.data.notification.count);
-        setTopHeaderNotificationCountClass(response.data.notification.count);
-      }
-    } catch (error) {
-      if (error.response.status === 404) {
-        // console.log("The code is 404")
-        setTopHeaderNotification([]);
-      }
+      } catch (error) {
+        if (error.response.status === 404) {
+          // console.log("The code is 404")
+          setTopHeaderNotification([]);
+        }
+      } 
     }
+
   };
 
   // const handleLinkClick = notificationId => {
@@ -313,9 +316,8 @@ const TopHeader = ({
   const popover = (
     <Popover
       id="popover-basic"
-      className={`notificationpopup ${
-        topHeaderNotificationMarkAllRead ? 'marked-read' : ''
-      } ${topHeaderNotificationCountClass ? '' : 'no-notification'}`}
+      className={`notificationpopup ${topHeaderNotificationMarkAllRead ? 'marked-read' : ''
+        } ${topHeaderNotificationCountClass ? '' : 'no-notification'}`}
     >
       {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
       <Popover.Header as="h3">
@@ -400,30 +402,32 @@ const TopHeader = ({
   );
 
   const fetchNotificationData = async () => {
-    const response = await axios.get(
-      `${BASE_URL}/notification/data/${notifType}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      }
-    );
-
-    if (response.status === 200 && response.data.status === 'success') {
-      let { data } = response.data;
-      let filteredData = data.map((d) => ({
-        id: d.id,
-        title: d.title,
-        created_for: d.created_for,
-      }));
-      filteredData = filteredData.filter(
-        (d) =>
-          parseInt(d.created_for) === parseInt(localStorage.getItem('user_id'))
+    if (localStorage.getItem('token')) {
+      const response = await axios.get(
+        `${BASE_URL}/notification/data/${notifType}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
       );
-      filteredData = filteredData.slice(0, 5);
+      if (response.status === 200 && response.data.status === 'success') {
+        let { data } = response.data;
+        let filteredData = data.map((d) => ({
+          id: d.id,
+          title: d.title,
+          created_for: d.created_for,
+        }));
+        filteredData = filteredData.filter(
+          (d) =>
+            parseInt(d.created_for) === parseInt(localStorage.getItem('user_id'))
+        );
+        filteredData = filteredData.slice(0, 5);
 
-      setNotifData(filteredData);
+        setNotifData(filteredData);
+      }
     }
+
   };
   // const handleSearch = () =>{
   //   console.log("HANDLE SEARCH")
@@ -798,25 +802,25 @@ const TopHeader = ({
                     <span className="user-name">
                       {localStorage.getItem('user_name')
                         ? localStorage
-                            .getItem('user_name')
-                            .split(' ')
-                            .map(
-                              (data) =>
-                                data.charAt(0).toUpperCase() + data.slice(1)
-                            )
-                            .join(' ')
+                          .getItem('user_name')
+                          .split(' ')
+                          .map(
+                            (data) =>
+                              data.charAt(0).toUpperCase() + data.slice(1)
+                          )
+                          .join(' ')
                         : ''}
 
                       <small>
                         {localStorage.getItem('user_role')
                           ? localStorage
-                              .getItem('user_role')
-                              .split('_')
-                              .map(
-                                (data) =>
-                                  data.charAt(0).toUpperCase() + data.slice(1)
-                              )
-                              .join(' ')
+                            .getItem('user_role')
+                            .split('_')
+                            .map(
+                              (data) =>
+                                data.charAt(0).toUpperCase() + data.slice(1)
+                            )
+                            .join(' ')
                           : ''}
                       </small>
                     </span>

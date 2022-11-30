@@ -95,9 +95,9 @@ const EditUser = () => {
   const [fileDeleteMessage, setFileDeleteMessage] = useState(null);
 
   // FETCHES THE DATA OF USER FOR EDITING
-  const fetchEditUserData = async () => {
+  const fetchEditUserData = async (data) => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+    const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, data ,{
       headers: {
         "Authorization": `Bearer ${token}`
       }

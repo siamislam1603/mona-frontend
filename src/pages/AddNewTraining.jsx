@@ -142,8 +142,7 @@ const AddNewTraining = () => {
   const fetchUserRoles = async () => {
     const response = await axios.get(`${BASE_URL}/api/user-role`, {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem('token')
-      }`
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
     });
     if (response.status === 200) {
@@ -220,7 +219,7 @@ const AddNewTraining = () => {
   const fetchFranchiseeUsers = async (franchisee_id) => {
 
     let f_id = localStorage.getItem('user_role') === 'franchisor_admin' ? franchisee_id : selectedFranchisee;
-    const response = await axios.post(`${ BASE_URL }/auth/users/franchisees?franchiseeId=${ f_id }`, {
+    const response = await axios.post(`${ BASE_URL }/auth/users/franchisees?franchiseeId=${ f_id }`,{}, {
       headers: {
         "Authorization": `Bearer ${localStorage.getItem('token')}`
       }

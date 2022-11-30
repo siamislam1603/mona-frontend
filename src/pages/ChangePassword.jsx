@@ -75,8 +75,7 @@ const ChangePassword = () => {
   const fetchUserRoles = async () => {
     const response = await axios.get(`${BASE_URL}/api/user-role`, {
       headers: {
-        "Authorization": `Bearer ${localStorage.getItem('token')
-          }`
+        "Authorization": `Bearer ${localStorage.getItem('token')}`
       }
     });
     if (response.status === 200) {

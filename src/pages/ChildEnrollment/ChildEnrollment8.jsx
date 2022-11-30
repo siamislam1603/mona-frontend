@@ -58,7 +58,7 @@ const ChildEnrollment8 = ({ nextStep, handleFormData, prevStep }) => {
   // CREATING AN EMPTY RECORD IF NOT ALREADY EXISTS
   const createEmptyRecord = async () => {
     let user_id = localStorage.getItem('user_id');
-    const response = await axios.post(`${BASE_URL}/enrollment/office-use-only/empty-record/${user_id}`, {
+    const response = await axios.post(`${BASE_URL}/enrollment/office-use-only/empty-record/${user_id}`,{}, {
       headers: {
         "Authorization": "Bearer " + localStorage.getItem('token')
       }

@@ -194,13 +194,13 @@ const EditTraining = () => {
   };
 
   // FUNCTION TO FETCH USERS OF A PARTICULAR FRANCHISEE
-  const fetchFranchiseeUsers = async (franchisee_id) => {
-    console.log('FRANCHISEE ID>>>>>>>>>>>>>>>>>>>>>', franchisee_id);
+  const fetchFranchiseeUsers = async (franchisee_id, data) => {
     // let f = franchisee_id[0] === 'all' ? "" : [franchisee_id];
-    const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`, {
+
+
+    const response = await axios.post(`${BASE_URL}/auth/users/franchisees?franchiseeId=${franchisee_id}`, data, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        'Authorization': `Basic ${localStorage.getItem('token')}`
       }
     });
     if (response.status === 200 && response.data.status === "success") {
