@@ -25,6 +25,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { FullLoader } from '../../components/Loader';
 
@@ -33,6 +34,8 @@ function ViewFormBuilder(props) {
   const [viewResponseFlag, setViewResponseFlag] = useState(false);
   const [formData, setFormData] = useState([]);
   const [Index, setIndex] = useState(0);
+  const [educatorIDs, setEducatorIDs] = useState(null);
+  const [educatorChildren, setEducatorChildren] = useState(null);
   const [innerIndex, setInnerIndex] = useState(0);
   const [MeFormData, setMeFormData] = useState([]);
   const [meformDataStatus, setMeformDataStatus] = useState(false);
@@ -225,17 +228,38 @@ function ViewFormBuilder(props) {
       body: JSON.stringify(seenData),
       redirect: 'follow',
     };
+  };
 
-    // fetch(`${BASE_URL}/form/response/seen`, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((result) => console.log(result?.message))
-    //   .catch((error) => console.log('error', error));
+  const fetchChildrenForThisEdcuator = async (educatorId) => {
+    let response = await axios.get(
+      `${BASE_URL}/enrollment/get-children-by-educator-id/${educatorId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200 && response.data.status === 'success') {
+      let { children } = response.data.educator;
+      let childIds = children.map((child) => child.id);
+      let childrenNames = children.map((child) => child.fullname);
+      setEducatorChildren(childrenNames);
+      setEducatorIDs(childIds);
+    }
   };
 
   useEffect(() => {
     if (localStorage.getItem('form_error')) {
       toast.error(localStorage.getItem('form_error'));
       localStorage.removeItem('form_error');
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem('user_role') === 'educator') {
+      let userId = localStorage.getItem('user_id');
+      fetchChildrenForThisEdcuator(userId);
     }
   }, []);
 
@@ -498,7 +522,7 @@ function ViewFormBuilder(props) {
                                         let formPermissions =
                                           inner_item?.form_permissions || [];
                                         let fieldPermission = [];
-                                        inner_item?.form_fields.map(
+                                        inner_item?.form_fields?.map(
                                           (fields) => {
                                             fields
                                               ?.form_field_permissions[0] !==
@@ -829,7 +853,7 @@ function ViewFormBuilder(props) {
                                     {item?.forms?.map(
                                       (inner_item, inner_index) => {
                                         let fieldPermission = [];
-                                        inner_item?.form_fields.map(
+                                        inner_item?.form_fields?.map(
                                           (fields) => {
                                             fields
                                               ?.form_field_permissions[0] !==
@@ -1899,7 +1923,86 @@ function ViewFormBuilder(props) {
                 ? MeFormData[Index]?.forms &&
                   MeFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item) => {
-                      return (
+                      return localStorage.getItem('user_role') ===
+                        'educator' ? (
+                        educatorIDs.includes(parseInt(item[0]?.behalf_of)) && (
+                          <div className="user_box">
+                            <div className="user_name">
+                              <div className="user_profile">
+                                <img
+                                  src={
+                                    item[0]?.user?.profile_photo
+                                      ? item[0]?.user?.profile_photo
+                                      : '../img/user_img.png'
+                                  }
+                                  alt=""
+                                />
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false &&
+                                    'bold-user-info'
+                                  }
+                                >
+                                  {item[0]?.user?.fullname}
+                                </h4>
+                              </div>
+                            </div>
+                            <div className="user_role">
+                              <div className="user_detail">
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false
+                                      ? 'bold-user-info text-capitalize'
+                                      : 'text-capitalize'
+                                  }
+                                >
+                                  {item[0]?.user?.role.split('_').join(' ')}
+                                </h4>
+                              </div>
+                            </div>
+                            <div className="date">
+                              <div className="user_detail">
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false &&
+                                    'bold-user-info'
+                                  }
+                                >
+                                  {moment(item[0]?.createdAt).format(
+                                    'DD/MM/YYYY'
+                                  )}{' '}
+                                  -{' '}
+                                  {item[0]?.createdAt
+                                    .split('T')[1]
+                                    .split('.')[0]
+                                    .split(':', 2)
+                                    .join(':')}{' '}
+                                  Hrs
+                                </h4>
+                                <button
+                                  onClick={() => {
+                                    navigate(
+                                      `/form/response/${item[0]?.form_id}`,
+                                      {
+                                        state: {
+                                          id: MeFormData[Index]?.forms[
+                                            innerIndex
+                                          ]?.id,
+                                          form_name:
+                                            MeFormData[Index]?.forms[innerIndex]
+                                              ?.form_name,
+                                        },
+                                      }
+                                    );
+                                  }}
+                                >
+                                  View Response
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ) : (
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">
@@ -1980,7 +2083,122 @@ function ViewFormBuilder(props) {
                 : OthersFormData[Index]?.forms &&
                   OthersFormData[Index]?.forms[innerIndex]?.form_data.map(
                     (item, index) => {
-                      return (
+                      return localStorage.getItem('user_role') ===
+                        'educator' ? (
+                        educatorIDs.includes(parseInt(item[0]?.behalf_of)) && (
+                          <div className="user_box">
+                            <div className="user_name">
+                              <div className="user_profile">
+                                <img
+                                  src={
+                                    item[0]?.user?.profile_photo
+                                      ? item[0]?.user?.profile_photo
+                                      : '../img/user_img.png'
+                                  }
+                                  alt=""
+                                />
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false &&
+                                    'bold-user-info'
+                                  }
+                                >
+                                  {item[0]?.user?.fullname}
+                                </h4>
+                              </div>
+                            </div>
+                            <div className="user_role">
+                              <div className="user_detail">
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false
+                                      ? 'bold-user-info text-capitalize'
+                                      : 'text-capitalize'
+                                  }
+                                >
+                                  {item[0]?.user?.role.split('_').join(' ')}
+                                </h4>
+                              </div>
+                            </div>
+                            <div className="date">
+                              <div className="user_detail">
+                                <h4
+                                  className={
+                                    item[0]?.seen_flag === false &&
+                                    'bold-user-info'
+                                  }
+                                >
+                                  {moment(item[0]?.createdAt)
+                                    .utcOffset('+11:00')
+                                    .format('DD/MM/YYYY')}{' '}
+                                  -{' '}
+                                  {item[0]?.createdAt
+                                    .split('T')[1]
+                                    .split('.')[0]
+                                    .split(':', 2)
+                                    .join(':')}{' '}
+                                  Hrs
+                                </h4>
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      OthersFormData[Index]?.forms[innerIndex]
+                                        ?.form_permissions[0]
+                                        ?.signatories_role ||
+                                      [].includes(
+                                        localStorage.getItem('user_id')
+                                      ) ||
+                                      OthersFormData[Index]?.forms[innerIndex]
+                                        ?.form_permissions[0]
+                                        ?.signatories_role ||
+                                      [].includes(
+                                        localStorage.getItem('user_role') ===
+                                          'guardian'
+                                          ? 'parent'
+                                          : localStorage.getItem('user_role')
+                                      )
+                                    ) {
+                                      navigate(
+                                        `/form/response/${item[0]?.form_id}`,
+                                        {
+                                          state: {
+                                            id: OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.id,
+                                            form_name:
+                                              OthersFormData[Index]?.forms[
+                                                innerIndex
+                                              ]?.form_name,
+                                            signature_access: true,
+                                          },
+                                        }
+                                      );
+                                    } else {
+                                      navigate(
+                                        `/form/response/${item[0]?.form_id}`,
+                                        {
+                                          state: {
+                                            id: OthersFormData[Index]?.forms[
+                                              innerIndex
+                                            ]?.id,
+                                            form_name:
+                                              OthersFormData[Index]?.forms[
+                                                innerIndex
+                                              ]?.form_name,
+                                            signature_access: false,
+                                          },
+                                        }
+                                      );
+                                    }
+                                  }}
+                                >
+                                  View Response
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      ) : (
                         <div className="user_box">
                           <div className="user_name">
                             <div className="user_profile">

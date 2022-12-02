@@ -176,14 +176,10 @@ function OwnFormResponse(props) {
         }
 
         if (result) {
-          // console.log('Result>>>>>>>>>>>>>>>>>>>>', result);
           setfullLoaderStatus(false);
         }
         if (result?.result.length > 0) {
           result?.result.map((item, index) => {
-            // if(item['signature_button'] === true) {
-
-            // }
             item['signature_button'] = true;
 
             result?.result[index]?.map((inner_item, inner_index) => {
@@ -330,8 +326,6 @@ function OwnFormResponse(props) {
       fetchChildrenForThisEdcuator(userId);
     }
   }, []);
-  educatorChildren &&
-    console.log('EDUCATOR CHILDREN>>>>>>>>>>>>>>>>>', educatorChildren);
   return (
     <>
       <div id="main">
@@ -402,9 +396,6 @@ function OwnFormResponse(props) {
                           type="submit"
                           className="mt-4"
                           onClick={() => {
-                            console.log(
-                              'GETTING FILTERED RESPONSE FROM SERVER!'
-                            );
                             getResponse('');
                           }}
                         >
@@ -684,14 +675,6 @@ function OwnFormResponse(props) {
                                           {Object.keys(
                                             JSON.parse(item.fields)
                                           ).map((inner_item, inner_index) => {
-                                            // if (item.fields) {
-                                            //   let a = JSON.parse(item?.fields);
-
-                                            //   console.log(a);
-                                            //   // a.filter((item) => {
-                                            //   //   console.log(item.signature_);
-                                            //   // });
-                                            // }
                                             {
                                               {
                                                 (Object.keys(
@@ -838,11 +821,6 @@ function OwnFormResponse(props) {
                                                     '.jpeg'
                                                   ) ? (
                                                     <>
-                                                      {/* {console.log('INNER INDEX:', inner_index)}
-                                                  {console.log('ITEM FIELDS:', item.fields)}
-                                                  {console.log('>>>>><<<<<', Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index])} */}
                                                       <img
                                                         style={{
                                                           height: '40px',
@@ -1000,7 +978,9 @@ function OwnFormResponse(props) {
                           )
                         ) : localStorage.getItem('user_role') === 'educator' ? (
                           educatorChildren?.includes(item[0].user.fullname) &&
-                          item[0]?.filled_user?.role !== 'educator' && (
+                          (item[0]?.filled_user?.role !== 'educator' ||
+                            parseInt(item[0].filled_user?.id) ===
+                              parseInt(localStorage.getItem('user_id'))) && (
                             <Accordion.Item key={index} eventKey={index}>
                               <Accordion.Header>
                                 <div className="responses-header-row">
@@ -1247,14 +1227,6 @@ function OwnFormResponse(props) {
                                           {Object.keys(
                                             JSON.parse(item.fields)
                                           ).map((inner_item, inner_index) => {
-                                            // if (item.fields) {
-                                            //   let a = JSON.parse(item?.fields);
-
-                                            //   console.log(a);
-                                            //   // a.filter((item) => {
-                                            //   //   console.log(item.signature_);
-                                            //   // });
-                                            // }
                                             {
                                               {
                                                 (Object.keys(
@@ -1403,11 +1375,6 @@ function OwnFormResponse(props) {
                                                     '.jpeg'
                                                   ) ? (
                                                     <>
-                                                      {/* {console.log('INNER INDEX:', inner_index)}
-                                                  {console.log('ITEM FIELDS:', item.fields)}
-                                                  {console.log('>>>>><<<<<', Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index])} */}
                                                       <img
                                                         style={{
                                                           height: '40px',
@@ -1806,14 +1773,6 @@ function OwnFormResponse(props) {
                                         {Object.keys(
                                           JSON.parse(item.fields)
                                         ).map((inner_item, inner_index) => {
-                                          // if (item.fields) {
-                                          //   let a = JSON.parse(item?.fields);
-
-                                          //   console.log(a);
-                                          //   // a.filter((item) => {
-                                          //   //   console.log(item.signature_);
-                                          //   // });
-                                          // }
                                           {
                                             {
                                               (Object.keys(
@@ -1951,11 +1910,6 @@ function OwnFormResponse(props) {
                                                   '.jpeg'
                                                 ) ? (
                                                   <>
-                                                    {/* {console.log('INNER INDEX:', inner_index)}
-                                                  {console.log('ITEM FIELDS:', item.fields)}
-                                                  {console.log('>>>>><<<<<', Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index])} */}
                                                     <img
                                                       style={{
                                                         height: '40px',
