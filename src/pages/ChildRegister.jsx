@@ -4,6 +4,8 @@ import { Col, Container, Form, Row, Button } from "react-bootstrap";
 import { BASE_URL } from "../components/App";
 
 const ChildRegister = () => {
+
+  
   const [form, setForm] = useState({ school: "Y", sex: "M", physical: "Y", service: "Y" });
   const [errors, setErrors] = useState({});
 
