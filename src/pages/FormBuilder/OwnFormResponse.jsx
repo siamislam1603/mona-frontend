@@ -37,7 +37,7 @@ function OwnFormResponse(props) {
   const [signatureModel, setSignatureModel] = useState(false);
   const [indexToHide, setIndexToHide] = useState(-1);
   const [fillAccessUsers, setFillAccessUsers] = useState([]);
-  const [educatorChildren, setEducatorChildren] = useState(null);
+  const [educatorIDs, setEducatorIDs] = useState([]);
   const [Index, setIndex] = useState(0);
   const [childrenData, setChildrenData] = useState([]);
   const [hideFlag, setHideFlag] = useState(false);
@@ -112,9 +112,13 @@ function OwnFormResponse(props) {
 
     if (response?.status === 200 && response?.data?.status === 'success') {
       const { parentData } = response?.data;
-      let { children } = parentData;
-      let childrenData = children?.map((data) => data?.fullname);
-      setChildrenData(childrenData);
+      if (parentData) {
+        let { children } = parentData;
+        let childrenData = children?.map((data) => data?.fullname);
+        setChildrenData(childrenData);
+      } else {
+        setChildrenData([]);
+      }
     }
   };
 
@@ -311,8 +315,8 @@ function OwnFormResponse(props) {
 
     if (response.status === 200 && response.data.status === 'success') {
       let { children } = response.data.educator;
-      let childrenNames = children.map((child) => child.fullname);
-      setEducatorChildren(childrenNames);
+      let childIds = children.map((child) => child.id);
+      setEducatorIDs(childIds);
     }
   };
 
@@ -326,6 +330,7 @@ function OwnFormResponse(props) {
       fetchChildrenForThisEdcuator(userId);
     }
   }, []);
+
   return (
     <>
       <div id="main">
@@ -977,7 +982,7 @@ function OwnFormResponse(props) {
                             </Accordion.Item>
                           )
                         ) : localStorage.getItem('user_role') === 'educator' ? (
-                          educatorChildren?.includes(item[0].user.fullname) &&
+                          educatorIDs?.includes(parseInt(item[0]?.behalf_of)) &&
                           (item[0]?.filled_user?.role !== 'educator' ||
                             parseInt(item[0].filled_user?.id) ===
                               parseInt(localStorage.getItem('user_id'))) && (
