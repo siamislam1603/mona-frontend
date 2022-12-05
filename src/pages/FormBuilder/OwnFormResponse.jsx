@@ -168,10 +168,15 @@ function OwnFormResponse(props) {
           });
           setFormFieldPermission(arr);
         }
-        let { fill_access_users } = result.fillPermission;
 
-        let isExist = fill_access_users?.includes('parent');
-        let tempUsers = [];
+        let { fill_access_users } = result?.fillPermission;
+
+        let isExist = null,
+          tempUsers = [];
+        if (typeof fill_access_users !== 'undefined') {
+          isExist = fill_access_users?.includes('parent');
+        }
+
         if (isExist) {
           tempUsers = fill_access_users.filter((d) => d !== 'parent');
           setFillAccessUsers([...tempUsers, 'guardian']);
