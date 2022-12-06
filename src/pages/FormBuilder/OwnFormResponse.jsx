@@ -987,7 +987,11 @@ function OwnFormResponse(props) {
                             </Accordion.Item>
                           )
                         ) : localStorage.getItem('user_role') === 'educator' ? (
-                          educatorIDs?.includes(parseInt(item[0]?.behalf_of)) &&
+                          (educatorIDs?.includes(
+                            parseInt(item[0]?.behalf_of)
+                          ) ||
+                            parseInt(item[0]?.behalf_of) ===
+                              parseInt(localStorage.getItem('user_id'))) &&
                           (item[0]?.filled_user?.role !== 'educator' ||
                             parseInt(item[0].filled_user?.id) ===
                               parseInt(localStorage.getItem('user_id'))) && (
