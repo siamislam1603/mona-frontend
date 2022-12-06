@@ -1513,6 +1513,10 @@ function ViewFormBuilder(props) {
                                         <Row key={index + '10'}>
                                           {item?.forms?.map(
                                             (inner_item, inner_index) => {
+                                              // console.log(
+                                              //   'INNER ITEM >>>>>>>>>>>>>>>',
+                                              //   inner_item
+                                              // );
                                               if (
                                                 inner_item?.created_by !==
                                                   parseInt(
@@ -2085,7 +2089,9 @@ function ViewFormBuilder(props) {
                     (item, index) => {
                       return localStorage.getItem('user_role') ===
                         'educator' ? (
-                        educatorIDs?.includes(parseInt(item[0]?.behalf_of)) && (
+                        (educatorIDs?.includes(parseInt(item[0]?.behalf_of)) ||
+                          parseInt(item[0]?.behalf_of) ===
+                            parseInt(localStorage.getItem('user_id'))) && (
                           <div className="user_box">
                             <div className="user_name">
                               <div className="user_profile">
