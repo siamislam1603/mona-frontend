@@ -630,7 +630,8 @@ const DynamicForm = () => {
                         <Col sm={6}>
                           {(behalfOfFlag = true)}
                           <div className="child_info_field sex">
-                            <span className="form-label">Behalf of:</span>
+                            <span className="form-label">Name:</span>
+                            {/* <span className="form-label">Behalf of:</span> */}
                             <div clas Name="d-flex mt-2"></div>
                             <div className="btn-radio d-flex align-items-center">
                               {localStorage.getItem('user_role') ===
