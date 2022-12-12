@@ -22,6 +22,29 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import isEmpty from 'lodash/isEmpty';
+import { split } from 'lodash';
+
+function returnResponseCount(data, educatorIDs) {
+  if (data.length > 0) {
+    let formData = data.map((item) => {
+      let data = item[0];
+      return data;
+    });
+
+    let educatorResponseData = [];
+    educatorResponseData = formData.filter((item) => {
+      if (
+        educatorIDs.includes(item.behalf_of) ||
+        item.behalf_of === parseInt(localStorage.getItem('user_id'))
+      ) {
+        return item;
+      }
+    });
+    return educatorResponseData.length;
+  } else {
+    return data.length;
+  }
+}
 
 function OwnFormResponse(props) {
   const Params = useParams();
@@ -49,6 +72,52 @@ function OwnFormResponse(props) {
   });
 
   let count = 0;
+
+  function checkValidTime(timeArray) {
+    let data = timeArray.map((item) => {
+      if (!isNaN(item)) {
+        return true;
+      }
+    });
+
+    data = data.filter((item) => typeof item !== 'undefined');
+    return data.length !== 0 && !data.includes(false);
+  }
+
+  function formatText(data) {
+    // let isDateAndValid = moment(data, 'DD-MM-YYYY', true).isValid();
+    // let isTimeValid = checkValidTime(data.split(':'));
+    // let dataStr = ``;
+    // if (
+    //   data &&
+    //   !isDateAndValid &&
+    //   !isTimeValid &&
+    //   data !== null &&
+    //   typeof data !== 'undefined'
+    // ) {
+    //   // console.log('data>>>>>>>>>>>>>>>>>', data);
+    //   let digit = parseInt(data[0]);
+    //   if (Number.isInteger(digit)) {
+    //     let dataArr = data?.split(',');
+    //     let dataContent = [],
+    //       dataIndex = [];
+
+    //     dataArr = dataArr?.map((item) => item?.split('. ')[1]);
+    //     dataIndex = dataArr?.map((item) => item?.split('. ')[0]);
+
+    //     dataContent = dataArr?.filter((item) => typeof item !== 'undefined');
+    //     dataIndex = dataIndex?.filter((item) => typeof item !== 'undefined');
+    //     console.log('Data Index:', dataIndex);
+
+    //     dataContent.forEach((item, index) => {
+    //       dataStr += `${dataIndex[index]}. ${item}\n`;
+    //     });
+    //   }
+    // }
+
+    // return dataStr.length > 0 ? dataStr : data;
+    return data;
+  }
 
   useEffect(() => {
     if (location?.state?.message) {
@@ -139,13 +208,14 @@ function OwnFormResponse(props) {
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log('RESULT>>>>>>>>>>>>>>>>>', result);
         let fieldPermissionArray = [];
         let permissionArray = [];
         let obj = {};
         result?.FormField?.map((field) => {
           obj[field?.field_name] = field?.section_name;
 
-          field?.form_field_permissions[0] !== undefined &&
+          typeof field?.form_field_permissions[0] !== 'undefined' &&
             fieldPermissionArray.push(
               field?.form_field_permissions[0]?.fill_access_users
             );
@@ -369,7 +439,10 @@ function OwnFormResponse(props) {
                   <div className="d-md-flex align-items-end mt-4">
                     <div className="forms-managmentsection">
                       <div className="forms-managment-left">
-                        <p>{responseData.length} Responses</p>
+                        <p>
+                          {returnResponseCount(responseData, educatorIDs)}{' '}
+                          Responses
+                        </p>
                       </div>
 
                       <div className="d-sm-flex align-items-center">
@@ -764,6 +837,10 @@ function OwnFormResponse(props) {
                                                   ) : formField[inner_item] !==
                                                     '' ? (
                                                     <>
+                                                      {console.log(
+                                                        'formField[inner_item]',
+                                                        formField[inner_item]
+                                                      )}
                                                       <h6 className="text-capitalize">
                                                         {inner_item
                                                           .split('_')
@@ -1508,14 +1585,14 @@ function OwnFormResponse(props) {
                                                       )[inner_index] ===
                                                         'text_headings'
                                                     ) && (
-                                                      <p>
-                                                        {
+                                                      <p className="preserve-white-space">
+                                                        {formatText(
                                                           Object.values(
                                                             JSON.parse(
                                                               item.fields
                                                             )
                                                           )[inner_index]
-                                                        }
+                                                        )}
                                                       </p>
                                                     )
                                                   )}
@@ -2040,14 +2117,14 @@ function OwnFormResponse(props) {
                                                     )[inner_index] ===
                                                       'text_headings'
                                                   ) && (
-                                                    <p>
-                                                      {
+                                                    <p className="preserve-white-space">
+                                                      {formatText(
                                                         Object.values(
                                                           JSON.parse(
                                                             item.fields
                                                           )
                                                         )[inner_index]
-                                                      }
+                                                      )}
                                                     </p>
                                                   )
                                                 )}

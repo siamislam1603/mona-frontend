@@ -1,17 +1,80 @@
-.modal-button{padding:.8rem 2.2rem;border:none;border-radius:5px;background-color:#455c58;color:#fff}
-.modal-paragraph{font-weight:400;font-size:1.2rem}
-.view-enrolment{border:2px solid #aa0061;color:#aa0061}
-.initiate-enrolment{border:2px solid #3e5d58;color:#3e5d58}
-.center{text-align:center}
-p.center{font-size:1rem}
-.disabled-button{background-color:#455c58;padding:.9rem 2.3rem;color:#fff;font-weight:500;border-radius:5px;display:inline-block;margin:0 5px}
-.notification-dialog{transition:all .5s ease-in-out;background-color:#fff;height:350px;width:250px;box-shadow:rgba(50,50,105,.15) 0 2px 5px 0,rgba(0,0,0,.05) 0 1px 1px 0;display:flex;flex-direction:column;position:absolute;right:220px}
-.notification-dialog-body{flex:10}
-.notification-dialog-footer,.notification-dialog-header{flex:1;position:relative}
-.notification-dialog-header{background-color:#fff;padding:1rem;border-bottom:.3px solid #e7e7e7}
-.notification-dialog-footer{background-color:#eb5757;padding:.4rem}
-.notification-link,.notification-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff}
-.notification-title{color:#272727;font-size:1.2rem;font-weight:400;letter-spacing:.2px}
+.modal-button {
+  padding: 0.8rem 2.2rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #455c58;
+  color: #fff;
+}
+.modal-paragraph {
+  font-weight: 400;
+  font-size: 1.2rem;
+}
+.view-enrolment {
+  border: 2px solid #aa0061;
+  color: #aa0061;
+}
+.initiate-enrolment {
+  border: 2px solid #3e5d58;
+  color: #3e5d58;
+}
+.center {
+  text-align: center;
+}
+p.center {
+  font-size: 1rem;
+}
+.disabled-button {
+  background-color: #455c58;
+  padding: 0.9rem 2.3rem;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 0 5px;
+}
+.notification-dialog {
+  transition: all 0.5s ease-in-out;
+  background-color: #fff;
+  height: 350px;
+  width: 250px;
+  box-shadow: rgba(50, 50, 105, 0.15) 0 2px 5px 0,
+    rgba(0, 0, 0, 0.05) 0 1px 1px 0;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 220px;
+}
+.notification-dialog-body {
+  flex: 10;
+}
+.notification-dialog-footer,
+.notification-dialog-header {
+  flex: 1;
+  position: relative;
+}
+.notification-dialog-header {
+  background-color: #fff;
+  padding: 1rem;
+  border-bottom: 0.3px solid #e7e7e7;
+}
+.notification-dialog-footer {
+  background-color: #eb5757;
+  padding: 0.4rem;
+}
+.notification-link,
+.notification-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fff;
+}
+.notification-title {
+  color: #272727;
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+}
 
 .error-border {
   border: 1px solid tomato;
@@ -20,23 +83,27 @@ p.center{font-size:1rem}
 .signature-mode {
   text-transform: uppercase;
   font-weight: bold;
-  margin-top: .5rem;
+  margin-top: 0.5rem;
 }
 
 .top-bar {
   display: flex;
 }
 
-.datepicker:not(.has-value):before{
+.datepicker:not(.has-value):before {
   color: #464646;
   font-weight: 500;
   content: attr(placeholder);
   margin-right: -20rem;
 }
 
-.timepicker:not(.has-value):before{
+.timepicker:not(.has-value):before {
   color: #464646;
   font-weight: 500;
   content: attr(placeholder);
   margin-right: -20rem;
+}
+
+.preserve-white-space {
+  white-space: pre-wrap;
 }
