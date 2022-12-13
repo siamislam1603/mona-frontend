@@ -78,18 +78,43 @@ function OwnFormResponse(props) {
   let count = 0;
 
   function checkValidTime(timeArray) {
-    let data = timeArray.map((item) => {
+    let data = timeArray?.map((item) => {
       if (!isNaN(item)) {
         return true;
       }
     });
 
-    data = data.filter((item) => typeof item !== 'undefined');
-    return data.length !== 0 && !data.includes(false);
+    data = data?.filter((item) => typeof item !== 'undefined');
+    return data?.length !== 0 && !data?.includes(false);
   }
 
   function formatText(data) {
-    return data;
+    let isDateAndValid = moment(data, 'DD-MM-YYYY', true).isValid();
+    let isTimeValid = checkValidTime(data?.split(':'));
+    let dataStr = ``;
+    if (
+      data &&
+      !isDateAndValid &&
+      !isTimeValid &&
+      data !== null &&
+      typeof data !== 'undefined'
+    ) {
+      let digit = parseInt(data[0]);
+      if (!isNaN(digit)) {
+        let dataArr = data?.split(',');
+        let dataContent = [],
+          dataIndex = [];
+
+        dataContent = dataArr?.map((item) => item?.split('. ')[1]);
+        dataIndex = dataArr?.map((item) => item?.split('. ')[0]);
+
+        dataContent.forEach((item, index) => {
+          dataStr += `${dataIndex[index]}. ${item}\n`;
+        });
+      }
+    }
+
+    return dataStr.length > 0 ? dataStr : data;
   }
 
   useEffect(() => {
