@@ -108,6 +108,9 @@ function OwnFormResponse(props) {
         dataContent = dataArr?.map((item) => item?.split('. ')[1]);
         dataIndex = dataArr?.map((item) => item?.split('. ')[0]);
 
+        dataContent = dataContent.filter((item) => typeof item !== 'undefined');
+        dataIndex = dataIndex.filter((item) => typeof item !== 'undefined');
+
         dataContent.forEach((item, index) => {
           dataStr += `${dataIndex[index]}. ${item}\n`;
         });
