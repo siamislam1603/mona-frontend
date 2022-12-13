@@ -29,27 +29,35 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { FullLoader } from '../../components/Loader';
 
-function returnResponseCount(data, educatorIDs, form) {
-  if (data.length > 0) {
-    let educatorResponseData = [];
-    educatorResponseData = data.map((item) => {
-      let result = item.filter((d) => {
-        if (
-          educatorIDs.includes(d.behalf_of) ||
-          d.behalf_of === parseInt(localStorage.getItem('user_id'))
-        ) {
-          return d;
-        }
-      });
-      return result[0];
-    });
+function modifySeenCountForEducators(data) {
+  return data;
+}
 
-    educatorResponseData = educatorResponseData.filter(
-      (item) => typeof item !== 'undefined'
-    );
-    return educatorResponseData.length;
+function returnResponseCount(data, educatorIDs, form) {
+  if (localStorage.getItem('user_role') === 'educator') {
+    if (data.length > 0) {
+      let educatorResponseData = [];
+      educatorResponseData = data.map((item) => {
+        let result = item.filter((d) => {
+          if (
+            educatorIDs.includes(d.behalf_of) ||
+            d.behalf_of === parseInt(localStorage.getItem('user_id'))
+          ) {
+            return d;
+          }
+        });
+        return result[0];
+      });
+
+      educatorResponseData = educatorResponseData.filter(
+        (item) => typeof item !== 'undefined'
+      );
+      return educatorResponseData.length;
+    }
+    return 0;
   }
-  return 0;
+
+  return data.length === 0 ? 0 : data.length;
 }
 
 function ViewFormBuilder(props) {
@@ -223,6 +231,11 @@ function ViewFormBuilder(props) {
           }
         });
         setMeFormData(me);
+
+        // MUTATING THE OTHER FORM DATA;
+        console.log('OTHERS:>>>>>>>>>>>>>>>', others);
+        others = modifySeenCountForEducators(others);
+
         setOthersFormData(others);
         if (result) {
           setfullLoaderStatus(false);
@@ -286,9 +299,9 @@ function ViewFormBuilder(props) {
     }
   }, []);
 
-  MeFormData && console.log('ME FORM DATA>>>>>>>>>>', MeFormData);
-  OthersFormData && console.log('OTHER FORM DATA>>>', OthersFormData);
-  educatorIDs && console.log('EDUCATOR ID>>>>>>>>>>', educatorIDs);
+  // MeFormData && console.log('ME FORM DATA>>>>>>>>>>', MeFormData);
+  // OthersFormData && console.log('OTHER FORM DATA>>>', OthersFormData);
+  // educatorIDs && console.log('EDUCATOR ID>>>>>>>>>>', educatorIDs);
   return (
     <>
       <div id="main">

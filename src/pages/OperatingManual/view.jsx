@@ -1,7 +1,22 @@
-import { faEllipsisVertical, faPen, faPlus, faRemove, faTrash, faUsers, } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEllipsisVertical,
+  faPen,
+  faPlus,
+  faRemove,
+  faTrash,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
-import { Button, Col, Container, Dropdown, Form, Modal, Row, } from 'react-bootstrap';
+import {
+  Button,
+  Col,
+  Container,
+  Dropdown,
+  Form,
+  Modal,
+  Row,
+} from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL, FRONT_BASE_URL } from '../../components/App';
 import LeftNavbar from '../../components/LeftNavbar';
@@ -47,9 +62,9 @@ const OperatingManual = () => {
   );
   const [selectedFranchiseeId, setSelectedFranchiseeId] = useState(null);
   const token = localStorage.getItem('token');
-  const loginuser = localStorage.getItem('user_role')
+  const loginuser = localStorage.getItem('user_role');
 
-  const manageCollpase=()=>{
+  const manageCollpase = () => {
     var tree = document.getElementById('tree1');
     if (tree) {
       tree.querySelectorAll('ul').forEach(function (el, index, key, parent) {
@@ -96,24 +111,27 @@ const OperatingManual = () => {
         );
       });
     }
-  }
-  
+  };
+
   // useEffect(() => {
   //   manageCollpase();
   // },[]);
   useEffect(() => {
     manageCollpase();
   }, [operatingManualdata]);
+
   useEffect(() => {
     getOperatingManual();
     getUserRoleData();
     // getCategory();
   }, []);
+
   useEffect(() => {
     if (selectedFranchisee) {
       getUser();
     }
   }, [selectedFranchisee]);
+
   const setCategoryField = (field, value) => {
     setCategoryData({ ...categoryData, [field]: value });
     if (!!categoryError[field]) {
@@ -148,7 +166,7 @@ const OperatingManual = () => {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('authorization', 'Bearer ' + token);
-        fetch(`${BASE_URL}/operating_manual/category/add`, {
+        fetch(`${process.env.BASE_URL}/operating_manual/category/add`, {
           method: 'post',
           body: JSON.stringify(categoryData),
           headers: myHeaders,
@@ -210,32 +228,38 @@ const OperatingManual = () => {
     }
 
     fetch(api_url, requestOptions)
-      .then((response) => response.json())
+      .then(async (response) => response.json())
       .then((result) => {
-        console.log("The result",result)
+        console.log('The result', result);
         result?.data?.map((item) => {
           item['status'] = false;
         });
         if (selectedFranchisee) {
-          if (selectedFranchisee === 'All' || selectedFranchisee === 'all')
-          {
+          if (selectedFranchisee === 'All' || selectedFranchisee === 'all') {
             let formattedUserData = result?.data?.map((d) => ({
               id: d.id,
               fullname: d.fullname,
               email: d.email,
 
               // charAt(0).toUpperCase() + string.slice(1);
-              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
-          }));
+              namemail: `${d.fullname
+                .toLowerCase()
+                .split(' ')
+                .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                .join(' ')} (${d.email})`,
+            }));
             setUser(formattedUserData);
-          }
-          else {
+          } else {
             let formattedUserData = result?.data?.map((d) => ({
               id: d.id,
               fullname: d.fullname,
               email: d.email,
-              namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
-          }));
+              namemail: `${d.fullname
+                .toLowerCase()
+                .split(' ')
+                .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                .join(' ')} (${d.email})`,
+            }));
             setUser(formattedUserData);
           }
         } else {
@@ -243,7 +267,11 @@ const OperatingManual = () => {
             id: d.id,
             fullname: d.fullname,
             email: d.email,
-            namemail: `${d.fullname.toLowerCase().split(' ').map(s => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')} (${d.email})`,
+            namemail: `${d.fullname
+              .toLowerCase()
+              .split(' ')
+              .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+              .join(' ')} (${d.email})`,
           }));
           setUser(formattedUserData);
         }
@@ -251,36 +279,35 @@ const OperatingManual = () => {
       .catch((error) => console.log('View OM error', error));
   };
 
-  const checkDelete = async()=>{
+  const checkDelete = async () => {
     const query = new URL(window.location);
-    const id = query.searchParams.get('selected')
-    console.log("The id",id)
+    const id = query.searchParams.get('selected');
     const token = localStorage.getItem('token');
 
-    const response = await axios.get(`${BASE_URL}/operating_manual/checkExist/${id}`,{
-      headers: {
-        "Authorization": "Bearer " + token
+    const response = await axios.get(
+      `${BASE_URL}/operating_manual/checkExist/${id}`,
+      {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        },
       }
-    })
-    if(response.status === 200 && response.data.status === "success"){
-
+    );
+    if (response.status === 200 && response.data.status === 'success') {
+    } else {
+      setTopErrorMessage(
+        'Operating mannual either deleted or no longer exist!'
+      );
+      setTimeout(() => {
+        setTopErrorMessage(null);
+      }, 6000);
     }
-    else{
-        setTopErrorMessage("Operating mannual either deleted or no longer exist!")
-        setTimeout(() => {
-          setTopErrorMessage(null);
-        }, 6000)
-    }
-    console.log(" the id The response check",response)
+    console.log(' the id The response check', response);
+  };
 
-  }
- 
-  useEffect(() =>{
-    checkDelete()
-  },[])
-  
-  
-  
+  useEffect(() => {
+    checkDelete();
+  }, []);
+
   const getOneOperatingManual = async (id, category_name) => {
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
@@ -297,7 +324,7 @@ const OperatingManual = () => {
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log("THE OPERATING DATA", response)
+        console.log('THE OPERATING DATA', response);
         setSingleOperatingManual(response?.result);
         let data = formSettingData;
         data['applicable_to_all'] =
@@ -325,7 +352,7 @@ const OperatingManual = () => {
           role += item + ',';
         });
         data['shared_role'] = role;
-        console.log("THE OPNE ROLE", role)
+        console.log('THE OPNE ROLE', role);
         setFormSettingData(data);
       })
       .catch((error) => console.log('error', error));
@@ -348,14 +375,16 @@ const OperatingManual = () => {
   //     })
   //     .catch((error) => console.log('error', error));
   // };
-  const deleteOperatingManualAlert = (id) =>{
-    if (window.confirm('Are you sure you want to delete this category that already contains files?')) {
-      deleteOperatingManualCategory(id)
-
+  const deleteOperatingManualAlert = (id) => {
+    if (
+      window.confirm(
+        'Are you sure you want to delete this category that already contains files?'
+      )
+    ) {
+      deleteOperatingManualCategory(id);
+    } else {
     }
-    else{
-    }
-  }
+  };
   const deleteOperatingManualCategory = async (id) => {
     try {
       var myHeaders = new Headers();
@@ -403,7 +432,8 @@ const OperatingManual = () => {
     };
 
     fetch(
-      `${BASE_URL}/operating_manual/${operatingManualdata[Index]?.operating_manuals[innerIndex]?.id
+      `${BASE_URL}/operating_manual/${
+        operatingManualdata[Index]?.operating_manuals[innerIndex]?.id
       }?shared_by=${localStorage.getItem(
         'user_id'
       )}&link=${FRONT_BASE_URL}/operatingmanual`,
@@ -497,10 +527,14 @@ const OperatingManual = () => {
         data['accessible_to_role'] = null;
         data['accessible_to_all'] = true;
       } else {
-        if (localStorage.getItem("user_role") !== "franchisor_admin") {
-          formSettingData.shared_role = formSettingData.shared_role ? formSettingData.shared_role.replace("franchisee_admin,", "") : null;
+        if (localStorage.getItem('user_role') !== 'franchisor_admin') {
+          formSettingData.shared_role = formSettingData.shared_role
+            ? formSettingData.shared_role.replace('franchisee_admin,', '')
+            : null;
         }
-        formSettingData.shared_role = formSettingData.shared_role ? formSettingData.shared_role.replace("all,", "") : null;
+        formSettingData.shared_role = formSettingData.shared_role
+          ? formSettingData.shared_role.replace('all,', '')
+          : null;
         data['shared_role'] = formSettingData.shared_role
           ? formSettingData.shared_role.slice(0, -1)
           : null;
@@ -536,11 +570,18 @@ const OperatingManual = () => {
     console.log('Skn');
   }, [operatingManualdata]);
   console.log('Rohan manual', operatingManualdata, formSettingData);
-  console.log("The users",user)
+  console.log('The users', user);
 
   return (
     <>
-    {topErrorMessage && <p className="alert alert-danger" style={{ position: "fixed", left: "50%", top: "0%", zIndex: 1000 }}>{topErrorMessage}</p>} 
+      {topErrorMessage && (
+        <p
+          className="alert alert-danger"
+          style={{ position: 'fixed', left: '50%', top: '0%', zIndex: 1000 }}
+        >
+          {topErrorMessage}
+        </p>
+      )}
 
       <div id="main">
         <ToastContainer />
@@ -662,23 +703,23 @@ const OperatingManual = () => {
                                                 'operating_manual',
                                                 'add'
                                               ) &&
-                                                (inner_item.created_by ===
-                                                  parseInt(
-                                                    localStorage.getItem(
-                                                      'user_id'
-                                                    )
-                                                  ) ||
-                                                  inner_item.upper_role.includes(
-                                                    localStorage.getItem(
-                                                      'user_role'
-                                                    )
-                                                  ))
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
+                                                    'user_role'
+                                                  )
+                                                ))
                                                 ? (inner_item[
-                                                  'allow_access_to_edit'
-                                                ] = true)
+                                                    'allow_access_to_edit'
+                                                  ] = true)
                                                 : (inner_item[
-                                                  'allow_access_to_edit'
-                                                ] = false);
+                                                    'allow_access_to_edit'
+                                                  ] = false);
                                             }
                                             {
                                               inner_item[
@@ -702,9 +743,11 @@ const OperatingManual = () => {
                                                   )
                                                 )) &&
                                               inner_item[
-                                              'allow_access_to_edit'
+                                                'allow_access_to_edit'
                                               ] === true &&
-                                              count === 1 && loginuser === "franchisor_admin" && (
+                                              count === 1 &&
+                                              loginuser ===
+                                                'franchisor_admin' && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -714,7 +757,6 @@ const OperatingManual = () => {
                                                       setCategoryData(item);
 
                                                       // edit:{true}
-
                                                     }}
                                                     active
                                                   >
@@ -764,23 +806,23 @@ const OperatingManual = () => {
                                                 'operating_manual',
                                                 'add'
                                               ) &&
-                                                (inner_item.created_by ===
-                                                  parseInt(
-                                                    localStorage.getItem(
-                                                      'user_id'
-                                                    )
-                                                  ) ||
-                                                  inner_item.upper_role.includes(
-                                                    localStorage.getItem(
-                                                      'user_role'
-                                                    )
-                                                  ))
+                                              (inner_item.created_by ===
+                                                parseInt(
+                                                  localStorage.getItem(
+                                                    'user_id'
+                                                  )
+                                                ) ||
+                                                inner_item.upper_role.includes(
+                                                  localStorage.getItem(
+                                                    'user_role'
+                                                  )
+                                                ))
                                                 ? (inner_item[
-                                                  'allow_access_to_edit'
-                                                ] = true)
+                                                    'allow_access_to_edit'
+                                                  ] = true)
                                                 : (inner_item[
-                                                  'allow_access_to_edit'
-                                                ] = false);
+                                                    'allow_access_to_edit'
+                                                  ] = false);
                                             }
                                             {
                                               inner_item[
@@ -804,9 +846,11 @@ const OperatingManual = () => {
                                                   )
                                                 )) &&
                                               inner_item[
-                                              'allow_access_to_edit'
+                                                'allow_access_to_edit'
                                               ] === true &&
-                                              count === 1 && loginuser === "franchisor_admin" && (
+                                              count === 1 &&
+                                              loginuser ===
+                                                'franchisor_admin' && (
                                                 <div className="edit-module">
                                                   <Dropdown.Item
                                                     onClick={() => {
@@ -871,7 +915,7 @@ const OperatingManual = () => {
                                         <a
                                           className={
                                             index === Index &&
-                                              innerIndex === inner_index
+                                            innerIndex === inner_index
                                               ? 'tree_active'
                                               : ''
                                           }
@@ -906,160 +950,160 @@ const OperatingManual = () => {
                             ]?.upper_role.includes(
                               localStorage.getItem('user_role')
                             )) && (
-                              <Dropdown>
-                                <Dropdown.Toggle id="dropdown-basic">
-                                  <FontAwesomeIcon icon={faEllipsisVertical} />
-                                </Dropdown.Toggle>
+                            <Dropdown>
+                              <Dropdown.Toggle id="dropdown-basic">
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
 
-                                <Dropdown.Menu>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      navigate('/operatingmanual/add', {
-                                        state: {
-                                          id: operatingManualdata[Index]
-                                            ?.operating_manuals[innerIndex]?.id,
-                                          category_name:
-                                            operatingManualdata[Index]
-                                              ?.category_name,
-                                          edit: true
-                                        },
-                                      });
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faPen} /> Edit
-                                  </Dropdown.Item>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      deleteOperatingManual();
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faRemove} /> Remove
-                                  </Dropdown.Item>
-                                  <Dropdown.Item
-                                    href=""
-                                    onClick={() => {
-                                      setFormSettingFlag(true);
-                                      getOneOperatingManual(
-                                        operatingManualdata[Index]
+                              <Dropdown.Menu>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    navigate('/operatingmanual/add', {
+                                      state: {
+                                        id: operatingManualdata[Index]
                                           ?.operating_manuals[innerIndex]?.id,
-                                        operatingManualdata[Index]?.category_name
-                                      );
-                                    }}
-                                  >
-                                    <FontAwesomeIcon icon={faUsers} /> Sharing
-                                  </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                            )}
+                                        category_name:
+                                          operatingManualdata[Index]
+                                            ?.category_name,
+                                        edit: true,
+                                      },
+                                    });
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faPen} /> Edit
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    deleteOperatingManual();
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faRemove} /> Remove
+                                </Dropdown.Item>
+                                <Dropdown.Item
+                                  href=""
+                                  onClick={() => {
+                                    setFormSettingFlag(true);
+                                    getOneOperatingManual(
+                                      operatingManualdata[Index]
+                                        ?.operating_manuals[innerIndex]?.id,
+                                      operatingManualdata[Index]?.category_name
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faUsers} /> Sharing
+                                </Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          )}
                         </div>
                       </div>
                     </div>
                     {operatingManualdata.map((item, index) => {
                       return index === Index
                         ? item?.operating_manuals.map(
-                          (inner_item, inner_index) => {
-                            {
-                              inner_item.category =
-                                operatingManualdata[
-                                  operatingManualdata
-                                    .map((object) => object.id)
-                                    .indexOf(inner_item.category_id)
-                                ]?.category_name;
-                              inner_item.related_files = eval(
-                                inner_item.related_files
-                              );
-                            }
-                            return inner_index === innerIndex ? (
-                              <>
-                                <PdfComponent {...inner_item} />
-                                <Row>
-                                  {inner_item.reference_video && (
-                                    <Col xl={7} lg={6}>
-                                      <div className="reference_wrp">
-                                        <h1>Reference Videos</h1>
-                                        <div className="reference_videos">
-                                          <Button
-                                            className="vidico"
-                                            variant="transparent"
-                                            onClick={() => {
-                                              setVideoUrl(
-                                                inner_item.reference_video
-                                                  ? inner_item.reference_video
-                                                  : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
-                                              );
-                                              handleShow();
-                                            }}
-                                          >
-                                            <img
-                                              src={
-                                                inner_item.video_thumbnail
-                                                  ? inner_item.video_thumbnail
-                                                  : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
-                                              }
-                                              alt=""
-                                            />
-                                          </Button>
-                                          <div className="video_title">
-                                            <h6>Video 1</h6>
+                            (inner_item, inner_index) => {
+                              {
+                                inner_item.category =
+                                  operatingManualdata[
+                                    operatingManualdata
+                                      .map((object) => object.id)
+                                      .indexOf(inner_item.category_id)
+                                  ]?.category_name;
+                                inner_item.related_files = eval(
+                                  inner_item.related_files
+                                );
+                              }
+                              return inner_index === innerIndex ? (
+                                <>
+                                  <PdfComponent {...inner_item} />
+                                  <Row>
+                                    {inner_item.reference_video && (
+                                      <Col xl={7} lg={6}>
+                                        <div className="reference_wrp">
+                                          <h1>Reference Videos</h1>
+                                          <div className="reference_videos">
+                                            <Button
+                                              className="vidico"
+                                              variant="transparent"
+                                              onClick={() => {
+                                                setVideoUrl(
+                                                  inner_item.reference_video
+                                                    ? inner_item.reference_video
+                                                    : 'https://player.vimeo.com/video/718118183?title=0&portrait=0&byline=0&autoplay=1&loop=1&transparent=1'
+                                                );
+                                                handleShow();
+                                              }}
+                                            >
+                                              <img
+                                                src={
+                                                  inner_item.video_thumbnail
+                                                    ? inner_item.video_thumbnail
+                                                    : 'https://i.vimeocdn.com/video/1446869688-ebc55555ef4671d3217b51fa6fea2d6a1c1010568f048e57a22966e13c2c4338-d_640x360.jpg'
+                                                }
+                                                alt=""
+                                              />
+                                            </Button>
+                                            <div className="video_title">
+                                              <h6>Video 1</h6>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    </Col>
-                                  )}
-                                  {inner_item.related_files.length !== 0 ? (
-                                    <Col xl={5} lg={6}>
-                                      <div className="related_files">
-                                        <h1>Related Files</h1>
-                                        {inner_item.related_files.map(
-                                          (file_item, file_index) => {
-                                            return (
-                                              <>
-                                                {console.log(
-                                                  'file_item---->',
-                                                  file_item
-                                                )}
+                                      </Col>
+                                    )}
+                                    {inner_item.related_files.length !== 0 ? (
+                                      <Col xl={5} lg={6}>
+                                        <div className="related_files">
+                                          <h1>Related Files</h1>
+                                          {inner_item.related_files.map(
+                                            (file_item, file_index) => {
+                                              return (
+                                                <>
+                                                  {console.log(
+                                                    'file_item---->',
+                                                    file_item
+                                                  )}
 
-                                                <a
-                                                  className="forms-content create-other"
-                                                  role="button"
-                                                  href={file_item.url}
-                                                  download
-                                                >
-                                                  <div className="content-icon-section">
-                                                    <img
-                                                      src={
-                                                        (file_index + 1) %
-                                                          2 ==
+                                                  <a
+                                                    className="forms-content create-other"
+                                                    role="button"
+                                                    href={file_item.url}
+                                                    download
+                                                  >
+                                                    <div className="content-icon-section">
+                                                      <img
+                                                        src={
+                                                          (file_index + 1) %
+                                                            2 ==
                                                           0
-                                                          ? '../img/doc_pink.svg'
-                                                          : '../img/doc_blue.svg'
-                                                      }
-                                                    />
-                                                  </div>
-                                                  <div className="content-title-section">
-                                                    <h6>{file_item.name}</h6>
-                                                    <h4>
-                                                      Added On :
-                                                      {moment(
-                                                        inner_item.createdAt
-                                                      ).format('DD/MM/YYYY')}
-                                                    </h4>
-                                                  </div>
-                                                </a>
-                                              </>
-                                            );
-                                          }
-                                        )}
-                                      </div>
-                                    </Col>
-                                  ) : null}
-                                </Row>
-                              </>
-                            ) : null;
-                          }
-                        )
+                                                            ? '../img/doc_pink.svg'
+                                                            : '../img/doc_blue.svg'
+                                                        }
+                                                      />
+                                                    </div>
+                                                    <div className="content-title-section">
+                                                      <h6>{file_item.name}</h6>
+                                                      <h4>
+                                                        Added On :
+                                                        {moment(
+                                                          inner_item.createdAt
+                                                        ).format('DD/MM/YYYY')}
+                                                      </h4>
+                                                    </div>
+                                                  </a>
+                                                </>
+                                              );
+                                            }
+                                          )}
+                                        </div>
+                                      </Col>
+                                    ) : null}
+                                  </Row>
+                                </>
+                              ) : null;
+                            }
+                          )
                         : null;
                     })}
                   </Col>
@@ -1080,7 +1124,7 @@ const OperatingManual = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="embed-responsive embed-responsive-16by9">
-          {/* <iframe title="video file" className="embed-responsive-item" src={data.file} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
+            {/* <iframe title="video file" className="embed-responsive-item" src={data.file} frameborder="0"  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe> */}
 
             <iframe
               width="1366"
@@ -1121,40 +1165,40 @@ const OperatingManual = () => {
                   <div className="modal-two-check user-roles-box">
                     {localStorage.getItem('user_role') ===
                       'franchisor_admin' && (
-                        <label className="container">
-                          Franchisee Admin
-                          <input
-                            type="checkbox"
-                            name="shared_role"
-                            id="franchisee_admin"
-                            onClick={(e) => {
-                              let data = { ...formSettingData };
-                              if (
-                                !data['shared_role']
-                                  .toString()
-                                  .includes(e.target.id)
-                              ) {
-                                data['shared_role'] += e.target.id + ',';
-                              } else {
-                                data['shared_role'] = data['shared_role'].replace(
-                                  e.target.id + ',',
-                                  ''
-                                );
-                                if (data['shared_role'].includes('all')) {
-                                  data['shared_role'] = data[
-                                    'shared_role'
-                                  ].replace('all,', '');
-                                }
+                      <label className="container">
+                        Franchisee Admin
+                        <input
+                          type="checkbox"
+                          name="shared_role"
+                          id="franchisee_admin"
+                          onClick={(e) => {
+                            let data = { ...formSettingData };
+                            if (
+                              !data['shared_role']
+                                .toString()
+                                .includes(e.target.id)
+                            ) {
+                              data['shared_role'] += e.target.id + ',';
+                            } else {
+                              data['shared_role'] = data['shared_role'].replace(
+                                e.target.id + ',',
+                                ''
+                              );
+                              if (data['shared_role'].includes('all')) {
+                                data['shared_role'] = data[
+                                  'shared_role'
+                                ].replace('all,', '');
                               }
-                              setFormSettingData(data);
-                            }}
-                            checked={formSettingData?.shared_role
-                              ?.toString()
-                              .includes('franchisee_admin')}
-                          />
-                          <span className="checkmark"></span>
-                        </label>
-                      )}
+                            }
+                            setFormSettingData(data);
+                          }}
+                          checked={formSettingData?.shared_role
+                            ?.toString()
+                            .includes('franchisee_admin')}
+                        />
+                        <span className="checkmark"></span>
+                      </label>
+                    )}
                     <label className="container">
                       Coordinator
                       <input
