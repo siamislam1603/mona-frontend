@@ -25,22 +25,26 @@ import isEmpty from 'lodash/isEmpty';
 import { split } from 'lodash';
 
 function returnResponseCount(data, educatorIDs) {
-  if (data.length > 0) {
-    let formData = data.map((item) => {
-      let data = item[0];
-      return data;
-    });
+  if (localStorage.getItem('user_role') === 'educator') {
+    if (data.length > 0) {
+      let formData = data.map((item) => {
+        let data = item[0];
+        return data;
+      });
 
-    let educatorResponseData = [];
-    educatorResponseData = formData.filter((item) => {
-      if (
-        educatorIDs.includes(item.behalf_of) ||
-        item.behalf_of === parseInt(localStorage.getItem('user_id'))
-      ) {
-        return item;
-      }
-    });
-    return educatorResponseData.length;
+      let educatorResponseData = [];
+      educatorResponseData = formData.filter((item) => {
+        if (
+          educatorIDs.includes(item.behalf_of) ||
+          item.behalf_of === parseInt(localStorage.getItem('user_id'))
+        ) {
+          return item;
+        }
+      });
+      return educatorResponseData.length;
+    } else {
+      return data.length;
+    }
   } else {
     return data.length;
   }
@@ -85,37 +89,6 @@ function OwnFormResponse(props) {
   }
 
   function formatText(data) {
-    // let isDateAndValid = moment(data, 'DD-MM-YYYY', true).isValid();
-    // let isTimeValid = checkValidTime(data.split(':'));
-    // let dataStr = ``;
-    // if (
-    //   data &&
-    //   !isDateAndValid &&
-    //   !isTimeValid &&
-    //   data !== null &&
-    //   typeof data !== 'undefined'
-    // ) {
-    //   // console.log('data>>>>>>>>>>>>>>>>>', data);
-    //   let digit = parseInt(data[0]);
-    //   if (Number.isInteger(digit)) {
-    //     let dataArr = data?.split(',');
-    //     let dataContent = [],
-    //       dataIndex = [];
-
-    //     dataArr = dataArr?.map((item) => item?.split('. ')[1]);
-    //     dataIndex = dataArr?.map((item) => item?.split('. ')[0]);
-
-    //     dataContent = dataArr?.filter((item) => typeof item !== 'undefined');
-    //     dataIndex = dataIndex?.filter((item) => typeof item !== 'undefined');
-    //     console.log('Data Index:', dataIndex);
-
-    //     dataContent.forEach((item, index) => {
-    //       dataStr += `${dataIndex[index]}. ${item}\n`;
-    //     });
-    //   }
-    // }
-
-    // return dataStr.length > 0 ? dataStr : data;
     return data;
   }
 

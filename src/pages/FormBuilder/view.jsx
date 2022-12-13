@@ -29,10 +29,6 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom';
 import { FullLoader } from '../../components/Loader';
 
-function modifySeenCountForEducators(data) {
-  return data;
-}
-
 function returnResponseCount(data, educatorIDs, form) {
   if (localStorage.getItem('user_role') === 'educator') {
     if (data.length > 0) {
@@ -40,7 +36,7 @@ function returnResponseCount(data, educatorIDs, form) {
       educatorResponseData = data.map((item) => {
         let result = item.filter((d) => {
           if (
-            educatorIDs.includes(d.behalf_of) ||
+            educatorIDs?.includes(d.behalf_of) ||
             d.behalf_of === parseInt(localStorage.getItem('user_id'))
           ) {
             return d;
@@ -233,8 +229,7 @@ function ViewFormBuilder(props) {
         setMeFormData(me);
 
         // MUTATING THE OTHER FORM DATA;
-        console.log('OTHERS:>>>>>>>>>>>>>>>', others);
-        others = modifySeenCountForEducators(others);
+        // others = modifySeenCountForEducators(others, educatorIDs);
 
         setOthersFormData(others);
         if (result) {

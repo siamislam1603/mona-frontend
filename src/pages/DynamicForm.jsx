@@ -580,6 +580,7 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
+  console.log('FIELD DATA:>>>>>>>>>>>>>>>>>>>>', fieldData);
   return (
     <>
       <div id="main">
