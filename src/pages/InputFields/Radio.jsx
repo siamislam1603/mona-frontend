@@ -4,6 +4,7 @@ import { Button, Col, Form } from 'react-bootstrap';
 import SignaturePad from 'react-signature-canvas';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../../components/App';
+
 const Radio = (props) => {
   const { ...controls } = props;
   const [optionValue, setOptionValue] = useState('');
@@ -432,7 +433,6 @@ const Radio = (props) => {
                   }
                   value={dropDownValue ? dropDownValue : 'Select'}
                   onChange={(e) => {
-                    console.log('FIELD3:>>>>', e.target.value);
                     setDropDownValue(e.target.value);
                     props.onChange(
                       Object.values(eval(controls.option)[Index])[0]
@@ -662,7 +662,6 @@ const Radio = (props) => {
                       Object.values(eval(controls.option)[Index])[0].field_name
                     }
                     onChange={(e) => {
-                      console.log('FIELD6:>>>>', e.target.value);
                       props.onChange(e.target.name, e.target.value);
                       setTextInputValue(e.target.value);
                     }}
