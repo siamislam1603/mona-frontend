@@ -24,7 +24,7 @@ import axios from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import { split } from 'lodash';
 
-function returnResponseCount(data, educatorIDs) {
+function returnResponseCount(data, educatorIDs, parentIDs) {
   if (localStorage.getItem('user_role') === 'educator') {
     if (data.length > 0) {
       let formData = data.map((item) => {
@@ -42,6 +42,26 @@ function returnResponseCount(data, educatorIDs) {
         }
       });
       return educatorResponseData.length;
+    } else {
+      return data.length;
+    }
+  } else if (localStorage.getItem('user_role') === 'guardian') {
+    if (data.length > 0) {
+      let formData = data.map((item) => {
+        let data = item[0];
+        return data;
+      });
+
+      let parentResponseData = [];
+      parentResponseData = formData.filter((item) => {
+        if (
+          parentIDs.includes(item.behalf_of) ||
+          item.behalf_of === parseInt(localStorage.getItem('user_id'))
+        ) {
+          return item;
+        }
+      });
+      return parentResponseData.length;
     } else {
       return data.length;
     }
@@ -67,6 +87,7 @@ function OwnFormResponse(props) {
   const [educatorIDs, setEducatorIDs] = useState([]);
   const [Index, setIndex] = useState(0);
   const [childrenData, setChildrenData] = useState([]);
+  const [parentChildrenIDs, setParentChildrenIDs] = useState([]);
   const [hideFlag, setHideFlag] = useState(false);
   const [formFieldPermission, setFormFieldPermission] = useState([]);
   const [formField, setFormField] = useState({});
@@ -209,10 +230,10 @@ function OwnFormResponse(props) {
     fetch(URL_, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log('RESULT>>>>>>>>>>>>>>>>>', result);
         let fieldPermissionArray = [];
         let permissionArray = [];
         let obj = {};
+        setParentChildrenIDs(result.parentChildrenIds);
         result?.FormField?.map((field) => {
           obj[field?.field_name] = field?.section_name;
 
@@ -303,8 +324,13 @@ function OwnFormResponse(props) {
               let arr2 = [];
               for (let iterator of result?.result) {
                 let ar = [];
-
-                ar.push(iterator[0]);
+                if (iterator.length > 1) {
+                  ar.push(iterator[0]);
+                  ar.push(iterator[1]);
+                } else if (iterator.length === 1) {
+                  ar.push(iterator[0]);
+                }
+                // ar.push(iterator[0]);
                 ar['signature_button'] = iterator?.signature_button;
 
                 arr2.push(ar);
@@ -340,7 +366,12 @@ function OwnFormResponse(props) {
           for (let iterator of result?.result) {
             let ar = [];
 
-            ar.push(iterator[0]);
+            if (iterator.length > 1) {
+              ar.push(iterator[0]);
+              ar.push(iterator[1]);
+            } else if (iterator.length === 1) {
+              ar.push(iterator[0]);
+            }
             ar['signature_button'] = iterator?.signature_button;
 
             arr2.push(ar);
@@ -407,6 +438,7 @@ function OwnFormResponse(props) {
     }
   }, []);
 
+  console.log('Parent Childen IDs:', parentChildrenIDs);
   return (
     <>
       <div id="main">
@@ -441,7 +473,11 @@ function OwnFormResponse(props) {
                     <div className="forms-managmentsection">
                       <div className="forms-managment-left">
                         <p>
-                          {returnResponseCount(responseData, educatorIDs)}{' '}
+                          {returnResponseCount(
+                            responseData,
+                            educatorIDs,
+                            parentChildrenIDs
+                          )}{' '}
                           Responses
                         </p>
                       </div>

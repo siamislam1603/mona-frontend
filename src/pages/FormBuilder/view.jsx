@@ -294,8 +294,8 @@ function ViewFormBuilder(props) {
     }
   }, []);
 
-  // MeFormData && console.log('ME FORM DATA>>>>>>>>>>', MeFormData);
-  // OthersFormData && console.log('OTHER FORM DATA>>>', OthersFormData);
+  MeFormData && console.log('ME FORM DATA>>>>>>>>>>', MeFormData);
+  OthersFormData && console.log('OTHER FORM DATA>>>', OthersFormData);
   // educatorIDs && console.log('EDUCATOR ID>>>>>>>>>>', educatorIDs);
   return (
     <>
