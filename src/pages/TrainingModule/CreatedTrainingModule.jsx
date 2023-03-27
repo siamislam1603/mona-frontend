@@ -400,15 +400,6 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                               {moment(training.end_date).format('DD/MM/YYYY')}
                             </span>
                           )}
-
-                          {training.deadline_date !== null && (
-                            <span className="red-date">
-                              Deadline Date:{' '}
-                              {moment(training.deadline_date).format(
-                                'DD/MM/YYYY'
-                              )}
-                            </span>
-                          )}
                           <span className="time">
                             {training.completion_time} {training.completion_in}
                           </span>

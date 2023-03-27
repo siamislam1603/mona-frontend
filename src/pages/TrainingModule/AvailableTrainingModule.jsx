@@ -421,14 +421,6 @@ const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
                                     )}
                                   </span>
                                 )}
-                                {item.training.deadline_date && (
-                                  <span className="red-date">
-                                    Deadline Date:{' '}
-                                    {moment(item.training.deadline_date).format(
-                                      'DD/MM/YYYY'
-                                    )}
-                                  </span>
-                                )}
                                 <span className="time">
                                   {item.training.completion_time}{' '}
                                   {item.training.completion_in}

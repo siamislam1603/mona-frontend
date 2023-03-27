@@ -10,7 +10,6 @@ import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { EditTrainingFormValidation } from '../helpers/validation';
-import { isEndDateAvailable, isEndDateExceeded } from '../utils/commonMethods';
 import { BASE_URL } from '../components/App';
 import moment from 'moment';
 import * as ReactBootstrap from 'react-bootstrap';
@@ -260,12 +259,6 @@ const EditTraining = () => {
         : '',
       end_time: training?.end_date
         ? moment(training?.end_date).format('HH:mm')
-        : '',
-      deadline_date: training?.deadline_date
-        ? moment(training?.deadline_date).format('YYYY-MM-DD')
-        : '',
-      deadline_time: training?.deadline_date
-        ? moment(training?.deadline_date).format('HH:mm')
         : '',
       applicable_to: training?.shares[0]?.applicable_to,
       send_to_all_franchisee:
@@ -1097,7 +1090,6 @@ const EditTraining = () => {
                       <Form.Control
                         type="date"
                         name="end_date"
-                        disabled={isEndDateExceeded(trainingSettings)}
                         className="datepicker"
                         placeholder={
                           trainingSettings?.end_date
@@ -1132,7 +1124,6 @@ const EditTraining = () => {
                       <Form.Control
                         type="time"
                         name="end_time"
-                        disabled={isEndDateExceeded(trainingSettings)}
                         value={trainingSettings?.end_time}
                         onChange={(e) => {
                           setTrainingSettings((prevState) => ({
@@ -1152,71 +1143,6 @@ const EditTraining = () => {
                       )}
                     </Form.Group>
                   </Col>
-
-                  {isEndDateAvailable(trainingSettings) &&
-                    isEndDateExceeded(trainingSettings) && (
-                      <>
-                        <Col lg={3} sm={6}>
-                          <Form.Group>
-                            <Form.Label>Deadline Date</Form.Label>
-                            <Form.Control
-                              type="date"
-                              name="deadline_date"
-                              className="datepicker"
-                              placeholder={
-                                trainingSettings?.deadline_date
-                                  ? moment(
-                                      trainingSettings?.deadline_date
-                                    ).format('DD/MM/YYYY')
-                                  : 'dd/mm/yyyy'
-                              }
-                              value={trainingSettings?.deadline_date}
-                              min={moment().format('YYYY-MM-DD')}
-                              onChange={(e) => {
-                                setTrainingSettings((prevState) => ({
-                                  ...prevState,
-                                  deadline_date: e.target.value,
-                                }));
-                                // setTrainingSettingErrors((prevState) => ({
-                                //   ...prevState,
-                                //   deadline_date: null,
-                                // }));
-                              }}
-                            />
-                            {/* {trainingSettingErrors?.start_date !== null && (
-                            <span className="error">
-                              {trainingSettingErrors?.start_date}
-                            </span>
-                          )} */}
-                          </Form.Group>
-                        </Col>
-                        <Col lg={3} sm={6} className="mt-3 mt-sm-0">
-                          <Form.Group>
-                            <Form.Label>Deadline Time</Form.Label>
-                            <Form.Control
-                              type="time"
-                              name="deadline_time"
-                              value={trainingSettings?.deadline_time}
-                              onChange={(e) => {
-                                setTrainingSettings((prevState) => ({
-                                  ...prevState,
-                                  deadline_time: e.target.value,
-                                }));
-                                // setTrainingSettingErrors((prevState) => ({
-                                //   ...prevState,
-                                //   start_time: null,
-                                // }));
-                              }}
-                            />
-                            {/* {trainingSettingErrors?.start_time !== null && (
-                            <span className="error">
-                              {trainingSettingErrors?.start_time}
-                            </span>
-                          )} */}
-                          </Form.Group>
-                        </Col>
-                      </>
-                    )}
                 </Row>
 
                 <Row className="mt-4">

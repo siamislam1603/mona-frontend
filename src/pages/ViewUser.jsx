@@ -1069,17 +1069,21 @@ const ViewUser = () => {
                               'educator',
                               'guardian',
                             ]) && (
+                              // <Form.Group className="col-md-12 mb-3 relative">
+                              //   <Form.Label>User Note</Form.Label>
+                              //   <Form.Control
+                              //     style={{ resize: 'none' }}
+                              //     type="text"
+                              //     as="textarea"
+                              //     disabled={true}
+                              //     rows={5}
+                              //     name="user_note"
+                              //     value={formData?.user_note || ''}
+                              //   />
+                              // </Form.Group>
                               <Form.Group className="col-md-12 mb-3 relative">
                                 <Form.Label>User Note</Form.Label>
-                                <Form.Control
-                                  style={{ resize: 'none' }}
-                                  type="text"
-                                  as="textarea"
-                                  disabled={true}
-                                  rows={5}
-                                  name="user_note"
-                                  value={formData?.user_note || ''}
-                                />
+                                <p>{formData?.user_note}</p>
                               </Form.Group>
                             )}
 
