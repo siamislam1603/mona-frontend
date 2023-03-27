@@ -15,6 +15,7 @@ import UserSignature from './InputFields/UserSignature';
 import moment from 'moment';
 import DragDropSingle from '../components/DragDropSingle';
 import { editUserValidation } from '../helpers/validation';
+import { getLoggedInUserRole, isUserAllowed } from '../utils/commonMethods';
 import * as ReactBootstrap from 'react-bootstrap';
 
 const animatedComponents = makeAnimated();
@@ -146,6 +147,7 @@ const EditUser = () => {
       profile_photo: user?.profile_photo,
       assign_random_password: user?.assign_random_password ? true : false,
       change_pwd_next_login: user?.change_pwd_next_login ? true : false,
+      user_note: user?.user_note,
     }));
     setCroppedImage(user?.profile_photo);
 
@@ -323,6 +325,16 @@ const EditUser = () => {
       ...prevData,
       [name]: value,
     }));
+  };
+
+  const canWriteUserNote = () => {
+    let role = getLoggedInUserRole();
+
+    return (
+      role === 'franchisor_admin' ||
+      role === 'franchisee_admin' ||
+      role === 'coordinator'
+    );
   };
 
   const fetchStateList = async () => {
@@ -728,6 +740,7 @@ const EditUser = () => {
     // console.log('UNIQUE ERRORS:', uniqueList);
   }, [uploadError]);
 
+  console.log('FORM DATA:', formData);
   return (
     <>
       {fileDeleteMessage && (
@@ -1248,6 +1261,28 @@ const EditUser = () => {
                               </Form.Group>
                             </>
                           )}
+                          {canWriteUserNote() &&
+                            isUserAllowed(formData?.role, [
+                              'educator',
+                              'guardian',
+                            ]) && (
+                              <div className="col-md-12 mb-3">
+                                <Form.Group className="mb-3 relative">
+                                  <Form.Label>User Note</Form.Label>
+                                  <Form.Control
+                                    style={{ resize: 'none' }}
+                                    type="text"
+                                    as="textarea"
+                                    rows={5}
+                                    name="user_note"
+                                    value={formData?.user_note || ''}
+                                    onChange={(e) => {
+                                      handleChange(e);
+                                    }}
+                                  />
+                                </Form.Group>
+                              </div>
+                            )}
                           <div className="col-md-12 mb-3 relative passopt mt-3">
                             <Form.Label>Password Settings</Form.Label>
                             <Form.Group>
