@@ -33,7 +33,11 @@ function isTrainingExpired(end_date) {
   return false;
 }
 
-const AvailableTraining = ({ filter, selectedFranchisee, setTabName }) => {
+const AvailableTraining = ({
+  filter = {},
+  selectedFranchisee,
+  setTabName = () => {},
+}) => {
   const [availableTrainingData, setAvailableTrainingData] = useState([]);
   const [trainingDeleteMessage, setTrainingDeleteMessage] = useState('');
   const [saveTrainingId, setSaveTrainingId] = useState(null);

@@ -1,4 +1,11 @@
 import moment from 'moment';
+import { BASE_URL } from '../components/App';
+
+export const getAuthToken = () => {
+  let token = localStorage.getItem('token');
+
+  return token;
+};
 
 export const getLoggedInUserRole = () => {
   let role = localStorage.getItem('user_role');
@@ -32,4 +39,16 @@ export const isEndDateExceeded = (trainingObj) => {
   let currentTime = moment(currentTimeStamp).format('HH:mm');
 
   return currentDate >= end_date && currentTime > end_time;
+};
+
+export const getUserAPIs = () => {
+  let API_ARRAY = [
+    `${BASE_URL}/api/user-role`,
+    `${BASE_URL}/training/get-training-categories`,
+    `${BASE_URL}/api/get-pdc`,
+    `${BASE_URL}/api/get-business-assets`,
+    `${BASE_URL}/role/franchisee`,
+  ];
+
+  return API_ARRAY;
 };
