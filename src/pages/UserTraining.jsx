@@ -3,6 +3,7 @@ import BootstrapTable from 'react-bootstrap-table-next';
 import { useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getAuthToken } from '../utils/commonMethods';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import { FullLoader } from '../components/Loader';
@@ -40,6 +41,7 @@ const useTrainingList = (user_id) => {
 };
 
 const UserTraining = () => {
+  const navigate = useNavigate();
   const { userId } = useParams();
   let { trainingList: trainings, isLoading, error } = useTrainingList(userId);
 
@@ -62,7 +64,7 @@ const UserTraining = () => {
     },
     {
       dataField: 'title',
-      text: 'Name',
+      text: 'Training Name',
     },
     {
       dataField: 'start_date',
@@ -100,9 +102,15 @@ const UserTraining = () => {
       formatter: (cell) => {
         return (
           <>
-            <a style={{ color: '' }} href={`/training-detail/${cell}`}>
+            <button
+              className="btn btn-outline-secondary"
+              onClick={() => navigate(`/training-detail/${cell}`)}
+            >
+              View More
+            </button>
+            {/* <a style={{ color: '' }} href={`/training-detail/${cell}`}>
               show more
-            </a>
+            </a> */}
           </>
         );
       },
