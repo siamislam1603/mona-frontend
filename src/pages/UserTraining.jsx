@@ -7,6 +7,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import { FullLoader } from '../components/Loader';
+import { BASE_URL } from '../components/App';
 
 const useTrainingList = (user_id) => {
   const [trainingList, setTrainingList] = useState([]);
@@ -21,7 +22,7 @@ const useTrainingList = (user_id) => {
     };
 
     await axios
-      .get(`http://localhost:4000/training/list/all/${user_id}`, config)
+      .get(`${BASE_URL}/training/list/all/${user_id}`, config)
       .then((res) => {
         let { trainings } = res.data;
         setTrainingList(trainings);
