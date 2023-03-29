@@ -6,8 +6,23 @@ import { getAuthToken } from '../utils/commonMethods';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { FullLoader } from '../components/Loader';
 import { BASE_URL } from '../components/App';
+
+function getUiniqueTrainingData(data) {
+  let uniqueIds = [];
+  data = data.map((item) => {
+    if (!uniqueIds.includes(item.training_id)) {
+      uniqueIds.push(item.training_id);
+      return item;
+    }
+  });
+
+  data = data.filter((item) => typeof item !== 'undefined');
+  return data;
+}
 
 const useTrainingList = (user_id) => {
   const abortControllerRef = useRef(new AbortController());
@@ -30,6 +45,7 @@ const useTrainingList = (user_id) => {
       )
       .then((res) => {
         let { trainings } = res.data;
+        trainings = getUiniqueTrainingData(trainings);
         setTrainingList(trainings);
         setIsLoading(false);
       })
@@ -138,11 +154,20 @@ const UserTraining = () => {
                     {error === null ? (
                       trainings.length > 0 ? (
                         <>
-                          <BootstrapTable
-                            keyField="id"
+                          <ToolkitProvider
+                            keyField="name"
                             data={trainings}
                             columns={columns}
-                          />
+                          >
+                            {(props) => (
+                              <>
+                                <BootstrapTable
+                                  {...props.baseProps}
+                                  pagination={paginationFactory()}
+                                />
+                              </>
+                            )}
+                          </ToolkitProvider>
                         </>
                       ) : (
                         <p
