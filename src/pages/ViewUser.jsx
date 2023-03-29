@@ -1,6 +1,6 @@
 import axios from 'axios';
 import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -20,6 +20,9 @@ import moment from 'moment';
 import { FullLoader } from '../components/Loader';
 
 const useFetchBatchDatFromAPIs = () => {
+  // TO CANCEL API REQUEST IF THE PAGE CHANGES
+  const abortControllerRef = useRef(new AbortController());
+
   const [userRoleData, setUserRoleData] = useState([]);
   const [franchiseeData, setFranchiseeData] = useState(null);
   const [trainingCategoryData, setTrainingCategoryData] = useState([]);
@@ -36,7 +39,9 @@ const useFetchBatchDatFromAPIs = () => {
       },
     };
 
-    let requests = apiArray.map((item) => axios.get(item, config));
+    let requests = apiArray.map((item) =>
+      axios.get(item, config, abortControllerRef)
+    );
 
     await axios
       .all(requests)
@@ -107,7 +112,12 @@ const useFetchBatchDatFromAPIs = () => {
   }, []);
 
   useEffect(() => {
+    const controller = abortControllerRef.current;
     fetchAPIData();
+
+    return () => {
+      controller.abort();
+    };
   }, [fetchAPIData]);
 
   return {

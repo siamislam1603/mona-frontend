@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
@@ -10,6 +10,7 @@ import { FullLoader } from '../components/Loader';
 import { BASE_URL } from '../components/App';
 
 const useTrainingList = (user_id) => {
+  const abortControllerRef = useRef(new AbortController());
   const [trainingList, setTrainingList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,7 +23,11 @@ const useTrainingList = (user_id) => {
     };
 
     await axios
-      .get(`${BASE_URL}/training/list/all/${user_id}`, config)
+      .get(
+        `${BASE_URL}/training/list/all/${user_id}`,
+        config,
+        abortControllerRef
+      )
       .then((res) => {
         let { trainings } = res.data;
         setTrainingList(trainings);
@@ -35,7 +40,12 @@ const useTrainingList = (user_id) => {
   }, [user_id]);
 
   useEffect(() => {
+    const controller = abortControllerRef.current;
     fetchUserTrainingDetails();
+
+    return () => {
+      controller.abort();
+    };
   }, [fetchUserTrainingDetails]);
 
   return { trainingList, isLoading, error };
@@ -109,16 +119,12 @@ const UserTraining = () => {
             >
               View More
             </button>
-            {/* <a style={{ color: '' }} href={`/training-detail/${cell}`}>
-              show more
-            </a> */}
           </>
         );
       },
     },
   ];
 
-  console.log(trainings, isLoading, error);
   return (
     <>
       <div id="main" className="main-class">
@@ -130,13 +136,26 @@ const UserTraining = () => {
                 <div className="entry-container">
                   <div className="user-management-sec user-training">
                     {error === null ? (
-                      <>
-                        <BootstrapTable
-                          keyField="id"
-                          data={trainings}
-                          columns={columns}
-                        />
-                      </>
+                      trainings.length > 0 ? (
+                        <>
+                          <BootstrapTable
+                            keyField="id"
+                            data={trainings}
+                            columns={columns}
+                          />
+                        </>
+                      ) : (
+                        <p
+                          style={{
+                            textAlign: 'center',
+                            color: '#888',
+                            fontWeight: 'normal',
+                            fontSize: '18px',
+                          }}
+                        >
+                          No Trainings Available
+                        </p>
+                      )
                     ) : (
                       <p
                         style={{
