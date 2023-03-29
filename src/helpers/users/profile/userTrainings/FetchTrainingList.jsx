@@ -103,7 +103,33 @@ export const GetTrainingListColumns = (navigate) => {
     },
     {
       dataField: 'status',
+      text: 'Progress',
+    },
+    {
+      dataField: 'is_expired',
       text: 'Status',
+      formatter: (cell) => {
+        let statusStyle =
+          cell === 'Available'
+            ? {
+                backgroundColor: 'limegreen',
+              }
+            : { backgroundColor: 'tomato' };
+        return (
+          <>
+            <div
+              style={{
+                width: '6rem',
+                height: '0.8rem',
+                color: 'white',
+                textAlign: 'center',
+              }}
+            >
+              <p style={statusStyle}>{cell}</p>
+            </div>
+          </>
+        );
+      },
     },
     {
       dataField: 'training_id',
