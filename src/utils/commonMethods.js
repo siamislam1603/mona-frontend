@@ -40,15 +40,3 @@ export const isEndDateExceeded = (trainingObj) => {
 
   return currentDate >= end_date && currentTime > end_time;
 };
-
-export const getUserAPIs = () => {
-  let API_ARRAY = [
-    `${BASE_URL}/api/user-role`,
-    `${BASE_URL}/training/get-training-categories`,
-    `${BASE_URL}/api/get-pdc`,
-    `${BASE_URL}/api/get-business-assets`,
-    `${BASE_URL}/role/franchisee`,
-  ];
-
-  return API_ARRAY;
-};

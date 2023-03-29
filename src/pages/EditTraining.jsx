@@ -5,7 +5,6 @@ import TopHeader from '../components/TopHeader';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import Multiselect from 'multiselect-react-dropdown';
-import DropOneFile from '../components/DragDrop';
 import DropAllFile from '../components/DragDropMultiple';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
