@@ -162,6 +162,7 @@ const UserManagement = () => {
       formatter: (cell) => {
         let status = null;
         cell = cell.split(',');
+        let role = cell[2].toLowerCase();
         if (parseInt(cell[3]) === 0) {
           status = 'inactive';
         } else if (parseInt(cell[3]) === 1) {
@@ -179,7 +180,7 @@ const UserManagement = () => {
                 />
               </span>
               <span className="user-name">
-                <Link to={`/profile/${cell[4]}`}>{cell[1]}</Link>
+                <Link to={`/profile/${cell[4]}/${role}`}>{cell[1]}</Link>
                 <small>{cell[2]}</small>{' '}
                 <small className={`${status}`}>{status}</small>
               </span>

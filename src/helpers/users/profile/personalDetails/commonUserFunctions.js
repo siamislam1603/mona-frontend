@@ -63,3 +63,7 @@ export const populateCoordinator = (data, coordinator) => {
 
   return dataStr && dataStr.length > 0 ? dataStr[0]?.label : '';
 };
+
+export const isNominatedAssistant = (data) => {
+  return data && data !== 'null' && data !== null;
+};

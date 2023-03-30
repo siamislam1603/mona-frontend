@@ -488,7 +488,7 @@ const Main = () => {
           }
         />
         <Route
-          path="/profile/:userId"
+          path="/profile/:userId/:userRole"
           element={
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />

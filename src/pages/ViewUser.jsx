@@ -18,6 +18,7 @@ import {
   populateUserTrainingCategoryData,
   populateUserBusinessAssets,
   populateCoordinator,
+  isNominatedAssistant,
 } from '../helpers/users/profile/personalDetails/commonUserFunctions';
 
 const ViewUser = () => {
@@ -145,12 +146,16 @@ const ViewUser = () => {
                             </div>
                           </Form.Group>
 
-                          {formData && formData?.role === 'educator' && (
-                            <Form.Group className="col-md-6 mb-3 relative">
-                              <Form.Label>Nominated Assistant</Form.Label>
-                              <p>{formData?.nominated_assistant}</p>
-                            </Form.Group>
-                          )}
+                          {formData &&
+                            formData?.role === 'educator' &&
+                            isNominatedAssistant(
+                              formData?.nominated_assistant
+                            ) && (
+                              <Form.Group className="col-md-6 mb-3 relative">
+                                <Form.Label>Nominated Assistant</Form.Label>
+                                <p>{formData?.nominated_assistant}</p>
+                              </Form.Group>
+                            )}
 
                           <Form.Group className="col-md-6 mb-3 relative">
                             <Form.Label>Select Franchise</Form.Label>

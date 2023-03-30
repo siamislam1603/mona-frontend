@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import ViewUser from './ViewUser';
 import UserTraining from './UserTraining';
+import UserForm from './UserForm';
 import { useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
 
 const Profile = (props) => {
-  const { userId } = useParams();
+  const { userId, userRole } = useParams();
   const [selectedFranchisee, setSelectedFranchisee] = useState(
     'Alphabet Kids, Sydney'
   );
@@ -64,17 +65,17 @@ const Profile = (props) => {
                             User Trainings
                           </a>
                         </li>
-                        {/* <li>
+                        <li>
                           <a
                             onClick={handleLinkClick}
-                            path="/view-user/1132"
+                            path={`/user-forms/${userId}/${userRole}`}
                             className={`${
-                              tabLinkPath === '/view-user/1132' ? 'active' : ''
+                              tabLinkPath.includes('user-forms') ? 'active' : ''
                             }`}
                           >
-                            Forms
+                            User Forms
                           </a>
-                        </li> */}
+                        </li>
                       </ul>
                     </div>
 
@@ -83,7 +84,7 @@ const Profile = (props) => {
                       {tabLinkPath.includes('user-training') && (
                         <UserTraining />
                       )}
-                      {/*{tabLinkPath === '/view-user/1132' && <ViewUser />} */}
+                      {tabLinkPath.includes('user-forms') && <UserForm />}
                     </div>
                   </div>
                 </div>

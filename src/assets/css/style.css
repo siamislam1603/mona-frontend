@@ -1607,6 +1607,7 @@ label.form-check-label {
   width: 20%;
 }
 
+/* USER TRAINING */
 .user-management-sec.user-training .table tr td:nth-child(1n) {
   width: 20%;
 }
@@ -1626,6 +1627,23 @@ label.form-check-label {
 
 .user-management-sec.user-training .table tr td:nth-child(6n) {
   width: 25%;
+}
+
+/* USER FORM */
+.user-management-sec.user-form .table tr td:nth-child(1n) {
+  width: 25%;
+}
+.user-management-sec.user-form .table tr td:nth-child(2n) {
+  width: 25%;
+}
+.user-management-sec.user-form .table tr td:nth-child(3n) {
+  width: 20%;
+}
+.user-management-sec.user-form .table tr td:nth-child(4n) {
+  width: 20%;
+}
+.user-management-sec.user-form .table tr td:nth-child(5n) {
+  width: 15%;
 }
 
 .user-management-sec.repository-sec .table tr td:nth-child(2n) {
