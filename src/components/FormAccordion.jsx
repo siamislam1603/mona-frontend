@@ -26,12 +26,9 @@ function FormAccordion({ data: formResponse }) {
                   </h6>
                 </div>
               </div>
-              {/* <div className="responses-header-right">
-                <p>
-                  Updated on: <br />
-                  {item?.createdAt}
-                </p>
-              </div> */}
+              <div className="responses-header-right">
+                <p>Total Responses: {item?.count}</p>
+              </div>
             </div>
           </Accordion.Header>
           <Accordion.Body>
