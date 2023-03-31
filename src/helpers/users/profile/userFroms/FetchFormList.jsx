@@ -4,7 +4,7 @@ import moment from 'moment';
 import { getAuthToken } from '../../../../utils/commonMethods';
 import { getUserFormsAPI } from './userFormAPI';
 
-export const FetchFormList = ({ userId, userRole }) => {
+export const FetchFormList = ({ userId, userRole, search }) => {
   const abortControllerRef = useRef(new AbortController());
   const [formList, setFormList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +18,11 @@ export const FetchFormList = ({ userId, userRole }) => {
     };
 
     await axios
-      .get(getUserFormsAPI({ userId, userRole }), config, abortControllerRef)
+      .get(
+        getUserFormsAPI({ userId, userRole, search }),
+        config,
+        abortControllerRef
+      )
       .then((res) => {
         let { forms } = res.data;
         setFormList(forms);
@@ -28,7 +32,7 @@ export const FetchFormList = ({ userId, userRole }) => {
         setError('No Forms Available');
         setIsLoading(false);
       });
-  }, [userId, userRole]);
+  }, [userId, userRole, search]);
 
   useEffect(() => {
     const controller = abortControllerRef.current;

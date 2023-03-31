@@ -82,11 +82,7 @@ export const GetTrainingListColumns = (navigate) => {
       text: 'Start Date',
       formatter: (cell) => {
         let start_date = moment(cell).format('DD-MM-YYYY');
-        return (
-          <>
-            <p>{start_date}</p>
-          </>
-        );
+        return <p style={{ margin: 0 }}>{start_date}</p>;
       },
     },
     {
@@ -94,11 +90,7 @@ export const GetTrainingListColumns = (navigate) => {
       text: 'Due Date',
       formatter: (cell) => {
         let due_date = cell ? moment(cell).format('DD-MM-YYYY') : 'No Due Date';
-        return (
-          <>
-            <p>{due_date}</p>
-          </>
-        );
+        return <p style={{ margin: 0 }}>{due_date}</p>;
       },
     },
     {
