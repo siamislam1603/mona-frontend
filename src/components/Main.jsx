@@ -64,6 +64,7 @@ import { logoutUser } from '../helpers/logout';
 import AllEvent from '../pages/AllEvent';
 import OwnFormResponse from '../pages/FormBuilder/OwnFormResponse';
 import UserTraining from '../pages/UserTraining';
+import UserFormResponses from '../pages/UserFormResponses';
 
 function returnDashboard(role) {
   if (role === 'franchisor_admin') return <FranchisorDashboard />;
@@ -493,6 +494,15 @@ const Main = () => {
             <Protected isLoggedIn={isLoggedIn}>
               <SignIn />
               <Profile />
+            </Protected>
+          }
+        />
+        <Route
+          path="/user/form/response/:formId/:userId/:userRole"
+          element={
+            <Protected isLoggedIn={isLoggedIn}>
+              <SignIn />
+              <UserFormResponses />
             </Protected>
           }
         />

@@ -46,7 +46,10 @@ export const FetchFormList = ({ userId, userRole, search }) => {
   return { formList, isLoading, error };
 };
 
-export const GetFromListColumns = (navigate) => {
+export const GetFromListColumns = ({ navigate, userId, userRole }) => {
+  let id = userId.trim();
+  let role = userRole.trim();
+
   return [
     {
       dataField: 'form_name',
@@ -80,7 +83,9 @@ export const GetFromListColumns = (navigate) => {
           <>
             <button
               className="btn btn-outline-secondary"
-              onClick={() => navigate(`/form/response/${cell}`)}
+              onClick={() =>
+                navigate(`/user/form/response/${cell}/${id}/${role}`)
+              }
             >
               View Responses
             </button>

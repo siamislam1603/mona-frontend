@@ -560,7 +560,7 @@ function FormResponse(props) {
                                               )[inner_index] ===
                                                 'text_headings') &&
                                               count++;
-                                          } 
+                                          }
                                           return (
                                             <div
                                               key={inner_index}

@@ -16,7 +16,7 @@ const UserForm = () => {
   const navigate = useNavigate();
   const { userId, userRole } = useParams();
   const [search, setSearch] = useState('');
-  let columns = GetFromListColumns(navigate);
+  let columns = GetFromListColumns({ navigate, userId, userRole });
   let {
     formList: forms,
     isLoading,
