@@ -17,7 +17,7 @@ function getUiniqueTrainingData(data) {
   return data;
 }
 
-export const FetchTrainingList = (userId) => {
+export const FetchTrainingList = ({ userId, search }) => {
   const abortControllerRef = useRef(new AbortController());
   const [trainingList, setTrainingList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ export const FetchTrainingList = (userId) => {
     };
 
     await axios
-      .get(getUserTrainingsAPI(userId), config, abortControllerRef)
+      .get(getUserTrainingsAPI({ userId, search }), config, abortControllerRef)
       .then((res) => {
         let { trainings } = res.data;
         trainings = getUiniqueTrainingData(trainings);
@@ -42,7 +42,7 @@ export const FetchTrainingList = (userId) => {
         setError('No Trainings Available');
         setIsLoading(false);
       });
-  }, [userId]);
+  }, [userId, search]);
 
   useEffect(() => {
     const controller = abortControllerRef.current;
