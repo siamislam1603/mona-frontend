@@ -67,8 +67,7 @@ const UserManagement = () => {
                     <div className="forms-managmentsection">
                       <div className="forms-managment-left">
                         <p className="mb-2">
-                          {formDetails?.form_response_count} users have filled
-                          this form.
+                          {formDetails?.form_response_count} responses
                         </p>
                       </div>
                       <div className="forms-search me-0 ms-auto mt-3">

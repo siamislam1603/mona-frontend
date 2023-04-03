@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { BASE_URL } from '../components/App';
 
 export const getAuthToken = () => {
   let token = localStorage.getItem('token');
