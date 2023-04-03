@@ -411,11 +411,9 @@ const CreatedTraining = ({ filter, selectedFranchisee, setTabName }) => {
                             <img src="../img/dot-ico.svg" alt="" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            {(isTrainingAddedByLoggedInUser(
+                            {isTrainingAddedByLoggedInUser(
                               training?.addedBy
-                            ) ||
-                              (isTrainingExpired(training.end_date) === false &&
-                                training.is_Training_completed === false)) && (
+                            ) && (
                               <Dropdown.Item
                                 href={`/edit-training/${training.id}`}
                               >
