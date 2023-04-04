@@ -55,7 +55,7 @@ function FormAccordion({ data: formResponse }) {
               }
             >
               <div className="content-wrap-title text-capitalize d-md-flex">
-                <h4>Filled By: {item?.filled_by}</h4>
+                <h4>Filled By: {item?.user?.fullname}</h4>
               </div>
 
               {Object.keys(JSON.parse(item.fields)).map(
