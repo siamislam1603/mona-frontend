@@ -25,7 +25,12 @@ const ViewUser = () => {
   const { userId } = useParams();
   const [image, setImage] = useState(null);
   const [popupVisible, setPopupVisible] = useState(false);
-  const { formData, croppedImage, coordinatorData } = FetchUserData(userId);
+  const {
+    formData,
+    croppedImage,
+    coordinatorData,
+    files: userFiles,
+  } = FetchUserData(userId);
   const {
     userRoleData,
     trainingCategoryData,
@@ -190,6 +195,35 @@ const ViewUser = () => {
                                   formData?.businessAssets
                                 )}
                               </p>
+                            </Form.Group>
+                          )}
+
+                          {userFiles && userFiles.length > 0 && (
+                            <Form.Group className="col-md-12 mb-3 relative">
+                              <Form.Label>User Documents</Form.Label>
+                              {userFiles &&
+                                userFiles.map((doc) => {
+                                  return (
+                                    <div>
+                                      <a
+                                        style={{ color: '#AA007F' }}
+                                        href={doc?.file}
+                                      >
+                                        <p>{doc.name}</p>
+                                      </a>
+                                      <img
+                                        style={{
+                                          width: '18px',
+                                          height: 'auto',
+                                          cursor: 'pointer',
+                                          marginLeft: '5px',
+                                        }}
+                                        src="https://img.favpng.com/2/11/13/computer-icons-download-button-png-favpng-LyjSg5tLYsK66QHJ5WnQWx4Qv.jpg"
+                                        alt=""
+                                      />
+                                    </div>
+                                  );
+                                })}
                             </Form.Group>
                           )}
 

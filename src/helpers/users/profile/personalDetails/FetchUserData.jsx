@@ -6,6 +6,7 @@ import { getUserCoordinatorAPI, getUserDetailAPI } from './ProfileAPI';
 export function FetchUserData(userId) {
   const [croppedImage, setCroppedImage] = useState(null);
   const [coordinatorData, setCoordinatorData] = useState([]);
+  const [files, setFiles] = useState(null);
   const [formData, setFormData] = useState({
     telcode: '',
     phone: '',
@@ -21,7 +22,9 @@ export function FetchUserData(userId) {
 
     const response = await axios.get(getUserDetailAPI(userId), config);
     if (response.status === 200 && response.data.status === 'success') {
-      const { user } = response.data;
+      const { user, userFiles } = response.data;
+
+      if (typeof userFiles !== 'undefined') setFiles(userFiles);
 
       if (Object.keys(user).length > 0) {
         axios
@@ -85,5 +88,6 @@ export function FetchUserData(userId) {
     formData,
     coordinatorData,
     croppedImage,
+    files,
   };
 }
