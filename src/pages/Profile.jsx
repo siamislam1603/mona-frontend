@@ -52,19 +52,21 @@ const Profile = (props) => {
                             Personal Details
                           </a>
                         </li>
-                        <li>
-                          <a
-                            onClick={handleLinkClick}
-                            path={`/user-training/${userId}`}
-                            className={`${
-                              tabLinkPath.includes('user-training')
-                                ? 'active'
-                                : ''
-                            }`}
-                          >
-                            User Trainings
-                          </a>
-                        </li>
+                        {userRole !== 'guardian' && (
+                          <li>
+                            <a
+                              onClick={handleLinkClick}
+                              path={`/user-training/${userId}`}
+                              className={`${
+                                tabLinkPath.includes('user-training')
+                                  ? 'active'
+                                  : ''
+                              }`}
+                            >
+                              User Trainings
+                            </a>
+                          </li>
+                        )}
                         <li>
                           <a
                             onClick={handleLinkClick}
@@ -81,9 +83,10 @@ const Profile = (props) => {
 
                     <div className="training-column">
                       {tabLinkPath.includes(`view-user`) && <ViewUser />}
-                      {tabLinkPath.includes('user-training') && (
-                        <UserTraining />
-                      )}
+                      {userRole !== 'guardian' &&
+                        tabLinkPath.includes('user-training') && (
+                          <UserTraining />
+                        )}
                       {tabLinkPath.includes('user-forms') && <UserForm />}
                     </div>
                   </div>

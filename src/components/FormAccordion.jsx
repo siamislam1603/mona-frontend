@@ -43,7 +43,7 @@ function FormAccordion({ data: formResponse }) {
               </div>
             </div>
           </Accordion.Header>
-          <Accordion.Body>
+          <Accordion.Body style={{ paddingTop: '10px' }}>
             {/* {item.response.length > 0 &&
               item.response.map((response, index) => ( */}
             <div
@@ -55,7 +55,12 @@ function FormAccordion({ data: formResponse }) {
               }
             >
               <div className="content-wrap-title text-capitalize d-md-flex">
-                <h4>Filled By: {item?.user?.fullname}</h4>
+                <h4>
+                  {`Filled By: ${item?.user?.fullname}`}{' '}
+                  {item?.behalf_of?.fullname
+                    ? `| Name: ${item?.behalf_of?.fullname}`
+                    : ``}
+                </h4>
               </div>
 
               {Object.keys(JSON.parse(item.fields)).map(
