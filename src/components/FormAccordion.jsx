@@ -56,7 +56,9 @@ function FormAccordion({ data: formResponse }) {
             >
               <div className="content-wrap-title text-capitalize d-md-flex">
                 <h4>
-                  {`Filled By: ${item?.user?.fullname}`}{' '}
+                  {item?.behalf_of?.fullname
+                    ? `${item?.user?.fullname}`
+                    : `Filled By: ${item?.user?.fullname}`}{' '}
                   {item?.behalf_of?.fullname
                     ? `| Name: ${item?.behalf_of?.fullname}`
                     : ``}
