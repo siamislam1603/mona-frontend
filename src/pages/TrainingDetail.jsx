@@ -65,9 +65,11 @@ const TrainingDetail = () => {
     useState(false);
   const [trainingFinishedDate, setTrainingFinishedDate] = useState(null);
   const [users, setUsers] = useState();
+  const [originalParticipants, setOriginalParticipants] = useState();
   const [relatedForms, setRelatedForms] = useState();
   const [showSurveyForm, setShowSurveyForm] = useState(false);
   const [nonParticipants, setNonParticipants] = useState(null);
+  const [originalNonParticipants, setOriginalNonParticipants] = useState(null);
   const [popupNotification, setPopupNotification] = useState(null);
   const [trainingDeletePopup, setTrainingDeletePopup] = useState(false);
   const [trainingExpiredPopup, setTrainingExpiredPopup] = useState(false);
@@ -168,6 +170,7 @@ const TrainingDetail = () => {
         );
       }
       let participants = filteredUser.slice(0, 6);
+      setOriginalParticipants(filteredUser);
       setUsers(
         participants.map((user) => ({
           id: user.id,
@@ -216,6 +219,7 @@ const TrainingDetail = () => {
     if (response.status === 200 && response.data.status === 'success') {
       let { finalResponse } = response.data;
 
+      setOriginalNonParticipants(finalResponse);
       setNonParticipants(finalResponse.slice(0, 6));
     }
   };
@@ -426,7 +430,7 @@ const TrainingDetail = () => {
                                 <h3 className="title-sm">
                                   Training Participants Attended
                                 </h3>
-                                {users.length > 6 && (
+                                {originalParticipants.length > 6 && (
                                   <Link
                                     to={`/training-participant/${trainingId}`}
                                     className="viewall"
@@ -495,7 +499,7 @@ const TrainingDetail = () => {
                                 <h3 className="title-sm">
                                   Training Participants Not Attended
                                 </h3>
-                                {nonParticipants?.length > 6 && (
+                                {originalNonParticipants?.length > 6 && (
                                   <Link
                                     to={`/training-non-participant/${trainingId}`}
                                     className="viewall"
