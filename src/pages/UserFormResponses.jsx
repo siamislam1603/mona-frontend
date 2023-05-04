@@ -15,6 +15,7 @@ const UserManagement = () => {
   const [search, setSearch] = useState('');
   let { formDetails, formResponse, error, isLoading } = FetchFormResponse({
     formId,
+    userId,
     search,
   });
 

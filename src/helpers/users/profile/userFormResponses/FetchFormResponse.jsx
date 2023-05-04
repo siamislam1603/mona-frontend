@@ -3,7 +3,7 @@ import axios from 'axios';
 import { getAuthToken } from '../../../../utils/commonMethods';
 import { getFormResponseAPI } from './formResponseAPI';
 
-export const FetchFormResponse = ({ formId, search }) => {
+export const FetchFormResponse = ({ formId, userId, search }) => {
   const [formDetails, setFormDetails] = useState(null);
   const [formResponse, setFormResponse] = useState(null);
   const [error, setError] = useState(null);
@@ -17,7 +17,7 @@ export const FetchFormResponse = ({ formId, search }) => {
     };
 
     await axios
-      .get(getFormResponseAPI({ formId, search }), config)
+      .get(getFormResponseAPI({ formId, userId, search }), config)
       .then((response) => {
         let { formResponse: userFormResponse, formDetails } = response.data;
         setFormDetails(formDetails);
