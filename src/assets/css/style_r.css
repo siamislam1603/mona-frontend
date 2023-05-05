@@ -90,7 +90,7 @@ p.center {
   display: flex;
 }
 
-.datepicker {
+/* .datepicker {
   position: 'absolute';
 }
 
@@ -106,7 +106,7 @@ p.center {
   font-weight: 500;
   content: attr(placeholder);
   margin-right: -20rem;
-}
+} */
 
 .preserve-white-space {
   white-space: pre-wrap;
