@@ -90,6 +90,10 @@ p.center {
   display: flex;
 }
 
+.datepicker {
+  position: 'absolute';
+}
+
 .datepicker:not(.has-value):before {
   color: #464646;
   font-weight: 500;
