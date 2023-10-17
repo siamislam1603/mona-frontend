@@ -6,7 +6,7 @@ import axios from 'axios';
 import { BASE_URL } from '../components/App';
 // import { getVideoDurationInSeconds } from 'get-video-duration';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import VideoPop from '../components/VideoPop';
 import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -50,9 +50,14 @@ const fileExtension = [
   '.pdf',
 ];
 
-const TrainingDetail = () => {
-  const { trainingId } = useParams();
+const TrainingDetail = (props) => {
+  const { trainingId, user_id, user_role } = useParams();
+  let queryParams = new URLSearchParams(window.location?.search);
+  let query_user_id = queryParams?.get('user_id');
+  let query_user_role = queryParams?.get('user_role');
 
+  let storage_user_id = localStorage.getItem('user_id');
+  let storage_user_role = localStorage.getItem('user_role');
   const [trainingDetails, setTrainingDetails] = useState(null);
   const [selectedFranchisee, setSelectedFranchisee] = useState(null);
 
@@ -645,32 +650,64 @@ const TrainingDetail = () => {
 
                       {relatedForms && (
                         <Col md={12}>
+                          {console.log('Form Details:::', relatedForms)}
                           <div className="related-form-sec mb-5">
                             <h3 className="title-sm">
                               Training Assessment Form
                             </h3>
-                            <div className="column-list files-list three-col">
-                              <div className="item">
-                                <div className="pic">
-                                  <a>
-                                    <img src="../img/folder-ico.png" alt="" />
-                                  </a>
+                            {query_user_id && query_user_role ? (
+                              <a
+                                href={`/user/form/response/${relatedForms?.id}/${query_user_id}/${query_user_role}`}
+                                className="column-list files-list three-col"
+                              >
+                                <div className="item">
+                                  <div className="pic">
+                                    <a>
+                                      <img src="../img/folder-ico.png" alt="" />
+                                    </a>
+                                  </div>
+                                  <div className="name">
+                                    <a>{relatedForms.form_name}</a>
+                                  </div>
+                                  <div className="cta-col">
+                                    {/* <Dropdown>
+                                          <Dropdown.Toggle variant="transparent" id="ctacol">
+                                            <img src="../img/dot-ico.svg" alt="" />
+                                          </Dropdown.Toggle>
+                                          <Dropdown.Menu>
+                                            {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
+                                    {/* </Dropdown.Menu> */}
+                                    {/* </Dropdown> */}
+                                  </div>
                                 </div>
-                                <div className="name">
-                                  <a>{relatedForms.form_name}</a>
+                              </a>
+                            ) : (
+                              <a
+                                href={`/user/form/response/${relatedForms?.id}/${storage_user_id}/${storage_user_role}`}
+                                className="column-list files-list three-col"
+                              >
+                                <div className="item">
+                                  <div className="pic">
+                                    <a>
+                                      <img src="../img/folder-ico.png" alt="" />
+                                    </a>
+                                  </div>
+                                  <div className="name">
+                                    <a>{relatedForms.form_name}</a>
+                                  </div>
+                                  <div className="cta-col">
+                                    {/* <Dropdown>
+                                            <Dropdown.Toggle variant="transparent" id="ctacol">
+                                              <img src="../img/dot-ico.svg" alt="" />
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                              {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
+                                    {/* </Dropdown.Menu> */}
+                                    {/* </Dropdown> */}
+                                  </div>
                                 </div>
-                                <div className="cta-col">
-                                  {/* <Dropdown>
-                                      <Dropdown.Toggle variant="transparent" id="ctacol">
-                                        <img src="../img/dot-ico.svg" alt="" />
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu>
-                                        {/* <Dropdown.Item href="#">Delete</Dropdown.Item> */}
-                                  {/* </Dropdown.Menu> */}
-                                  {/* </Dropdown> */}
-                                </div>
-                              </div>
-                            </div>
+                              </a>
+                            )}
                           </div>
                         </Col>
                       )}

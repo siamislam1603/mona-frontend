@@ -1,6 +1,6 @@
 import axios from 'axios';
 import ImageCropPopup from '../components/ImageCropPopup/ImageCropPopup';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Button, Col, Container, Row, Form, Modal } from 'react-bootstrap';
 import LeftNavbar from '../components/LeftNavbar';
 import TopHeader from '../components/TopHeader';
@@ -96,28 +96,28 @@ const EditUser = () => {
   const [fileDeleteMessage, setFileDeleteMessage] = useState(null);
 
   // FETCHES THE DATA OF USER FOR EDITING
-  const fetchEditUserData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // const fetchEditUserData = async () => {
+  //   const token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/auth/user/${userId}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (response.status === 200 && response.data.status === 'success') {
-      const { user } = response.data;
-      const { userFiles } = response.data;
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     const { user } = response.data;
+  //     const { userFiles } = response.data;
 
-      if (Object.keys(user).length > 0) {
-        copyDataToState(user, userFiles);
-      } else {
-        localStorage.setItem('success_msg', "User doesn't exist!");
-        const userRole = localStorage.getItem('user_role');
-        if (userRole === 'guardian') window.location.href = '/';
-        else window.location.href = '/user-management';
-      }
-    }
-  };
+  //     if (Object.keys(user).length > 0) {
+  //       copyDataToState(user, userFiles);
+  //     } else {
+  //       localStorage.setItem('success_msg', "User doesn't exist!");
+  //       const userRole = localStorage.getItem('user_role');
+  //       if (userRole === 'guardian') window.location.href = '/';
+  //       else window.location.href = '/user-management';
+  //     }
+  //   }
+  // };
 
   const copyDataToState = (user, files) => {
     setCurrentRole(user?.role);
@@ -337,24 +337,24 @@ const EditUser = () => {
     );
   };
 
-  const fetchStateList = async () => {
-    let response = await axios.get(`${BASE_URL}/api/state/data`, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token'),
-      },
-    });
+  // const fetchStateList = async () => {
+  //   let response = await axios.get(`${BASE_URL}/api/state/data`, {
+  //     headers: {
+  //       Authorization: 'Bearer ' + localStorage.getItem('token'),
+  //     },
+  //   });
 
-    if (response.status === 200 && response.data.status === 'success') {
-      let { states } = response.data;
-      setStateData(
-        states.map((d) => ({
-          id: d.id,
-          value: d.name,
-          label: d.name,
-        }))
-      );
-    }
-  };
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     let { states } = response.data;
+  //     setStateData(
+  //       states.map((d) => ({
+  //         id: d.id,
+  //         value: d.name,
+  //         label: d.name,
+  //       }))
+  //     );
+  //   }
+  // };
 
   const setAutoFocus = (obj) => {
     let errArray = Object.keys(obj);
@@ -420,7 +420,7 @@ const EditUser = () => {
           blob = await fetch(croppedImage.getAttribute('src')).then((res) =>
             res.blob()
           );
-          data.append('images', blob);
+          data.append('profile_photo', blob);
         } else {
           blob = croppedImage;
           data.append('profile_photo', blob);
@@ -439,46 +439,153 @@ const EditUser = () => {
     }
   };
 
-  // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-  const fetchCountryData = async () => {
+  // FETCH THE OVERALL PROFILE DATA FGOR POPULATION;
+  const fetchProfileData = useCallback(() => {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/country-data`, {
+    let config = {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: `Bearer ${token}`,
       },
-    });
-    if (response.status === 200) {
-      const { countryDataList } = response.data;
-      setCountryData(
-        countryDataList.map((countryData) => ({
-          value: `${countryData.name}\n${countryData.dial_code}`,
-          label: `${countryData.name}\n${countryData.dial_code}`,
-        }))
-      );
-    }
-  };
+    };
+    axios
+      .get(`${BASE_URL}/auth/user/profile/data/${userId}`, config)
+      .then((res) => {
+        let details = res.data?.details;
+        let success = res.data?.success;
+
+        if (success) {
+          let {
+            countryDataList,
+            userRoleList,
+            categoryList,
+            pdcList,
+            businessAssetList,
+            stateData: states,
+            franchiseeList,
+            userData,
+          } = details;
+
+          // setting country data;
+          setCountryData(
+            countryDataList.map((countryData) => ({
+              value: `${countryData.name}\n${countryData.dial_code}`,
+              label: `${countryData.name}\n${countryData.dial_code}`,
+            }))
+          );
+
+          // Setting user role list;
+          let newRoleList = userRoleList.map((d) => ({
+            id: d.id,
+            value: d.role_name,
+            label: d.role_label,
+            sequence: d.role_sequence,
+          }));
+
+          setUserRoleData(newRoleList);
+
+          // Setting franchisee list;
+          setTrainingCategoryData([
+            ...categoryList.map((data) => ({
+              id: data.id,
+              value: data.category_name,
+              label: data.category_name,
+            })),
+          ]);
+
+          // Setting PDC List
+          setPdcData(
+            pdcList.map((data) => ({
+              id: data.id,
+              value: data.category_name,
+              label: data.category_name,
+            }))
+          );
+
+          // Setting Business asset list;
+          setBuinessAssetData(
+            businessAssetList.map((data) => ({
+              id: data.id,
+              value: data.asset_name,
+              label: data.asset_name,
+            }))
+          );
+
+          // Setting state list;
+          setStateData(
+            states.map((d) => ({
+              id: d.id,
+              value: d.name,
+              label: d.name,
+            }))
+          );
+
+          // Setting franchisee List;
+          setFranchiseeData(
+            franchiseeList.map((franchisee) => ({
+              id: franchisee.id,
+              value: franchisee.franchisee_name,
+              label: franchisee.franchisee_name,
+            }))
+          );
+
+          // Setting user details for editing;
+          const { user, userFiles } = userData;
+
+          if (Object.keys(user).length > 0) {
+            copyDataToState(user, userFiles);
+          } else {
+            localStorage.setItem('success_msg', "User doesn't exist!");
+            const userRole = localStorage.getItem('user_role');
+            if (userRole === 'guardian') window.location.href = '/';
+            else window.location.href = '/user-management';
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('Error::::', error);
+      });
+  }, []);
+
+  // FETCHES COUNTRY CODES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
+  // const fetchCountryData = async () => {
+  //   const token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/api/country-data`, {
+  //     headers: {
+  //       Authorization: 'Bearer ' + token,
+  //     },
+  //   });
+  //   if (response.status === 200) {
+  //     const { countryDataList } = response.data;
+  //     setCountryData(
+  //       countryDataList.map((countryData) => ({
+  //         value: `${countryData.name}\n${countryData.dial_code}`,
+  //         label: `${countryData.name}\n${countryData.dial_code}`,
+  //       }))
+  //     );
+  //   }
+  // };
 
   // FETCHES USER ROLES FROM THE DATABASE AND POPULATES THE DROP DOWN LIST
-  const fetchUserRoleData = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/user-role`, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-    });
-    if (response.status === 200) {
-      const { userRoleList } = response.data;
+  // const fetchUserRoleData = async () => {
+  //   const token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/api/user-role`, {
+  //     headers: {
+  //       Authorization: 'Bearer ' + token,
+  //     },
+  //   });
+  //   if (response.status === 200) {
+  //     const { userRoleList } = response.data;
 
-      let newRoleList = userRoleList.map((d) => ({
-        id: d.id,
-        value: d.role_name,
-        label: d.role_label,
-        sequence: d.role_sequence,
-      }));
+  //     let newRoleList = userRoleList.map((d) => ({
+  //       id: d.id,
+  //       value: d.role_name,
+  //       label: d.role_label,
+  //       sequence: d.role_sequence,
+  //     }));
 
-      setUserRoleData(newRoleList);
-    }
-  };
+  //     setUserRoleData(newRoleList);
+  //   }
+  // };
 
   // FETCHING SUBURB DATA
   const fetchSuburbData = (state) => {
@@ -500,87 +607,87 @@ const EditUser = () => {
     );
   };
 
-  const fetchTrainingCategories = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(
-      `${BASE_URL}/training/get-training-categories`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    if (response.status === 200 && response.data.status === 'success') {
-      const { categoryList } = response.data;
-      setTrainingCategoryData([
-        ...categoryList.map((data) => ({
-          id: data.id,
-          value: data.category_name,
-          label: data.category_name,
-        })),
-      ]);
-    }
-  };
+  // const fetchTrainingCategories = async () => {
+  //   let token = localStorage.getItem('token');
+  //   const response = await axios.get(
+  //     `${BASE_URL}/training/get-training-categories`,
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     }
+  //   );
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     const { categoryList } = response.data;
+  //     setTrainingCategoryData([
+  //       ...categoryList.map((data) => ({
+  //         id: data.id,
+  //         value: data.category_name,
+  //         label: data.category_name,
+  //       })),
+  //     ]);
+  //   }
+  // };
 
-  const fetchProfessionalDevelopementCategories = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // const fetchProfessionalDevelopementCategories = async () => {
+  //   let token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/api/get-pdc`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (response.status === 200 && response.data.status === 'success') {
-      const { pdcList } = response.data;
-      setPdcData(
-        pdcList.map((data) => ({
-          id: data.id,
-          value: data.category_name,
-          label: data.category_name,
-        }))
-      );
-    }
-  };
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     const { pdcList } = response.data;
+  //     setPdcData(
+  //       pdcList.map((data) => ({
+  //         id: data.id,
+  //         value: data.category_name,
+  //         label: data.category_name,
+  //       }))
+  //     );
+  //   }
+  // };
 
-  const fetchBuinessAssets = async () => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // const fetchBuinessAssets = async () => {
+  //   let token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/api/get-business-assets`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    if (response.status === 200 && response.data.status === 'success') {
-      const { businessAssetList } = response.data;
-      setBuinessAssetData(
-        businessAssetList.map((data) => ({
-          id: data.id,
-          value: data.asset_name,
-          label: data.asset_name,
-        }))
-      );
-    }
-  };
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     const { businessAssetList } = response.data;
+  //     setBuinessAssetData(
+  //       businessAssetList.map((data) => ({
+  //         id: data.id,
+  //         value: data.asset_name,
+  //         label: data.asset_name,
+  //       }))
+  //     );
+  //   }
+  // };
 
-  const fetchFranchiseeList = async () => {
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${BASE_URL}/role/franchisee`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (response.status === 200 && response.data.status === 'success') {
-      let { franchiseeList } = response.data;
+  // const fetchFranchiseeList = async () => {
+  //   const token = localStorage.getItem('token');
+  //   const response = await axios.get(`${BASE_URL}/role/franchisee`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   if (response.status === 200 && response.data.status === 'success') {
+  //     let { franchiseeList } = response.data;
 
-      setFranchiseeData(
-        franchiseeList.map((franchisee) => ({
-          id: franchisee.id,
-          value: franchisee.franchisee_name,
-          label: franchisee.franchisee_name,
-        }))
-      );
-    }
-  };
+  //     setFranchiseeData(
+  //       franchiseeList.map((franchisee) => ({
+  //         id: franchisee.id,
+  //         value: franchisee.franchisee_name,
+  //         label: franchisee.franchisee_name,
+  //       }))
+  //     );
+  //   }
+  // };
 
   const fetchCoordinatorData = async (franchisee_id) => {
     const response = await axios.get(
@@ -683,23 +790,24 @@ const EditUser = () => {
   };
 
   useEffect(() => {
-    fetchCountryData();
-    fetchUserRoleData();
-    fetchTrainingCategories();
-    fetchProfessionalDevelopementCategories();
-    fetchBuinessAssets();
-    fetchEditUserData();
-    fetchFranchiseeList();
-    fetchStateList();
-  }, []);
+    // fetchCountryData();
+    // fetchUserRoleData();
+    // fetchTrainingCategories();
+    // fetchProfessionalDevelopementCategories();
+    // fetchBuinessAssets();
+    // fetchEditUserData();
+    // fetchFranchiseeList();
+    // fetchStateList();
+    fetchProfileData();
+  }, [fetchProfileData]);
 
   useEffect(() => {
     fetchSuburbData(formData.state);
   }, [formData.state]);
 
-  useEffect(() => {
-    copyDataToState();
-  }, [editUserData]);
+  // useEffect(() => {
+  //   copyDataToState();
+  // }, [editUserData]);
 
   useEffect(() => {
     fetchCoordinatorData(formData.franchisee_id);
@@ -1452,7 +1560,7 @@ const EditUser = () => {
                                     }}
                                   >
                                     {errorObj === 'Too many files'
-                                      ? 'Only five files allowed'
+                                      ? 'Only 20 files allowed'
                                       : errorObj.includes(
                                           'File type must be text/*'
                                         )

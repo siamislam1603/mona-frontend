@@ -56,7 +56,7 @@ export const FetchTrainingList = ({ userId, search }) => {
   return { trainingList, isLoading, error };
 };
 
-export const GetTrainingListColumns = (navigate) => {
+export const GetTrainingListColumns = (navigate, userId, userRole) => {
   return [
     {
       dataField: 'coverImage',
@@ -125,16 +125,42 @@ export const GetTrainingListColumns = (navigate) => {
     },
     {
       dataField: 'training_id',
-      text: 'Show More',
+      text: 'Training Details',
       formatter: (cell) => {
         return (
           <>
             <button
               className="btn btn-outline-secondary"
-              onClick={() => navigate(`/training-detail/${cell}`)}
+              onClick={() =>
+                navigate(
+                  `/training-detail/${cell}?user_id=${userId}&user_role=${userRole}`
+                )
+              }
             >
               View More
             </button>
+          </>
+        );
+      },
+    },
+    {
+      dataField: 'form_id',
+      text: 'View Form Response',
+      formatter: (cell) => {
+        return (
+          <>
+            {cell ? (
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() =>
+                  navigate(`/user/form/response/${cell}/${userId}/${userRole}`)
+                }
+              >
+                View More
+              </button>
+            ) : (
+              <p style={{ textAlign: 'center' }}>{'--'}</p>
+            )}
           </>
         );
       },

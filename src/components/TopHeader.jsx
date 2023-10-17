@@ -16,8 +16,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { logoutUser } from '../helpers/logout';
 // import { FullLoader } from "./Loader";
 
-let temp = () => { };
-let Child = () => { };
+let temp = () => {};
+let Child = () => {};
 const TopHeader = ({
   setSelectedFranchisee = temp,
   setChild = Child,
@@ -134,9 +134,8 @@ const TopHeader = ({
           // console.log("The code is 404")
           setTopHeaderNotification([]);
         }
-      } 
+      }
     }
-
   };
 
   // const handleLinkClick = notificationId => {
@@ -316,8 +315,9 @@ const TopHeader = ({
   const popover = (
     <Popover
       id="popover-basic"
-      className={`notificationpopup ${topHeaderNotificationMarkAllRead ? 'marked-read' : ''
-        } ${topHeaderNotificationCountClass ? '' : 'no-notification'}`}
+      className={`notificationpopup ${
+        topHeaderNotificationMarkAllRead ? 'marked-read' : ''
+      } ${topHeaderNotificationCountClass ? '' : 'no-notification'}`}
     >
       {/* id={topHeaderNotificationCount?"popover-basic":"popover-basic"} */}
       <Popover.Header as="h3">
@@ -420,14 +420,14 @@ const TopHeader = ({
         }));
         filteredData = filteredData.filter(
           (d) =>
-            parseInt(d.created_for) === parseInt(localStorage.getItem('user_id'))
+            parseInt(d.created_for) ===
+            parseInt(localStorage.getItem('user_id'))
         );
         filteredData = filteredData.slice(0, 5);
 
         setNotifData(filteredData);
       }
     }
-
   };
   // const handleSearch = () =>{
   //   console.log("HANDLE SEARCH")
@@ -802,25 +802,25 @@ const TopHeader = ({
                     <span className="user-name">
                       {localStorage.getItem('user_name')
                         ? localStorage
-                          .getItem('user_name')
-                          .split(' ')
-                          .map(
-                            (data) =>
-                              data.charAt(0).toUpperCase() + data.slice(1)
-                          )
-                          .join(' ')
-                        : ''}
-
-                      <small>
-                        {localStorage.getItem('user_role')
-                          ? localStorage
-                            .getItem('user_role')
-                            .split('_')
+                            .getItem('user_name')
+                            .split(' ')
                             .map(
                               (data) =>
                                 data.charAt(0).toUpperCase() + data.slice(1)
                             )
                             .join(' ')
+                        : ''}
+
+                      <small>
+                        {localStorage.getItem('user_role')
+                          ? localStorage
+                              .getItem('user_role')
+                              .split('_')
+                              .map(
+                                (data) =>
+                                  data.charAt(0).toUpperCase() + data.slice(1)
+                              )
+                              .join(' ')
                           : ''}
                       </small>
                     </span>

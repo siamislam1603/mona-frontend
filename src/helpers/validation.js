@@ -747,8 +747,8 @@ export const UserFormValidation = (formObj, trainingDocuments) => {
   if (open_coordinator === true && role === 'educator' && !coordinator)
     errors.coordinator = 'Coordinator is required';
 
-  if (trainingDocuments?.length > 5)
-    errors.doc = 'Only 5 documents can be uploaded';
+  if (trainingDocuments?.length > 20)
+    errors.doc = 'Only 20 documents can be uploaded';
 
   return errors;
 };
@@ -827,8 +827,8 @@ export const editUserValidation = (
       'New password and Confirm password need to be same';
   }
 
-  if (trainingDocuments?.length + fetchedTrainingDocuments?.length > 5)
-    errors.doc = 'Only 5 documents can be uploaded';
+  if (trainingDocuments?.length + fetchedTrainingDocuments?.length > 20)
+    errors.doc = 'Only 20 documents can be uploaded';
 
   return errors;
 };

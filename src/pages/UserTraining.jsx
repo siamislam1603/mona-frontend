@@ -14,9 +14,9 @@ import {
 
 const UserTraining = () => {
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { userId, userRole } = useParams();
   const [search, setSearch] = useState('');
-  let columns = GetTrainingListColumns(navigate);
+  let columns = GetTrainingListColumns(navigate, userId, userRole);
   let {
     trainingList: trainings,
     isLoading,
@@ -37,6 +37,7 @@ const UserTraining = () => {
     };
   });
 
+  console.log('Trainings:::', trainings);
   return (
     <>
       <div id="main" className="main-class">
