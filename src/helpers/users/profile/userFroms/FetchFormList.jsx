@@ -76,19 +76,24 @@ export const GetFromListColumns = ({ navigate, userId, userRole }) => {
       },
     },
     {
-      dataField: 'id',
+      dataField: 'view_response',
       text: 'Action',
       formatter: (cell) => {
+        let data = cell?.split(' ');
         return (
           <>
-            <button
-              className="btn btn-outline-secondary"
-              onClick={() =>
-                navigate(`/user/form/response/${cell}/${id}/${role}`)
-              }
-            >
-              View Responses
-            </button>
+            {data[1] === 'false' || data[1] === false ? (
+              <p>{'--'}</p>
+            ) : (
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() =>
+                  navigate(`/user/form/response/${data[0]}/${id}/${role}`)
+                }
+              >
+                View Responses
+              </button>
+            )}
           </>
         );
       },
