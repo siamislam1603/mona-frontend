@@ -73,6 +73,7 @@ const DynamicForm = () => {
   const [formFillingTime, setFormFillingTime] = useState(null);
   const [errorFocus, setErrorFocus] = useState('');
   const [signatories, setSignatories] = useState([]);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState('');
   const [currentForm, setCurrentForm] = useState({});
   const token = localStorage.getItem('token');
   let training_id = location.search
@@ -454,6 +455,7 @@ const DynamicForm = () => {
         setErrorFocus(Object.keys(newErrors)[0]);
         document.getElementById(Object.keys(newErrors)[0])?.focus();
       } else {
+        setIsSubmitDisabled('disabled')
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('authorization', 'Bearer ' + token);
@@ -472,6 +474,7 @@ const DynamicForm = () => {
         fetch(`${BASE_URL}/form/form_data`, requestOptions)
           .then((response) => response.json())
           .then((result) => {
+            setIsSubmitDisabled('')
             navigate(`/form/response/${location.state.form_id}`, {
               state: { message: result.message },
             });
@@ -496,6 +499,8 @@ const DynamicForm = () => {
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('authorization', 'Bearer ' + token);
+
+        setIsSubmitDisabled('disabled')
         var requestOptions = {
           method: 'POST',
           headers: myHeaders,
@@ -526,6 +531,8 @@ const DynamicForm = () => {
         )
           .then((response) => response.text())
           .then((result) => {
+
+            setIsSubmitDisabled('')
             result = JSON.parse(result);
             if (training_id) {
               const user_id = localStorage.getItem('user_id');
@@ -926,7 +933,7 @@ const DynamicForm = () => {
                     <Col md={12}>
                       <div className="d-flex justify-content custom_submit">
                         <Button
-                          className="custom_submit_button w-auto ml-auto mr-auto d-block"
+                          className={`custom_submit_button w-auto ml-auto mr-auto d-block ${isSubmitDisabled}`}
                           onClick={onSubmit}
                         >
                           Submit
