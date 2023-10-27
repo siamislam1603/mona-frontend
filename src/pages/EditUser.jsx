@@ -18,6 +18,12 @@ import { editUserValidation } from '../helpers/validation';
 import { getLoggedInUserRole, isUserAllowed } from '../utils/commonMethods';
 import * as ReactBootstrap from 'react-bootstrap';
 
+import {
+  canViewUserNote,
+} from '../helpers/users/profile/personalDetails/commonUserFunctions';
+
+
+
 const animatedComponents = makeAnimated();
 
 const training = [
@@ -1541,7 +1547,8 @@ const EditUser = () => {
                                 </div>
                               )}
                           </Form.Group>
-
+                          
+                          {canViewUserNote() && (
                           <Form.Group className="col-md-12 mb-3 relative">
                             <Form.Label>Upload Documents</Form.Label>
                             <DragDropMultiple
@@ -1596,7 +1603,7 @@ const EditUser = () => {
                               <span className="error">{formErrors.doc}</span>
                             )}
                           </Form.Group>
-
+                            )}
                           <Col md={12}>
                             <div className="cta text-center mt-5">
                               <Button variant="transparent" className="me-3">
