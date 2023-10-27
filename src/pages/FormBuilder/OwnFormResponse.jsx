@@ -888,13 +888,11 @@ function OwnFormResponse(props) {
                                                             color: '#9c9898',
                                                           }}
                                                         >
-                                                          (
                                                           {
                                                             formField[
                                                               inner_item
                                                             ]
                                                           }
-                                                          )
                                                         </h6>
                                                       </h6>
                                                     </>
@@ -1446,13 +1444,11 @@ function OwnFormResponse(props) {
                                                             color: '#9c9898',
                                                           }}
                                                         >
-                                                          (
                                                           {
                                                             formField[
                                                               inner_item
                                                             ]
                                                           }
-                                                          )
                                                         </h6>
                                                       </h6>
                                                     </>
@@ -1986,8 +1982,7 @@ function OwnFormResponse(props) {
                                                           color: '#9c9898',
                                                         }}
                                                       >
-                                                        ({formField[inner_item]}
-                                                        )
+                                                        {formField[inner_item]}
                                                       </h6>
                                                     </h6>
                                                   </>

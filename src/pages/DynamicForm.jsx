@@ -81,7 +81,7 @@ const DynamicForm = () => {
   const setField = (section, field, value, type) => {
     let flag = false;
     if (type === 'text') {
-      if (!location?.state?.if) {
+      if (!location?.state?.id) {
         value = value.trimEnd();
       }
       if (value.split(' ').length > 250) {
@@ -141,6 +141,7 @@ const DynamicForm = () => {
           [section]: { ...form[`${section}`], [field]: value },
         });
       }
+
       if (type === 'checkbox') {
         value = value.slice(0, -1);
         setForm({
@@ -479,6 +480,7 @@ const DynamicForm = () => {
       }
     } else {
       // let newFormObj = copyOneStateToAnother(form);
+
       const newErrors = DynamicFormValidation(
         form,
         formData,
