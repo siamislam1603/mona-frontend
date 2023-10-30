@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 const Headings = (props) => {
   const { ...controls } = props;
 
-  useEffect(() => {
-    props.onChange(props?.field_name, '', props?.field_type);
-  }, []);
+  // useEffect(() => {
+  //   props.onChange(props?.field_name, '', props?.field_type);
+  // }, []);
 
   return (
     <Col sm={12} className="main-form-heading-title">

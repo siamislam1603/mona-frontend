@@ -270,7 +270,7 @@ const Radio = (props) => {
                           onClick={(e) => {
                             setOptionValue(e.target.value);
                             props.onChange(
-                              `${e.target.name} ${props?.field_name}`,
+                              e.target.name,
                               e.target.value,
                               'radio'
                             );
@@ -332,7 +332,7 @@ const Radio = (props) => {
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {
                               props.onChange(
-                                `${e.target.name} ${props?.field_name}`,
+                                e.target.name,
                                 e.target.value,
                                 'radio'
                               );

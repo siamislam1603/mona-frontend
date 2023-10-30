@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import { FullLoader } from '../components/Loader';
+import context from 'react-bootstrap/esm/AccordionContext';
 
 // function copyOneStateToAnother(formObj) {
 //   let keyNames = Object.keys(formObj);
@@ -23,6 +24,33 @@ import { FullLoader } from '../components/Loader';
 //   }
 //   return formObj;
 // }
+
+function formattedFormData(dataArr) {
+  let formedObj = {};
+
+  dataArr?.forEach((item, index) => {
+    if (!item?.option) {
+      if (!formedObj[`${item?.field_name} ${index}`]) {
+        formedObj[`${item?.field_name} ${index}`] = null;
+      }
+    } else {
+      formedObj[`${item?.field_name} ${index}`] = null;
+      let options = item?.option;
+      // eslint-disable-next-line no-eval
+      options = eval(options);
+      options?.forEach((d) => {
+        // let key = Object?.keys(d);
+        let value = Object?.values(d);
+        if (typeof value[0] === 'object') {
+          value = value[0];
+          formedObj[`${value?.field_name} ${item?.field_name} ${index}`] = null;
+        }
+      });
+    }
+  });
+
+  return formedObj;
+}
 
 function formatDate(date) {
   let data = date.split('-');
@@ -557,7 +585,8 @@ const DynamicForm = () => {
       formDataVal?.forEach((item, index) => {
         if (
           item?.field_type === 'sub_headings' ||
-          item?.field_type === 'headings'
+          item?.field_type === 'headings' ||
+          item?.field_type === 'text_headings'
         ) {
           if (!formDataObj[`${`${item?.field_type}_${index}`} ${index}`]) {
             formDataObj[`${`${item?.field_type}_${index}`} ${index}`] =
@@ -565,6 +594,7 @@ const DynamicForm = () => {
           }
         }
       });
+
       // return;
 
       // let newFormObj = copyOneStateToAnother(form);
@@ -572,8 +602,18 @@ const DynamicForm = () => {
       let finalizedObject = {
         '': {},
       };
-      let data = tempFormData[''];
-      data = { ...data, ...formDataObj };
+      let defaultFormData = formattedFormData(formData['']);
+      // return;
+      let newDataObj = tempFormData[''];
+      let data = {};
+
+      Object?.keys(newDataObj)?.forEach((item) => {
+        if (!(newDataObj[item] === 'undefined')) {
+          data[item] = newDataObj[item];
+        }
+      });
+
+      data = { ...defaultFormData, ...data, ...formDataObj };
       Object?.keys(data)?.forEach((item, index) => {
         let info = item?.split(' ');
         let parent_key = info?.[0];
@@ -621,8 +661,10 @@ const DynamicForm = () => {
         };
       });
 
+      let form_payload_data = finalizedObject;
+
       const newErrors = DynamicFormValidation(
-        finalizedObject,
+        form_payload_data,
         formData,
         signatories,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
@@ -658,7 +700,7 @@ const DynamicForm = () => {
                 ? behalfOf
                 : localStorage.getItem('user_id'),
             selectedUserData: selectedUserValue,
-            data: finalizedObject,
+            data: form_payload_data,
           }),
           redirect: 'follow',
         };
