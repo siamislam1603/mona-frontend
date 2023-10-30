@@ -51,6 +51,16 @@ function formatTime(time) {
   }:${minuteValue} ${hour}`;
 }
 
+// function filterBlankData(dataArr) {
+//   let data = [];
+
+//   dataArr?.forEach((item, index) => {
+//     item?.data?.forEach((d) => {});
+//   });
+
+//   return data;
+// }
+
 let values = [];
 let behalfOfFlag = false;
 const DynamicForm = () => {
@@ -58,6 +68,7 @@ const DynamicForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [signatureAccessFlag, setSignatureAccessFlag] = useState();
+  const [tempFormData, setTempFormData] = useState({});
   const [formData, setFormData] = useState([]);
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
@@ -79,7 +90,15 @@ const DynamicForm = () => {
   let training_id = location.search
     ? location.search.split('?')[1].split('=')[1]
     : null;
-  const setField = (section, field, value, type) => {
+  const setField = ({ field_index, section, field, value, type }) => {
+    console.log('Field_index SET FIELD:::', {
+      field_index,
+      section,
+      field,
+      value,
+      type,
+    });
+    let tempObj = {};
     let flag = false;
     if (type === 'text') {
       if (!location?.state?.id) {
@@ -115,6 +134,14 @@ const DynamicForm = () => {
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
         });
+
+        setTempFormData({
+          ...tempFormData,
+          ['fields']: {
+            ...tempFormData[`fields`],
+            [`${field} ${field_index}`]: value,
+          },
+        });
       }
       if (type === 'checkbox') {
         value = value.slice(0, -1);
@@ -122,16 +149,38 @@ const DynamicForm = () => {
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
         });
+
+        setTempFormData({
+          ...tempFormData,
+          ['fields']: {
+            ...tempFormData[`fields`],
+            [`${field} ${field_index}`]: value,
+          },
+        });
       }
       if (type === 'radio') {
         setFieldData({
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
         });
+        setTempFormData({
+          ...tempFormData,
+          ['fields']: {
+            ...tempFormData[`fields`],
+            [`${field} ${field_index}`]: value,
+          },
+        });
       } else {
         setFieldData({
           ...fieldData,
           ['fields']: { ...fieldData[`fields`], [field]: value },
+        });
+        setTempFormData({
+          ...tempFormData,
+          ['fields']: {
+            ...tempFormData[`fields`],
+            [`${field} ${field_index}`]: value,
+          },
         });
       }
     } else {
@@ -141,6 +190,13 @@ const DynamicForm = () => {
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
         });
+        setTempFormData({
+          ...tempFormData,
+          [section]: {
+            ...tempFormData[section],
+            [`${field} ${field_index}`]: value,
+          },
+        });
       }
 
       if (type === 'checkbox') {
@@ -149,10 +205,24 @@ const DynamicForm = () => {
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
         });
+        setTempFormData({
+          ...tempFormData,
+          [section]: {
+            ...tempFormData[section],
+            [`${field} ${field_index}`]: value,
+          },
+        });
       } else {
         setForm({
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
+        });
+        setTempFormData({
+          ...tempFormData,
+          [section]: {
+            ...tempFormData[section],
+            [`${field} ${field_index}`]: value,
+          },
         });
       }
     }
@@ -456,7 +526,7 @@ const DynamicForm = () => {
         setErrorFocus(Object.keys(newErrors)[0]);
         document.getElementById(Object.keys(newErrors)[0])?.focus();
       } else {
-        setIsSubmitDisabled('disabled')
+        setIsSubmitDisabled('disabled');
         var myHeaders = new Headers();
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('authorization', 'Bearer ' + token);
@@ -475,7 +545,7 @@ const DynamicForm = () => {
         fetch(`${BASE_URL}/form/form_data`, requestOptions)
           .then((response) => response.json())
           .then((result) => {
-            setIsSubmitDisabled('')
+            setIsSubmitDisabled('');
             navigate(`/form/response/${location.state.form_id}`, {
               state: { message: result.message },
             });
@@ -483,9 +553,61 @@ const DynamicForm = () => {
       }
     } else {
       // let newFormObj = copyOneStateToAnother(form);
+      let orderedObject = {};
+      let finalizedObject = {
+        '': {},
+      };
+      let data = tempFormData[''];
+
+      Object?.keys(data)?.forEach((item, index) => {
+        let info = item?.split(' ');
+        let parent_key = info?.[0];
+        let isParent = info?.length === 2 ? true : false;
+        if (!isParent) {
+          parent_key = info?.[1];
+        }
+        let order_index = info?.pop();
+        if (parent_key !== 'undefined') {
+          if (!orderedObject[`${order_index} ${parent_key}`]) {
+            orderedObject[`${order_index} ${parent_key}`] = {
+              [info?.[0]]: data[item],
+            };
+          } else {
+            orderedObject[`${order_index} ${parent_key}`] = {
+              ...orderedObject[`${order_index} ${parent_key}`],
+              [info?.[0]]: data[item],
+            };
+          }
+        }
+      });
+
+      let unsortedKeyArray = Object.keys(orderedObject);
+      unsortedKeyArray = unsortedKeyArray?.map((item) =>
+        parseInt(item?.split(' ')?.[0])
+      );
+
+      unsortedKeyArray = unsortedKeyArray?.sort();
+      let tempObj = {};
+      Object?.keys(orderedObject)?.forEach((item) => {
+        if (orderedObject[item]) {
+          tempObj[item?.split(' ')?.[0]] = orderedObject[item];
+        }
+      });
+
+      orderedObject = {};
+      unsortedKeyArray?.forEach((item) => {
+        orderedObject[item] = tempObj[item];
+      });
+
+      Object?.keys(orderedObject)?.forEach((item, index) => {
+        finalizedObject[''] = {
+          ...finalizedObject[''],
+          ...orderedObject[item],
+        };
+      });
 
       const newErrors = DynamicFormValidation(
-        form,
+        finalizedObject,
         formData,
         signatories,
         localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
@@ -502,7 +624,7 @@ const DynamicForm = () => {
         myHeaders.append('Content-Type', 'application/json');
         myHeaders.append('authorization', 'Bearer ' + token);
 
-        setIsSubmitDisabled('disabled')
+        setIsSubmitDisabled('disabled');
         var requestOptions = {
           method: 'POST',
           headers: myHeaders,
@@ -521,7 +643,7 @@ const DynamicForm = () => {
                 ? behalfOf
                 : localStorage.getItem('user_id'),
             selectedUserData: selectedUserValue,
-            data: form,
+            data: finalizedObject,
           }),
           redirect: 'follow',
         };
@@ -533,8 +655,7 @@ const DynamicForm = () => {
         )
           .then((response) => response.text())
           .then((result) => {
-
-            setIsSubmitDisabled('')
+            setIsSubmitDisabled('');
             result = JSON.parse(result);
             if (training_id) {
               const user_id = localStorage.getItem('user_id');
@@ -833,7 +954,13 @@ const DynamicForm = () => {
                                     error={errors}
                                     errorFocus={errorFocus}
                                     onChange={(key, value, type) => {
-                                      setField('', key, value, type);
+                                      setField({
+                                        field_index: inner_index,
+                                        section: '',
+                                        field: key,
+                                        value: value,
+                                        type: type,
+                                      });
                                     }}
                                     freshForm={true}
                                     currentForm={currentForm}
@@ -862,7 +989,13 @@ const DynamicForm = () => {
                                       error={errors}
                                       errorFocus={errorFocus}
                                       onChange={(key, value, type) => {
-                                        setField(item, key, value, type);
+                                        setField({
+                                          field_index: inner_index,
+                                          section: item,
+                                          field: key,
+                                          value: value,
+                                          type: type,
+                                        });
                                       }}
                                       currentForm={currentForm}
                                     />
@@ -879,7 +1012,13 @@ const DynamicForm = () => {
                                 error={errors}
                                 errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
-                                  setField('', key, value, type);
+                                  setField({
+                                    field_index: inner_index,
+                                    section: '',
+                                    field: key,
+                                    value: value,
+                                    type: type,
+                                  });
                                 }}
                                 currentForm={currentForm}
                               />
@@ -891,7 +1030,13 @@ const DynamicForm = () => {
                                 diff_index={inner_index}
                                 errorFocus={errorFocus}
                                 onChange={(key, value, type) => {
-                                  setField('', key, value, type);
+                                  setField({
+                                    field_index: inner_index,
+                                    section: '',
+                                    field: key,
+                                    value: value,
+                                    type: type,
+                                  });
                                 }}
                                 currentForm={currentForm}
                               />
@@ -910,7 +1055,13 @@ const DynamicForm = () => {
                               error={errors}
                               errorFocus={errorFocus}
                               onChange={(key, value, type) => {
-                                setField('', key, value, type);
+                                setField({
+                                  field_index: inner_index,
+                                  section: '',
+                                  field: key,
+                                  value: value,
+                                  type: type,
+                                });
                               }}
                               currentForm={currentForm}
                             />
@@ -922,7 +1073,13 @@ const DynamicForm = () => {
                               error={errors}
                               errorFocus={errorFocus}
                               onChange={(key, value, type) => {
-                                setField(item, key, value, type);
+                                setField({
+                                  field_index: inner_index,
+                                  section: item,
+                                  field: key,
+                                  value: value,
+                                  type: type,
+                                });
                               }}
                               freshForm={true}
                               currentForm={currentForm}

@@ -10,9 +10,6 @@ let value = {};
 const Checkbox = (props) => {
   const { ...controls } = props;
 
-  console.log('Controls:::', controls);
-  console.log('Props:::', props);
-
   const [array, setArray] = useState([]);
   const [subCheckbox, setSubCheckbox] = useState([]);
   const [condIndex, setCondIndex] = useState(0);
@@ -34,7 +31,9 @@ const Checkbox = (props) => {
   const trim = (e) => {
     e.preventDefault();
     props.onChange(
-      Object.values(eval(controls?.option)[Index])[0]?.field_name,
+      `${Object.values(eval(controls?.option)[Index])[0]?.field_name} ${
+        props?.field_name
+      }`,
       sigPad.current.getTrimmedCanvas().toDataURL('image/png')
     );
     if (props?.field_data || signature) {
@@ -142,7 +141,7 @@ const Checkbox = (props) => {
   useEffect(() => {
     if (window.location.pathname.split('/')[2] !== 'preview') {
       props.onChange(
-        event,
+        `${event}`,
         value[controls.field_name] + array?.join(',') + ',',
         'checkbox'
       );
@@ -158,7 +157,7 @@ const Checkbox = (props) => {
         'checkbox'
     ) {
       props.onChange(
-        checkboxValue,
+        `${checkboxValue} ${props?.field_name}`,
         value[controls.field_name] + subCheckbox?.join(',') + ',',
         'checkbox'
       );
@@ -306,7 +305,7 @@ const Checkbox = (props) => {
                                   id={Object.keys(key)[0]}
                                   onClick={(e) => {
                                     props.onChange(
-                                      e.target.name,
+                                      `${e.target.name} ${props?.field_name}`,
                                       e.target.value
                                     );
                                   }}
@@ -395,7 +394,11 @@ const Checkbox = (props) => {
                         type={value?.field_type}
                         name={value?.field_name}
                         onChange={(e) => {
-                          props.onChange(e.target.name, e.target.value, 'text');
+                          props.onChange(
+                            `${e.target.name} ${props?.field_name}`,
+                            e.target.value,
+                            'text'
+                          );
                         }}
                         value={
                           props.field_data &&
@@ -418,7 +421,10 @@ const Checkbox = (props) => {
                           value={dropdownValue ? dropdownValue : 'Select'}
                           onChange={(e) => {
                             setDropdownValue(e.target.value);
-                            props.onChange(value?.field_name, e.target.value);
+                            props.onChange(
+                              `${value?.field_name} ${props.field_name}`,
+                              e.target.value
+                            );
                           }}
                         >
                           <option>Select </option>
@@ -453,7 +459,10 @@ const Checkbox = (props) => {
                         className="child_input"
                         onChange={(e) => {
                           e.preventDefault();
-                          props.onChange(e.target.name, e.target.value);
+                          props.onChange(
+                            `${e.target.name} ${props?.field_name}`,
+                            e.target.value
+                          );
                         }}
                       />
                     </div>
@@ -473,7 +482,11 @@ const Checkbox = (props) => {
                           let file = e.target.files[0];
                           setCondIndex(i);
                           await uploadFile(file).then((url) => {
-                            props.onChange(e.target.name, url, 'file');
+                            props.onChange(
+                              `${e.target.name} ${props?.field_name}`,
+                              url,
+                              'file'
+                            );
                           });
                         }}
                       />

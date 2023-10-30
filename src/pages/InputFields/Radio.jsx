@@ -26,7 +26,9 @@ const Radio = (props) => {
   const trim = (e) => {
     e.preventDefault();
     props.onChange(
-      Object.values(eval(controls?.option)[Index])[0]?.field_name,
+      `${Object.values(eval(controls?.option)[Index])[0]?.field_name} ${
+        props?.field_name
+      }`,
       sigPad.current.getTrimmedCanvas().toDataURL('image/png')
     );
     if (props?.field_data || signature) {
@@ -268,7 +270,7 @@ const Radio = (props) => {
                           onClick={(e) => {
                             setOptionValue(e.target.value);
                             props.onChange(
-                              e.target.name,
+                              `${e.target.name} ${props?.field_name}`,
                               e.target.value,
                               'radio'
                             );
@@ -330,7 +332,7 @@ const Radio = (props) => {
                             id={Object.keys(item)[0] + props?.diff_index}
                             onClick={(e) => {
                               props.onChange(
-                                e.target.name,
+                                `${e.target.name} ${props?.field_name}`,
                                 e.target.value,
                                 'radio'
                               );
@@ -395,7 +397,10 @@ const Radio = (props) => {
                             id={Object.keys(item)[0]}
                             onClick={(e) => {
                               console.log('INPUT>>>>>', e.target.value);
-                              props.onChange(e.target.name, e.target.value);
+                              props.onChange(
+                                `${e.target.name} ${props?.field_name}`,
+                                e.target.value
+                              );
                             }}
                             checked={
                               props.field_data?.form_id &&
@@ -435,8 +440,10 @@ const Radio = (props) => {
                   onChange={(e) => {
                     setDropDownValue(e.target.value);
                     props.onChange(
-                      Object.values(eval(controls.option)[Index])[0]
-                        ?.field_name,
+                      `${
+                        Object.values(eval(controls.option)[Index])[0]
+                          ?.field_name
+                      } ${props?.field_name}`,
                       e.target.value
                     );
                   }}
@@ -533,7 +540,10 @@ const Radio = (props) => {
                 onChange={(e) => {
                   e.preventDefault();
                   console.log('FIELD4:>>>>', e.target.value);
-                  props.onChange(e.target.name, e.target.value);
+                  props.onChange(
+                    `${e.target.name} ${props?.field_name}`,
+                    e.target.value
+                  );
                 }}
               />
             </div>
@@ -588,7 +598,11 @@ const Radio = (props) => {
                   console.log('FIELD5:>>>>', e.target.files[0]);
                   let file = e.target.files[0];
                   await uploadFile(file).then((url) => {
-                    props.onChange(e.target.name, url, 'file');
+                    props.onChange(
+                      `${e.target.name} ${props?.field_name}`,
+                      url,
+                      'file'
+                    );
                   });
                 }}
               />
@@ -662,7 +676,10 @@ const Radio = (props) => {
                       Object.values(eval(controls.option)[Index])[0].field_name
                     }
                     onChange={(e) => {
-                      props.onChange(e.target.name, e.target.value);
+                      props.onChange(
+                        `${e.target.name} ${props?.field_name}`,
+                        e.target.value
+                      );
                       setTextInputValue(e.target.value);
                     }}
                     value={
