@@ -791,23 +791,23 @@ function OwnFormResponse(props) {
                                               item?.user?.family_name || ''
                                             }`}
                                           </h4>
-
+                                          <p style={{ display: 'none' }}>
+                                            {(count = 0)}
+                                          </p>
                                           {Object.keys(
                                             JSON.parse(item.fields)
                                           ).map((inner_item, inner_index) => {
-                                            {
-                                              {
-                                                (Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'headings'
-                                                ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings') &&
-                                                  count++;
-                                              }
+                                            if (
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                'headings'
+                                              ) ||
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] === 'text_headings'
+                                            ) {
+                                              count++;
                                             }
                                             return (
                                               <div
@@ -1350,22 +1350,23 @@ function OwnFormResponse(props) {
                                               item?.user?.family_name || ''
                                             }`}
                                           </h4>
+                                          <p style={{ display: 'none' }}>
+                                            {(count = 0)}
+                                          </p>
                                           {Object.keys(
                                             JSON.parse(item.fields)
                                           ).map((inner_item, inner_index) => {
-                                            {
-                                              {
-                                                (Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'headings'
-                                                ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings') &&
-                                                  count++;
-                                              }
+                                            if (
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index]?.includes(
+                                                'headings'
+                                              ) ||
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] === 'text_headings'
+                                            ) {
+                                              count++;
                                             }
                                             return (
                                               <div
@@ -1894,22 +1895,23 @@ function OwnFormResponse(props) {
                                             item?.user?.family_name || ''
                                           }`}
                                         </h4>
+                                        <p style={{ display: 'none' }}>
+                                          {(count = 0)}
+                                        </p>
                                         {Object.keys(
                                           JSON.parse(item.fields)
                                         ).map((inner_item, inner_index) => {
-                                          {
-                                            {
-                                              (Object.keys(
-                                                JSON.parse(item.fields)
-                                              )[inner_index]?.includes(
-                                                'headings'
-                                              ) ||
-                                                Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] ===
-                                                  'text_headings') &&
-                                                count++;
-                                            }
+                                          if (
+                                            Object.keys(
+                                              JSON.parse(item.fields)
+                                            )[inner_index]?.includes(
+                                              'headings'
+                                            ) ||
+                                            Object.keys(
+                                              JSON.parse(item.fields)
+                                            )[inner_index] === 'text_headings'
+                                          ) {
+                                            count++;
                                           }
                                           return (
                                             <div
