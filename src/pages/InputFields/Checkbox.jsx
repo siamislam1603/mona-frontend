@@ -166,9 +166,6 @@ const Checkbox = (props) => {
     // Rendering conditional elements, if present;
   }, [subCheckbox]);
 
-  console.log('Array:::', array);
-  console.log('Universal value:::', optionValue);
-  console.log('Universal value:::', array?.includes(optionValue));
   return (
     <>
       <Col sm={6}>

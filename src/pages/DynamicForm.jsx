@@ -552,13 +552,28 @@ const DynamicForm = () => {
           });
       }
     } else {
+      let formDataVal = formData[''];
+      let formDataObj = {};
+      formDataVal?.forEach((item, index) => {
+        if (
+          item?.field_type === 'sub_headings' ||
+          item?.field_type === 'headings'
+        ) {
+          if (!formDataObj[`${`${item?.field_type}_${index}`} ${index}`]) {
+            formDataObj[`${`${item?.field_type}_${index}`} ${index}`] =
+              item?.field_label;
+          }
+        }
+      });
+      // return;
+
       // let newFormObj = copyOneStateToAnother(form);
       let orderedObject = {};
       let finalizedObject = {
         '': {},
       };
       let data = tempFormData[''];
-
+      data = { ...data, ...formDataObj };
       Object?.keys(data)?.forEach((item, index) => {
         let info = item?.split(' ');
         let parent_key = info?.[0];
@@ -947,6 +962,7 @@ const DynamicForm = () => {
                                 <>
                                   <InputFields
                                     {...inner_item}
+                                    dataKey={'1'}
                                     signature_flag={signatureAccessFlag}
                                     diff_index={inner_index}
                                     field_data={fieldData}
@@ -984,6 +1000,7 @@ const DynamicForm = () => {
                                     )}
                                     <InputFields
                                       {...inner_item}
+                                      dataKey={'2'}
                                       signature_flag={signatureAccessFlag}
                                       diff_index={inner_index}
                                       error={errors}
@@ -1005,6 +1022,7 @@ const DynamicForm = () => {
                             ) : location?.state?.id ? (
                               <InputFields
                                 {...inner_item}
+                                dataKey={'3'}
                                 signature_flag={signatureAccessFlag}
                                 diff_index={inner_index}
                                 field_data={fieldData}
@@ -1025,6 +1043,7 @@ const DynamicForm = () => {
                             ) : (
                               <InputFields
                                 {...inner_item}
+                                dataKey={'4'}
                                 signature_flag={signatureAccessFlag}
                                 error={errors}
                                 diff_index={inner_index}
@@ -1050,6 +1069,7 @@ const DynamicForm = () => {
                               {...inner_item}
                               signature_flag={signatureAccessFlag}
                               field_data={fieldData}
+                              dataKey={'5'}
                               setFieldData={setFieldData}
                               diff_index={inner_index}
                               error={errors}
@@ -1068,6 +1088,7 @@ const DynamicForm = () => {
                           ) : (
                             <InputFields
                               {...inner_item}
+                              dataKey={'6'}
                               signature_flag={signatureAccessFlag}
                               diff_index={inner_index}
                               error={errors}

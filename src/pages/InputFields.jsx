@@ -13,7 +13,6 @@ import { FullLoader } from '../components/Loader';
 import SubHeadings from './InputFields/SubHeadings';
 
 const InputFields = (props) => {
-  console.log('INPUT FIELDS PROPS:::', props);
   let inputElement = null;
   let { ...controls } = props;
   if (isEmpty(controls?.field_data)) {
@@ -42,19 +41,26 @@ const InputFields = (props) => {
       break;
     case 'headings':
       inputElement = (
-        <Headings {...controls} field_index={props?.field_index} />
+        <Headings
+          {...controls}
+          key={props?.key}
+          field_index={props?.field_index}
+        />
       );
       break;
     case 'sub_headings':
       inputElement = (
-        <SubHeadings {...controls} field_index={props?.field_index} />
+        <SubHeadings
+          {...controls}
+          key={props?.key}
+          field_index={props?.field_index}
+        />
       );
       break;
     case 'checkbox':
       inputElement = (
         <Checkbox
           {...controls}
-          field_index={props?.field_index}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
@@ -65,7 +71,6 @@ const InputFields = (props) => {
       inputElement = (
         <TextArea
           {...controls}
-          field_index={props?.field_index}
           field_data={props.field_data}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
@@ -76,7 +81,6 @@ const InputFields = (props) => {
       inputElement = (
         <Select
           {...controls}
-          field_index={props?.field_index}
           field_data={props.field_data}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
@@ -87,7 +91,6 @@ const InputFields = (props) => {
       inputElement = (
         <Signature
           {...controls}
-          field_index={props?.field_index}
           signature_flag={props.signature_flag}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
@@ -98,7 +101,6 @@ const InputFields = (props) => {
       inputElement = (
         <FileUpload
           {...controls}
-          field_index={props?.field_index}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
@@ -109,7 +111,6 @@ const InputFields = (props) => {
       inputElement = (
         <ImageUpload
           {...controls}
-          field_index={props?.field_index}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
@@ -120,7 +121,6 @@ const InputFields = (props) => {
       inputElement = (
         <Input
           {...controls}
-          field_index={props?.field_index}
           field_data={props?.field_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
