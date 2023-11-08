@@ -37,11 +37,14 @@ const RepoEdit = () => {
   const [generalCategory, setGeneralCategory] = useState('');
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [userCount, setUserCount] = useState(0);
+  const [fullUserList, setFullUserList] = useState([]);
+  const [accessToAllFranchise, setAccessToAllFranchise] = useState([]);
   const [formSettings, setFormSettings] = useState({
     assigned_role: [],
     franchisee: [],
     // assigned_users: []
   });
+  const [tempData, setTempData] = useState({});
 
   const GetData = async () => {
     let response = await axios.get(
@@ -62,7 +65,7 @@ const RepoEdit = () => {
     }
   };
   const copyFetchedData = (data) => {
-    console.log('Copying fetched data:::', data);
+    console.log('DATA REPOSITORY:::', data);
     setData((prevState) => ({
       ...prevState,
       id: data?.id,
@@ -73,14 +76,23 @@ const RepoEdit = () => {
       image: data?.repository_files[0]?.filesPath,
       fileName: data?.repository_files[0]?.fileName,
       franchise: data?.repository_shares[0]?.franchisee,
-      accessibleToRole: data?.repository_shares[0]?.accessibleToRole || 1,
+      accessibleToRole: data?.repository_shares[0]?.accessibleToRole,
       accessibleToAll: data?.repository_shares[0]?.accessibleToAll,
       assigned_users: data?.repository_shares[0]?.assigned_users,
       user_roles: data?.repository_shares[0]?.assigned_roles,
       assigned_childs: data?.repository_shares[0]?.assigned_childs,
       file_type: data?.repository_files[0]?.fileType,
     }));
+    setTempData((prevState) => ({
+      ...prevState,
+      assigned_users: data?.repository_shares[0]?.assigned_users,
+      user_roles: data?.repository_shares[0]?.assigned_roles,
+      assigned_childs: data?.repository_shares[0]?.assigned_childs,
+    }));
     setCoverImage(data?.repository_files[0].filesPath);
+    let allowAccessToAllFranchisee =
+      data?.repository_shares[0].franchisee.length > 0 ? false : true;
+    setAccessToAllFranchise(allowAccessToAllFranchisee);
     data?.repository_shares[0].franchisee.length == 0
       ? setSendToAllFranchisee('all')
       : setSendToAllFranchisee('none');
@@ -254,25 +266,31 @@ const RepoEdit = () => {
       headers: myHeaders,
     };
 
-    console.log('Request:::', request);
     let franchiseeArr = data.franchise.length == 0 ? 'all' : data.franchise;
     let userIdd = localStorage.getItem('user_id');
     let response = await axios.post(
       `${BASE_URL}/auth/users/franchisee-list`,
       {
-        franchisee_id: typeof param === 'undefined' ? franchiseeArr : param,
         userId: userIdd || [],
       },
       request
     );
     if (response.status === 200) {
       let userList = response.data.users;
+
       let formattedUserData = userList.map((d) => ({
         id: d.id,
         fullname: d.fullname,
         email: d.email,
         namemail: `${d.fullname} (${d.email})`,
+        franchisee_id: d?.franchisee_id,
       }));
+      setFullUserList(formattedUserData);
+      if (typeof param === 'undefined') {
+        userList = userList?.filter((item) =>
+          franchiseeArr?.includes(item?.franchisee_id + '')
+        );
+      }
       setUser(formattedUserData);
     }
   };
@@ -323,6 +341,35 @@ const RepoEdit = () => {
     return bool;
   };
 
+  const getUserOptions = () => {
+    if (accessToAllFranchise) {
+      return fullUserList;
+    }
+
+    let populatedData = fullUserList?.filter((item) => {
+      if (data?.franchise?.includes(item?.franchisee_id + '')) {
+        return item;
+      }
+    });
+
+    return populatedData;
+  };
+
+  const getPopulatedUserValues = () => {
+    if (fullUserList?.length === 0) return [];
+
+    let populatedUsers = fullUserList;
+    populatedUsers = populatedUsers?.filter((item) =>
+      data?.franchise?.includes(item?.franchisee_id + '')
+    );
+
+    populatedUsers = populatedUsers?.filter((item) =>
+      tempData?.assigned_users?.includes(item?.id + '')
+    );
+
+    return populatedUsers;
+  };
+
   useEffect(() => {
     GetData();
     getFileCategory();
@@ -332,17 +379,14 @@ const RepoEdit = () => {
   }, [setSelectedUser]);
 
   useEffect(() => {
-    // childList()
+    // childList();
     getUser();
   }, [data.franchise]);
 
   useEffect(() => {
     childList();
-    getUser();
+    // getUser();
   }, [userCount]);
-
-  console.log('Datat::::', data);
-  console.log('User::::', user);
 
   return (
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -588,7 +632,10 @@ const RepoEdit = () => {
                                                 assigned_franchisee: [],
                                               }));
                                               setSendToAllFranchisee('all');
-                                              getUser('all');
+                                              // getUser('all');
+                                              setUser(fullUserList);
+                                              setAccessToAllFranchise(true);
+                                              childList();
                                             }}
                                             disabled={
                                               getUser_Role !==
@@ -614,6 +661,7 @@ const RepoEdit = () => {
                                                 assigned_franchisee: ['none'],
                                               }));
                                               setSendToAllFranchisee('none');
+                                              setAccessToAllFranchise(false);
                                             }}
                                             disabled={
                                               getUser_Role !==
@@ -640,15 +688,15 @@ const RepoEdit = () => {
                                         placeholder={'Select'}
                                         displayValue="key"
                                         className="multiselect-box default-arrow-select"
-                                        onRemove={function noRefCheck(data) {
+                                        onRemove={(item) => {
+                                          let idList = item?.map(
+                                            (key) => key?.id + ''
+                                          );
+
                                           setData((prevState) => ({
                                             ...prevState,
-                                            franchise: [
-                                              ...data.map((data) => data.id),
-                                            ],
-                                            franchisee: [
-                                              ...data.map((data) => data.id),
-                                            ],
+                                            franchise: idList,
+                                            franchisee: idList,
                                           }));
                                           setSelectedUser([]);
                                           setSelectedChild([]);
@@ -659,17 +707,17 @@ const RepoEdit = () => {
                                             data.franchise?.includes(c.id + '')
                                           )
                                         }
-                                        onSelect={function noRefCheck(data) {
+                                        onSelect={(item) => {
+                                          let idList = item?.map(
+                                            (key) => key?.id + ''
+                                          );
+
                                           setData((prevState) => ({
                                             ...prevState,
-                                            franchise: [
-                                              ...data.map((data) => data.id),
-                                            ],
-                                            franchisee: [
-                                              ...data.map((data) => data.id),
-                                            ],
-                                            assigned_childs: [],
-                                            assigned_users: [],
+                                            franchise: idList,
+                                            franchisee: idList,
+                                            // assigned_childs: [],
+                                            // assigned_users: [],
                                           }));
 
                                           setSelectedUser([]);
@@ -1066,14 +1114,7 @@ const RepoEdit = () => {
                                             // disable={sendToAllFranchisee === 'all'}
                                             displayValue="namemail"
                                             className="multiselect-box default-arrow-select"
-                                            selectedValues={
-                                              user &&
-                                              user.filter((c) =>
-                                                data.assigned_users?.includes(
-                                                  c.id + ''
-                                                )
-                                              )
-                                            }
+                                            selectedValues={getPopulatedUserValues()}
                                             // onRemove={onRemoveUser}
                                             onRemove={function noRefCheck(
                                               data
@@ -1089,15 +1130,12 @@ const RepoEdit = () => {
                                               setUserCount(userCount - 1);
                                               childList();
                                             }}
-                                            value={
-                                              user &&
-                                              user.filter((c) =>
-                                                data.assigned_users?.includes(
-                                                  c.id + ''
-                                                )
-                                              )
-                                            }
+                                            value={getPopulatedUserValues()}
                                             onSelect={(selectedOptions) => {
+                                              console.log(
+                                                'Selected Options:::',
+                                                selectedOptions
+                                              );
                                               setData((prevState) => ({
                                                 ...prevState,
                                                 assigned_users: [
@@ -1108,7 +1146,7 @@ const RepoEdit = () => {
                                               }));
                                               setUserCount(userCount + 1);
                                             }}
-                                            options={user}
+                                            options={getUserOptions()}
                                           />
                                         </div>
                                         <p className="error">
