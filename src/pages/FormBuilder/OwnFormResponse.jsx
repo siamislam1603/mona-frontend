@@ -438,7 +438,6 @@ function OwnFormResponse(props) {
     }
   }, []);
 
-  console.log('Parent Childen IDs:', parentChildrenIDs);
   return (
     <>
       <div id="main">
