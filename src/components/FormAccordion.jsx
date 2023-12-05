@@ -11,7 +11,8 @@ function formatDate(dateString) {
 
 function FormAccordion({ data: formResponse }) {
   let count = 0;
-
+  let obj = formResponse?.[1];
+  console.log('Form Response:::', JSON.parse(obj?.fields));
   return (
     <Accordion>
       {formResponse.map((item, index) => (
@@ -67,6 +68,23 @@ function FormAccordion({ data: formResponse }) {
 
               {Object.keys(JSON.parse(item.fields)).map(
                 (inner_item, inner_index) => {
+                  // console.log('Inner Item:::', inner_item);
+                  if (inner_index === 0) {
+                    count = 0;
+                  }
+                  if (
+                    Object.keys(JSON.parse(item.fields))[inner_index]?.includes(
+                      'headings'
+                    ) ||
+                    Object.keys(JSON.parse(item.fields))[inner_index]?.includes(
+                      'text_headings'
+                    ) ||
+                    Object.keys(JSON.parse(item.fields))[inner_index]?.includes(
+                      'sub_headings'
+                    )
+                  ) {
+                    count += 1;
+                  }
                   return (
                     <div
                       key={inner_index}
@@ -75,13 +93,19 @@ function FormAccordion({ data: formResponse }) {
                     >
                       <div className="responses-content-question">
                         {!(
-                          Object.keys(JSON.parse(item.fields))[inner_index] ===
-                            'headings' ||
-                          Object.keys(JSON.parse(item.fields))[inner_index] ===
-                            'text_headings'
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('headings') ||
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('text_headings') ||
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('sub_headings')
                         ) && <span>{inner_index + 1 - count}</span>}
-                        {Object.keys(JSON.parse(item.fields))[inner_index] ===
-                        'headings' ? (
+                        {Object.keys(JSON.parse(item.fields))[
+                          inner_index
+                        ]?.includes('headings') ? (
                           <h6
                             className="text-capitalize"
                             style={{
@@ -97,7 +121,23 @@ function FormAccordion({ data: formResponse }) {
                           </h6>
                         ) : Object.keys(JSON.parse(item.fields))[
                             inner_index
-                          ] === 'text_headings' ? (
+                          ]?.includes('text_headings') ? (
+                          <h6
+                            className="text-capitalize"
+                            style={{
+                              fontSize: '16px',
+                              color: '#455c58',
+                            }}
+                          >
+                            {
+                              Object.values(JSON.parse(item.fields))[
+                                inner_index
+                              ]
+                            }
+                          </h6>
+                        ) : Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('text_headings') ? (
                           <h6
                             className="text-capitalize"
                             style={{
@@ -119,10 +159,15 @@ function FormAccordion({ data: formResponse }) {
                       </div>
                       <div className="responses-content-answer">
                         {!(
-                          Object.keys(JSON.parse(item.fields))[inner_index] ===
-                            'headings' ||
-                          Object.keys(JSON.parse(item.fields))[inner_index] ===
-                            'text_headings'
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('headings') ||
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('text_headings') ||
+                          Object.keys(JSON.parse(item.fields))[
+                            inner_index
+                          ]?.includes('sub_headings')
                         ) && <img src="../img/bx_right-arrow-alt.svg" alt="" />}
 
                         {Object.values(JSON.parse(item.fields))[
@@ -211,10 +256,13 @@ function FormAccordion({ data: formResponse }) {
                           !(
                             Object.keys(JSON.parse(item.fields))[
                               inner_index
-                            ] === 'headings' ||
+                            ]?.includes('headings') ||
                             Object.keys(JSON.parse(item.fields))[
                               inner_index
-                            ] === 'text_headings'
+                            ]?.includes('text_headings') ||
+                            Object.keys(JSON.parse(item.fields))[
+                              inner_index
+                            ]?.includes('sub_headings')
                           ) && (
                             <p>
                               {
