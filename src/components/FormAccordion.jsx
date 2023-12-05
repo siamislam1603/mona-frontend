@@ -11,8 +11,7 @@ function formatDate(dateString) {
 
 function FormAccordion({ data: formResponse }) {
   let count = 0;
-  let obj = formResponse?.[1];
-  console.log('Form Response:::', JSON.parse(obj?.fields));
+
   return (
     <Accordion>
       {formResponse.map((item, index) => (
