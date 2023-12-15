@@ -119,13 +119,6 @@ const DynamicForm = () => {
     ? location.search.split('?')[1].split('=')[1]
     : null;
   const setField = ({ field_index, section, field, value, type }) => {
-    console.log('Field_index SET FIELD:::', {
-      field_index,
-      section,
-      field,
-      value,
-      type,
-    });
     let tempObj = {};
     let flag = false;
     if (type === 'text') {
@@ -675,7 +668,6 @@ const DynamicForm = () => {
         currentForm
       );
 
-      console.log('New Errors:::', newErrors);
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
@@ -733,7 +725,6 @@ const DynamicForm = () => {
               )
                 .then((response) => response.json())
                 .then((res) => {
-                  console.log('RES:>>>>>>>>>>>>>>>>>>>>', res);
                   if (res) {
                     if (
                       result?.message ===
@@ -771,7 +762,6 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
-  console.log('Field Data:::', fieldData);
   return (
     <>
       <div id="main">
