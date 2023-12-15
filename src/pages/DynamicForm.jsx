@@ -346,7 +346,6 @@ const DynamicForm = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log('RESPONSE>>>>>>>>>>>>>>>>>>>>>>>', result);
         setCurrentForm(result?.form);
         let { form } = result;
         let { start_date, start_time, created_by } = form[0];
@@ -544,11 +543,14 @@ const DynamicForm = () => {
         formData1,
         formData,
         signatories,
-        localStorage.getItem('user_role') === 'guardian' ? childId : behalfOf,
+        localStorage.getItem('user_role') === 'guardian'
+          ? childId
+          : behalfOf || fieldData?.behalf_of,
         behalfOfFlag,
         signatureAccessFlag,
         currentForm
       );
+
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
@@ -672,6 +674,8 @@ const DynamicForm = () => {
         signatureAccessFlag,
         currentForm
       );
+
+      console.log('New Errors:::', newErrors);
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors);
         setErrorFocus(Object.keys(newErrors)[0]);
@@ -767,6 +771,7 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
+  console.log('Field Data:::', fieldData);
   return (
     <>
       <div id="main">
