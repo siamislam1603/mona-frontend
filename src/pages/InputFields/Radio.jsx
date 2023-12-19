@@ -164,7 +164,6 @@ const Radio = (props) => {
     });
 
   const uploadFile = async (file) => {
-    console.log(file, '===-=-=');
     let type = file.name.split('.')[file.name.split('.').length - 1];
     if (
       Object.values(eval(controls?.option)[Index])[0]?.field_type ===
@@ -208,7 +207,6 @@ const Radio = (props) => {
       body.append('description', 'form module');
       body.append('title', 'image');
       body.append('uploadedBy', 'vaibhavi');
-      console.log('object');
       var myHeaders = new Headers();
       myHeaders.append('shared_role', 'admin');
       let res = await fetch(`${BASE_URL}/uploads/uiFiles`, {
@@ -396,7 +394,6 @@ const Radio = (props) => {
                             }
                             id={Object.keys(item)[0]}
                             onClick={(e) => {
-                              console.log('INPUT>>>>>', e.target.value);
                               props.onChange(
                                 `${e.target.name} ${props?.field_name}`,
                                 e.target.value
@@ -539,7 +536,6 @@ const Radio = (props) => {
                 className="child_input"
                 onChange={(e) => {
                   e.preventDefault();
-                  console.log('FIELD4:>>>>', e.target.value);
                   props.onChange(
                     `${e.target.name} ${props?.field_name}`,
                     e.target.value
@@ -595,7 +591,6 @@ const Radio = (props) => {
                 type="file"
                 name={Object.values(eval(controls.option)[Index])[0].field_name}
                 onChange={async (e) => {
-                  console.log('FIELD5:>>>>', e.target.files[0]);
                   let file = e.target.files[0];
                   await uploadFile(file).then((url) => {
                     props.onChange(

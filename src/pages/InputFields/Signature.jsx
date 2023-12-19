@@ -12,7 +12,6 @@ const Signature = (props) => {
   );
   const { ...controls } = props;
   const sigPad = useRef({});
-  // console.log(props?.signature_flag, '====');
   useEffect(() => {
     if (
       signatureFlag &&
@@ -67,9 +66,15 @@ const Signature = (props) => {
       props?.field_data !== {} &&
       !isEmpty(props?.field_data)
     ) {
-      setSignature(props?.field_data?.fields[controls?.field_name]);
+      if (props?.field_data?.fields[controls?.field_name]) {
+        sigPad.current.clear();
+        setSignature(props?.field_data?.fields[controls?.field_name]);
+      } else {
+        setSignature(null);
+        sigPad.current.clear();
+      }
     }
-  }, [controls?.field_name, props?.field_data]);
+  }, [controls?.field_name, props]);
   useEffect(() => {
     if (signature && props !== {} && props?.field_data) {
       sigPad?.current?.fromDataURL(signature);

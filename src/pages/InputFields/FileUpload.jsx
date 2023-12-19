@@ -17,6 +17,17 @@ const FileUpload = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      props !== {} &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
+      setFileList(props?.field_data?.fields[`${controls?.field_name}`]);
+    }
+  }, [props]);
+
   useEffect(() => {
     if (fileList || props?.field_data?.fields) {
       if (

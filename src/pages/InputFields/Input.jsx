@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { Form, Col } from 'react-bootstrap';
 
 const Input = (props) => {
-  // let [dateValue, setDateValue] = useState(null);
   let { ...controls } = props;
   const [dataValue, setDataValue] = useState('');
 
@@ -30,13 +29,14 @@ const Input = (props) => {
         setDataValue(value);
       }
     }
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     if (props.errorFocus) {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
   return (
     <Col sm={6}>
       <Form.Group className="form-input-section">
@@ -76,10 +76,9 @@ const Input = (props) => {
               setDataValue(e.target.value);
             }
 
-            console.log('e.target.value>>>>>', e.target.value);
             props.onChange(e.target.name, e.target.value, controls?.field_type);
           }}
-          value={dataValue}
+          value={dataValue || props?.field_data?.fields?.[controls?.field_name]}
           isInvalid={!!controls.error[controls?.field_name]}
         />
         {controls?.field_type === 'text' && (

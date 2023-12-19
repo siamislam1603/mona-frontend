@@ -91,6 +91,7 @@ const InputFields = (props) => {
       inputElement = (
         <Signature
           {...controls}
+          field_data={props.field_data}
           signature_flag={props.signature_flag}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}

@@ -215,20 +215,22 @@ const AddFormField = (props) => {
   };
 
   const setCheckBoxField = (form, name, value, checked, index) => {
-    console.log('DATA CHECKBOX FIELD:::', {
-      form,
-      name,
-      value,
-      checked,
-      index,
-    });
+    // console.log('DATA CHECKBOX FIELD:::', {
+    //   form,
+    //   name,
+    //   value,
+    //   checked,
+    //   index,
+    // });
     let tempArr = [...form];
     let tempObj = tempArr[index];
-    console.log('Temp obj::::', tempObj);
+    // console.log('Temp obj::::', tempObj);
 
     let obj = selectedCheckBox;
 
-    let selectedCheckboxVal = selectedCheckBox[tempObj?.section_name];
+    // console.log('Selected Checkbox:::', selectedCheckBox);
+    let selectedCheckboxVal = selectedCheckBox[tempObj?.section_name] || [];
+    // console.log('Selected checkbox value:::', selectedCheckboxVal);
     selectedCheckboxVal = selectedCheckboxVal?.filter((item) => {
       if (item !== 'undefine' && !!item) return item;
     });
@@ -728,7 +730,9 @@ const AddFormField = (props) => {
               item['signatories_role'] = item.signatories_role
                 ? item.signatories_role.slice(0, -1)
                 : null;
-              item['fill_access_users'] = item?.fill_access_users;
+              item['fill_access_users'] =
+                item?.fill_access_users ||
+                selectedCheckBox?.[item?.section_name];
             }
             if (
               item?.form_field_permissions[0]?.accessible_to_role === '0' ||
@@ -1444,7 +1448,10 @@ const AddFormField = (props) => {
                                         setSelectedCheckBox((prevState) => ({
                                           ...prevState,
                                           [form[index]?.section_name]:
-                                            permissions,
+                                            permissions ||
+                                            selectedCheckBox[
+                                              form[index]?.section_name
+                                            ],
                                         }));
 
                                         setGroupFlag(!groupFlag);
@@ -2102,7 +2109,7 @@ const AddFormField = (props) => {
                                           </div>
                                         </Form.Group>
                                       </Col>
-                                      {console.log('Index:::', Index)}
+
                                       {form[Index]?.accessible_to_role ===
                                         '1' ||
                                       form[Index]?.accessible_to_role ===

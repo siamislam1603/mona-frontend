@@ -98,6 +98,7 @@ const DynamicForm = () => {
   const [signatureAccessFlag, setSignatureAccessFlag] = useState();
   const [tempFormData, setTempFormData] = useState({});
   const [formData, setFormData] = useState([]);
+  const [formDataVal, setFormDataVal] = useState({});
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
   const [fieldData, setFieldData] = useState({});
@@ -149,7 +150,6 @@ const DynamicForm = () => {
     }
     if (location?.state?.id) {
       if (type === 'date') {
-        console.log('DATE FIELD!');
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
           ...fieldData,
@@ -317,7 +317,6 @@ const DynamicForm = () => {
   }
 
   const getFormFields = async () => {
-    console.log('GETTING FORM FIELDS');
     var myHeaders = new Headers();
     myHeaders.append('authorization', 'Bearer ' + token);
     var requestOptions = {
@@ -339,6 +338,7 @@ const DynamicForm = () => {
     )
       .then((response) => response.json())
       .then((result) => {
+        setFormDataVal(result?.fData);
         setCurrentForm(result?.form);
         let { form } = result;
         let { start_date, start_time, created_by } = form[0];
@@ -370,11 +370,15 @@ const DynamicForm = () => {
             setFormPermission(res?.form[0]?.form_permissions[0]);
             let formsData = {};
             let data = {};
+            console.log('Result:::', res?.result);
             Object.keys(res?.result)?.map((item) => {
               if (!formsData[item]) formsData[item] = {};
               if (!data[item]) data[item] = [];
 
+              console.log('ITEM:::', item);
               res?.result[item]?.map((inner_item, index) => {
+                console.log('Inner Item::::', inner_item);
+                data[item]?.push(inner_item);
                 if (inner_item.form_field_permissions.length > 0) {
                   inner_item?.form_field_permissions?.map((permission) => {
                     if (
@@ -397,10 +401,10 @@ const DynamicForm = () => {
                       } else {
                         formsData[item][`${inner_item.field_name}`] = null;
                       }
-                      data[item].push(inner_item);
+                      // data[item].push(inner_item);
                     } else {
-                      delete formsData[item];
-                      delete data[item];
+                      // delete formsData[item];
+                      // delete data[item];
                     }
                   });
                 } else {
@@ -414,7 +418,7 @@ const DynamicForm = () => {
                   } else {
                     formsData[item][`${inner_item.field_name}`] = null;
                   }
-                  data[item].push(inner_item);
+                  // data[item].push(inner_item);
                 }
               });
             });
@@ -609,6 +613,7 @@ const DynamicForm = () => {
       });
 
       data = { ...defaultFormData, ...data, ...formDataObj };
+      console.log('Data Middle:::', data);
       Object?.keys(data)?.forEach((item, index) => {
         let info = item?.split(' ');
         let parent_key = info?.[0];
@@ -640,11 +645,17 @@ const DynamicForm = () => {
       let tempObj = {};
       Object?.keys(orderedObject)?.forEach((item) => {
         if (orderedObject[item]) {
-          tempObj[item?.split(' ')?.[0]] = orderedObject[item];
+          if (!tempObj[item?.split(' ')?.[0]]) {
+            tempObj[item?.split(' ')?.[0]] = orderedObject[item];
+          } else {
+            let index = Object.keys(tempObj)?.length + 1;
+            tempObj[index] = orderedObject[item];
+          }
         }
       });
 
       orderedObject = {};
+      unsortedKeyArray = Object.keys(tempObj);
       unsortedKeyArray?.forEach((item) => {
         orderedObject[item] = tempObj[item];
       });
@@ -762,6 +773,53 @@ const DynamicForm = () => {
     }
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
+  useEffect(() => {
+    let details = formDataVal?.[selectedUserValue?.id] || {};
+
+    let fData = {};
+
+    if (Object.keys(details)?.length > 0) {
+      let dataKeys = Object?.keys(formData);
+      dataKeys?.forEach((item) => {
+        let innerData = formData?.[item];
+        innerData = innerData?.map((inner_item) => {
+          let keys = Object?.keys(inner_item);
+          let valObj = {};
+
+          keys?.forEach((item) => {
+            if (details?.[inner_item?.[item]]) {
+              valObj['field_value'] = details?.[inner_item?.[item]];
+            }
+          });
+
+          return {
+            ...inner_item,
+            ...valObj,
+          };
+        });
+        fData[item] = innerData;
+      });
+    } else {
+      let dataKeys = Object?.keys(formData);
+      dataKeys?.forEach((item) => {
+        let innerData = formData?.[item];
+        innerData = innerData?.map((inner_item) => {
+          delete inner_item['field_value'];
+
+          return {
+            ...inner_item,
+          };
+        });
+        fData[item] = innerData;
+      });
+    }
+
+    if (Object?.keys(fData)?.length > 0) {
+      setFormData(fData);
+    }
+  }, [selectedUserValue]);
+
+  console.log('Form Final::::', formData);
   return (
     <>
       <div id="main">
@@ -991,71 +1049,116 @@ const DynamicForm = () => {
                           {formData[item]?.map((inner_item, inner_index) => {
                             return inner_item.form_field_permissions.length >
                               0 ? (
-                              inner_item.form_field_permissions[0].fill_access_users?.includes(
-                                localStorage.getItem('user_role') === 'guardian'
-                                  ? 'parent'
-                                  : localStorage.getItem('user_role')
-                              ) ? (
-                                <>
-                                  <InputFields
-                                    {...inner_item}
-                                    dataKey={'1'}
-                                    signature_flag={signatureAccessFlag}
-                                    diff_index={inner_index}
-                                    field_data={fieldData}
-                                    setFieldData={setFieldData}
-                                    error={errors}
-                                    errorFocus={errorFocus}
-                                    onChange={(key, value, type) => {
-                                      setField({
-                                        field_index: inner_index,
-                                        section: '',
-                                        field: key,
-                                        value: value,
-                                        type: type,
-                                      });
-                                    }}
-                                    freshForm={true}
-                                    currentForm={currentForm}
-                                  />
-                                </>
-                              ) : (
-                                (
-                                  inner_item.form_field_permissions[0]
-                                    .fill_access_users || []
-                                ).includes(
-                                  localStorage.getItem('user_role') ===
-                                    'guardian'
-                                    ? 'parent'
-                                    : localStorage.getItem('user_role')
-                                ) && (
-                                  <>
-                                    {index === 0 && (
-                                      <h6 className="text-capitalize">
-                                        {item.split('_').join(' ')}
-                                      </h6>
-                                    )}
-                                    <InputFields
-                                      {...inner_item}
-                                      dataKey={'2'}
-                                      signature_flag={signatureAccessFlag}
-                                      diff_index={inner_index}
-                                      error={errors}
-                                      errorFocus={errorFocus}
-                                      onChange={(key, value, type) => {
-                                        setField({
-                                          field_index: inner_index,
-                                          section: item,
-                                          field: key,
-                                          value: value,
-                                          type: type,
-                                        });
-                                      }}
-                                      currentForm={currentForm}
-                                    />
-                                  </>
-                                )
-                              )
+                              // inner_item.form_field_permissions[0].fill_access_users?.includes(
+                              //   localStorage.getItem('user_role') === 'guardian'
+                              //     ? 'parent'
+                              //     : localStorage.getItem('user_role')
+                              // ) ? (
+                              //   <>
+                              //     <InputFields
+                              //       {...inner_item}
+                              //       dataKey={'1'}
+                              //       signature_flag={signatureAccessFlag}
+                              //       diff_index={inner_index}
+                              //       field_data={fieldData}
+                              //       setFieldData={setFieldData}
+                              //       error={errors}
+                              //       errorFocus={errorFocus}
+                              //       onChange={(key, value, type) => {
+                              //         setField({
+                              //           field_index: inner_index,
+                              //           section: '',
+                              //           field: key,
+                              //           value: value,
+                              //           type: type,
+                              //         });
+                              //       }}
+                              //       freshForm={true}
+                              //       currentForm={currentForm}
+                              //     />
+                              //   </>
+                              // ) : (
+                              //   (
+                              //     inner_item.form_field_permissions[0]
+                              //       .fill_access_users || []
+                              //   ).includes(
+                              //     localStorage.getItem('user_role') ===
+                              //       'guardian'
+                              //       ? 'parent'
+                              //       : localStorage.getItem('user_role')
+                              //   ) && (
+                              //     <>
+                              //       {index === 0 && (
+                              //         <h6 className="text-capitalize">
+                              //           {item.split('_').join(' ')}
+                              //         </h6>
+                              //       )}
+                              //       <InputFields
+                              //         {...inner_item}
+                              //         dataKey={'2'}
+                              //         signature_flag={signatureAccessFlag}
+                              //         diff_index={inner_index}
+                              //         error={errors}
+                              //         errorFocus={errorFocus}
+                              //         onChange={(key, value, type) => {
+                              //           setField({
+                              //             field_index: inner_index,
+                              //             section: item,
+                              //             field: key,
+                              //             value: value,
+                              //             type: type,
+                              //           });
+                              //         }}
+                              //         currentForm={currentForm}
+                              //       />
+                              //     </>
+                              //   )
+                              // )
+                              <>
+                                <InputFields
+                                  {...inner_item}
+                                  dataKey={'1'}
+                                  signature_flag={signatureAccessFlag}
+                                  diff_index={inner_index}
+                                  field_data={
+                                    !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
+                                      localStorage.getItem('user_role') ===
+                                        'guardian'
+                                        ? 'parent'
+                                        : localStorage.getItem('user_role')
+                                    )
+                                      ? {
+                                          fields: {
+                                            [inner_item?.field_name]:
+                                              inner_item?.field_value || '',
+                                          },
+                                        }
+                                      : fieldData || fieldData
+                                  }
+                                  setFieldData={setFieldData}
+                                  isDisable={
+                                    !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
+                                      localStorage.getItem('user_role') ===
+                                        'guardian'
+                                        ? 'parent'
+                                        : localStorage.getItem('user_role')
+                                    )
+                                  }
+                                  error={errors}
+                                  errorFocus={errorFocus}
+                                  onChange={(key, value, type) => {
+                                    setField({
+                                      field_index: inner_index,
+                                      section: '',
+                                      field: key,
+                                      value: value,
+                                      type: type,
+                                    });
+                                  }}
+                                  freshForm={true}
+                                  currentForm={currentForm}
+                                />
+                              </>
                             ) : location?.state?.id ? (
                               <InputFields
                                 {...inner_item}
