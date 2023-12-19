@@ -370,14 +370,11 @@ const DynamicForm = () => {
             setFormPermission(res?.form[0]?.form_permissions[0]);
             let formsData = {};
             let data = {};
-            console.log('Result:::', res?.result);
             Object.keys(res?.result)?.map((item) => {
               if (!formsData[item]) formsData[item] = {};
               if (!data[item]) data[item] = [];
 
-              console.log('ITEM:::', item);
               res?.result[item]?.map((inner_item, index) => {
-                console.log('Inner Item::::', inner_item);
                 data[item]?.push(inner_item);
                 if (inner_item.form_field_permissions.length > 0) {
                   inner_item?.form_field_permissions?.map((permission) => {
@@ -446,7 +443,6 @@ const DynamicForm = () => {
         }
       })
       .catch((error) => {
-        console.log('error', error);
         setfullLoaderStatus(false);
       });
   };
@@ -613,7 +609,6 @@ const DynamicForm = () => {
       });
 
       data = { ...defaultFormData, ...data, ...formDataObj };
-      console.log('Data Middle:::', data);
       Object?.keys(data)?.forEach((item, index) => {
         let info = item?.split(' ');
         let parent_key = info?.[0];
@@ -819,7 +814,6 @@ const DynamicForm = () => {
     }
   }, [selectedUserValue]);
 
-  console.log('Form Final::::', formData);
   return (
     <>
       <div id="main">
@@ -900,7 +894,6 @@ const DynamicForm = () => {
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    // console.log('ITEM>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {item.id === parseInt(childId) ? (
