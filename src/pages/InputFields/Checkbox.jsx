@@ -9,6 +9,7 @@ let value = {};
 
 const Checkbox = (props) => {
   const { ...controls } = props;
+  console.log('Props:::', props);
 
   const [array, setArray] = useState([]);
   const [subCheckbox, setSubCheckbox] = useState([]);
@@ -252,7 +253,17 @@ const Checkbox = (props) => {
                           // ].replace(e.target.value + ',', '');
                         }
                       }}
-                      checked={array?.includes(Object.keys(item2)[0])}
+                      checked={
+                        array?.includes(Object.keys(item2)[0]) ||
+                        (Object?.keys(props?.field_data)?.length > 0 &&
+                        typeof Object?.values(
+                          props?.field_data?.fields
+                        )?.[0] === 'string'
+                          ? Object?.values(props?.field_data?.fields)?.[0]
+                              ?.split(',')
+                              ?.includes(Object.keys(item2)[0])
+                          : false)
+                      }
                     />
                     <span className="checkmark"></span>
                   </label>
@@ -279,7 +290,14 @@ const Checkbox = (props) => {
         {Object.values(eval(controls.option))?.map((item, i) => {
           let key = Object.keys(item)[0];
           let value = Object.values(item)[0];
-          if (array?.includes(key) && typeof value !== 'string') {
+          if (
+            (array?.includes(key) ||
+              (Object?.keys(props?.field_data)?.length > 0 &&
+                Object?.values(props?.field_data?.fields)?.[0]
+                  ?.split(',')
+                  ?.includes(key))) &&
+            typeof value !== 'string'
+          ) {
             switch (value?.field_type) {
               case 'radio':
                 return (
@@ -383,24 +401,31 @@ const Checkbox = (props) => {
                   </>
                 );
               case 'text':
+                console.log('KEY:::', key);
+                console.log('KEY:::', value);
                 return (
                   <Col sm={6}>
                     <Form.Group>
                       <Form.Label>{value?.field_label}</Form.Label>
                       <Form.Control
                         type={value?.field_type}
-                        name={value?.field_name}
+                        name={`${value?.field_name} ${props?.field_name}`}
                         onChange={(e) => {
                           props.onChange(
-                            `${e.target.name} ${props?.field_name}`,
+                            `${e.target.name}`,
                             e.target.value,
                             'text'
                           );
                         }}
+                        disabled={props?.isDisable}
                         value={
-                          props.field_data &&
-                          Object.keys(props.field_data).length > 0 &&
-                          props.field_data.fields[`${value?.field_name}`]
+                          (props.field_data &&
+                            Object.keys(props?.field_data)?.length > 0 &&
+                            props.field_data.fields?.[
+                              `${value?.field_name} ${props?.field_name}`
+                            ]) ||
+                          props?.extra_data?.[value?.field_name] ||
+                          ''
                         }
                       />
                     </Form.Group>

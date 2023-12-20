@@ -5,8 +5,10 @@ import SignaturePad from 'react-signature-canvas';
 import { toast } from 'react-toastify';
 import { BASE_URL } from '../../components/App';
 
+let optIndex = 0;
 const Radio = (props) => {
   const { ...controls } = props;
+  console.log('Props:::', props);
   const [optionValue, setOptionValue] = useState('');
   const [Index, setIndex] = useState(0);
   const [textInputValue, setTextInputValue] = useState('');
@@ -17,6 +19,10 @@ const Radio = (props) => {
   const [dropDownValue, setDropDownValue] = useState();
 
   const sigPad = useRef({});
+  let extData = {};
+  if (Object?.keys(props?.field_data)?.length) {
+    extData = props?.extra_data;
+  }
 
   const clear = (e) => {
     e.preventDefault();
@@ -118,6 +124,7 @@ const Radio = (props) => {
         props?.field_data?.fields[
           `${Object.values(eval(controls?.option)[Index])[0]?.field_name}`
         ];
+
       if (typeof fieldData === 'object') {
         fieldData = fieldData?.join(',');
       }
@@ -126,8 +133,19 @@ const Radio = (props) => {
           return item;
         })
       );
+
+      setOptionValue(props?.field_data?.fields?.[props?.field_name] || '');
+      let ind = 0;
+      let val = props?.field_data?.fields?.[props?.field_name];
+      eval(controls.option)?.forEach((item, index) => {
+        let key = Object?.keys(item);
+        if (key?.[0] === val) {
+          ind = index;
+        }
+      });
+      setIndex(ind);
     }
-  }, []);
+  }, [props]);
 
   useEffect(() => {
     if (
@@ -219,6 +237,20 @@ const Radio = (props) => {
       setFileList(data?.url);
       return data?.url;
     }
+  };
+
+  const hasValue = (value) => {
+    let hasValue = false;
+    eval(controls.option)?.forEach((item, index) => {
+      let key = Object?.keys(item);
+      if (key?.[0] === value) {
+        hasValue = true;
+      }
+    });
+
+    // setIndex(optIndex);
+    console.log('Has Value::::', value, hasValue, Index);
+    return hasValue;
   };
 
   return (
@@ -362,15 +394,13 @@ const Radio = (props) => {
           <p className="error">{controls.error[controls.field_name]}</p>
         </Form.Group>
       </Col>
-      {props?.field_data?.form_id ||
-      optionValue ===
-        Object.values(eval(controls.option)[Index])[0]['option_key'] ? (
+      {props?.field_data?.form_id || hasValue(optionValue) ? (
         Object.values(eval(controls.option)[Index])[0]['field_type'] ===
         'radio' ? (
           <Col sm={6}>
             <Form.Group>
               <Form.Label>
-                {Object.values(eval(controls.option)[Index])[0]?.field_name}
+                {Object.values(eval(controls.option)[Index])[0]?.field_label}
               </Form.Label>
               <div className="new-form-radio">
                 {Object.values(eval(controls.option)[Index])[0]['option'].map(
@@ -400,14 +430,22 @@ const Radio = (props) => {
                               );
                             }}
                             checked={
-                              props.field_data?.form_id &&
-                              props.field_data.fields[
-                                `${
-                                  Object.values(
-                                    eval(controls.option)[Index]
-                                  )[0]['field_name']
-                                }`
-                              ] === Object.values(item)[0]
+                              (props.field_data?.form_id &&
+                                props.field_data.fields[
+                                  `${
+                                    Object.values(
+                                      eval(controls.option)[Index]
+                                    )[0]['field_name']
+                                  }`
+                                ] === Object.values(item)[0]) ||
+                              (Object?.keys(extData)?.length > 0
+                                ? extData[
+                                    Object.values(
+                                      eval(controls.option)[Index]
+                                    )[0]['field_name']
+                                  ] === Object.values(item)[0]
+                                : null) ||
+                              null
                             }
                           />
                           <span className="radio-round"></span>
@@ -670,6 +708,7 @@ const Radio = (props) => {
                     name={
                       Object.values(eval(controls.option)[Index])[0].field_name
                     }
+                    disabled={controls?.isDisable}
                     onChange={(e) => {
                       props.onChange(
                         `${e.target.name} ${props?.field_name}`,
@@ -686,7 +725,18 @@ const Radio = (props) => {
                               .field_name
                           }`
                         ]) ||
-                      textInputValue
+                      textInputValue ||
+                      (props?.field_data?.fields?.[
+                        `${
+                          Object.values(eval(controls.option)[Index])[0]
+                            .field_name
+                        } ${props?.field_name}`
+                      ] || props?.field_data?.fields?.[`${props?.field_name}`]
+                        ? props?.extra_data[
+                            Object.values(eval(controls.option)[Index])[0]
+                              .field_name
+                          ]
+                        : '')
                     }
                   />
                 </Form.Group>

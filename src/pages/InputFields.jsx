@@ -26,6 +26,7 @@ const InputFields = (props) => {
         <Radio
           {...controls}
           field_index={props?.field_index}
+          extra_data={props?.extra_data}
           field_data={props?.field_data}
           setFieldData={props.setFieldData}
           diff_index={props?.diff_index}
@@ -62,6 +63,7 @@ const InputFields = (props) => {
         <Checkbox
           {...controls}
           field_data={props?.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
         />
@@ -72,6 +74,7 @@ const InputFields = (props) => {
         <TextArea
           {...controls}
           field_data={props.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
         />
@@ -82,6 +85,7 @@ const InputFields = (props) => {
         <Select
           {...controls}
           field_data={props.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
         />
@@ -92,6 +96,7 @@ const InputFields = (props) => {
         <Signature
           {...controls}
           field_data={props.field_data}
+          extra_data={props?.extra_data}
           signature_flag={props.signature_flag}
           errorFocus={props.errorFocus}
           isDisable={props.isDisable}
@@ -103,6 +108,7 @@ const InputFields = (props) => {
         <FileUpload
           {...controls}
           field_data={props?.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
         />
@@ -113,6 +119,7 @@ const InputFields = (props) => {
         <ImageUpload
           {...controls}
           field_data={props?.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
         />
@@ -123,6 +130,7 @@ const InputFields = (props) => {
         <Input
           {...controls}
           field_data={props?.field_data}
+          extra_data={props?.extra_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}
         />
