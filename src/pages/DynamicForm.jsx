@@ -780,7 +780,9 @@ const DynamicForm = () => {
   }, [targetUser, localStorage.getItem('selectedChild')]);
 
   useEffect(() => {
-    let details = formDataVal?.[selectedUserValue?.id] || {};
+    let user_id = localStorage.getItem('user_id');
+    let details =
+      formDataVal?.[selectedUserValue?.id] || formDataVal?.[user_id] || {};
     let tempDetails = {};
     let fData = {};
 
@@ -847,7 +849,82 @@ const DynamicForm = () => {
     }
 
     setFieldData({});
-  }, [selectedUserValue]);
+  }, [selectedUserValue, localStorage?.getItem('user_id')]);
+
+  useEffect(() => {
+    if (Object?.keys(selectedUserValue)?.length === 0) {
+      let user_id = localStorage.getItem('user_id');
+      let details = formDataVal?.[user_id] || {};
+      let tempDetails = {};
+      let fData = {};
+
+      if (Object.keys(details)?.length > 0) {
+        let dataKeys = Object?.keys(formData);
+        dataKeys?.forEach((item) => {
+          let innerData = formData?.[item];
+          innerData = innerData?.map((inner_item) => {
+            let keys = Object?.keys(inner_item);
+            let valObj = {};
+
+            keys?.forEach((item) => {
+              if (
+                details?.[inner_item?.['field_name']] &&
+                !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
+                  localStorage.getItem('user_role') === 'guardian'
+                    ? 'parent'
+                    : localStorage.getItem('user_role')
+                )
+              ) {
+                valObj['field_value'] = details?.[inner_item?.['field_name']];
+                tempDetails[inner_item?.['field_name']] =
+                  details?.[inner_item?.['field_name']];
+
+                if (inner_item?.option) {
+                  let item = eval(inner_item?.option);
+                  item?.map((item) => {
+                    let key = Object?.keys(item);
+                    if (details[item?.[key]?.field_name]) {
+                      tempDetails[item?.[key]?.field_name] =
+                        details[item?.[key]?.field_name];
+                    }
+                  });
+                }
+              }
+            });
+
+            return {
+              ...inner_item,
+              ...valObj,
+            };
+          });
+          setFormFieldDetails(tempDetails);
+          fData[item] = innerData;
+        });
+      } else {
+        let dataKeys = Object?.keys(formData);
+        setFormFieldDetails(details || {});
+        dataKeys?.forEach((item) => {
+          let innerData = formData?.[item];
+          innerData = innerData?.map((inner_item) => {
+            delete inner_item['field_value'];
+
+            return {
+              ...inner_item,
+            };
+          });
+          fData[item] = innerData;
+        });
+      }
+
+      if (Object?.keys(fData)?.length > 0) {
+        setFormData(fData);
+      }
+
+      setFieldData({});
+    }
+
+    // setFieldData({});
+  }, [formDataVal]);
 
   return (
     <>
