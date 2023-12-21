@@ -9,7 +9,6 @@ let value = {};
 
 const Checkbox = (props) => {
   const { ...controls } = props;
-  console.log('Props:::', props);
 
   const [array, setArray] = useState([]);
   const [subCheckbox, setSubCheckbox] = useState([]);
@@ -62,7 +61,6 @@ const Checkbox = (props) => {
     });
 
   const uploadFile = async (file) => {
-    console.log(file, '===-=-=');
     let type = file.name.split('.')[file.name.split('.').length - 1];
     if (
       Object.values(eval(controls?.option)[condIndex])[0]?.field_type ===
@@ -106,7 +104,6 @@ const Checkbox = (props) => {
       body.append('description', 'form module');
       body.append('title', 'image');
       body.append('uploadedBy', 'vaibhavi');
-      console.log('object');
       var myHeaders = new Headers();
       myHeaders.append('shared_role', 'admin');
       let res = await fetch(`${BASE_URL}/uploads/uiFiles`, {
@@ -401,8 +398,6 @@ const Checkbox = (props) => {
                   </>
                 );
               case 'text':
-                console.log('KEY:::', key);
-                console.log('KEY:::', value);
                 return (
                   <Col sm={6}>
                     <Form.Group>
@@ -500,7 +495,6 @@ const Checkbox = (props) => {
                         type="file"
                         name={value?.field_name}
                         onChange={async (e) => {
-                          console.log('FIELD5:>>>>', e.target.files[0]);
                           let file = e.target.files[0];
                           setCondIndex(i);
                           await uploadFile(file).then((url) => {

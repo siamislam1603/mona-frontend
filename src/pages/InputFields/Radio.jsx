@@ -8,7 +8,6 @@ import { BASE_URL } from '../../components/App';
 let optIndex = 0;
 const Radio = (props) => {
   const { ...controls } = props;
-  console.log('Props:::', props);
   const [optionValue, setOptionValue] = useState('');
   const [Index, setIndex] = useState(0);
   const [textInputValue, setTextInputValue] = useState('');
@@ -249,7 +248,6 @@ const Radio = (props) => {
     });
 
     // setIndex(optIndex);
-    console.log('Has Value::::', value, hasValue, Index);
     return hasValue;
   };
 

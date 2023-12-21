@@ -138,7 +138,7 @@ const DynamicForm = () => {
     }
     if (type === 'textarea') {
       if (!location?.state?.id) {
-        value = value.trimEnd();
+        // value = value.trimEnd();
       }
       if (value.split(' ').length > 2000) {
         let errorsData = { ...errors };
@@ -784,7 +784,6 @@ const DynamicForm = () => {
     let tempDetails = {};
     let fData = {};
 
-    console.log('Details::::', details);
     if (Object.keys(details)?.length > 0) {
       let dataKeys = Object?.keys(formData);
       dataKeys?.forEach((item) => {
@@ -792,14 +791,6 @@ const DynamicForm = () => {
         innerData = innerData?.map((inner_item) => {
           let keys = Object?.keys(inner_item);
           let valObj = {};
-
-          console.log('details:::', details);
-          console.log('inner_item:::', inner_item);
-          console.log('item:::', item);
-          console.log(
-            'details?.[inner_item?.[item]]:::',
-            details?.[inner_item?.['field_name']]
-          );
 
           keys?.forEach((item) => {
             if (
