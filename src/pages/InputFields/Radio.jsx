@@ -19,7 +19,7 @@ const Radio = (props) => {
 
   const sigPad = useRef({});
   let extData = {};
-  if (Object?.keys(props?.field_data)?.length) {
+  if (props?.field_data && Object?.keys(props?.field_data)?.length) {
     extData = props?.extra_data;
   }
 
