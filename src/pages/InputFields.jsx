@@ -62,7 +62,7 @@ const InputFields = (props) => {
       inputElement = (
         <Checkbox
           {...controls}
-          field_data={props?.field_data}
+          field_data={props?.field_data || {}}
           extra_data={props?.extra_data}
           errorFocus={props?.errorFocus}
           isDisable={props.isDisable}

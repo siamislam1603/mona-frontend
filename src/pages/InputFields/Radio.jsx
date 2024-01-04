@@ -143,6 +143,9 @@ const Radio = (props) => {
         }
       });
       setIndex(ind);
+    } else {
+      setOptionValue('');
+      setIndex(0);
     }
   }, [props]);
 

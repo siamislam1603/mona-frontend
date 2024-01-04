@@ -227,6 +227,13 @@ const DynamicForm = () => {
           ...form,
           [section]: { ...form[`${section}`], [field]: value },
         });
+        setFieldData({
+          ...fieldData,
+          ['fields']: {
+            ...fieldData['fields'],
+            [field]: value,
+          },
+        });
         setTempFormData({
           ...tempFormData,
           [section]: {
@@ -797,6 +804,7 @@ const DynamicForm = () => {
           keys?.forEach((item) => {
             if (
               details?.[inner_item?.['field_name']] &&
+              inner_item?.form_field_permissions?.length > 0 &&
               !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
                 localStorage.getItem('user_role') === 'guardian'
                   ? 'parent'
@@ -869,7 +877,7 @@ const DynamicForm = () => {
             keys?.forEach((item) => {
               if (
                 details?.[inner_item?.['field_name']] &&
-                !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
+                !inner_item.form_field_permissions?.[0]?.fill_access_users?.includes(
                   localStorage.getItem('user_role') === 'guardian'
                     ? 'parent'
                     : localStorage.getItem('user_role')
@@ -1061,7 +1069,6 @@ const DynamicForm = () => {
                                     : (behalfOfFlag = false)}
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    // console.log('ITEM>>>>>>>>>>>>',   item);
                                     return (
                                       <>
                                         {item?.id === fieldData?.behalf_of ? (
@@ -1112,7 +1119,6 @@ const DynamicForm = () => {
                                 >
                                   <option value="">Select</option>
                                   {targetUser?.map((item, index) => {
-                                    // console.log('ITEM>>>>>>>>>>>>>', item);
                                     return (
                                       <>
                                         {(parseInt(
@@ -1369,6 +1375,25 @@ const DynamicForm = () => {
                               diff_index={inner_index}
                               error={errors}
                               errorFocus={errorFocus}
+                              extra_data={formFieldDetails}
+                              field_data={
+                                inner_item?.form_field_permissions?.length >
+                                  0 &&
+                                !inner_item?.form_field_permissions?.[0].fill_access_users?.includes(
+                                  localStorage.getItem('user_role') ===
+                                    'guardian'
+                                    ? 'parent'
+                                    : localStorage.getItem('user_role')
+                                )
+                                  ? {
+                                      fields: {
+                                        [inner_item?.field_name]:
+                                          inner_item?.field_value || '',
+                                      },
+                                    }
+                                  : fieldData || fieldData
+                                // fieldData
+                              }
                               onChange={(key, value, type) => {
                                 setField({
                                   field_index: inner_index,
@@ -1378,6 +1403,7 @@ const DynamicForm = () => {
                                   type: type,
                                 });
                               }}
+                              setFieldData={setFieldData}
                               freshForm={true}
                               currentForm={currentForm}
                             />

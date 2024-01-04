@@ -25,7 +25,7 @@ const Input = (props) => {
         ).format('YYYY-MM-DD');
         setDataValue(value);
       } else {
-        value = props?.field_data?.fields[`${controls?.field_name}`];
+        value = props?.field_data?.fields[`${controls?.field_name}`] || '';
         setDataValue(value);
       }
     }

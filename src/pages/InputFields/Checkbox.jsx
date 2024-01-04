@@ -120,9 +120,8 @@ const Checkbox = (props) => {
 
   useEffect(() => {
     if (
-      !isEmpty(props?.field_data) ||
-      !props?.field_data ||
-      props?.field_data == 'undefined'
+      typeof props?.field_data !== 'undefined' &&
+      Object?.keys(props?.field_data)?.length > 0
     ) {
       let fieldData = props?.field_data?.fields[controls?.field_name];
       if (typeof fieldData === 'object') {
@@ -135,6 +134,41 @@ const Checkbox = (props) => {
       );
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      typeof props?.field_data !== 'undefined' &&
+      Object?.keys(props?.field_data)?.length > 0
+    ) {
+      let fieldData = props?.field_data?.fields[controls?.field_name];
+      if (typeof fieldData === 'object') {
+        fieldData = fieldData?.join(',');
+      }
+      setArray(
+        fieldData?.split(',').map((item) => {
+          return item;
+        })
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      (array?.length === 0 || array?.[0] === '') &&
+      typeof props?.extra_data !== 'undefined' &&
+      Object?.keys(props?.extra_data)?.length > 0
+    ) {
+      let fieldData = props?.extra_data?.[controls?.field_name];
+      if (typeof fieldData === 'object') {
+        fieldData = fieldData?.join(',');
+      }
+      setArray(
+        fieldData?.split(',').map((item) => {
+          return item;
+        })
+      );
+    }
+  }, [props?.extra_data]);
 
   useEffect(() => {
     if (window.location.pathname.split('/')[2] !== 'preview') {
@@ -207,14 +241,21 @@ const Checkbox = (props) => {
                       }
                       value={Object.keys(item2)[0]}
                       onChange={(e) => {
+                        let checkVal = '';
                         if (e.target.checked) {
                           if (optionValue?.includes(Object.keys(item2)[0])) {
                             let data = optionValue;
                             data = data.filter(
                               (item) => item !== Object.keys(item2)[0]
                             );
+                            checkVal = data?.join(',');
                             setOptionValue(data);
                           } else {
+                            checkVal = [
+                              ...optionValue,
+                              Object.keys(item2)[0],
+                            ]?.join(',');
+
                             setOptionValue((val) => [
                               ...val,
                               Object.keys(item2)[0],
@@ -241,25 +282,37 @@ const Checkbox = (props) => {
                             data = data.filter(
                               (item) => item !== e.target.value
                             );
+                            checkVal = data?.join(',');
                             setOptionValue(data);
                           } else {
+                            checkVal = [...optionValue, e.target.value]?.join(
+                              ','
+                            );
+
                             setOptionValue((val) => [...val, e.target.value]);
                           }
+                          // props.onChange(
+                          //   controls.field_name,
+                          //   checkVal,
+                          //   'checkbox'
+                          // );
                           // value[controls.field_name] = value[
                           //   controls.field_name
                           // ].replace(e.target.value + ',', '');
                         }
                       }}
                       checked={
-                        array?.includes(Object.keys(item2)[0]) ||
-                        (Object?.keys(props?.field_data)?.length > 0 &&
-                        typeof Object?.values(
-                          props?.field_data?.fields
-                        )?.[0] === 'string'
-                          ? Object?.values(props?.field_data?.fields)?.[0]
-                              ?.split(',')
-                              ?.includes(Object.keys(item2)[0])
-                          : false)
+                        props?.form_data
+                          ? array?.includes(Object.keys(item2)[0]) ||
+                            (Object?.keys(props?.field_data)?.length > 0 &&
+                            typeof Object?.values(
+                              props?.field_data?.fields
+                            )?.[0] === 'string'
+                              ? Object?.values(props?.field_data?.fields)?.[0]
+                                  ?.split(',')
+                                  ?.includes(Object.keys(item2)[0])
+                              : false)
+                          : false || array?.includes(Object.keys(item2)[0])
                       }
                     />
                     <span className="checkmark"></span>
@@ -289,7 +342,8 @@ const Checkbox = (props) => {
           let value = Object.values(item)[0];
           if (
             (array?.includes(key) ||
-              (Object?.keys(props?.field_data)?.length > 0 &&
+              (props?.field_data &&
+                Object?.keys(props?.field_data)?.length > 0 &&
                 Object?.values(props?.field_data?.fields)?.[0]
                   ?.split(',')
                   ?.includes(key))) &&
