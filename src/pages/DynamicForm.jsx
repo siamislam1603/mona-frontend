@@ -635,6 +635,18 @@ const DynamicForm = () => {
           parent_key = info?.[1];
         }
         let order_index = info?.pop();
+        let keyList = Object?.keys(orderedObject);
+        keyList = keyList?.filter((item) => {
+          var keyNum = item?.split(' ')?.[0];
+          if (parseInt(keyNum) === parseInt(order_index)) {
+            return item;
+          }
+        });
+
+        if (keyList?.length > 0) {
+          order_index = parseInt(order_index) + 1;
+        }
+
         if (parent_key !== 'undefined') {
           if (!orderedObject[`${order_index} ${parent_key}`]) {
             orderedObject[`${order_index} ${parent_key}`] = {

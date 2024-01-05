@@ -6,7 +6,7 @@ import { FullLoader } from '../../components/Loader';
 
 const Select = (props) => {
   const { ...controls } = props;
-  // console.log('Controls:', controls);
+
   const [dropdownValue, setDropdownValue] = useState();
   const [options, setOptions] = useState();
   const [textInputValue, setTextInputValue] = useState('');
@@ -118,6 +118,9 @@ const Select = (props) => {
                     props.field_data?.fields[
                       options[dropdownValue]?.field_name
                     ]) ||
+                  (typeof props?.extra_data !== 'undefined' &&
+                    Object?.keys(props?.extra_data)?.length > 0 &&
+                    props.extra_data?.[options[dropdownValue]?.field_name]) ||
                   textInputValue
                 }
               />
