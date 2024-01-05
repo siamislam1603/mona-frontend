@@ -89,28 +89,9 @@ const Select = (props) => {
               isInvalid={!!controls.error[controls.field_name]}
             >
               <option>Select {controls.label}</option>
-              {/* {console.log(JSON.parse(controls.option))} */}
               {[...JSON.parse(controls.option)]?.map((item2, index) => {
                 return <option key={index}>{Object.keys(item2)}</option>;
               })}
-              {/* {eval(controls.option)?.map((item2, index) => {
-                return (
-                  <>
-                    {props !== {} && props.field_data !== {} ? (
-                      props.field_data.fields[`${controls.field_name}`] ===
-                      Object.keys(item2)[0] ? (
-                        <option selected key={index}>
-                          {Object.keys(item2)[0]}
-                        </option>
-                      ) : (
-                        <option key={index}>{Object.keys(item2)[0]}</option>
-                      )
-                    ) : (
-                      <option key={index}>{Object.keys(item2)[0]}</option>
-                    )}
-                  </>
-                );
-              })} */}
             </Form.Select>
           </div>
           <p>{controls.error[controls.field_name]}</p>

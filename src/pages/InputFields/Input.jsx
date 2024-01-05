@@ -15,21 +15,21 @@ const Input = (props) => {
 
     if (
       props !== {} &&
-      props?.field_data !== {} &&
-      !isEmpty(props?.field_data)
+      props?.extra_data !== {} &&
+      !isEmpty(props?.extra_data)
     ) {
       if (controls?.field_type === 'date') {
         value = moment(
-          props?.field_data?.fields[`${controls?.field_name}`],
+          props?.extra_data[`${controls?.field_name}`],
           'YYYY-MM-DD'
         ).format('YYYY-MM-DD');
         setDataValue(value);
       } else {
-        value = props?.field_data?.fields[`${controls?.field_name}`] || '';
+        value = props?.extra_data[`${controls?.field_name}`] || '';
         setDataValue(value);
       }
     }
-  }, [props]);
+  }, [props?.extra_data]);
 
   useEffect(() => {
     if (props.errorFocus) {

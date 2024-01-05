@@ -68,6 +68,9 @@ const Signature = (props) => {
     ) {
       if (props?.field_data?.fields[controls?.field_name]) {
         sigPad.current.clear();
+        sigPad?.current?.fromDataURL(
+          props?.field_data?.fields[controls?.field_name]
+        );
         setSignature(props?.field_data?.fields[controls?.field_name]);
       } else {
         setSignature(null);
