@@ -1349,6 +1349,8 @@ const DynamicForm = () => {
                               signature_flag={signatureAccessFlag}
                               extra_data={formFieldDetails}
                               field_data={
+                                inner_item?.form_field_permissions?.length >
+                                  0 &&
                                 !inner_item.form_field_permissions?.[0].fill_access_users?.includes(
                                   localStorage.getItem('user_role') ===
                                     'guardian'
