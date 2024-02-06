@@ -339,22 +339,19 @@ function OwnFormResponse(props) {
               let arr3 = [];
               let behalf_of_list = [];
               let child_arr = [];
-              arr2?.forEach((item, index) => {
+              console.log('Arr2:::', arr2);
+              let sortedDateArray = arr2?.sort((a, b) =>
+                moment(a?.[0]?.createdAt)?.diff(b?.[0]?.createdAt)
+              );
+              sortedDateArray?.forEach((item, index) => {
                 let currentItem = item;
                 let currentItemBehalfOf = currentItem?.[0]?.behalf_of;
-                console.log('Current item behalf of:::', currentItemBehalfOf);
                 if (!behalf_of_list?.includes(currentItemBehalfOf)) {
                   behalf_of_list?.push(currentItemBehalfOf);
-                  let remaining_array = arr2?.filter(
+                  let remaining_array = sortedDateArray?.filter(
                     (data) => data?.[0]?.id !== item?.[0]?.id
                   );
                   remaining_array?.forEach((item, index) => {
-                    console.log(
-                      'Values:::',
-                      item?.[0]?.behalf_of,
-                      currentItemBehalfOf,
-                      item?.[0]?.behalf_of === currentItemBehalfOf
-                    );
                     if (item?.[0]?.behalf_of === currentItemBehalfOf) {
                       child_arr?.push(item);
                     }
@@ -369,9 +366,8 @@ function OwnFormResponse(props) {
                 }
               });
 
-              console.log('ARRAY:::333:::', arr3);
               setResponseData(arr3);
-              seenFormResponse(arr2);
+              seenFormResponse(sortedDateArray);
 
               setFormData(result?.form);
             }
@@ -795,7 +791,7 @@ function OwnFormResponse(props) {
                                       </p>
                                     ) : (
                                       <p>
-                                        Completed By :{' '}
+                                        Completed By:{' '}
                                         {item[0]?.filled_user?.fullname} <br />
                                         Completed on: <br />
                                         {moment(item[0].createdAt).format(
@@ -841,15 +837,13 @@ function OwnFormResponse(props) {
                                           >
                                             <h4 className="content-wrap-title text-capitalize">
                                               {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                              {item?.filled_user?.fullname}{' '}
+                                              {/* {item?.filled_user?.fullname}{' '}
                                               {!item.section_name ||
                                                 (item.section_name !== '' &&
                                                   `| ${item.section_name
                                                     .split('_')
-                                                    .join(' ')} Section`)}{' '}
-                                              {`| Name: ${
-                                                item?.user?.fullname
-                                              } ${
+                                                    .join(' ')} Section`)}{' '} */}
+                                              {`Name: ${item?.user?.fullname} ${
                                                 item?.user?.family_name || ''
                                               }`}
                                             </h4>
@@ -940,10 +934,6 @@ function OwnFormResponse(props) {
                                                         inner_item
                                                       ] !== '' ? (
                                                       <>
-                                                        {console.log(
-                                                          'formField[inner_item]',
-                                                          formField[inner_item]
-                                                        )}
                                                         <h6 className="text-capitalize">
                                                           {inner_item
                                                             .split('_')
@@ -1168,7 +1158,7 @@ function OwnFormResponse(props) {
                                                         <div className="contant-wrap-line">
                                                           <h4 className="content-wrap-title text-capitalize">
                                                             {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                                            {
+                                                            {/* {
                                                               item?.filled_user
                                                                 ?.fullname
                                                             }{' '}
@@ -1179,8 +1169,8 @@ function OwnFormResponse(props) {
                                                                   .split('_')
                                                                   .join(
                                                                     ' '
-                                                                  )} Section`)}{' '}
-                                                            {`| Name: ${
+                                                                  )} Section`)}{' '} */}
+                                                            {`Name: ${
                                                               item?.user
                                                                 ?.fullname
                                                             } ${
@@ -2027,15 +2017,13 @@ function OwnFormResponse(props) {
                                           >
                                             <h4 className="content-wrap-title text-capitalize">
                                               {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                              {item?.filled_user?.fullname}{' '}
+                                              {/* {item?.filled_user?.fullname}{' '}
                                               {!item.section_name ||
                                                 (item.section_name !== '' &&
                                                   `| ${item.section_name
                                                     .split('_')
-                                                    .join(' ')} Section`)}{' '}
-                                              {`| Name: ${
-                                                item?.user?.fullname
-                                              } ${
+                                                    .join(' ')} Section`)}{' '} */}
+                                              {`Name: ${item?.user?.fullname} ${
                                                 item?.user?.family_name || ''
                                               }`}
                                             </h4>
@@ -2061,7 +2049,6 @@ function OwnFormResponse(props) {
                                               return (
                                                 <div
                                                   key={inner_index}
-                                                  sss
                                                   className="responses-content-box"
                                                   style={{
                                                     marginTop: '12px',
@@ -2352,7 +2339,7 @@ function OwnFormResponse(props) {
                                                         <div className="contant-wrap-line">
                                                           <h4 className="content-wrap-title text-capitalize">
                                                             {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                                            {
+                                                            {/* {
                                                               item?.filled_user
                                                                 ?.fullname
                                                             }{' '}
@@ -2363,8 +2350,8 @@ function OwnFormResponse(props) {
                                                                   .split('_')
                                                                   .join(
                                                                     ' '
-                                                                  )} Section`)}{' '}
-                                                            {`| Name: ${
+                                                                  )} Section`)}{' '} */}
+                                                            {`Name: ${
                                                               item?.user
                                                                 ?.fullname
                                                             } ${
@@ -2475,7 +2462,7 @@ function OwnFormResponse(props) {
                                                             </p>
                                                           ) : (
                                                             <p>
-                                                              Completed By :{' '}
+                                                              Completed By:{' '}
                                                               {
                                                                 item
                                                                   ?.filled_user
@@ -3199,13 +3186,13 @@ function OwnFormResponse(props) {
                                         >
                                           <h4 className="content-wrap-title text-capitalize">
                                             {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                            {item?.filled_user?.fullname}{' '}
+                                            {/* {item?.filled_user?.fullname}{' '}
                                             {!item.section_name ||
                                               (item.section_name !== '' &&
                                                 `| ${item.section_name
                                                   .split('_')
-                                                  .join(' ')} Section`)}{' '}
-                                            {`| Name: ${item?.user?.fullname} ${
+                                                  .join(' ')} Section`)}{' '} */}
+                                            {`Name: ${item?.user?.fullname} ${
                                               item?.user?.family_name || ''
                                             }`}
                                           </h4>
@@ -3508,7 +3495,7 @@ function OwnFormResponse(props) {
                                                   <div className="contant-wrap-line">
                                                     <h4 className="content-wrap-title text-capitalize">
                                                       {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                                      {
+                                                      {/* {
                                                         item?.filled_user
                                                           ?.fullname
                                                       }{' '}
@@ -3519,13 +3506,74 @@ function OwnFormResponse(props) {
                                                             .split('_')
                                                             .join(
                                                               ' '
-                                                            )} Section`)}{' '}
-                                                      {`| Name: ${
+                                                            )} Section`)}{' '} */}
+                                                      {/* {`Name: ${
                                                         item?.user?.fullname
                                                       } ${
                                                         item?.user
                                                           ?.family_name || ''
-                                                      }`}
+                                                      }`} */}
+                                                    </h4>
+                                                    <div
+                                                      style={{
+                                                        display: 'flex',
+                                                        gap: '5px',
+                                                      }}
+                                                    >
+                                                      {item?.updated ? (
+                                                        <p>
+                                                          Last Updated By :{' '}
+                                                          {
+                                                            item
+                                                              ?.updatedByUsers[0]
+                                                              ?.fullname
+                                                          }{' '}
+                                                          <br />
+                                                          Updated on: <br />
+                                                          {moment(
+                                                            item.updatedAt
+                                                          ).format(
+                                                            'DD/MM/YYYY'
+                                                          ) +
+                                                            ', ' +
+                                                            moment(
+                                                              item.updatedAt
+                                                            )
+                                                              .subtract(
+                                                                13,
+                                                                'hours'
+                                                              )
+                                                              .utc()
+                                                              .format('HH:mm')}
+                                                          hrs
+                                                        </p>
+                                                      ) : (
+                                                        <p>
+                                                          Completed By :{' '}
+                                                          {
+                                                            item?.filled_user
+                                                              ?.fullname
+                                                          }{' '}
+                                                          <br />
+                                                          Completed on: <br />
+                                                          {moment(
+                                                            item.createdAt
+                                                          ).format(
+                                                            'DD/MM/YYYY'
+                                                          ) +
+                                                            ', ' +
+                                                            moment(
+                                                              item.createdAt
+                                                            )
+                                                              .subtract(
+                                                                13,
+                                                                'hours'
+                                                              )
+                                                              .utc()
+                                                              .format('HH:mm')}
+                                                          hrs{' '}
+                                                        </p>
+                                                      )}
                                                       {item.isEditTime !=
                                                         null &&
                                                       moment(
@@ -3535,7 +3583,6 @@ function OwnFormResponse(props) {
                                                         <span
                                                           style={{
                                                             fontSize: '12px',
-                                                            paddingLeft: '12px',
                                                           }}
                                                         >
                                                           Currently in editing
@@ -3589,53 +3636,7 @@ function OwnFormResponse(props) {
                                                           </Link>
                                                         )
                                                       )}
-                                                    </h4>
-                                                    {item?.updated ? (
-                                                      <p>
-                                                        Last Updated By :{' '}
-                                                        {
-                                                          item
-                                                            ?.updatedByUsers[0]
-                                                            ?.fullname
-                                                        }{' '}
-                                                        <br />
-                                                        Updated on: <br />
-                                                        {moment(
-                                                          item.updatedAt
-                                                        ).format('DD/MM/YYYY') +
-                                                          ', ' +
-                                                          moment(item.updatedAt)
-                                                            .subtract(
-                                                              13,
-                                                              'hours'
-                                                            )
-                                                            .utc()
-                                                            .format('HH:mm')}
-                                                        hrs
-                                                      </p>
-                                                    ) : (
-                                                      <p>
-                                                        Completed By :{' '}
-                                                        {
-                                                          item?.filled_user
-                                                            ?.fullname
-                                                        }{' '}
-                                                        <br />
-                                                        Completed on: <br />
-                                                        {moment(
-                                                          item.createdAt
-                                                        ).format('DD/MM/YYYY') +
-                                                          ', ' +
-                                                          moment(item.createdAt)
-                                                            .subtract(
-                                                              13,
-                                                              'hours'
-                                                            )
-                                                            .utc()
-                                                            .format('HH:mm')}
-                                                        hrs{' '}
-                                                      </p>
-                                                    )}
+                                                    </div>
                                                   </div>
                                                   <p
                                                     style={{ display: 'none' }}
