@@ -6,3 +6,5 @@ src/components/App.jsx
 sonarqube/extensions
 sonarqube/data
 sonarqube/logs
+package-lock.json
+yarn.lock
