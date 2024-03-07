@@ -309,7 +309,9 @@ const Children = () => {
         // CODE TO DELETE THE USER
       }
       if (e.target.text === 'Edit' || e.target.text === 'View') {
-        navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`);
+        navigate(`/child-enrollment-init/edit/${row.id}/${paramsParentId}`, {
+          state: { from: 'user-listing' },
+        });
       }
       if (e.target.text === 'Add Educator') {
         setRowFranchiseId(row.Franchisee);

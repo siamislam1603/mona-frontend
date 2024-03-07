@@ -12,6 +12,16 @@ const ImageUpload = (props) => {
       document.getElementById(props.errorFocus).focus();
     }
   }, []);
+
+  useEffect(() => {
+    if (
+      props !== {} &&
+      props?.field_data !== {} &&
+      !isEmpty(props?.field_data)
+    ) {
+      setImage(props?.field_data?.fields[`${controls?.field_name}`]);
+    }
+  }, [props]);
   useEffect(() => {
     if (image || props?.field_data?.fields) {
       if (

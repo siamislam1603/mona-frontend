@@ -10,6 +10,7 @@ export const DynamicFormValidation = (
   currentForm
 ) => {
   let newErrors = {};
+  console.log('Behalf of::::', behalf_of);
   if (behalf_of_flag === true) {
     if (!behalf_of || behalf_of === '')
       newErrors.behalf_of = 'Behalf of is required';

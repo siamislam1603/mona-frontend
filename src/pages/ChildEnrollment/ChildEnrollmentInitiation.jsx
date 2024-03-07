@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Container } from 'react-bootstrap';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
+import DragDropMultiple from '../../components/DragDropMultiple';
 import { useEffect } from 'react';
 import { Button, Col, Row, Form } from 'react-bootstrap';
 import Select from 'react-select';
@@ -12,7 +13,8 @@ import { enrollmentInitiationFormValidation } from '../../helpers/validation';
 import { useNavigate } from 'react-router-dom';
 
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
-  let { parentId } = useParams();
+  let params = useParams();
+  let { parentId } = params;
   const navigate = useNavigate();
 
   // REFS
@@ -45,10 +47,14 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [franchiseData, setFranchiseData] = useState(null);
   const [loader, setLoader] = useState(false);
   const [errors, setErrors] = useState({});
+  const [fileError, setFileError] = useState([]);
+  const [childDocument, setChildDocument] = useState([]);
+  const [uploadError, setUploadError] = useState([]);
+  const [fetchedChildDocuments, setFetchedChildDocuments] = useState([]);
+  const [formErrors, setFormErrors] = useState([]);
 
   const fetchEducatorList = async (franchise) => {
     let token = localStorage.getItem('token');
-    // console.log('FETCHING EDUCATOR LIST', franchise);
     const response = await axios.get(
       `${BASE_URL}/user-group/users/${franchise}`,
       {
@@ -57,10 +63,8 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
         },
       }
     );
-    // console.log('RESPONSE EDUCATOR DATA:', response);
     if (response.status === 200 && response.data.status === 'success') {
       let { users } = response.data;
-      // console.log('USERS:', users);
       setEducatorData(
         users?.map((user) => ({
           id: user.id,
@@ -81,6 +85,18 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   };
 
   const initiateEnrollment = async () => {
+    let formData = new FormData();
+    Object?.keys(formOneChildData)?.map((item) => {
+      formData?.append(item, formOneChildData?.[item]);
+    });
+
+    formData?.append('parent_id', parentId);
+
+    // SETTING FILES;
+    childDocument?.forEach((item, index) => {
+      formData?.append(`images`, item);
+    });
+
     let token = localStorage.getItem('token');
     let response = await axios.get(`${BASE_URL}/auth/user/${parentId}`, {
       headers: {
@@ -89,60 +105,41 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     });
 
     if (response.status === 200 && response.data.status === 'success') {
-      let { user } = response.data;
-      let { franchisee_id } = user;
-
-      response = await axios.post(
-        `${BASE_URL}/enrollment/child`,
-        { ...formOneChildData },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      response = await axios.post(`${BASE_URL}/enrollment/child`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 201 && response.data.status === 'success') {
         let { child } = response.data;
         // SAVING PARENT DETAIL
         response = await axios.post(
-          `${BASE_URL}/enrollment/parent/`,
-          { user_parent_id: parentId, childId: child.id },
+          `${BASE_URL}/enrollment/child/assign-educators/${child.id}`,
+          { educatorIds: formOneChildData.educator },
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-
         if (response.status === 201 && response.data.status === 'success') {
-          response = await axios.post(
-            `${BASE_URL}/enrollment/child/assign-educators/${child.id}`,
-            { educatorIds: formOneChildData.educator },
+          response = await axios.patch(
+            `${BASE_URL}/auth/user/update/${parentId}`,
+            {},
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
-          if (response.status === 201 && response.data.status === 'success') {
-            response = await axios.patch(
-              `${BASE_URL}/auth/user/update/${parentId}`,
-              {},
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
 
-            if (response.status === 201 && response.data.status === 'success') {
-              setLoader(false);
-              // window.location.href = `/children/${parentId}`;
-              navigate(`/children/${parentId}`, {
-                state: { franchisee_id: formOneChildData.franchisee_id },
-              });
-            }
+          if (response.status === 201 && response.data.status === 'success') {
+            setLoader(false);
+            // window.location.href = `/children/${parentId}`;
+            navigate(`/children/${parentId}`, {
+              state: { franchisee_id: formOneChildData.franchisee_id },
+            });
           }
         }
       }
@@ -195,7 +192,6 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
 
   const submitFormData = (event) => {
     event.preventDefault();
-    console.log('SUBMITTING FORM DATA');
 
     let errorObj = enrollmentInitiationFormValidation(formOneChildData);
     if (Object.keys(errorObj).length > 0) {
@@ -212,7 +208,6 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   };
 
   useEffect(() => {
-    console.log('FETCHING EDUCATOR LIST!');
     fetchEducatorList(formOneChildData?.franchisee_id);
   }, [formOneChildData?.franchisee_id]);
 
@@ -229,8 +224,18 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
     }
   }, [selectedFranchisee]);
 
-  formOneChildData && console.log('CHILD DATA:', formOneChildData);
-  errors && console.log('Errors:', errors);
+  const getUniqueErrors = (arr) => {
+    var result = [];
+    arr.forEach(function (item) {
+      if (result.indexOf(item) < 0) {
+        result.push(item);
+      }
+    });
+
+    return result;
+  };
+
+  const handleUserFileDelete = (id) => {};
   return (
     <>
       <div id="main">
@@ -638,6 +643,65 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
                                 {errors?.child_crn !== null && (
                                   <span className="error">
                                     {errors?.child_crn}
+                                  </span>
+                                )}
+                              </Form.Group>
+                            </Col>
+
+                            <Col md={12}>
+                              <Form.Group className="col-md-12 mb-3 relative">
+                                <Form.Label>Upload Documents</Form.Label>
+                                <DragDropMultiple
+                                  module="user-management"
+                                  onSave={setChildDocument}
+                                  setUploadError={setUploadError}
+                                />
+                                {fileError &&
+                                  getUniqueErrors(fileError).map((errorObj) => {
+                                    return (
+                                      // errorObj?.error[0].message
+                                      <p
+                                        style={{
+                                          color: 'tomato',
+                                          fontSize: '12px',
+                                        }}
+                                      >
+                                        {errorObj === 'Too many files'
+                                          ? 'Only 20 files allowed'
+                                          : errorObj.includes(
+                                              'File type must be text/*'
+                                            )
+                                          ? "zip file uploads aren't allowed"
+                                          : errorObj}
+                                      </p>
+                                    );
+                                  })}
+                                {fetchedChildDocuments &&
+                                  fetchedChildDocuments.map((doc) => {
+                                    return (
+                                      <div>
+                                        <a href={doc?.file}>
+                                          <p>{doc.name}</p>
+                                        </a>
+                                        <img
+                                          onClick={() => {
+                                            handleUserFileDelete(doc?.id);
+                                          }}
+                                          style={{
+                                            width: '18px',
+                                            height: 'auto',
+                                            cursor: 'pointer',
+                                            marginLeft: '5px',
+                                          }}
+                                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Delete-button.svg/862px-Delete-button.svg.png"
+                                          alt=""
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                {formErrors.doc !== null && (
+                                  <span className="error">
+                                    {formErrors.doc}
                                   </span>
                                 )}
                               </Form.Group>

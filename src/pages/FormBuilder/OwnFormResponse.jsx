@@ -336,8 +336,38 @@ function OwnFormResponse(props) {
                 arr2.push(ar);
               }
 
-              setResponseData(arr2);
-              seenFormResponse(arr2);
+              let arr3 = [];
+              let behalf_of_list = [];
+              let child_arr = [];
+              console.log('Arr2:::', arr2);
+              let sortedDateArray = arr2?.sort((a, b) =>
+                moment(a?.[0]?.createdAt)?.diff(b?.[0]?.createdAt)
+              );
+              sortedDateArray?.forEach((item, index) => {
+                let currentItem = item;
+                let currentItemBehalfOf = currentItem?.[0]?.behalf_of;
+                if (!behalf_of_list?.includes(currentItemBehalfOf)) {
+                  behalf_of_list?.push(currentItemBehalfOf);
+                  let remaining_array = sortedDateArray?.filter(
+                    (data) => data?.[0]?.id !== item?.[0]?.id
+                  );
+                  remaining_array?.forEach((item, index) => {
+                    if (item?.[0]?.behalf_of === currentItemBehalfOf) {
+                      child_arr?.push(item);
+                    }
+                  });
+
+                  let data = { ...currentItem?.[0], childData: child_arr };
+                  let arr = [{ ...data }];
+                  arr['signature_button'] = currentItem?.['signature_button'];
+                  arr3?.push(arr);
+
+                  child_arr = [];
+                }
+              });
+
+              setResponseData(arr3);
+              seenFormResponse(sortedDateArray);
 
               setFormData(result?.form);
             }
@@ -377,7 +407,33 @@ function OwnFormResponse(props) {
             arr2.push(ar);
           }
 
-          setResponseData(arr2);
+          let arr3 = [];
+          let behalf_of_list = [];
+          let child_arr = [];
+          arr2?.forEach((item, index) => {
+            let currentItem = item;
+            let currentItemBehalfOf = currentItem?.[0]?.behalf_of;
+            if (!behalf_of_list?.includes(currentItemBehalfOf)) {
+              behalf_of_list?.push(currentItemBehalfOf);
+              let remaining_array = arr2?.filter(
+                (data) => data?.[0]?.id !== item?.[0]?.id
+              );
+              remaining_array?.forEach((item, index) => {
+                if (item?.[0]?.behalf_of === currentItemBehalfOf) {
+                  child_arr?.push(item);
+                }
+              });
+
+              let data = { ...currentItem?.[0], childData: child_arr };
+              let arr = [{ ...data }];
+              arr['signature_button'] = currentItem?.['signature_button'];
+              arr3?.push(arr);
+
+              child_arr = [];
+            }
+          });
+
+          setResponseData(arr3);
           seenFormResponse(arr2);
 
           setFormData(result?.form);
@@ -438,7 +494,6 @@ function OwnFormResponse(props) {
     }
   }, []);
 
-  console.log('Parent Childen IDs:', parentChildrenIDs);
   return (
     <>
       <div id="main">
@@ -736,7 +791,7 @@ function OwnFormResponse(props) {
                                       </p>
                                     ) : (
                                       <p>
-                                        Completed By :{' '}
+                                        Completed By:{' '}
                                         {item[0]?.filled_user?.fullname} <br />
                                         Completed on: <br />
                                         {moment(item[0].createdAt).format(
@@ -771,289 +826,55 @@ function OwnFormResponse(props) {
                                   return (
                                     <>
                                       {
-                                        <div
-                                          key={index}
-                                          className={
-                                            index === 0
-                                              ? 'responses-content-wrap'
-                                              : 'responses-content-wrap response-margin'
-                                          }
-                                        >
-                                          <h4 className="content-wrap-title text-capitalize">
-                                            {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                            {item?.filled_user?.fullname}{' '}
-                                            {!item.section_name ||
-                                              (item.section_name !== '' &&
-                                                `| ${item.section_name
-                                                  .split('_')
-                                                  .join(' ')} Section`)}{' '}
-                                            {`| Name: ${item?.user?.fullname} ${
-                                              item?.user?.family_name || ''
-                                            }`}
-                                          </h4>
-
-                                          {Object.keys(
-                                            JSON.parse(item.fields)
-                                          ).map((inner_item, inner_index) => {
-                                            {
-                                              {
-                                                (Object.keys(
+                                        <>
+                                          <div
+                                            key={index}
+                                            className={
+                                              index === 0
+                                                ? 'responses-content-wrap'
+                                                : 'responses-content-wrap response-margin'
+                                            }
+                                          >
+                                            <h4 className="content-wrap-title text-capitalize">
+                                              {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                              {/* {item?.filled_user?.fullname}{' '}
+                                              {!item.section_name ||
+                                                (item.section_name !== '' &&
+                                                  `| ${item.section_name
+                                                    .split('_')
+                                                    .join(' ')} Section`)}{' '} */}
+                                              {`Name: ${item?.user?.fullname} ${
+                                                item?.user?.family_name || ''
+                                              }`}
+                                            </h4>
+                                            <p style={{ display: 'none' }}>
+                                              {(count = 0)}
+                                            </p>
+                                            {Object.keys(
+                                              JSON.parse(item.fields)
+                                            ).map((inner_item, inner_index) => {
+                                              if (
+                                                Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index]?.includes(
                                                   'headings'
                                                 ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings') &&
-                                                  count++;
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings'
+                                              ) {
+                                                count++;
                                               }
-                                            }
-                                            return (
-                                              <div
-                                                key={inner_index}
-                                                sss
-                                                className="responses-content-box"
-                                                style={{ marginTop: '12px' }}
-                                              >
-                                                <div className="responses-content-question">
-                                                  {!(
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'headings'
-                                                    ) ||
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                      'text_headings'
-                                                  ) && (
-                                                    <span>
-                                                      {inner_index + 1 - count}
-                                                    </span>
-                                                  )}
-                                                  {Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'headings'
-                                                  ) ? (
-                                                    <h6
-                                                      className="text-capitalize"
-                                                      style={{
-                                                        fontSize: '20px',
-                                                        color: '#AA0061',
-                                                      }}
-                                                    >
-                                                      {
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                    </h6>
-                                                  ) : Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                    'text_headings' ? (
-                                                    <h6
-                                                      className="text-capitalize"
-                                                      style={{
-                                                        fontSize: '16px',
-                                                        color: '#455c58',
-                                                      }}
-                                                    >
-                                                      {
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                    </h6>
-                                                  ) : formField[inner_item] !==
-                                                    '' ? (
-                                                    <>
-                                                      {console.log(
-                                                        'formField[inner_item]',
-                                                        formField[inner_item]
-                                                      )}
-                                                      <h6 className="text-capitalize">
-                                                        {inner_item
-                                                          .split('_')
-                                                          .join(' ')}
-                                                        <h6
-                                                          style={{
-                                                            fontSize: '12px',
-                                                            color: '#9c9898',
-                                                          }}
-                                                        >
-                                                          (
-                                                          {
-                                                            formField[
-                                                              inner_item
-                                                            ]
-                                                          }
-                                                          )
-                                                        </h6>
-                                                      </h6>
-                                                    </>
-                                                  ) : (
-                                                    <h6 className="text-capitalize">
-                                                      {inner_item
-                                                        .split('_')
-                                                        .join(' ')}
-                                                    </h6>
-                                                  )}
-                                                </div>
-                                                <div className="responses-content-answer">
-                                                  {!(
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'headings'
-                                                    ) ||
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                      'text_headings'
-                                                  ) && (
-                                                    <img
-                                                      src="/img/bx_right-arrow-alt.svg"
-                                                      alt=""
-                                                    />
-                                                  )}
-
-                                                  {Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'data:image'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.png'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.jpg'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.jpeg'
-                                                  ) ? (
-                                                    <>
-                                                      <img
-                                                        style={{
-                                                          height: '40px',
-                                                          width: '51px',
-                                                        }}
-                                                        alt="img"
-                                                        src={`${
-                                                          Object.values(
-                                                            JSON.parse(
-                                                              item.fields
-                                                            )
-                                                          )[inner_index]
-                                                        }`}
-                                                      ></img>
-                                                    </>
-                                                  ) : Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.doc'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.docx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.html'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.htm'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.odt'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.xls'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.xlsx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'ods'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.ppt'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.pptx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.pdf'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.txt'
-                                                    ) ? (
-                                                    <a
-                                                      role="button"
-                                                      href={
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                      download
-                                                    >
-                                                      <p>
-                                                        {
-                                                          Object.values(
-                                                            JSON.parse(
-                                                              item.fields
-                                                            )
-                                                          )[inner_index].split(
-                                                            '/'
-                                                          )[
-                                                            Object.values(
-                                                              JSON.parse(
-                                                                item.fields
-                                                              )
-                                                            )[
-                                                              inner_index
-                                                            ].split('/')
-                                                              .length - 1
-                                                          ]
-                                                        }
-                                                      </p>
-                                                    </a>
-                                                  ) : (
-                                                    !(
+                                              return (
+                                                <div
+                                                  key={inner_index}
+                                                  sss
+                                                  className="responses-content-box"
+                                                  style={{ marginTop: '12px' }}
+                                                >
+                                                  <div className="responses-content-question">
+                                                    {!(
                                                       Object.keys(
                                                         JSON.parse(item.fields)
                                                       )[inner_index]?.includes(
@@ -1064,7 +885,24 @@ function OwnFormResponse(props) {
                                                       )[inner_index] ===
                                                         'text_headings'
                                                     ) && (
-                                                      <p>
+                                                      <span>
+                                                        {inner_index +
+                                                          1 -
+                                                          count}
+                                                      </span>
+                                                    )}
+                                                    {Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'headings'
+                                                    ) ? (
+                                                      <h6
+                                                        className="text-capitalize"
+                                                        style={{
+                                                          fontSize: '20px',
+                                                          color: '#AA0061',
+                                                        }}
+                                                      >
                                                         {
                                                           Object.values(
                                                             JSON.parse(
@@ -1072,14 +910,850 @@ function OwnFormResponse(props) {
                                                             )
                                                           )[inner_index]
                                                         }
-                                                      </p>
-                                                    )
-                                                  )}
+                                                      </h6>
+                                                    ) : Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index] ===
+                                                      'text_headings' ? (
+                                                      <h6
+                                                        className="text-capitalize"
+                                                        style={{
+                                                          fontSize: '16px',
+                                                          color: '#455c58',
+                                                        }}
+                                                      >
+                                                        {
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        }
+                                                      </h6>
+                                                    ) : formField[
+                                                        inner_item
+                                                      ] !== '' ? (
+                                                      <>
+                                                        <h6 className="text-capitalize">
+                                                          {inner_item
+                                                            .split('_')
+                                                            .join(' ')}
+                                                          <h6
+                                                            style={{
+                                                              fontSize: '12px',
+                                                              color: '#9c9898',
+                                                            }}
+                                                          >
+                                                            {
+                                                              formField[
+                                                                inner_item
+                                                              ]
+                                                            }
+                                                          </h6>
+                                                        </h6>
+                                                      </>
+                                                    ) : (
+                                                      <h6 className="text-capitalize">
+                                                        {inner_item
+                                                          .split('_')
+                                                          .join(' ')}
+                                                      </h6>
+                                                    )}
+                                                  </div>
+                                                  <div className="responses-content-answer">
+                                                    {!(
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        'headings'
+                                                      ) ||
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index] ===
+                                                        'text_headings'
+                                                    ) && (
+                                                      <img
+                                                        src="/img/bx_right-arrow-alt.svg"
+                                                        alt=""
+                                                      />
+                                                    )}
+
+                                                    {Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'data:image'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.png'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.jpg'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.jpeg'
+                                                    ) ? (
+                                                      <>
+                                                        <img
+                                                          style={{
+                                                            height: '40px',
+                                                            width: '51px',
+                                                          }}
+                                                          alt="img"
+                                                          src={`${
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[inner_index]
+                                                          }`}
+                                                        ></img>
+                                                      </>
+                                                    ) : Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.doc'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.docx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.html'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.htm'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.odt'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.xls'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.xlsx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        'ods'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.ppt'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.pptx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.pdf'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.txt'
+                                                      ) ? (
+                                                      <a
+                                                        role="button"
+                                                        href={
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        }
+                                                        download
+                                                      >
+                                                        <p>
+                                                          {
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ].split('/')[
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ].split('/')
+                                                                .length - 1
+                                                            ]
+                                                          }
+                                                        </p>
+                                                      </a>
+                                                    ) : (
+                                                      !(
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[
+                                                          inner_index
+                                                        ]?.includes(
+                                                          'headings'
+                                                        ) ||
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index] ===
+                                                          'text_headings'
+                                                      ) && (
+                                                        <p>
+                                                          {
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[inner_index]
+                                                          }
+                                                        </p>
+                                                      )
+                                                    )}
+                                                  </div>
                                                 </div>
+                                              );
+                                            })}
+                                          </div>
+                                          <>
+                                            {
+                                              <div className="responses-content-wrap response-margin">
+                                                {item?.childData?.map(
+                                                  (keyItem, index) => {
+                                                    let item = keyItem?.[0];
+                                                    return (
+                                                      <div
+                                                        key={index}
+                                                        className={
+                                                          index === 0
+                                                            ? 'responses-content-wrap'
+                                                            : 'responses-content-wrap response-margin'
+                                                        }
+                                                      >
+                                                        <div className="contant-wrap-line">
+                                                          <h4 className="content-wrap-title text-capitalize">
+                                                            {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                                            {/* {
+                                                              item?.filled_user
+                                                                ?.fullname
+                                                            }{' '}
+                                                            {!item.section_name ||
+                                                              (item.section_name !==
+                                                                '' &&
+                                                                `| ${item.section_name
+                                                                  .split('_')
+                                                                  .join(
+                                                                    ' '
+                                                                  )} Section`)}{' '} */}
+                                                            {`Name: ${
+                                                              item?.user
+                                                                ?.fullname
+                                                            } ${
+                                                              item?.user
+                                                                ?.family_name ||
+                                                              ''
+                                                            }`}
+                                                            {item.isEditTime !=
+                                                              null &&
+                                                            moment(
+                                                              item.isEditTime
+                                                            ).format() >
+                                                              moment().format() ? (
+                                                              <span
+                                                                style={{
+                                                                  fontSize:
+                                                                    '12px',
+                                                                  paddingLeft:
+                                                                    '12px',
+                                                                }}
+                                                              >
+                                                                Currently in
+                                                                editing mode{' '}
+                                                                <br />
+                                                                [Refresh the
+                                                                page after some
+                                                                time]
+                                                              </span>
+                                                            ) : (
+                                                              // formData &&
+                                                              // inner_index === 0 &&
+                                                              (formData?.form_type ===
+                                                                'editable' ||
+                                                                formData?.form_type ===
+                                                                  'multi_submission') && (
+                                                                <Link
+                                                                  style={{
+                                                                    marginLeft:
+                                                                      '5px',
+                                                                  }}
+                                                                  to={`/form/dynamic/${formData.form_name}`}
+                                                                  state={{
+                                                                    id:
+                                                                      // item?.filter(
+                                                                      //   (el) =>
+                                                                      //     el?.section_name ===
+                                                                      //     ''
+                                                                      // )[0]?.id ||
+                                                                      item?.id,
+                                                                    form_id: id
+                                                                      ? id
+                                                                      : null,
+                                                                  }}
+                                                                >
+                                                                  {(fillAccessUsers?.includes(
+                                                                    localStorage.getItem(
+                                                                      'user_role'
+                                                                    )
+                                                                  ) ||
+                                                                    formFieldPermission?.includes(
+                                                                      localStorage.getItem(
+                                                                        'user_role'
+                                                                      ) ===
+                                                                        'guardian'
+                                                                        ? 'parent'
+                                                                        : localStorage.getItem(
+                                                                            'user_role'
+                                                                          )
+                                                                    )) && (
+                                                                    <FontAwesomeIcon
+                                                                      icon={
+                                                                        faPen
+                                                                      }
+                                                                    />
+                                                                  )}
+                                                                </Link>
+                                                              )
+                                                            )}
+                                                          </h4>
+                                                          {item?.updated ? (
+                                                            <p>
+                                                              Last Updated By :{' '}
+                                                              {
+                                                                item
+                                                                  ?.updatedByUsers[0]
+                                                                  ?.fullname
+                                                              }{' '}
+                                                              <br />
+                                                              Updated on: <br />
+                                                              {moment(
+                                                                item.updatedAt
+                                                              ).format(
+                                                                'DD/MM/YYYY'
+                                                              ) +
+                                                                ', ' +
+                                                                moment(
+                                                                  item.updatedAt
+                                                                )
+                                                                  .subtract(
+                                                                    13,
+                                                                    'hours'
+                                                                  )
+                                                                  .utc()
+                                                                  .format(
+                                                                    'HH:mm'
+                                                                  )}
+                                                              hrs
+                                                            </p>
+                                                          ) : (
+                                                            <p>
+                                                              Completed By :{' '}
+                                                              {
+                                                                item
+                                                                  ?.filled_user
+                                                                  ?.fullname
+                                                              }{' '}
+                                                              <br />
+                                                              Completed on:{' '}
+                                                              <br />
+                                                              {moment(
+                                                                item.createdAt
+                                                              ).format(
+                                                                'DD/MM/YYYY'
+                                                              ) +
+                                                                ', ' +
+                                                                moment(
+                                                                  item.createdAt
+                                                                )
+                                                                  .subtract(
+                                                                    13,
+                                                                    'hours'
+                                                                  )
+                                                                  .utc()
+                                                                  .format(
+                                                                    'HH:mm'
+                                                                  )}
+                                                              hrs{' '}
+                                                            </p>
+                                                          )}
+                                                        </div>
+                                                        <p
+                                                          style={{
+                                                            display: 'none',
+                                                          }}
+                                                        >
+                                                          {(count = 0)}
+                                                        </p>
+                                                        {Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        ).map(
+                                                          (
+                                                            inner_item,
+                                                            inner_index
+                                                          ) => {
+                                                            if (
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                'headings'
+                                                              ) ||
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[inner_index] ===
+                                                                'text_headings'
+                                                            ) {
+                                                              count++;
+                                                            }
+                                                            return (
+                                                              <div
+                                                                key={
+                                                                  inner_index
+                                                                }
+                                                                sss
+                                                                className="responses-content-box"
+                                                                style={{
+                                                                  marginTop:
+                                                                    '12px',
+                                                                }}
+                                                              >
+                                                                <div className="responses-content-question">
+                                                                  {!(
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'headings'
+                                                                    ) ||
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                      'text_headings'
+                                                                  ) && (
+                                                                    <span>
+                                                                      {inner_index +
+                                                                        1 -
+                                                                        count}
+                                                                    </span>
+                                                                  )}
+                                                                  {Object.keys(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    'headings'
+                                                                  ) ? (
+                                                                    <h6
+                                                                      className="text-capitalize"
+                                                                      style={{
+                                                                        fontSize:
+                                                                          '20px',
+                                                                        color:
+                                                                          '#AA0061',
+                                                                      }}
+                                                                    >
+                                                                      {
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                    </h6>
+                                                                  ) : Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                    'text_headings' ? (
+                                                                    <h6
+                                                                      className="text-capitalize"
+                                                                      style={{
+                                                                        fontSize:
+                                                                          '16px',
+                                                                        color:
+                                                                          '#455c58',
+                                                                      }}
+                                                                    >
+                                                                      {
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                    </h6>
+                                                                  ) : formField[
+                                                                      inner_item
+                                                                    ] !== '' ? (
+                                                                    <>
+                                                                      <h6 className="text-capitalize">
+                                                                        {inner_item
+                                                                          .split(
+                                                                            '_'
+                                                                          )
+                                                                          .join(
+                                                                            ' '
+                                                                          )}
+                                                                        <h6
+                                                                          style={{
+                                                                            fontSize:
+                                                                              '12px',
+                                                                            color:
+                                                                              '#9c9898',
+                                                                          }}
+                                                                        >
+                                                                          {
+                                                                            formField[
+                                                                              inner_item
+                                                                            ]
+                                                                          }
+                                                                        </h6>
+                                                                      </h6>
+                                                                    </>
+                                                                  ) : (
+                                                                    <h6 className="text-capitalize">
+                                                                      {inner_item
+                                                                        .split(
+                                                                          '_'
+                                                                        )
+                                                                        .join(
+                                                                          ' '
+                                                                        )}
+                                                                    </h6>
+                                                                  )}
+                                                                </div>
+                                                                <div className="responses-content-answer">
+                                                                  {!(
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'headings'
+                                                                    ) ||
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                      'text_headings'
+                                                                  ) && (
+                                                                    <img
+                                                                      src="/img/bx_right-arrow-alt.svg"
+                                                                      alt=""
+                                                                    />
+                                                                  )}
+
+                                                                  {Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    'data:image'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.png'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.jpg'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.jpeg'
+                                                                  ) ? (
+                                                                    <>
+                                                                      <img
+                                                                        style={{
+                                                                          height:
+                                                                            '40px',
+                                                                          width:
+                                                                            '51px',
+                                                                        }}
+                                                                        alt="img"
+                                                                        src={`${
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ]
+                                                                        }`}
+                                                                      ></img>
+                                                                    </>
+                                                                  ) : Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.doc'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.docx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.html'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.htm'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.odt'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.xls'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.xlsx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'ods'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.ppt'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.pptx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.pdf'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.txt'
+                                                                    ) ? (
+                                                                    <a
+                                                                      role="button"
+                                                                      href={
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                      download
+                                                                    >
+                                                                      <p>
+                                                                        {
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ].split(
+                                                                            '/'
+                                                                          )[
+                                                                            Object.values(
+                                                                              JSON.parse(
+                                                                                item.fields
+                                                                              )
+                                                                            )[
+                                                                              inner_index
+                                                                            ].split(
+                                                                              '/'
+                                                                            )
+                                                                              .length -
+                                                                              1
+                                                                          ]
+                                                                        }
+                                                                      </p>
+                                                                    </a>
+                                                                  ) : (
+                                                                    !(
+                                                                      Object.keys(
+                                                                        JSON.parse(
+                                                                          item.fields
+                                                                        )
+                                                                      )[
+                                                                        inner_index
+                                                                      ]?.includes(
+                                                                        'headings'
+                                                                      ) ||
+                                                                      Object.keys(
+                                                                        JSON.parse(
+                                                                          item.fields
+                                                                        )
+                                                                      )[
+                                                                        inner_index
+                                                                      ] ===
+                                                                        'text_headings'
+                                                                    ) && (
+                                                                      <p className="preserve-white-space">
+                                                                        {formatText(
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ]
+                                                                        )}
+                                                                      </p>
+                                                                    )
+                                                                  )}
+                                                                </div>
+                                                              </div>
+                                                            );
+                                                          }
+                                                        )}
+                                                      </div>
+                                                    );
+                                                  }
+                                                )}
                                               </div>
-                                            );
-                                          })}
-                                        </div>
+                                            }
+                                          </>
+                                        </>
                                       }
                                     </>
                                   );
@@ -1332,286 +2006,56 @@ function OwnFormResponse(props) {
                                   return (
                                     <>
                                       {
-                                        <div
-                                          key={index}
-                                          className={
-                                            index === 0
-                                              ? 'responses-content-wrap'
-                                              : 'responses-content-wrap response-margin'
-                                          }
-                                        >
-                                          <h4 className="content-wrap-title text-capitalize">
-                                            {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                            {item?.filled_user?.fullname}{' '}
-                                            {!item.section_name ||
-                                              (item.section_name !== '' &&
-                                                `| ${item.section_name
-                                                  .split('_')
-                                                  .join(' ')} Section`)}{' '}
-                                            {`| Name: ${item?.user?.fullname} ${
-                                              item?.user?.family_name || ''
-                                            }`}
-                                          </h4>
-                                          {Object.keys(
-                                            JSON.parse(item.fields)
-                                          ).map((inner_item, inner_index) => {
-                                            {
-                                              {
-                                                (Object.keys(
+                                        <>
+                                          <div
+                                            key={index}
+                                            className={
+                                              index === 0
+                                                ? 'responses-content-wrap'
+                                                : 'responses-content-wrap response-margin'
+                                            }
+                                          >
+                                            <h4 className="content-wrap-title text-capitalize">
+                                              {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                              {/* {item?.filled_user?.fullname}{' '}
+                                              {!item.section_name ||
+                                                (item.section_name !== '' &&
+                                                  `| ${item.section_name
+                                                    .split('_')
+                                                    .join(' ')} Section`)}{' '} */}
+                                              {`Name: ${item?.user?.fullname} ${
+                                                item?.user?.family_name || ''
+                                              }`}
+                                            </h4>
+                                            <p style={{ display: 'none' }}>
+                                              {(count = 0)}
+                                            </p>
+                                            {Object.keys(
+                                              JSON.parse(item.fields)
+                                            ).map((inner_item, inner_index) => {
+                                              if (
+                                                Object.keys(
                                                   JSON.parse(item.fields)
                                                 )[inner_index]?.includes(
                                                   'headings'
                                                 ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings') &&
-                                                  count++;
+                                                Object.keys(
+                                                  JSON.parse(item.fields)
+                                                )[inner_index] ===
+                                                  'text_headings'
+                                              ) {
+                                                count++;
                                               }
-                                            }
-                                            return (
-                                              <div
-                                                key={inner_index}
-                                                sss
-                                                className="responses-content-box"
-                                                style={{
-                                                  marginTop: '12px',
-                                                }}
-                                              >
-                                                <div className="responses-content-question">
-                                                  {!(
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'headings'
-                                                    ) ||
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                      'text_headings'
-                                                  ) && (
-                                                    <span>
-                                                      {inner_index + 1 - count}
-                                                    </span>
-                                                  )}
-                                                  {Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'headings'
-                                                  ) ? (
-                                                    <h6
-                                                      className="text-capitalize"
-                                                      style={{
-                                                        fontSize: '20px',
-                                                        color: '#AA0061',
-                                                      }}
-                                                    >
-                                                      {
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                    </h6>
-                                                  ) : Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                    'text_headings' ? (
-                                                    <h6
-                                                      className="text-capitalize"
-                                                      style={{
-                                                        fontSize: '16px',
-                                                        color: '#455c58',
-                                                      }}
-                                                    >
-                                                      {
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                    </h6>
-                                                  ) : formField[inner_item] !==
-                                                    '' ? (
-                                                    <>
-                                                      <h6 className="text-capitalize">
-                                                        {inner_item
-                                                          .split('_')
-                                                          .join(' ')}
-                                                        <h6
-                                                          style={{
-                                                            fontSize: '12px',
-                                                            color: '#9c9898',
-                                                          }}
-                                                        >
-                                                          (
-                                                          {
-                                                            formField[
-                                                              inner_item
-                                                            ]
-                                                          }
-                                                          )
-                                                        </h6>
-                                                      </h6>
-                                                    </>
-                                                  ) : (
-                                                    <h6 className="text-capitalize">
-                                                      {inner_item
-                                                        .split('_')
-                                                        .join(' ')}
-                                                    </h6>
-                                                  )}
-                                                </div>
-                                                <div className="responses-content-answer">
-                                                  {!(
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'headings'
-                                                    ) ||
-                                                    Object.keys(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index] ===
-                                                      'text_headings'
-                                                  ) && (
-                                                    <img
-                                                      src="/img/bx_right-arrow-alt.svg"
-                                                      alt=""
-                                                    />
-                                                  )}
-
-                                                  {Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'data:image'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.png'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.jpg'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.jpeg'
-                                                  ) ? (
-                                                    <>
-                                                      <img
-                                                        style={{
-                                                          height: '40px',
-                                                          width: '51px',
-                                                        }}
-                                                        alt="img"
-                                                        src={`${
-                                                          Object.values(
-                                                            JSON.parse(
-                                                              item.fields
-                                                            )
-                                                          )[inner_index]
-                                                        }`}
-                                                      ></img>
-                                                    </>
-                                                  ) : Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.doc'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.docx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.html'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.htm'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.odt'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.xls'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.xlsx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      'ods'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.ppt'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.pptx'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.pdf'
-                                                    ) ||
-                                                    Object.values(
-                                                      JSON.parse(item.fields)
-                                                    )[inner_index]?.includes(
-                                                      '.txt'
-                                                    ) ? (
-                                                    <a
-                                                      role="button"
-                                                      href={
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }
-                                                      download
-                                                    >
-                                                      <p>
-                                                        {
-                                                          Object.values(
-                                                            JSON.parse(
-                                                              item.fields
-                                                            )
-                                                          )[inner_index].split(
-                                                            '/'
-                                                          )[
-                                                            Object.values(
-                                                              JSON.parse(
-                                                                item.fields
-                                                              )
-                                                            )[
-                                                              inner_index
-                                                            ].split('/')
-                                                              .length - 1
-                                                          ]
-                                                        }
-                                                      </p>
-                                                    </a>
-                                                  ) : (
-                                                    !(
+                                              return (
+                                                <div
+                                                  key={inner_index}
+                                                  className="responses-content-box"
+                                                  style={{
+                                                    marginTop: '12px',
+                                                  }}
+                                                >
+                                                  <div className="responses-content-question">
+                                                    {!(
                                                       Object.keys(
                                                         JSON.parse(item.fields)
                                                       )[inner_index]?.includes(
@@ -1622,22 +2066,875 @@ function OwnFormResponse(props) {
                                                       )[inner_index] ===
                                                         'text_headings'
                                                     ) && (
-                                                      <p className="preserve-white-space">
-                                                        {formatText(
+                                                      <span>
+                                                        {inner_index +
+                                                          1 -
+                                                          count}
+                                                      </span>
+                                                    )}
+                                                    {Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'headings'
+                                                    ) ? (
+                                                      <h6
+                                                        className="text-capitalize"
+                                                        style={{
+                                                          fontSize: '20px',
+                                                          color: '#AA0061',
+                                                        }}
+                                                      >
+                                                        {
                                                           Object.values(
                                                             JSON.parse(
                                                               item.fields
                                                             )
                                                           )[inner_index]
-                                                        )}
-                                                      </p>
-                                                    )
-                                                  )}
+                                                        }
+                                                      </h6>
+                                                    ) : Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index] ===
+                                                      'text_headings' ? (
+                                                      <h6
+                                                        className="text-capitalize"
+                                                        style={{
+                                                          fontSize: '16px',
+                                                          color: '#455c58',
+                                                        }}
+                                                      >
+                                                        {
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        }
+                                                      </h6>
+                                                    ) : formField[
+                                                        inner_item
+                                                      ] !== '' ? (
+                                                      <>
+                                                        <h6 className="text-capitalize">
+                                                          {inner_item
+                                                            .split('_')
+                                                            .join(' ')}
+                                                          <h6
+                                                            style={{
+                                                              fontSize: '12px',
+                                                              color: '#9c9898',
+                                                            }}
+                                                          >
+                                                            {
+                                                              formField[
+                                                                inner_item
+                                                              ]
+                                                            }
+                                                          </h6>
+                                                        </h6>
+                                                      </>
+                                                    ) : (
+                                                      <h6 className="text-capitalize">
+                                                        {inner_item
+                                                          .split('_')
+                                                          .join(' ')}
+                                                      </h6>
+                                                    )}
+                                                  </div>
+                                                  <div className="responses-content-answer">
+                                                    {!(
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        'headings'
+                                                      ) ||
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index] ===
+                                                        'text_headings'
+                                                    ) && (
+                                                      <img
+                                                        src="/img/bx_right-arrow-alt.svg"
+                                                        alt=""
+                                                      />
+                                                    )}
+
+                                                    {Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'data:image'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.png'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.jpg'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.jpeg'
+                                                    ) ? (
+                                                      <>
+                                                        <img
+                                                          style={{
+                                                            height: '40px',
+                                                            width: '51px',
+                                                          }}
+                                                          alt="img"
+                                                          src={`${
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[inner_index]
+                                                          }`}
+                                                        ></img>
+                                                      </>
+                                                    ) : Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.doc'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.docx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.html'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.htm'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.odt'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.xls'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.xlsx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        'ods'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.ppt'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.pptx'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.pdf'
+                                                      ) ||
+                                                      Object.values(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        '.txt'
+                                                      ) ? (
+                                                      <a
+                                                        role="button"
+                                                        href={
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        }
+                                                        download
+                                                      >
+                                                        <p>
+                                                          {
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ].split('/')[
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ].split('/')
+                                                                .length - 1
+                                                            ]
+                                                          }
+                                                        </p>
+                                                      </a>
+                                                    ) : (
+                                                      !(
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[
+                                                          inner_index
+                                                        ]?.includes(
+                                                          'headings'
+                                                        ) ||
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index] ===
+                                                          'text_headings'
+                                                      ) && (
+                                                        <p className="preserve-white-space">
+                                                          {formatText(
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[inner_index]
+                                                          )}
+                                                        </p>
+                                                      )
+                                                    )}
+                                                  </div>
                                                 </div>
+                                              );
+                                            })}
+                                          </div>
+                                          <>
+                                            {
+                                              <div className="responses-content-wrap response-margin">
+                                                {item?.childData?.map(
+                                                  (keyItem, index) => {
+                                                    let item = keyItem?.[0];
+                                                    return (
+                                                      <div
+                                                        key={index}
+                                                        className={
+                                                          index === 0
+                                                            ? 'responses-content-wrap'
+                                                            : 'responses-content-wrap response-margin'
+                                                        }
+                                                      >
+                                                        <div className="contant-wrap-line">
+                                                          <h4 className="content-wrap-title text-capitalize">
+                                                            {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                                            {/* {
+                                                              item?.filled_user
+                                                                ?.fullname
+                                                            }{' '}
+                                                            {!item.section_name ||
+                                                              (item.section_name !==
+                                                                '' &&
+                                                                `| ${item.section_name
+                                                                  .split('_')
+                                                                  .join(
+                                                                    ' '
+                                                                  )} Section`)}{' '} */}
+                                                            {`Name: ${
+                                                              item?.user
+                                                                ?.fullname
+                                                            } ${
+                                                              item?.user
+                                                                ?.family_name ||
+                                                              ''
+                                                            }`}
+                                                            {item.isEditTime !=
+                                                              null &&
+                                                            moment(
+                                                              item.isEditTime
+                                                            ).format() >
+                                                              moment().format() ? (
+                                                              <span
+                                                                style={{
+                                                                  fontSize:
+                                                                    '12px',
+                                                                  paddingLeft:
+                                                                    '12px',
+                                                                }}
+                                                              >
+                                                                Currently in
+                                                                editing mode{' '}
+                                                                <br />
+                                                                [Refresh the
+                                                                page after some
+                                                                time]
+                                                              </span>
+                                                            ) : (
+                                                              // formData &&
+                                                              // inner_index === 0 &&
+                                                              (formData?.form_type ===
+                                                                'editable' ||
+                                                                formData?.form_type ===
+                                                                  'multi_submission') && (
+                                                                <Link
+                                                                  style={{
+                                                                    marginLeft:
+                                                                      '5px',
+                                                                  }}
+                                                                  to={`/form/dynamic/${formData.form_name}`}
+                                                                  state={{
+                                                                    id:
+                                                                      // item?.filter(
+                                                                      //   (el) =>
+                                                                      //     el?.section_name ===
+                                                                      //     ''
+                                                                      // )[0]?.id ||
+                                                                      item?.id,
+                                                                    form_id: id
+                                                                      ? id
+                                                                      : null,
+                                                                  }}
+                                                                >
+                                                                  {(fillAccessUsers?.includes(
+                                                                    localStorage.getItem(
+                                                                      'user_role'
+                                                                    )
+                                                                  ) ||
+                                                                    formFieldPermission?.includes(
+                                                                      localStorage.getItem(
+                                                                        'user_role'
+                                                                      ) ===
+                                                                        'guardian'
+                                                                        ? 'parent'
+                                                                        : localStorage.getItem(
+                                                                            'user_role'
+                                                                          )
+                                                                    )) && (
+                                                                    <FontAwesomeIcon
+                                                                      icon={
+                                                                        faPen
+                                                                      }
+                                                                    />
+                                                                  )}
+                                                                </Link>
+                                                              )
+                                                            )}
+                                                          </h4>
+                                                          {item?.updated ? (
+                                                            <p>
+                                                              Last Updated By :{' '}
+                                                              {
+                                                                item
+                                                                  ?.updatedByUsers[0]
+                                                                  ?.fullname
+                                                              }{' '}
+                                                              <br />
+                                                              Updated on: <br />
+                                                              {moment(
+                                                                item.updatedAt
+                                                              ).format(
+                                                                'DD/MM/YYYY'
+                                                              ) +
+                                                                ', ' +
+                                                                moment(
+                                                                  item.updatedAt
+                                                                )
+                                                                  .subtract(
+                                                                    13,
+                                                                    'hours'
+                                                                  )
+                                                                  .utc()
+                                                                  .format(
+                                                                    'HH:mm'
+                                                                  )}
+                                                              hrs
+                                                            </p>
+                                                          ) : (
+                                                            <p>
+                                                              Completed By:{' '}
+                                                              {
+                                                                item
+                                                                  ?.filled_user
+                                                                  ?.fullname
+                                                              }{' '}
+                                                              <br />
+                                                              Completed on:{' '}
+                                                              <br />
+                                                              {moment(
+                                                                item.createdAt
+                                                              ).format(
+                                                                'DD/MM/YYYY'
+                                                              ) +
+                                                                ', ' +
+                                                                moment(
+                                                                  item.createdAt
+                                                                )
+                                                                  .subtract(
+                                                                    13,
+                                                                    'hours'
+                                                                  )
+                                                                  .utc()
+                                                                  .format(
+                                                                    'HH:mm'
+                                                                  )}
+                                                              hrs{' '}
+                                                            </p>
+                                                          )}
+                                                        </div>
+                                                        <p
+                                                          style={{
+                                                            display: 'none',
+                                                          }}
+                                                        >
+                                                          {(count = 0)}
+                                                        </p>
+                                                        {Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        ).map(
+                                                          (
+                                                            inner_item,
+                                                            inner_index
+                                                          ) => {
+                                                            if (
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                'headings'
+                                                              ) ||
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[inner_index] ===
+                                                                'text_headings'
+                                                            ) {
+                                                              count++;
+                                                            }
+                                                            return (
+                                                              <div
+                                                                key={
+                                                                  inner_index
+                                                                }
+                                                                sss
+                                                                className="responses-content-box"
+                                                                style={{
+                                                                  marginTop:
+                                                                    '12px',
+                                                                }}
+                                                              >
+                                                                <div className="responses-content-question">
+                                                                  {!(
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'headings'
+                                                                    ) ||
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                      'text_headings'
+                                                                  ) && (
+                                                                    <span>
+                                                                      {inner_index +
+                                                                        1 -
+                                                                        count}
+                                                                    </span>
+                                                                  )}
+                                                                  {Object.keys(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    'headings'
+                                                                  ) ? (
+                                                                    <h6
+                                                                      className="text-capitalize"
+                                                                      style={{
+                                                                        fontSize:
+                                                                          '20px',
+                                                                        color:
+                                                                          '#AA0061',
+                                                                      }}
+                                                                    >
+                                                                      {
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                    </h6>
+                                                                  ) : Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                    'text_headings' ? (
+                                                                    <h6
+                                                                      className="text-capitalize"
+                                                                      style={{
+                                                                        fontSize:
+                                                                          '16px',
+                                                                        color:
+                                                                          '#455c58',
+                                                                      }}
+                                                                    >
+                                                                      {
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                    </h6>
+                                                                  ) : formField[
+                                                                      inner_item
+                                                                    ] !== '' ? (
+                                                                    <>
+                                                                      <h6 className="text-capitalize">
+                                                                        {inner_item
+                                                                          .split(
+                                                                            '_'
+                                                                          )
+                                                                          .join(
+                                                                            ' '
+                                                                          )}
+                                                                        <h6
+                                                                          style={{
+                                                                            fontSize:
+                                                                              '12px',
+                                                                            color:
+                                                                              '#9c9898',
+                                                                          }}
+                                                                        >
+                                                                          {
+                                                                            formField[
+                                                                              inner_item
+                                                                            ]
+                                                                          }
+                                                                        </h6>
+                                                                      </h6>
+                                                                    </>
+                                                                  ) : (
+                                                                    <h6 className="text-capitalize">
+                                                                      {inner_item
+                                                                        .split(
+                                                                          '_'
+                                                                        )
+                                                                        .join(
+                                                                          ' '
+                                                                        )}
+                                                                    </h6>
+                                                                  )}
+                                                                </div>
+                                                                <div className="responses-content-answer">
+                                                                  {!(
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'headings'
+                                                                    ) ||
+                                                                    Object.keys(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ] ===
+                                                                      'text_headings'
+                                                                  ) && (
+                                                                    <img
+                                                                      src="/img/bx_right-arrow-alt.svg"
+                                                                      alt=""
+                                                                    />
+                                                                  )}
+
+                                                                  {Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    'data:image'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.png'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.jpg'
+                                                                  ) ||
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[
+                                                                    inner_index
+                                                                  ]?.includes(
+                                                                    '.jpeg'
+                                                                  ) ? (
+                                                                    <>
+                                                                      <img
+                                                                        style={{
+                                                                          height:
+                                                                            '40px',
+                                                                          width:
+                                                                            '51px',
+                                                                        }}
+                                                                        alt="img"
+                                                                        src={`${
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ]
+                                                                        }`}
+                                                                      ></img>
+                                                                    </>
+                                                                  ) : Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.doc'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.docx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.html'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.htm'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.odt'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.xls'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.xlsx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      'ods'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.ppt'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.pptx'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.pdf'
+                                                                    ) ||
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]?.includes(
+                                                                      '.txt'
+                                                                    ) ? (
+                                                                    <a
+                                                                      role="button"
+                                                                      href={
+                                                                        Object.values(
+                                                                          JSON.parse(
+                                                                            item.fields
+                                                                          )
+                                                                        )[
+                                                                          inner_index
+                                                                        ]
+                                                                      }
+                                                                      download
+                                                                    >
+                                                                      <p>
+                                                                        {
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ].split(
+                                                                            '/'
+                                                                          )[
+                                                                            Object.values(
+                                                                              JSON.parse(
+                                                                                item.fields
+                                                                              )
+                                                                            )[
+                                                                              inner_index
+                                                                            ].split(
+                                                                              '/'
+                                                                            )
+                                                                              .length -
+                                                                              1
+                                                                          ]
+                                                                        }
+                                                                      </p>
+                                                                    </a>
+                                                                  ) : (
+                                                                    !(
+                                                                      Object.keys(
+                                                                        JSON.parse(
+                                                                          item.fields
+                                                                        )
+                                                                      )[
+                                                                        inner_index
+                                                                      ]?.includes(
+                                                                        'headings'
+                                                                      ) ||
+                                                                      Object.keys(
+                                                                        JSON.parse(
+                                                                          item.fields
+                                                                        )
+                                                                      )[
+                                                                        inner_index
+                                                                      ] ===
+                                                                        'text_headings'
+                                                                    ) && (
+                                                                      <p className="preserve-white-space">
+                                                                        {formatText(
+                                                                          Object.values(
+                                                                            JSON.parse(
+                                                                              item.fields
+                                                                            )
+                                                                          )[
+                                                                            inner_index
+                                                                          ]
+                                                                        )}
+                                                                      </p>
+                                                                    )
+                                                                  )}
+                                                                </div>
+                                                              </div>
+                                                            );
+                                                          }
+                                                        )}
+                                                      </div>
+                                                    );
+                                                  }
+                                                )}
                                               </div>
-                                            );
-                                          })}
-                                        </div>
+                                            }
+                                          </>
+                                        </>
                                       }
                                     </>
                                   );
@@ -1878,272 +3175,54 @@ function OwnFormResponse(props) {
                                 return (
                                   <>
                                     {
-                                      <div
-                                        key={index}
-                                        className={
-                                          index === 0
-                                            ? 'responses-content-wrap'
-                                            : 'responses-content-wrap response-margin'
-                                        }
-                                      >
-                                        <h4 className="content-wrap-title text-capitalize">
-                                          {/* Filled By {item?.filled_user?.fullname}{' '} */}
-                                          {item?.filled_user?.fullname}{' '}
-                                          {!item.section_name ||
-                                            (item.section_name !== '' &&
-                                              `| ${item.section_name
-                                                .split('_')
-                                                .join(' ')} Section`)}{' '}
-                                          {`| Name: ${item?.user?.fullname} ${
-                                            item?.user?.family_name || ''
-                                          }`}
-                                        </h4>
-                                        {Object.keys(
-                                          JSON.parse(item.fields)
-                                        ).map((inner_item, inner_index) => {
-                                          {
-                                            {
-                                              (Object.keys(
+                                      <>
+                                        <div
+                                          key={index}
+                                          className={
+                                            index === 0
+                                              ? 'responses-content-wrap'
+                                              : 'responses-content-wrap response-margin'
+                                          }
+                                        >
+                                          <h4 className="content-wrap-title text-capitalize">
+                                            {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                            {/* {item?.filled_user?.fullname}{' '}
+                                            {!item.section_name ||
+                                              (item.section_name !== '' &&
+                                                `| ${item.section_name
+                                                  .split('_')
+                                                  .join(' ')} Section`)}{' '} */}
+                                            {`Name: ${item?.user?.fullname} ${
+                                              item?.user?.family_name || ''
+                                            }`}
+                                          </h4>
+                                          <p style={{ display: 'none' }}>
+                                            {(count = 0)}
+                                          </p>
+                                          {Object.keys(
+                                            JSON.parse(item.fields)
+                                          ).map((inner_item, inner_index) => {
+                                            if (
+                                              Object.keys(
                                                 JSON.parse(item.fields)
                                               )[inner_index]?.includes(
                                                 'headings'
                                               ) ||
-                                                Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index] ===
-                                                  'text_headings') &&
-                                                count++;
+                                              Object.keys(
+                                                JSON.parse(item.fields)
+                                              )[inner_index] === 'text_headings'
+                                            ) {
+                                              count++;
                                             }
-                                          }
-                                          return (
-                                            <div
-                                              key={inner_index}
-                                              sss
-                                              className="responses-content-box"
-                                              style={{ marginTop: '12px' }}
-                                            >
-                                              <div className="responses-content-question">
-                                                {!(
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'headings'
-                                                  ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings'
-                                                ) && (
-                                                  <span>
-                                                    {inner_index + 1 - count}
-                                                  </span>
-                                                )}
-                                                {Object.keys(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'headings'
-                                                ) ? (
-                                                  <h6
-                                                    className="text-capitalize"
-                                                    style={{
-                                                      fontSize: '20px',
-                                                      color: '#AA0061',
-                                                    }}
-                                                  >
-                                                    {
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }
-                                                  </h6>
-                                                ) : Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                  'text_headings' ? (
-                                                  <h6
-                                                    className="text-capitalize"
-                                                    style={{
-                                                      fontSize: '16px',
-                                                      color: '#455c58',
-                                                    }}
-                                                  >
-                                                    {
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }
-                                                  </h6>
-                                                ) : formField[inner_item] !==
-                                                  '' ? (
-                                                  <>
-                                                    <h6 className="text-capitalize">
-                                                      {inner_item
-                                                        .split('_')
-                                                        .join(' ')}
-                                                      <h6
-                                                        style={{
-                                                          fontSize: '12px',
-                                                          color: '#9c9898',
-                                                        }}
-                                                      >
-                                                        ({formField[inner_item]}
-                                                        )
-                                                      </h6>
-                                                    </h6>
-                                                  </>
-                                                ) : (
-                                                  <h6 className="text-capitalize">
-                                                    {inner_item
-                                                      .split('_')
-                                                      .join(' ')}
-                                                  </h6>
-                                                )}
-                                              </div>
-                                              <div className="responses-content-answer">
-                                                {!(
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'headings'
-                                                  ) ||
-                                                  Object.keys(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index] ===
-                                                    'text_headings'
-                                                ) && (
-                                                  <img
-                                                    src="/img/bx_right-arrow-alt.svg"
-                                                    alt=""
-                                                  />
-                                                )}
-
-                                                {Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  'data:image'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.png'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpg'
-                                                ) ||
-                                                Object.values(
-                                                  JSON.parse(item.fields)
-                                                )[inner_index]?.includes(
-                                                  '.jpeg'
-                                                ) ? (
-                                                  <>
-                                                    <img
-                                                      style={{
-                                                        height: '40px',
-                                                        width: '51px',
-                                                      }}
-                                                      alt="img"
-                                                      src={`${
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index]
-                                                      }`}
-                                                    ></img>
-                                                  </>
-                                                ) : Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.doc'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.docx'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.html'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.htm'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.odt'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.xls'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.xlsx'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    'ods'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.ppt'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.pptx'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.pdf'
-                                                  ) ||
-                                                  Object.values(
-                                                    JSON.parse(item.fields)
-                                                  )[inner_index]?.includes(
-                                                    '.txt'
-                                                  ) ? (
-                                                  <a
-                                                    role="button"
-                                                    href={
-                                                      Object.values(
-                                                        JSON.parse(item.fields)
-                                                      )[inner_index]
-                                                    }
-                                                    download
-                                                  >
-                                                    <p>
-                                                      {
-                                                        Object.values(
-                                                          JSON.parse(
-                                                            item.fields
-                                                          )
-                                                        )[inner_index].split(
-                                                          '/'
-                                                        )[
-                                                          Object.values(
-                                                            JSON.parse(
-                                                              item.fields
-                                                            )
-                                                          )[inner_index].split(
-                                                            '/'
-                                                          ).length - 1
-                                                        ]
-                                                      }
-                                                    </p>
-                                                  </a>
-                                                ) : (
-                                                  !(
+                                            return (
+                                              <div
+                                                key={inner_index}
+                                                sss
+                                                className="responses-content-box"
+                                                style={{ marginTop: '12px' }}
+                                              >
+                                                <div className="responses-content-question">
+                                                  {!(
                                                     Object.keys(
                                                       JSON.parse(item.fields)
                                                     )[inner_index]?.includes(
@@ -2154,22 +3233,824 @@ function OwnFormResponse(props) {
                                                     )[inner_index] ===
                                                       'text_headings'
                                                   ) && (
-                                                    <p className="preserve-white-space">
-                                                      {formatText(
+                                                    <span>
+                                                      {inner_index + 1 - count}
+                                                    </span>
+                                                  )}
+                                                  {Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    'headings'
+                                                  ) ? (
+                                                    <h6
+                                                      className="text-capitalize"
+                                                      style={{
+                                                        fontSize: '20px',
+                                                        color: '#AA0061',
+                                                      }}
+                                                    >
+                                                      {
                                                         Object.values(
                                                           JSON.parse(
                                                             item.fields
                                                           )
                                                         )[inner_index]
-                                                      )}
-                                                    </p>
-                                                  )
-                                                )}
+                                                      }
+                                                    </h6>
+                                                  ) : Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index] ===
+                                                    'text_headings' ? (
+                                                    <h6
+                                                      className="text-capitalize"
+                                                      style={{
+                                                        fontSize: '16px',
+                                                        color: '#455c58',
+                                                      }}
+                                                    >
+                                                      {
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index]
+                                                      }
+                                                    </h6>
+                                                  ) : formField[inner_item] !==
+                                                    '' ? (
+                                                    <>
+                                                      <h6 className="text-capitalize">
+                                                        {inner_item
+                                                          .split('_')
+                                                          .join(' ')}
+                                                        <h6
+                                                          style={{
+                                                            fontSize: '12px',
+                                                            color: '#9c9898',
+                                                          }}
+                                                        >
+                                                          {
+                                                            formField[
+                                                              inner_item
+                                                            ]
+                                                          }
+                                                        </h6>
+                                                      </h6>
+                                                    </>
+                                                  ) : (
+                                                    <h6 className="text-capitalize">
+                                                      {inner_item
+                                                        .split('_')
+                                                        .join(' ')}
+                                                    </h6>
+                                                  )}
+                                                </div>
+                                                <div className="responses-content-answer">
+                                                  {!(
+                                                    Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'headings'
+                                                    ) ||
+                                                    Object.keys(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index] ===
+                                                      'text_headings'
+                                                  ) && (
+                                                    <img
+                                                      src="/img/bx_right-arrow-alt.svg"
+                                                      alt=""
+                                                    />
+                                                  )}
+
+                                                  {Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    'data:image'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.png'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.jpg'
+                                                  ) ||
+                                                  Object.values(
+                                                    JSON.parse(item.fields)
+                                                  )[inner_index]?.includes(
+                                                    '.jpeg'
+                                                  ) ? (
+                                                    <>
+                                                      <img
+                                                        style={{
+                                                          height: '40px',
+                                                          width: '51px',
+                                                        }}
+                                                        alt="img"
+                                                        src={`${
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        }`}
+                                                      ></img>
+                                                    </>
+                                                  ) : Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.doc'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.docx'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.html'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.htm'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.odt'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.xls'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.xlsx'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      'ods'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.ppt'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.pptx'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.pdf'
+                                                    ) ||
+                                                    Object.values(
+                                                      JSON.parse(item.fields)
+                                                    )[inner_index]?.includes(
+                                                      '.txt'
+                                                    ) ? (
+                                                    <a
+                                                      role="button"
+                                                      href={
+                                                        Object.values(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index]
+                                                      }
+                                                      download
+                                                    >
+                                                      <p>
+                                                        {
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index].split(
+                                                            '/'
+                                                          )[
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ].split('/')
+                                                              .length - 1
+                                                          ]
+                                                        }
+                                                      </p>
+                                                    </a>
+                                                  ) : (
+                                                    !(
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index]?.includes(
+                                                        'headings'
+                                                      ) ||
+                                                      Object.keys(
+                                                        JSON.parse(item.fields)
+                                                      )[inner_index] ===
+                                                        'text_headings'
+                                                    ) && (
+                                                      <p className="preserve-white-space">
+                                                        {formatText(
+                                                          Object.values(
+                                                            JSON.parse(
+                                                              item.fields
+                                                            )
+                                                          )[inner_index]
+                                                        )}
+                                                      </p>
+                                                    )
+                                                  )}
+                                                </div>
                                               </div>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
+                                            );
+                                          })}
+                                        </div>
+                                        <div className="responses-content-wrap response-margin">
+                                          {item?.childData?.map(
+                                            (keyItem, index) => {
+                                              let item = keyItem?.[0];
+                                              return (
+                                                <div
+                                                  key={index}
+                                                  className={
+                                                    index === 0
+                                                      ? 'responses-content-wrap'
+                                                      : 'responses-content-wrap response-margin'
+                                                  }
+                                                >
+                                                  <div className="contant-wrap-line">
+                                                    <h4 className="content-wrap-title text-capitalize">
+                                                      {/* Filled By {item?.filled_user?.fullname}{' '} */}
+                                                      {/* {
+                                                        item?.filled_user
+                                                          ?.fullname
+                                                      }{' '}
+                                                      {!item.section_name ||
+                                                        (item.section_name !==
+                                                          '' &&
+                                                          `| ${item.section_name
+                                                            .split('_')
+                                                            .join(
+                                                              ' '
+                                                            )} Section`)}{' '} */}
+                                                      {/* {`Name: ${
+                                                        item?.user?.fullname
+                                                      } ${
+                                                        item?.user
+                                                          ?.family_name || ''
+                                                      }`} */}
+                                                    </h4>
+                                                    <div
+                                                      style={{
+                                                        display: 'flex',
+                                                        gap: '5px',
+                                                      }}
+                                                    >
+                                                      {item?.updated ? (
+                                                        <p>
+                                                          Last Updated By :{' '}
+                                                          {
+                                                            item
+                                                              ?.updatedByUsers[0]
+                                                              ?.fullname
+                                                          }{' '}
+                                                          <br />
+                                                          Updated on: <br />
+                                                          {moment(
+                                                            item.updatedAt
+                                                          ).format(
+                                                            'DD/MM/YYYY'
+                                                          ) +
+                                                            ', ' +
+                                                            moment(
+                                                              item.updatedAt
+                                                            )
+                                                              .subtract(
+                                                                13,
+                                                                'hours'
+                                                              )
+                                                              .utc()
+                                                              .format('HH:mm')}
+                                                          hrs
+                                                        </p>
+                                                      ) : (
+                                                        <p>
+                                                          Completed By :{' '}
+                                                          {
+                                                            item?.filled_user
+                                                              ?.fullname
+                                                          }{' '}
+                                                          <br />
+                                                          Completed on: <br />
+                                                          {moment(
+                                                            item.createdAt
+                                                          ).format(
+                                                            'DD/MM/YYYY'
+                                                          ) +
+                                                            ', ' +
+                                                            moment(
+                                                              item.createdAt
+                                                            )
+                                                              .subtract(
+                                                                13,
+                                                                'hours'
+                                                              )
+                                                              .utc()
+                                                              .format('HH:mm')}
+                                                          hrs{' '}
+                                                        </p>
+                                                      )}
+                                                      {item.isEditTime !=
+                                                        null &&
+                                                      moment(
+                                                        item.isEditTime
+                                                      ).format() >
+                                                        moment().format() ? (
+                                                        <span
+                                                          style={{
+                                                            fontSize: '12px',
+                                                          }}
+                                                        >
+                                                          Currently in editing
+                                                          mode <br />
+                                                          [Refresh the page
+                                                          after some time]
+                                                        </span>
+                                                      ) : (
+                                                        // formData &&
+                                                        // inner_index === 0 &&
+                                                        (formData?.form_type ===
+                                                          'editable' ||
+                                                          formData?.form_type ===
+                                                            'multi_submission') && (
+                                                          <Link
+                                                            style={{
+                                                              marginLeft: '5px',
+                                                            }}
+                                                            to={`/form/dynamic/${formData.form_name}`}
+                                                            state={{
+                                                              id:
+                                                                // item?.filter(
+                                                                //   (el) =>
+                                                                //     el?.section_name ===
+                                                                //     ''
+                                                                // )[0]?.id ||
+                                                                item?.id,
+                                                              form_id: id
+                                                                ? id
+                                                                : null,
+                                                            }}
+                                                          >
+                                                            {(fillAccessUsers?.includes(
+                                                              localStorage.getItem(
+                                                                'user_role'
+                                                              )
+                                                            ) ||
+                                                              formFieldPermission?.includes(
+                                                                localStorage.getItem(
+                                                                  'user_role'
+                                                                ) === 'guardian'
+                                                                  ? 'parent'
+                                                                  : localStorage.getItem(
+                                                                      'user_role'
+                                                                    )
+                                                              )) && (
+                                                              <FontAwesomeIcon
+                                                                icon={faPen}
+                                                              />
+                                                            )}
+                                                          </Link>
+                                                        )
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                  <p
+                                                    style={{ display: 'none' }}
+                                                  >
+                                                    {(count = 0)}
+                                                  </p>
+                                                  {Object.keys(
+                                                    JSON.parse(item.fields)
+                                                  ).map(
+                                                    (
+                                                      inner_item,
+                                                      inner_index
+                                                    ) => {
+                                                      if (
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[
+                                                          inner_index
+                                                        ]?.includes(
+                                                          'headings'
+                                                        ) ||
+                                                        Object.keys(
+                                                          JSON.parse(
+                                                            item.fields
+                                                          )
+                                                        )[inner_index] ===
+                                                          'text_headings'
+                                                      ) {
+                                                        count++;
+                                                      }
+                                                      return (
+                                                        <div
+                                                          key={inner_index}
+                                                          sss
+                                                          className="responses-content-box"
+                                                          style={{
+                                                            marginTop: '12px',
+                                                          }}
+                                                        >
+                                                          <div className="responses-content-question">
+                                                            {!(
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                'headings'
+                                                              ) ||
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[inner_index] ===
+                                                                'text_headings'
+                                                            ) && (
+                                                              <span>
+                                                                {inner_index +
+                                                                  1 -
+                                                                  count}
+                                                              </span>
+                                                            )}
+                                                            {Object.keys(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ]?.includes(
+                                                              'headings'
+                                                            ) ? (
+                                                              <h6
+                                                                className="text-capitalize"
+                                                                style={{
+                                                                  fontSize:
+                                                                    '20px',
+                                                                  color:
+                                                                    '#AA0061',
+                                                                }}
+                                                              >
+                                                                {
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[inner_index]
+                                                                }
+                                                              </h6>
+                                                            ) : Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[inner_index] ===
+                                                              'text_headings' ? (
+                                                              <h6
+                                                                className="text-capitalize"
+                                                                style={{
+                                                                  fontSize:
+                                                                    '16px',
+                                                                  color:
+                                                                    '#455c58',
+                                                                }}
+                                                              >
+                                                                {
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[inner_index]
+                                                                }
+                                                              </h6>
+                                                            ) : formField[
+                                                                inner_item
+                                                              ] !== '' ? (
+                                                              <>
+                                                                <h6 className="text-capitalize">
+                                                                  {inner_item
+                                                                    .split('_')
+                                                                    .join(' ')}
+                                                                  <h6
+                                                                    style={{
+                                                                      fontSize:
+                                                                        '12px',
+                                                                      color:
+                                                                        '#9c9898',
+                                                                    }}
+                                                                  >
+                                                                    {
+                                                                      formField[
+                                                                        inner_item
+                                                                      ]
+                                                                    }
+                                                                  </h6>
+                                                                </h6>
+                                                              </>
+                                                            ) : (
+                                                              <h6 className="text-capitalize">
+                                                                {inner_item
+                                                                  .split('_')
+                                                                  .join(' ')}
+                                                              </h6>
+                                                            )}
+                                                          </div>
+                                                          <div className="responses-content-answer">
+                                                            {!(
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                'headings'
+                                                              ) ||
+                                                              Object.keys(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[inner_index] ===
+                                                                'text_headings'
+                                                            ) && (
+                                                              <img
+                                                                src="/img/bx_right-arrow-alt.svg"
+                                                                alt=""
+                                                              />
+                                                            )}
+
+                                                            {Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ]?.includes(
+                                                              'data:image'
+                                                            ) ||
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ]?.includes(
+                                                              '.png'
+                                                            ) ||
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ]?.includes(
+                                                              '.jpg'
+                                                            ) ||
+                                                            Object.values(
+                                                              JSON.parse(
+                                                                item.fields
+                                                              )
+                                                            )[
+                                                              inner_index
+                                                            ]?.includes(
+                                                              '.jpeg'
+                                                            ) ? (
+                                                              <>
+                                                                <img
+                                                                  style={{
+                                                                    height:
+                                                                      '40px',
+                                                                    width:
+                                                                      '51px',
+                                                                  }}
+                                                                  alt="img"
+                                                                  src={`${
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]
+                                                                  }`}
+                                                                ></img>
+                                                              </>
+                                                            ) : Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.doc'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.docx'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.html'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.htm'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.odt'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.xls'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.xlsx'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                'ods'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.ppt'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.pptx'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.pdf'
+                                                              ) ||
+                                                              Object.values(
+                                                                JSON.parse(
+                                                                  item.fields
+                                                                )
+                                                              )[
+                                                                inner_index
+                                                              ]?.includes(
+                                                                '.txt'
+                                                              ) ? (
+                                                              <a
+                                                                role="button"
+                                                                href={
+                                                                  Object.values(
+                                                                    JSON.parse(
+                                                                      item.fields
+                                                                    )
+                                                                  )[inner_index]
+                                                                }
+                                                                download
+                                                              >
+                                                                <p>
+                                                                  {
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ].split(
+                                                                      '/'
+                                                                    )[
+                                                                      Object.values(
+                                                                        JSON.parse(
+                                                                          item.fields
+                                                                        )
+                                                                      )[
+                                                                        inner_index
+                                                                      ].split(
+                                                                        '/'
+                                                                      ).length -
+                                                                        1
+                                                                    ]
+                                                                  }
+                                                                </p>
+                                                              </a>
+                                                            ) : (
+                                                              !(
+                                                                Object.keys(
+                                                                  JSON.parse(
+                                                                    item.fields
+                                                                  )
+                                                                )[
+                                                                  inner_index
+                                                                ]?.includes(
+                                                                  'headings'
+                                                                ) ||
+                                                                Object.keys(
+                                                                  JSON.parse(
+                                                                    item.fields
+                                                                  )
+                                                                )[
+                                                                  inner_index
+                                                                ] ===
+                                                                  'text_headings'
+                                                              ) && (
+                                                                <p className="preserve-white-space">
+                                                                  {formatText(
+                                                                    Object.values(
+                                                                      JSON.parse(
+                                                                        item.fields
+                                                                      )
+                                                                    )[
+                                                                      inner_index
+                                                                    ]
+                                                                  )}
+                                                                </p>
+                                                              )
+                                                            )}
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
+                                                </div>
+                                              );
+                                            }
+                                          )}
+                                        </div>
+                                      </>
                                     }
                                   </>
                                 );

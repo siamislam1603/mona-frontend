@@ -169,7 +169,7 @@ export default function DropAllFile({
         ) : (
           <div style={{ marginTop: '5px' }}>
             <small className="fileinput">
-              (pdf, doc, ppt, xlsx and other documents)
+              (pdf, doc, ppt, xlsx, images and other documents)
             </small>
             <small className="fileinput">
               (max. 20 documents, less than 20MB each)
