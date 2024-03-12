@@ -24,6 +24,7 @@ import { verifyPermission } from '../helpers/roleBasedAccess';
 import { FullLoader } from '../components/Loader';
 import { useParams } from 'react-router-dom';
 import { userRoles } from '../assets/data/userRoles';
+import { decryptDataFromArray } from '../helpers/EncryptDecrypt';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -356,11 +357,14 @@ const UserManagement = () => {
       },
     });
 
-    // if (response) {
-    //   setfullLoaderStatus(false)
-    // }
-    if (response.status === 200 && response.data.status === 'success') {
-      const { users } = response.data;
+    if (response) {
+      setfullLoaderStatus(false);
+    }
+
+    let responseData = decryptDataFromArray(response?.data);
+
+    if (responseData.status === 'success') {
+      const { users } = responseData || {};
       let userData = users;
 
       // IN CASE OF EDUCATOR ROLE, REMOVES ALL OTHER EDUCATORS FROM THE RESULTS
@@ -475,8 +479,10 @@ const UserManagement = () => {
       setfullLoaderStatus(false);
     }
 
-    if (response.status === 200 && response.data.status === 'success') {
-      const { users } = response.data;
+    let responseData = decryptDataFromArray(response?.data);
+
+    if (responseData.status === 'success') {
+      const { users } = responseData || {};
       let tempData = users.map((dt) => ({
         name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
           .split('_')
