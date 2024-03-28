@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Col, Container, Form, Row, Button, Modal } from 'react-bootstrap';
-import { BASE_URL } from '../components/App';
-import { DynamicFormValidation } from '../helpers/validation';
-import InputFields from './InputFields';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
-import LeftNavbar from '../components/LeftNavbar';
-import TopHeader from '../components/TopHeader';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import moment from 'moment';
+import { BASE_URL } from '../components/App';
+import LeftNavbar from '../components/LeftNavbar';
 import { FullLoader } from '../components/Loader';
-import context from 'react-bootstrap/esm/AccordionContext';
+import TopHeader from '../components/TopHeader';
+import { DynamicFormValidation } from '../helpers/validation';
+import InputFields from './InputFields';
 
 // function copyOneStateToAnother(formObj) {
 //   let keyNames = Object.keys(formObj);
@@ -102,6 +101,7 @@ const DynamicForm = () => {
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({});
   const [fieldData, setFieldData] = useState({});
+  const [formId, setFormId] = useState(null);
   const [formPermission, setFormPermission] = useState({});
   const [fullLoaderStatus, setfullLoaderStatus] = useState(true);
   const [targetUser, setTargetUser] = useState([]);
@@ -154,12 +154,12 @@ const DynamicForm = () => {
         value = moment(value).format('DD-MM-YYYY');
         setFieldData({
           ...fieldData,
-          ['fields']: { ...fieldData[`fields`], [field]: value },
+          fields: { ...fieldData[`fields`], [field]: value },
         });
 
         setTempFormData({
           ...tempFormData,
-          ['fields']: {
+          fields: {
             ...tempFormData[`fields`],
             [`${field} ${field_index}`]: value,
           },
@@ -169,12 +169,12 @@ const DynamicForm = () => {
         value = value.slice(0, -1);
         setFieldData({
           ...fieldData,
-          ['fields']: { ...fieldData[`fields`], [field]: value },
+          fields: { ...fieldData[`fields`], [field]: value },
         });
 
         setTempFormData({
           ...tempFormData,
-          ['fields']: {
+          fields: {
             ...tempFormData[`fields`],
             [`${field} ${field_index}`]: value,
           },
@@ -183,11 +183,11 @@ const DynamicForm = () => {
       if (type === 'radio') {
         setFieldData({
           ...fieldData,
-          ['fields']: { ...fieldData[`fields`], [field]: value },
+          fields: { ...fieldData[`fields`], [field]: value },
         });
         setTempFormData({
           ...tempFormData,
-          ['fields']: {
+          fields: {
             ...tempFormData[`fields`],
             [`${field} ${field_index}`]: value,
           },
@@ -195,11 +195,11 @@ const DynamicForm = () => {
       } else {
         setFieldData({
           ...fieldData,
-          ['fields']: { ...fieldData[`fields`], [field]: value },
+          fields: { ...fieldData[`fields`], [field]: value },
         });
         setTempFormData({
           ...tempFormData,
-          ['fields']: {
+          fields: {
             ...tempFormData[`fields`],
             [`${field} ${field_index}`]: value,
           },
@@ -229,7 +229,7 @@ const DynamicForm = () => {
         });
         setFieldData({
           ...fieldData,
-          ['fields']: {
+          fields: {
             ...fieldData['fields'],
             [field]: value,
           },
@@ -251,7 +251,7 @@ const DynamicForm = () => {
         });
         setFieldData({
           ...fieldData,
-          ['fields']: {
+          fields: {
             ...fieldData['fields'],
             [field]: value,
           },
@@ -296,6 +296,8 @@ const DynamicForm = () => {
       .then((result) => {
         result.result.fields = JSON.parse(result.result.fields);
         setFieldData(result.result);
+        setFormId(result.result.form_id);
+        setBehalfOf(result.result.behalf_of);
       })
       .catch((error) => console.log('error', error));
   };
@@ -576,7 +578,7 @@ const DynamicForm = () => {
           headers: myHeaders,
           body: JSON.stringify({
             id: location?.state?.id,
-            data: fieldData,
+            data: { ...fieldData, form_id: formId, behalf_of: behalfOf },
             status: 'update',
             updated: true,
             updatedBy: localStorage.getItem('user_id'),
@@ -946,6 +948,14 @@ const DynamicForm = () => {
     // setFieldData({});
   }, [formDataVal]);
 
+  console.log({
+    targetUser,
+    selectedUserValue,
+    formDataVal,
+    behalfOf,
+    fieldData,
+  });
+
   return (
     <>
       <div id="main">
@@ -1072,7 +1082,6 @@ const DynamicForm = () => {
                                       setErrors(errorData);
                                     }
                                   }}
-                                  disabled
                                 >
                                   {formPermission?.target_user?.includes(
                                     'parent'
@@ -1083,7 +1092,7 @@ const DynamicForm = () => {
                                   {targetUser?.map((item, index) => {
                                     return (
                                       <>
-                                        {item?.id === fieldData?.behalf_of ? (
+                                        {item?.id === behalfOf ? (
                                           <option
                                             value={`${item.id} ${
                                               item.role || 'child'
