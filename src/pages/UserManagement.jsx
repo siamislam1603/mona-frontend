@@ -1,30 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Container,
-  Dropdown,
-  DropdownButton,
-  Form,
-  Modal,
-} from 'react-bootstrap';
-import LeftNavbar from '../components/LeftNavbar';
-import TopHeader from '../components/TopHeader';
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { Container, Dropdown, Form, Modal } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import Select from 'react-select';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-import makeAnimated from 'react-select/animated';
-import axios from 'axios';
-import { BASE_URL } from '../components/App';
 import { CSVDownload } from 'react-csv';
-import { useRef } from 'react';
-import { debounce } from 'lodash';
-import { useNavigate, Link } from 'react-router-dom';
-import { verifyPermission } from '../helpers/roleBasedAccess';
-import { FullLoader } from '../components/Loader';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import makeAnimated from 'react-select/animated';
 import { userRoles } from '../assets/data/userRoles';
+import { BASE_URL } from '../components/App';
+import LeftNavbar from '../components/LeftNavbar';
+import { FullLoader } from '../components/Loader';
+import TopHeader from '../components/TopHeader';
 import { decryptDataFromArray } from '../helpers/EncryptDecrypt';
+import { verifyPermission } from '../helpers/roleBasedAccess';
 // const { ExportCSVButton } = CSVExport;
 
 const animatedComponents = makeAnimated();
@@ -347,114 +336,125 @@ const UserManagement = () => {
   };
 
   const fetchUserDetails = async () => {
-    let api_url = '';
-    // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
-    api_url = `${BASE_URL}/role/user/list/${currentFranchise}?search=${search}&filter=${filter}`;
+    if (!currentFranchise) return;
+    try {
+      let api_url = '';
+      // let id = localStorage.getItem('user_role') === 'guardian' ? localStorage.getItem('franchisee_id') : selectedFranchisee;
+      api_url = `${BASE_URL}/role/user/list/${currentFranchise}?search=${search}&filter=${filter}`;
 
-    let response = await axios.get(api_url, {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
-
-    if (response) {
-      setfullLoaderStatus(false);
-    }
-
-    let responseData = decryptDataFromArray(response?.data);
-
-    if (responseData.status === 'success') {
-      const { users } = responseData || {};
-      let userData = users;
-
-      // IN CASE OF EDUCATOR ROLE, REMOVES ALL OTHER EDUCATORS FROM THE RESULTS
-      if (localStorage.getItem('user_role') === 'educator') {
-        let educatorList = userData.filter((user) => user.role === 'educator');
-        let nonEducatorList = userData.filter(
-          (user) => user.role !== 'educator'
-        );
-
-        educatorList = educatorList.filter(
-          (user) =>
-            parseInt(user.id) === parseInt(localStorage.getItem('user_id'))
-        );
-        userData = [...educatorList, ...nonEducatorList];
-      }
-
-      // IN CASE OF EDUCATOR ROLE, WHEN "EDUCATOR" ROLE FILTER IS APPLIED,
-      // REMOVES ALL OTHER RESULTS EXCEPT FOR HIS OWN DETAILS
-      if (
-        filter === 'Educator' &&
-        localStorage.getItem('user_role') === 'educator'
-      ) {
-        let educatorList = userData.filter((user) => user.role === 'educator');
-
-        educatorList = educatorList.filter(
-          (user) =>
-            parseInt(user.id) === parseInt(localStorage.getItem('user_id'))
-        );
-        userData = [...educatorList];
-      }
-
-      if (
-        filter === 'Coordinator' &&
-        localStorage.getItem('user_role') === 'educator'
-      ) {
-        let coordinatorList = userData.filter(
-          (user) => user.role === 'coordinator'
-        );
-        userData = [...coordinatorList];
-      }
-
-      if (
-        filter === 'Guardian' &&
-        localStorage.getItem('user_role') === 'educator'
-      ) {
-        let guardianList = userData.filter((user) => user.role === 'guardian');
-        userData = [...guardianList];
-      }
-
-      // FORMATS THE RESULTS TO THE DATA TABLE FORMAT
-      let tempData = userData.map((dt) => ({
-        name: `${dt.profile_photo}, ${getFormattedName(dt.fullname)}, ${dt.role
-          .split('_')
-          .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
-          .join(' ')}, ${dt.is_active}, ${dt.id}`,
-        email: dt.email,
-        number: dt.phone !== null ? dt.phone.slice(1) : null,
-        location: dt.city,
-        role: dt.role,
-        is_deleted: dt.is_deleted,
-        userID: dt.id,
-        roleDetail:
-          dt.role +
-          ',' +
-          dt.isChildEnrolled +
-          ',' +
-          dt.franchisee_id +
-          ',' +
-          dt.id,
-        action: `${dt.is_active},${dt.role}`,
-      }));
-
-      setUserData(tempData);
-
-      if (userData !== null) setfullLoaderStatus(false);
-      setIsLoading(false);
-
-      let temp = tempData;
-      let csv_data = [];
-      temp.map((item, index) => {
-        delete item.is_deleted;
-        csv_data.push(item);
-        let data = { ...csv_data[index] };
-        data['name'] = data.name.split(',')[1];
-        delete data.action;
-        delete data.roleDetail;
-        csv_data[index] = data;
+      let response = await axios.get(api_url, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       });
-      setCsvData(csv_data);
-    }
+
+      if (response) {
+        setfullLoaderStatus(false);
+      }
+
+      let responseData = decryptDataFromArray(response?.data);
+
+      if (responseData.status === 'success') {
+        const { users } = responseData || {};
+        let userData = users;
+
+        // IN CASE OF EDUCATOR ROLE, REMOVES ALL OTHER EDUCATORS FROM THE RESULTS
+        if (localStorage.getItem('user_role') === 'educator') {
+          let educatorList = userData.filter(
+            (user) => user.role === 'educator'
+          );
+          let nonEducatorList = userData.filter(
+            (user) => user.role !== 'educator'
+          );
+
+          educatorList = educatorList.filter(
+            (user) =>
+              parseInt(user.id) === parseInt(localStorage.getItem('user_id'))
+          );
+          userData = [...educatorList, ...nonEducatorList];
+        }
+
+        // IN CASE OF EDUCATOR ROLE, WHEN "EDUCATOR" ROLE FILTER IS APPLIED,
+        // REMOVES ALL OTHER RESULTS EXCEPT FOR HIS OWN DETAILS
+        if (
+          filter === 'Educator' &&
+          localStorage.getItem('user_role') === 'educator'
+        ) {
+          let educatorList = userData.filter(
+            (user) => user.role === 'educator'
+          );
+
+          educatorList = educatorList.filter(
+            (user) =>
+              parseInt(user.id) === parseInt(localStorage.getItem('user_id'))
+          );
+          userData = [...educatorList];
+        }
+
+        if (
+          filter === 'Coordinator' &&
+          localStorage.getItem('user_role') === 'educator'
+        ) {
+          let coordinatorList = userData.filter(
+            (user) => user.role === 'coordinator'
+          );
+          userData = [...coordinatorList];
+        }
+
+        if (
+          filter === 'Guardian' &&
+          localStorage.getItem('user_role') === 'educator'
+        ) {
+          let guardianList = userData.filter(
+            (user) => user.role === 'guardian'
+          );
+          userData = [...guardianList];
+        }
+
+        // FORMATS THE RESULTS TO THE DATA TABLE FORMAT
+        let tempData = userData.map((dt) => ({
+          name: `${dt.profile_photo}, ${getFormattedName(
+            dt.fullname
+          )}, ${dt.role
+            .split('_')
+            .map((d) => d.charAt(0).toUpperCase() + d.slice(1))
+            .join(' ')}, ${dt.is_active}, ${dt.id}`,
+          email: dt.email,
+          number: dt.phone !== null ? dt.phone.slice(1) : null,
+          location: dt.city,
+          role: dt.role,
+          is_deleted: dt.is_deleted,
+          userID: dt.id,
+          roleDetail:
+            dt.role +
+            ',' +
+            dt.isChildEnrolled +
+            ',' +
+            dt.franchisee_id +
+            ',' +
+            dt.id,
+          action: `${dt.is_active},${dt.role}`,
+        }));
+
+        setUserData(tempData);
+
+        if (userData !== null) setfullLoaderStatus(false);
+        setIsLoading(false);
+
+        let temp = tempData;
+        let csv_data = [];
+        temp.map((item, index) => {
+          delete item.is_deleted;
+          csv_data.push(item);
+          let data = { ...csv_data[index] };
+          data['name'] = data.name.split(',')[1];
+          delete data.action;
+          delete data.roleDetail;
+          csv_data[index] = data;
+        });
+        setCsvData(csv_data);
+      }
+    } catch (error) {}
   };
 
   const Show_eduactor = async () => {

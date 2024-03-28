@@ -1,16 +1,14 @@
 import axios from 'axios';
-import React, { useState, useRef } from 'react';
-import { Container } from 'react-bootstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import { BASE_URL } from '../../components/App';
+import DragDropMultiple from '../../components/DragDropMultiple';
 import LeftNavbar from '../../components/LeftNavbar';
 import TopHeader from '../../components/TopHeader';
-import DragDropMultiple from '../../components/DragDropMultiple';
-import { useEffect } from 'react';
-import { Button, Col, Row, Form } from 'react-bootstrap';
-import Select from 'react-select';
-import { useParams } from 'react-router-dom';
-import { BASE_URL } from '../../components/App';
 import { enrollmentInitiationFormValidation } from '../../helpers/validation';
-import { useNavigate } from 'react-router-dom';
 
 const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   let params = useParams();
@@ -54,24 +52,30 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   const [formErrors, setFormErrors] = useState([]);
 
   const fetchEducatorList = async (franchise) => {
-    let token = localStorage.getItem('token');
-    const response = await axios.get(
-      `${BASE_URL}/user-group/users/${franchise}`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-      }
-    );
-    if (response.status === 200 && response.data.status === 'success') {
-      let { users } = response.data;
-      setEducatorData(
-        users?.map((user) => ({
-          id: user.id,
-          value: user.fullname,
-          label: `${user.fullname} (${user.email})`,
-        }))
+    franchise = +franchise;
+    if (!franchise) return;
+    try {
+      let token = localStorage.getItem('token');
+      const response = await axios.get(
+        `${BASE_URL}/user-group/users/${franchise}`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        }
       );
+      if (response.status === 200 && response.data.status === 'success') {
+        let { users } = response.data;
+        setEducatorData(
+          users?.map((user) => ({
+            id: user.id,
+            value: user.fullname,
+            label: `${user.fullname} (${user.email})`,
+          }))
+        );
+      }
+    } catch (error) {
+      toast.error('Failed to fetch educators!');
     }
   };
 
@@ -85,64 +89,69 @@ const ChildEnrollmentInitiation = ({ nextStep, handleFormData }) => {
   };
 
   const initiateEnrollment = async () => {
-    let formData = new FormData();
-    Object?.keys(formOneChildData)?.map((item) => {
-      formData?.append(item, formOneChildData?.[item]);
-    });
+    try {
+      let formData = new FormData();
+      Object?.keys(formOneChildData)?.map((item) => {
+        formData?.append(item, formOneChildData?.[item]);
+      });
 
-    formData?.append('parent_id', parentId);
+      formData?.append('parent_id', parentId);
 
-    // SETTING FILES;
-    childDocument?.forEach((item, index) => {
-      formData?.append(`images`, item);
-    });
+      // SETTING FILES;
+      childDocument?.forEach((item, index) => {
+        formData?.append(`images`, item);
+      });
 
-    let token = localStorage.getItem('token');
-    let response = await axios.get(`${BASE_URL}/auth/user/${parentId}`, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-    });
-
-    if (response.status === 200 && response.data.status === 'success') {
-      response = await axios.post(`${BASE_URL}/enrollment/child`, formData, {
+      let token = localStorage.getItem('token');
+      let response = await axios.get(`${BASE_URL}/auth/user/${parentId}`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: 'Bearer ' + token,
         },
       });
 
-      if (response.status === 201 && response.data.status === 'success') {
-        let { child } = response.data;
-        // SAVING PARENT DETAIL
-        response = await axios.post(
-          `${BASE_URL}/enrollment/child/assign-educators/${child.id}`,
-          { educatorIds: formOneChildData.educator },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+      if (response.status === 200 && response.data.status === 'success') {
+        response = await axios.post(`${BASE_URL}/enrollment/child`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (response.status === 201 && response.data.status === 'success') {
-          response = await axios.patch(
-            `${BASE_URL}/auth/user/update/${parentId}`,
-            {},
+          let { child } = response.data;
+          // SAVING PARENT DETAIL
+          response = await axios.post(
+            `${BASE_URL}/enrollment/child/assign-educators/${child.id}`,
+            { educatorIds: formOneChildData.educator },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             }
           );
-
           if (response.status === 201 && response.data.status === 'success') {
-            setLoader(false);
-            // window.location.href = `/children/${parentId}`;
-            navigate(`/children/${parentId}`, {
-              state: { franchisee_id: formOneChildData.franchisee_id },
-            });
+            response = await axios.patch(
+              `${BASE_URL}/auth/user/update/${parentId}`,
+              {},
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            if (response.status === 201 && response.data.status === 'success') {
+              setLoader(false);
+              // window.location.href = `/children/${parentId}`;
+              navigate(`/children/${parentId}`, {
+                state: { franchisee_id: formOneChildData.franchisee_id },
+              });
+            }
           }
         }
       }
+    } catch (error) {
+      setLoader(false);
+      toast.error('Failed to submit data!');
     }
   };
 
