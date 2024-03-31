@@ -1,7 +1,7 @@
 node_modules
 build
 src/components/App.jsx
-.env
+# .env
 .scannerwork
 sonarqube/extensions
 sonarqube/data
